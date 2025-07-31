@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable standalone output for Docker deployment
-  output: 'standalone',
+  // Removed standalone output for simplified Docker deployment
+  // output: 'standalone',
   
   // Build optimizations
   eslint: {

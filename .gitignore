@@ -84,9 +84,9 @@ logs/
 
 # Output files (use output/ directory instead)
 *.csv
-*.json
 *.xlsx
 output/
+# Note: package.json should be tracked, only ignore generated JSON files in output/
 
 # Temporary files
 tmp/
