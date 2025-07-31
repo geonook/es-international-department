@@ -37,10 +37,13 @@ ES 國際部家長門戶網站和資源中心是一個全面的 Next.js 應用�
 
 - **Framework**: Next.js 14 (App Router) | **框架**: Next.js 14 (App Router)
 - **Language**: TypeScript | **語言**: TypeScript
+- **Database**: PostgreSQL + Prisma ORM | **資料庫**: PostgreSQL + Prisma ORM
 - **Styling**: Tailwind CSS | **樣式**: Tailwind CSS
 - **UI Components**: shadcn/ui | **UI 組件**: shadcn/ui
 - **Animations**: Framer Motion | **動畫**: Framer Motion  
 - **Package Manager**: pnpm | **套件管理器**: pnpm
+- **Code Quality**: ESLint + TypeScript | **程式碼品質**: ESLint + TypeScript
+- **Deployment**: Docker + Zeabur | **部署**: Docker + Zeabur
 
 ## Development Guidelines | 開發指導原則
 
@@ -88,11 +91,26 @@ pnpm dev          # Start development server (http://localhost:3000) | 啟動開
 pnpm build        # Build for production | 建置生產版本
 pnpm start        # Start production server | 啟動生產伺服器
 pnpm lint         # Run ESLint | 執行 ESLint
+pnpm typecheck    # Check TypeScript types | 檢查 TypeScript 類型
+
+# Database | 資料庫
+pnpm db:generate  # Generate Prisma client | 生成 Prisma 客戶端
+pnpm db:migrate   # Run database migrations | 執行資料庫遷移
+pnpm db:seed      # Seed database with initial data | 填充初始資料
+pnpm db:studio    # Open Prisma Studio | 開啟 Prisma Studio
+
+# Environment Management | 環境管理
+pnpm env:switch   # Switch between environments | 切換環境
+pnpm test:db      # Test database connection | 測試資料庫連接
+
+# Docker | Docker
+docker build -t es-international-department .  # Build Docker image | 建置 Docker 映像檔
+docker run -p 8080:8080 es-international-department  # Run container | 執行容器
 
 # Git workflow (follow CLAUDE.md rules) | Git 工作流程（遵循 CLAUDE.md 規則）
 git add .                           # 暫存所有變更
 git commit -m "feat: description"   # 提交變更
-git push origin main                # 推送到主分支
+git push origin main                # 推送到主分支（自動 GitHub 備份）
 ```
 
 ## Project Structure
@@ -101,9 +119,13 @@ git push origin main                # 推送到主分支
 es-international-department/
 ├── CLAUDE.md                  # Essential rules for Claude Code
 ├── README.md                  # This file
+├── Dockerfile                 # Docker configuration for deployment
+├── .dockerignore              # Docker ignore file
 ├── app/                       # Next.js App Router
 │   ├── layout.tsx             # Root layout
 │   ├── page.tsx               # Home page
+│   ├── api/                   # API routes
+│   │   └── health/            # Health check endpoint
 │   ├── events/                # Events section
 │   ├── resources/             # Resources section
 │   ├── admin/                 # Admin section
@@ -112,7 +134,13 @@ es-international-department/
 │   ├── ui/                    # shadcn/ui components
 │   └── theme-provider.tsx     # Theme configuration
 ├── lib/                       # Utilities
+│   └── prisma.ts              # Database connection
 ├── hooks/                     # Custom React hooks
+├── prisma/                    # Database schema and migrations
+│   ├── schema.prisma          # Database schema
+│   ├── seed.ts                # Database seeding script
+│   └── migrations/            # Database migrations
+├── scripts/                   # Development and deployment scripts
 ├── public/                    # Static assets
 ├── styles/                    # Global styles
 ├── docs/                      # Documentation
@@ -163,6 +191,10 @@ es-international-department/
 - Modern React patterns with hooks
 - Optimized Next.js App Router
 - Component-based architecture
+- PostgreSQL database with Prisma ORM
+- Docker containerization for deployment
+- Health check endpoint for monitoring
+- Multi-environment configuration support
 
 ## Contributing
 
@@ -196,11 +228,39 @@ Edit(file_path="existing_feature.tsx", old_string="...", new_string="...")
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Docker Deployment | Docker 部署
+
+### Quick Docker Setup | 快速 Docker 設定
+
+```bash
+# Build Docker image | 建置 Docker 映像檔
+docker build -t es-international-department .
+
+# Run with environment variables | 運行並設定環境變數
+docker run -p 8080:8080 \
+  -e DATABASE_URL="your_database_url" \
+  -e NODE_ENV="production" \
+  es-international-department
+
+# Health check | 健康檢查
+curl http://localhost:8080/api/health
+```
+
+### Docker Features | Docker 功能
+- ✅ Multi-stage build for optimized image size | 多階段建置優化映像檔大小
+- ✅ Non-root user for security | 非 root 使用者提升安全性
+- ✅ Health check endpoint | 健康檢查端點
+- ✅ Optimized for Zeabur deployment | 針對 Zeabur 部署優化
+
+See `docs/docker-deployment.md` for detailed Docker setup instructions.  
+詳細的 Docker 設定說明請參考 `docs/docker-deployment.md`。
+
 ## Support
 
 For questions or issues:
 - Check the documentation in `docs/`
 - Review `CLAUDE.md` for development guidelines
+- Check `docs/troubleshooting.md` for common issues
 - Contact the development team
 
 ---
