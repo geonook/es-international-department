@@ -3,7 +3,14 @@
  * ES International Department - 環境配置檢查腳本
  */
 
-import { env, getEnvironmentInfo, checkEnvironmentHealth } from '../lib/env'
+// Load environment variables from .env file
+import { config } from 'dotenv'
+import { join } from 'path'
+
+// Load .env file before importing lib/env
+config({ path: join(process.cwd(), '.env') })
+
+import { getValidatedEnv, getEnvironmentInfo, checkEnvironmentHealth } from '../lib/env'
 
 /**
  * 檢查環境配置完整性
@@ -13,7 +20,8 @@ function checkEnvironmentConfiguration() {
   console.log('🔍 Checking environment configuration...\n')
   
   try {
-    // 獲取環境資訊
+    // 獲取驗證的環境配置
+    const env = getValidatedEnv()
     const envInfo = getEnvironmentInfo()
     const health = checkEnvironmentHealth()
     

@@ -80,8 +80,16 @@ function validateEnv(): EnvConfig {
 }
 
 /**
- * 驗證的環境配置
- * Validated environment configuration
+ * 獲取驗證的環境配置
+ * Get validated environment configuration
+ */
+export function getValidatedEnv(): EnvConfig {
+  return validateEnv()
+}
+
+/**
+ * 驗證的環境配置 (為了向後相容性，但建議使用 getValidatedEnv())
+ * Validated environment configuration (for backward compatibility, but recommend using getValidatedEnv())
  */
 export const env = validateEnv()
 
