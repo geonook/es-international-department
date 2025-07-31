@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: currentUser.id },
       include: {
-        roles: {
+        userRoles: {
           include: {
             role: true
           }
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 準備使用者角色資料
-    const userRoles = user.roles.map(userRole => userRole.role.name)
+    const userRoles = user.userRoles.map(userRole => userRole.role.name)
 
     // 回傳使用者資訊（不包含敏感資訊）
     return NextResponse.json({
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         lastName: user.lastName,
         displayName: user.displayName,
         roles: userRoles,
-        avatar: user.avatar,
+        avatar: user.avatarUrl,
         phone: user.phone,
         dateOfBirth: user.dateOfBirth,
         address: user.address,
@@ -146,7 +146,7 @@ export async function PUT(request: NextRequest) {
         updatedAt: new Date()
       },
       include: {
-        roles: {
+        userRoles: {
           include: {
             role: true
           }
@@ -155,7 +155,7 @@ export async function PUT(request: NextRequest) {
     })
 
     // 準備使用者角色資料
-    const userRoles = updatedUser.roles.map(userRole => userRole.role.name)
+    const userRoles = updatedUser.userRoles.map(userRole => userRole.role.name)
 
     return NextResponse.json({
       success: true,
@@ -167,7 +167,7 @@ export async function PUT(request: NextRequest) {
         lastName: updatedUser.lastName,
         displayName: updatedUser.displayName,
         roles: userRoles,
-        avatar: updatedUser.avatar,
+        avatar: updatedUser.avatarUrl,
         phone: updatedUser.phone,
         dateOfBirth: updatedUser.dateOfBirth,
         address: updatedUser.address,

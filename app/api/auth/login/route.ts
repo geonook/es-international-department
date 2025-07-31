@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       include: {
-        roles: {
+        userRoles: {
           include: {
             role: true
           }
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 驗證密碼
-    const isValidPassword = await verifyPassword(password, user.password)
+    const isValidPassword = await verifyPassword(password, user.passwordHash || '')
     if (!isValidPassword) {
       return NextResponse.json(
         { 
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 準備使用者角色資料
-    const userRoles = user.roles.map(userRole => userRole.role.name)
+    const userRoles = user.userRoles.map(userRole => userRole.role.name)
 
     // 建立 JWT Token
     const token = await generateJWT({
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
         lastName: user.lastName,
         displayName: user.displayName,
         roles: userRoles,
-        avatar: user.avatar,
+        avatar: user.avatarUrl,
         createdAt: user.createdAt,
         lastLoginAt: new Date()
       }
