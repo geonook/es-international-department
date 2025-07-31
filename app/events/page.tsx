@@ -6,16 +6,27 @@ import { Download, Calendar, Users, ExternalLink, Search, Sparkles, ChevronDown 
 import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
 
+/**
+ * 活動頁面組件 - ES 國際部活動資訊
+ * Events Page Component - ES International Department Events
+ * 
+ * @description 展示學校活動資訊，包括校長有約會議資料和各年級活動簡報
+ * @features 校長有約分級資料、活動簡報下載、響應式設計、動畫效果
+ * @author Claude Code | Generated for ES International Department
+ */
 export default function EventsPage() {
+  // 滾動視差效果 | Scroll parallax effect
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
 
+  // 校長有約分級簡報資料 | Coffee with Principal grade-level presentation materials
   const coffeeWithPrincipalSlides = [
     { grades: "Grades 1-2", link: "#", description: "Early elementary presentation materials" },
     { grades: "Grades 3-4", link: "#", description: "Middle elementary presentation materials" },
     { grades: "Grades 5-6", link: "#", description: "Upper elementary presentation materials" },
   ]
 
+  // 其他活動簡報資料 | Other event presentation materials
   const otherEventSlides = [
     { date: "11/29", title: "Grade 1 Presentation", link: "#" },
     { date: "11/29", title: "Grade 2 Presentation", link: "#" },

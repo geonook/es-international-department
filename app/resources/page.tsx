@@ -7,7 +7,16 @@ import { BookOpen, Download, ExternalLink, Play, FileText, Users, Search, Sparkl
 import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
 
+/**
+ * 資源頁面組件 - ES 國際部學習資源中心
+ * Resources Page Component - ES International Department Learning Resource Center
+ * 
+ * @description 提供各年級學習資源，包括 PDF 教材、影片內容、互動工具和外部學習平台
+ * @features 分級學習資源、多種資源類型、下載功能、外部平台整合
+ * @author Claude Code | Generated for ES International Department
+ */
 export default function ResourcesPage() {
+  // 滾動視差效果 | Scroll parallax effect
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
 
