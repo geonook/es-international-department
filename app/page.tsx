@@ -9,12 +9,24 @@ import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 
+/**
+ * 首頁組件 - ES 國際部家長門戶網站
+ * Home Page Component - ES International Department Parent Portal
+ * 
+ * @description 展示 ES 國際部的主要功能，包括歡迎訊息、國際部新聞、月刊電子報和 KCFSID 小隊資訊
+ * @features 響應式設計、流暢動畫、視差滾動效果、互動式卡片
+ * @author Claude Code | Generated with love for ES International Department
+ */
 export default function HomePage() {
+  // 頁面載入狀態 | Page loading state
   const [isLoaded, setIsLoaded] = useState(false)
+  
+  // 滾動效果相關 hooks | Scroll effect related hooks
   const { scrollY } = useScroll()
   const heroRef = useRef(null)
   const isHeroInView = useInView(heroRef, { once: true })
 
+  // 視差滾動變換 | Parallax scroll transforms
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
   const opacity = useTransform(scrollY, [0, 300], [1, 0.3])
@@ -23,19 +35,22 @@ export default function HomePage() {
     setIsLoaded(true)
   }, [])
 
+  // KCFSID 小隊列表 | KCFSID Squad list
   const squads = ["Achievers", "Adventurers", "Discoverers", "Explorers", "Innovators", "Leaders"]
 
+  // 容器動畫變體 - 漸進式顯示子元素 | Container animation variants - staggered children
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
+        staggerChildren: 0.1,    // 子元素間隔顯示時間
+        delayChildren: 0.3,      // 子元素延遲顯示時間
       },
     },
   }
 
+  // 項目動畫變體 - 從下往上淡入 | Item animation variants - fade up
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
