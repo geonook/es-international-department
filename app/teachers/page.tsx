@@ -51,24 +51,12 @@ export default function TeachersPage() {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
+    visible: { y: 0, opacity: 1 },
   }
 
   const floatingVariants = {
     animate: {
       y: [-10, 10, -10],
-      transition: {
-        duration: 3,
-        repeat: Number.POSITIVE_INFINITY,
-        ease: "easeInOut",
-      },
     },
   }
 
@@ -278,12 +266,22 @@ export default function TeachersPage() {
             className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/30 to-cyan-400/30 rounded-full blur-xl"
             variants={floatingVariants}
             animate="animate"
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
           />
           <motion.div
             className="absolute bottom-20 right-10 w-32 h-32 bg-gradient-to-br from-green-400/30 to-teal-400/30 rounded-full blur-xl"
             variants={floatingVariants}
             animate="animate"
-            transition={{ delay: 1 }}
+            transition={{
+              delay: 1,
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
           />
         </section>
 

@@ -49,14 +49,7 @@ export default function EventsPage() {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
+    visible: { y: 0, opacity: 1 },
   }
 
   return (

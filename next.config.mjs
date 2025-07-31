@@ -19,11 +19,7 @@ const nextConfig = {
   // Production optimizations
   swcMinify: true,
   
-  // Experimental features
-  experimental: {
-    // Enable server actions if needed
-    serverActions: true,
-  },
+  // Experimental features (Server Actions are now enabled by default)
 }
 
 export default nextConfig
