@@ -1,0 +1,99 @@
+# ES International Department - Docker Ignore File
+# ES 國際部 Docker 忽略檔案
+
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+.coverage
+.nyc_output
+
+# Next.js build files
+.next/
+out/
+
+# Production build files
+build/
+dist/
+
+# Environment files (security sensitive)
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+.env.backup
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+logs/
+*.log
+tmp/
+output/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Documentation and examples
+docs/
+examples/
+README.md
+CLAUDE.md
+
+# Git and CI/CD
+.git/
+.gitignore
+.github/
+
+# Development tools and scripts
+scripts/
+tools/
+
+# Package manager files
+.pnp
+.pnp.js
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Miscellaneous
+*.tgz
+*.tar.gz
+.nyc_output
+.cache
