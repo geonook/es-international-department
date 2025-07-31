@@ -40,12 +40,24 @@ next-env.d.ts
 # Optional eslint cache
 .eslintcache
 
-# dotenv environment variables file
+# dotenv environment variables file - Zeabur 多環境配置
+# CRITICAL: These files contain sensitive Zeabur database credentials
 .env*
 .env.local
+.env.development
+.env.staging
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Zeabur specific configurations
+zeabur.json
+.zeabur/
+
+# Database migrations and seeds backup
+prisma/migrations/backup/
+prisma/seeds/backup/
 
 # Vercel
 .vercel

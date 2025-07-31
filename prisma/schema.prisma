@@ -1,13 +1,18 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ES International Department Prisma Schema
+// 支援 Zeabur 多環境雲端資料庫部署
+// Supports Zeabur multi-environment cloud database deployment
 
 generator client {
   provider = "prisma-client-js"
+  // 優化客戶端生成以支援 Zeabur 部署
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // 支援連接池配置以優化 Zeabur 雲端資料庫效能
+  relationMode = "prisma"
 }
 
 // 使用者管理 | User Management

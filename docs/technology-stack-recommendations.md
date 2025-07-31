@@ -1,34 +1,50 @@
-# Technology Stack & Architecture Recommendations
-*ES 國際部技術棧與架構建議*
+# Technology Stack & Architecture Recommendations for Zeabur Deployment
+*ES 國際部技術棧與架構建議 - Zeabur 雲端部署專用*
+
+## ☁️ Zeabur 雲端架構概述 | Zeabur Cloud Architecture Overview
+
+ES International Department 採用 **Zeabur 雲端平台**進行部署，實現多環境隔離與自動化部署流程。
+
+### 🏗️ 多環境架構設計
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Development   │    │     Staging     │    │   Production    │
+│   開發環境       │    │    預備環境      │    │    正式環境      │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ Zeabur Dev DB   │    │ Zeabur Stage DB │    │ Zeabur Prod DB  │
+│ 開發測試資料庫   │    │ 預備測試資料庫   │    │ 正式營運資料庫   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                        │                        │
+         ▼                        ▼                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              Zeabur Cloud Platform 雲端平台                     │
+│  • 自動部署 Auto Deployment                                     │
+│  • 環境隔離 Environment Isolation                               │
+│  • 資料庫備份 Database Backup                                   │
+│  • 監控告警 Monitoring & Alerts                                │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ## 資料庫技術選型 | Database Technology Selection
 
-### 主要推薦：PostgreSQL
+### ✅ Zeabur PostgreSQL（已選定）
 **優勢 | Advantages:**
-- 強大的 JSON/JSONB 支援，適合彈性資料結構
-- 優秀的全文搜索功能
-- 強大的索引和查詢優化能力
-- 符合 ACID 特性，資料一致性保證
-- 豐富的資料類型支援（UUID、Array、日期時間等）
-- 良好的 Next.js 生態整合
+- **雲端託管**: Zeabur 提供完全託管的 PostgreSQL 服務
+- **多環境支援**: 可輕鬆建立 development、staging、production 三套獨立資料庫
+- **自動備份**: Zeabur 平台提供自動備份與災難恢復
+- **擴展性**: 根據需求調整資料庫規格
+- **安全性**: 內建 SSL/TLS 加密與存取控制
+- **強大的 JSON/JSONB 支援**，適合彈性資料結構
+- **優秀的全文搜索功能**
+- **符合 ACID 特性**，資料一致性保證
+- **豐富的資料類型支援**（UUID、Array、日期時間等）
+- **良好的 Next.js 生態整合**
 
-**適用場景:**
-- 複雜的關聯查詢需求
-- 需要進階搜索功能
-- 高資料完整性要求
-- 支援大量並發讀寫
-
-### 替代方案：MySQL 8.0+
-**優勢 | Advantages:**
-- 廣泛的社群支援和資源
-- 優秀的效能表現
-- JSON 欄位支援
-- 成熟的備份和恢復工具
-
-**適用場景:**
-- 團隊對 MySQL 較為熟悉
-- 現有基礎設施已使用 MySQL
-- 注重運維成本控制
+**Zeabur 特定優勢:**
+- 一鍵部署與環境切換
+- 與 Zeabur 部署平台完美整合
+- 自動化的資料庫維護與監控
+- 按需求彈性計費
 
 ## ORM 框架建議 | ORM Framework Recommendation
 
@@ -69,30 +85,63 @@ const user = await prisma.user.findUnique({
 
 ## 應用架構設計 | Application Architecture
 
-### 整體架構 | Overall Architecture
+### Zeabur 整體架構 | Zeabur Overall Architecture
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend API   │    │   Database      │
-│   (Next.js)     │◄──►│   (Next.js API) │◄──►│   (PostgreSQL)  │
+│   (Next.js)     │◄──►│   (Next.js API) │◄──►│ (Zeabur PostgreSQL)│
 │                 │    │                 │    │                 │
 │ - React Components │  │ - API Routes    │    │ - Prisma Schema │
-│ - State Management │  │ - Authentication│    │ - Indexes       │
-│ - UI/UX           │  │ - Business Logic│    │ - Constraints   │
+│ - State Management │  │ - Authentication│    │ - Multi-Environment │
+│ - UI/UX           │  │ - Business Logic│    │ - Auto Backup   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
           │                        │                        │
           ▼                        ▼                        ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Static Assets │    │   Cache Layer   │    │   File Storage  │
-│   (Vercel CDN)  │    │   (Redis)       │    │   (AWS S3/      │
-│                 │    │                 │    │    Vercel Blob) │
+│   (Zeabur CDN)  │    │ (Optional Redis)│    │   (Vercel Blob/ │
+│                 │    │                 │    │    Zeabur Files)│
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────┐
+                         │ Zeabur Platform │
+                         │ 部署與監控平台   │
+                         │                 │
+                         │ - Auto Deploy   │
+                         │ - Environment   │
+                         │   Management    │
+                         │ - Monitoring    │
+                         │ - Logs          │
+                         └─────────────────┘
+```
+
+### 🚀 Zeabur 部署流程 | Zeabur Deployment Flow
+```
+GitHub Repository          Zeabur Platform            Database
+      │                          │                        │
+   ┌──▼──┐                 ┌─────▼─────┐          ┌──────▼──────┐
+   │ Push│                 │   Auto    │          │   Prisma    │
+   │  to │    ───────►     │  Deploy   │ ───────► │ Migrations  │
+   │Branch│                │  Trigger  │          │   & Seed    │
+   └─────┘                 └───────────┘          └─────────────┘
+      │                          │                        │
+      │ dev branch ──────────────┼────► Development DB    │
+      │ staging branch ──────────┼────► Staging DB        │
+      │ main branch ─────────────┼────► Production DB     │
+      │                          │                        │
+      ▼                          ▼                        ▼
+┌─────────────┐          ┌──────────────┐       ┌────────────────┐
+│   GitHub    │          │   Zeabur     │       │   Multi-Env    │
+│ Integration │          │   Console    │       │   Databases    │
+└─────────────┘          └──────────────┘       └────────────────┘
 ```
 
 ### 資料層架構 | Data Layer Architecture
 
-#### 1. 資料庫連接管理
+#### 1. Zeabur 資料庫連接管理
 ```typescript
-// lib/prisma.ts
+// lib/prisma.ts - Zeabur Multi-Environment Configuration
 import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = globalThis as unknown as {
@@ -100,15 +149,43 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  log: ['query', 'error', 'warn'],
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   datasources: {
     db: {
-      url: process.env.DATABASE_URL
+      url: process.env.DATABASE_URL // Zeabur 資料庫連接字串
+    }
+  },
+  // Zeabur 雲端資料庫連接優化配置
+  __internal: {
+    engine: {
+      connectionLimit: process.env.NODE_ENV === 'production' ? 10 : 5,
     }
   }
 })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// 開發環境防止熱重載時重複建立連接
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma
+}
+
+// 環境檢查與資料庫連接驗證
+export async function validateDatabaseConnection() {
+  try {
+    await prisma.$connect()
+    
+    const environment = process.env.NODE_ENV || 'development'
+    const dbUrl = process.env.DATABASE_URL?.replace(/\/\/[^:]+:[^@]+@/, '//***:***@') || 'Not configured'
+    
+    console.log(`✅ Zeabur Database connected successfully`)
+    console.log(`🌍 Environment: ${environment}`)
+    console.log(`🗄️  Database: ${dbUrl}`)
+    
+    return true
+  } catch (error) {
+    console.error('❌ Zeabur Database connection failed:', error)
+    return false
+  }
+}
 ```
 
 #### 2. 資料存取層 (Data Access Layer)
@@ -439,34 +516,95 @@ export function OptimizedImage({ src, alt, width, height, priority = false }: Op
 
 ## 部署架構建議 | Deployment Architecture
 
-### Vercel 部署 (推薦)
+### 🚀 Zeabur 部署 (主要推薦)
 ```yaml
-# vercel.json
+# zeabur.yaml - Zeabur 部署配置檔
+name: es-international-department
+services:
+  - name: web
+    source:
+      type: git
+      url: https://github.com/your-username/es-international-department
+    build:
+      commands:
+        - npm install
+        - npm run db:generate
+        - npm run build
+    start:
+      command: npm run zeabur:start
+    env:
+      NODE_ENV: ${ZEABUR_ENVIRONMENT}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+    port: 3000
+    
+  - name: database
+    source:
+      type: postgresql
+    version: "15"
+    plan: starter  # 可調整為 pro 或 team
+```
+
+### 🔧 Zeabur 環境配置
+```bash
+# Development Environment (開發環境)
+ZEABUR_ENVIRONMENT=development
+DATABASE_URL=postgresql://dev_user:password@dev-db.zeabur.com:5432/es_international_dev
+
+# Staging Environment (預備環境)
+ZEABUR_ENVIRONMENT=staging  
+DATABASE_URL=postgresql://stage_user:password@stage-db.zeabur.com:5432/es_international_staging
+
+# Production Environment (正式環境)
+ZEABUR_ENVIRONMENT=production
+DATABASE_URL=postgresql://prod_user:password@prod-db.zeabur.com:5432/es_international_prod
+```
+
+### 📋 Zeabur 部署腳本配置
+```json
+// package.json - Zeabur 專用腳本
 {
-  "functions": {
-    "app/api/**": {
-      "maxDuration": 30
-    }
-  },
-  "env": {
-    "DATABASE_URL": "@database-url",
-    "JWT_SECRET": "@jwt-secret",
-    "REDIS_URL": "@redis-url"
-  },
-  "build": {
-    "env": {
-      "SKIP_ENV_VALIDATION": "1"
-    }
+  "scripts": {
+    "zeabur:build": "npm run db:generate && npm run build",
+    "zeabur:start": "npm run start",
+    "zeabur:deploy:dev": "npm run db:migrate:deploy && npm run db:seed",
+    "zeabur:deploy:staging": "NODE_ENV=staging npm run db:migrate:deploy",
+    "zeabur:deploy:production": "NODE_ENV=production npm run db:migrate:deploy"
   }
 }
 ```
 
-### Docker 部署 (替代方案)
+### 🔄 自動部署工作流程
+```yaml
+# Zeabur 自動部署觸發器配置
+triggers:
+  - branch: dev
+    environment: development
+    auto_deploy: true
+    commands:
+      - npm run zeabur:deploy:dev
+      
+  - branch: staging  
+    environment: staging
+    auto_deploy: true
+    commands:
+      - npm run zeabur:deploy:staging
+      
+  - branch: main
+    environment: production
+    auto_deploy: false  # 手動部署確保安全
+    commands:
+      - npm run zeabur:deploy:production
+```
+
+### 🐳 Docker 部署 (備用方案)
 ```dockerfile
-# Dockerfile
+# Dockerfile - 支援 Zeabur 與其他平台
 FROM node:18-alpine AS base
 
-# Install dependencies only when needed
+# 安裝相依套件
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -474,23 +612,24 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 
-# Rebuild the source code only when needed
+# 建置應用程式
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma client
+# 生成 Prisma 客戶端
 RUN npx prisma generate
 
-# Build the application
+# 建置 Next.js 應用
+ENV SKIP_ENV_VALIDATION=1
 RUN npm run build
 
-# Production image
+# 生產環境映像
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -502,9 +641,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 EXPOSE 3000
+ENV PORT=3000
 
-ENV PORT 3000
-
+# 支援 Zeabur 與標準 Docker 部署
 CMD ["node", "server.js"]
 ```
 
@@ -632,21 +771,56 @@ SENTRY_DSN="your-sentry-dsn"
 
 ## 總結 | Summary
 
-此技術棧建議提供了一個完整的、可擴展的、現代化的解決方案，適合 ES International Department 系統的需求：
+此技術棧建議提供了一個完整的、雲端原生的、現代化的解決方案，專為 ES International Department 系統在 **Zeabur 平台**上的部署需求設計：
 
-**核心優勢:**
-1. **型別安全**: 全棧 TypeScript 支援
-2. **高效能**: 多層次快取策略
-3. **可擴展**: 模組化架構設計
-4. **安全性**: 完整的身份驗證和授權
-5. **維護性**: 清晰的代碼結構和文檔
+### 🌟 核心優勢 | Core Advantages
+1. **☁️ 雲端原生**: 完整的 Zeabur 平台整合，多環境自動化部署
+2. **🔒 型別安全**: 全棧 TypeScript 支援，從前端到資料庫
+3. **⚡ 高效能**: Zeabur CDN + 多層次快取策略
+4. **🚀 可擴展**: 雲端彈性擴展 + 模組化架構設計
+5. **🛡️ 安全性**: 完整的身份驗證、授權與資料保護
+6. **🔧 維護性**: 清晰的代碼結構、自動化部署與監控
+7. **💰 成本效益**: Zeabur 按需計費，優化資源使用
 
-**實作優先級:**
-1. 設定 PostgreSQL + Prisma 基礎架構
-2. 實作使用者驗證系統
-3. 建立 API 端點和資料存取層
-4. 整合前端組件與後端 API
-5. 添加快取和效能優化
-6. 部署和監控設定
+### 📋 Zeabur 實作優先級 | Zeabur Implementation Priority
+1. **🗄️ 設定 Zeabur PostgreSQL 多環境資料庫**
+   - 建立 development、staging、production 三套獨立資料庫
+   - 配置 Prisma 連接與遷移策略
 
-這個技術架構將為 ES International Department 提供一個穩定、高效、易於維護的現代化平台。
+2. **🔐 實作使用者驗證系統**
+   - JWT 身份驗證整合
+   - 多角色權限控制 (admin、teacher、parent)
+
+3. **🛠️ 建立 API 端點和資料存取層**
+   - Next.js API Routes 實作
+   - Prisma DAL 與服務層架構
+
+4. **🎨 整合前端組件與後端 API**
+   - React 組件與 shadcn/ui 整合
+   - 狀態管理與 API 串接
+
+5. **⚡ 添加快取和效能優化**
+   - Redis 快取策略（可選）
+   - 資料庫查詢優化與索引設計
+
+6. **🚀 Zeabur 部署和監控設定**
+   - 自動化部署流程配置
+   - 監控、日誌與告警系統
+
+### 🎯 Zeabur 專用特色 | Zeabur-Specific Features
+- **🔄 自動部署**: GitHub 分支對應環境自動部署
+- **🗄️ 資料庫管理**: 完全託管的 PostgreSQL 服務
+- **📊 監控整合**: 內建應用效能監控與日誌管理
+- **🌍 全球 CDN**: 自動靜態資源分發優化
+- **🔧 環境管理**: 簡化的多環境配置與切換
+
+### 🚀 部署就緒 | Deployment Ready
+這個 Zeabur 優化的技術架構將為 ES International Department 提供：
+
+✅ **穩定可靠**的雲端原生平台  
+✅ **高效能**的多環境部署策略  
+✅ **易於維護**的現代化開發體驗  
+✅ **安全合規**的資料管理機制  
+✅ **成本優化**的雲端資源使用  
+
+**🎉 立即開始使用 Zeabur 部署您的 ES International Department 系統！**
