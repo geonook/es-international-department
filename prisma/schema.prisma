@@ -4,15 +4,14 @@
 
 generator client {
   provider = "prisma-client-js"
-  // 優化客戶端生成以支援 Zeabur 部署
+  // 優化客戶端生成以支援 Zeabur 部署環境
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // 支援連接池配置以優化 Zeabur 雲端資料庫效能
-  relationMode = "prisma"
+  // PostgreSQL 原生支援外鍵約束，無需額外配置
 }
 
 // 使用者管理 | User Management

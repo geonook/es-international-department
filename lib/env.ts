@@ -36,8 +36,8 @@ const envSchema = z.object({
 
   // Security
   ALLOWED_ORIGINS: z.string().default('http://localhost:3000'),
-  RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default('100'),
-  RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default('900000'),
+  RATE_LIMIT_MAX_REQUESTS: z.string().default('100').transform((val) => parseInt(val, 10)),
+  RATE_LIMIT_WINDOW_MS: z.string().default('900000').transform((val) => parseInt(val, 10)),
 
   // Monitoring (Optional)
   SENTRY_DSN: z.string().url('Invalid SENTRY_DSN format').optional(),

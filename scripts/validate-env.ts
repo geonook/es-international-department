@@ -4,6 +4,8 @@
  */
 
 import { z } from 'zod'
+import fs from 'fs'
+import path from 'path'
 
 /**
  * 驗證環境變數格式與安全性
@@ -194,9 +196,6 @@ function generateSecureKeys() {
  * Check environment file existence
  */
 function checkEnvironmentFiles() {
-  const fs = require('fs')
-  const path = require('path')
-  
   console.log('\n📁 Environment Files Check:')
   
   const envFiles = ['Development', 'Staging', 'Production']

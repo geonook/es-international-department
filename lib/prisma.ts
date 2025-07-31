@@ -15,13 +15,6 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient({
     db: {
       url: process.env.DATABASE_URL
     }
-  },
-  // Zeabur 雲端資料庫連接優化配置
-  __internal: {
-    engine: {
-      // 優化連接池設定以適配 Zeabur 資料庫限制
-      connectionLimit: process.env.NODE_ENV === 'production' ? 10 : 5,
-    }
   }
 })
 
