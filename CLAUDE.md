@@ -163,9 +163,15 @@ npm run build        # Build for production | 建置生產版本
 npm run start        # Start production server | 啟動生產伺服器
 npm run lint         # Run ESLint | 執行 ESLint
 
-# Testing (when implemented) | 測試（實作後）
+# Testing | 測試
 npm test             # Run tests | 執行測試
-npm run test:watch   # Run tests in watch mode | 以監視模式執行測試
+node integration-test.js  # API integration tests | API 整合測試
+node frontend-test.js     # Frontend tests | 前端測試
+
+# Zeabur Cloud Testing | Zeabur 雲端測試
+# Current deployment: https://landing-app-v2.zeabur.app
+# Test results: 42.31% overall pass rate (11/26 tests)
+# API: 25% pass rate | Frontend: 70% pass rate
 
 # Git workflow | Git 工作流程
 git add .                           # 暫存所有變更
