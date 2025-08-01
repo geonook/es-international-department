@@ -5,7 +5,7 @@
  * 管理員儀表板組件 - 使用真實認證
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,50 +36,285 @@ import {
   GraduationCap,
   Sparkles,
   Loader2,
+  Send,
+  AlertTriangle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { cn } from '@/lib/utils'
+import AnnouncementList from '@/components/AnnouncementList'
+import AnnouncementForm from '@/components/AnnouncementForm'
+import { 
+  Announcement, 
+  AnnouncementFormData, 
+  AnnouncementFilters, 
+  PaginationInfo, 
+  AnnouncementStats,
+  ApiResponse,
+  AnnouncementListResponse 
+} from '@/lib/types'
 
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated, logout, isAdmin } = useAuth()
   const [activeTab, setActiveTab] = useState("dashboard")
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  // Mock data for demonstration (這些將來會從 API 獲取)
-  const [teachersData, setTeachersData] = useState({
-    announcements: [
-      {
-        id: 1,
-        title: "Staff Meeting Tomorrow",
-        content: "Please attend the staff meeting at 3 PM",
-        date: "2025-01-31",
-        priority: "high",
-      },
-      {
-        id: 2,
-        title: "New Curriculum Guidelines",
-        content: "Updated guidelines are now available",
-        date: "2025-01-30",
-        priority: "medium",
-      },
-    ],
-    reminders: [
-      {
-        id: 1,
-        title: "Grade Submission Deadline",
-        content: "Submit grades by Friday",
-        date: "2025-02-01",
-        status: "active",
-      },
-      {
-        id: 2,
-        title: "Parent Conference Week",
-        content: "Schedule your conferences",
-        date: "2025-02-05",
-        status: "pending",
-      },
-    ],
+  // 公告管理狀態
+  const [announcements, setAnnouncements] = useState<Announcement[]>([])
+  const [announcementsLoading, setAnnouncementsLoading] = useState(false)
+  const [announcementsError, setAnnouncementsError] = useState<string>('')
+  const [announcementStats, setAnnouncementStats] = useState<AnnouncementStats | null>(null)
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    page: 1,
+    limit: 10,
+    totalCount: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPrevPage: false
   })
+  const [filters, setFilters] = useState<AnnouncementFilters>({
+    targetAudience: 'all',
+    priority: undefined,
+    status: undefined,
+    search: ''
+  })
+  const [showAnnouncementForm, setShowAnnouncementForm] = useState(false)
+  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null)
+  const [formLoading, setFormLoading] = useState(false)
+  const [formError, setFormError] = useState<string>('')
+
+  // 獲取公告列表
+  const fetchAnnouncements = useCallback(async (newFilters?: AnnouncementFilters, page?: number) => {
+    setAnnouncementsLoading(true)
+    setAnnouncementsError('')
+    
+    try {
+      const currentFilters = newFilters || filters
+      const currentPage = page || pagination.page
+      
+      const searchParams = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: pagination.limit.toString(),
+        status: 'all' // 管理員可以看到所有狀態的公告
+      })
+      
+      if (currentFilters.targetAudience && currentFilters.targetAudience !== 'all') {
+        searchParams.append('targetAudience', currentFilters.targetAudience)
+      }
+      if (currentFilters.priority) {
+        searchParams.append('priority', currentFilters.priority)
+      }
+      if (currentFilters.status) {
+        searchParams.append('status', currentFilters.status)
+      }
+      if (currentFilters.search) {
+        searchParams.append('search', currentFilters.search)
+      }
+      
+      const response = await fetch(`/api/announcements?${searchParams}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data: AnnouncementListResponse = await response.json()
+      
+      if (data.success) {
+        setAnnouncements(data.data)
+        setPagination(data.pagination)
+        setFilters(currentFilters)
+        
+        // 計算統計資訊
+        calculateStats(data.data)
+      } else {
+        throw new Error(data.message || '獲取公告失敗')
+      }
+    } catch (error) {
+      console.error('Fetch announcements error:', error)
+      setAnnouncementsError(error instanceof Error ? error.message : '載入公告時發生錯誤')
+    } finally {
+      setAnnouncementsLoading(false)
+    }
+  }, [filters, pagination.page, pagination.limit])
+
+  // 計算統計資訊
+  const calculateStats = (announcementList: Announcement[]) => {
+    const stats: AnnouncementStats = {
+      total: announcementList.length,
+      published: announcementList.filter(a => a.status === 'published').length,
+      draft: announcementList.filter(a => a.status === 'draft').length,
+      archived: announcementList.filter(a => a.status === 'archived').length,
+      byPriority: {
+        high: announcementList.filter(a => a.priority === 'high').length,
+        medium: announcementList.filter(a => a.priority === 'medium').length,
+        low: announcementList.filter(a => a.priority === 'low').length
+      },
+      byTargetAudience: {
+        teachers: announcementList.filter(a => a.targetAudience === 'teachers').length,
+        parents: announcementList.filter(a => a.targetAudience === 'parents').length,
+        all: announcementList.filter(a => a.targetAudience === 'all').length
+      }
+    }
+    setAnnouncementStats(stats)
+  }
+
+  // 建立公告
+  const createAnnouncement = async (data: AnnouncementFormData) => {
+    setFormLoading(true)
+    setFormError('')
+    
+    try {
+      const response = await fetch('/api/announcements', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result: ApiResponse<Announcement> = await response.json()
+      
+      if (result.success) {
+        setShowAnnouncementForm(false)
+        setEditingAnnouncement(null)
+        await fetchAnnouncements() // 重新載入列表
+      } else {
+        throw new Error(result.message || '建立公告失敗')
+      }
+    } catch (error) {
+      console.error('Create announcement error:', error)
+      setFormError(error instanceof Error ? error.message : '建立公告時發生錯誤')
+      throw error
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  // 更新公告
+  const updateAnnouncement = async (data: AnnouncementFormData) => {
+    if (!editingAnnouncement) return
+    
+    setFormLoading(true)
+    setFormError('')
+    
+    try {
+      const response = await fetch(`/api/announcements/${editingAnnouncement.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result: ApiResponse<Announcement> = await response.json()
+      
+      if (result.success) {
+        setShowAnnouncementForm(false)
+        setEditingAnnouncement(null)
+        await fetchAnnouncements() // 重新載入列表
+      } else {
+        throw new Error(result.message || '更新公告失敗')
+      }
+    } catch (error) {
+      console.error('Update announcement error:', error)
+      setFormError(error instanceof Error ? error.message : '更新公告時發生錯誤')
+      throw error
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  // 刪除公告
+  const deleteAnnouncement = async (announcementId: number) => {
+    if (!confirm('確定要刪除這個公告嗎？此操作無法復原。')) {
+      return
+    }
+    
+    try {
+      const response = await fetch(`/api/announcements/${announcementId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result: ApiResponse = await response.json()
+      
+      if (result.success) {
+        await fetchAnnouncements() // 重新載入列表
+      } else {
+        throw new Error(result.message || '刪除公告失敗')
+      }
+    } catch (error) {
+      console.error('Delete announcement error:', error)
+      setAnnouncementsError(error instanceof Error ? error.message : '刪除公告時發生錯誤')
+    }
+  }
+
+  // 處理編輯公告
+  const handleEditAnnouncement = (announcement: Announcement) => {
+    setEditingAnnouncement(announcement)
+    setShowAnnouncementForm(true)
+    setFormError('')
+  }
+
+  // 處理新增公告
+  const handleCreateAnnouncement = () => {
+    setEditingAnnouncement(null)
+    setShowAnnouncementForm(true)
+    setFormError('')
+  }
+
+  // 處理表單取消
+  const handleFormCancel = () => {
+    setShowAnnouncementForm(false)
+    setEditingAnnouncement(null)
+    setFormError('')
+  }
+
+  // 處理表單提交
+  const handleFormSubmit = async (data: AnnouncementFormData) => {
+    if (editingAnnouncement) {
+      await updateAnnouncement(data)
+    } else {
+      await createAnnouncement(data)
+    }
+  }
+
+  // 處理篩選變更
+  const handleFiltersChange = (newFilters: AnnouncementFilters) => {
+    setFilters(newFilters)
+    fetchAnnouncements(newFilters, 1) // 重置到第一頁
+  }
+
+  // 處理分頁變更
+  const handlePageChange = (page: number) => {
+    fetchAnnouncements(filters, page)
+  }
+
+  // 初始載入公告
+  useEffect(() => {
+    if (isAuthenticated && isAdmin() && activeTab === 'teachers') {
+      fetchAnnouncements()
+    }
+  }, [isAuthenticated, activeTab, fetchAnnouncements, isAdmin])
 
   const [parentsData, setParentsData] = useState({
     newsletters: [
@@ -364,14 +599,77 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-orange-600 text-sm font-medium">待處理</p>
-                            <p className="text-2xl font-bold text-orange-800">12</p>
+                            <p className="text-orange-600 text-sm font-medium">總公告數</p>
+                            <p className="text-2xl font-bold text-orange-800">
+                              {announcementStats?.total || 0}
+                            </p>
                           </div>
-                          <Bell className="w-8 h-8 text-orange-600" />
+                          <MessageSquare className="w-8 h-8 text-orange-600" />
                         </div>
                       </CardContent>
                     </Card>
                   </div>
+
+                  {/* Announcement Statistics */}
+                  {announcementStats && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100 border-cyan-200">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-cyan-600 text-sm font-medium">已發佈</p>
+                              <p className="text-2xl font-bold text-cyan-800">
+                                {announcementStats.published}
+                              </p>
+                            </div>
+                            <Send className="w-8 h-8 text-cyan-600" />
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-amber-600 text-sm font-medium">草稿</p>
+                              <p className="text-2xl font-bold text-amber-800">
+                                {announcementStats.draft}
+                              </p>
+                            </div>
+                            <FileText className="w-8 h-8 text-amber-600" />
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-red-600 text-sm font-medium">高優先級</p>
+                              <p className="text-2xl font-bold text-red-800">
+                                {announcementStats.byPriority.high}
+                              </p>
+                            </div>
+                            <AlertTriangle className="w-8 h-8 text-red-600" />
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-teal-600 text-sm font-medium">已封存</p>
+                              <p className="text-2xl font-bold text-teal-800">
+                                {announcementStats.archived}
+                              </p>
+                            </div>
+                            <Download className="w-8 h-8 text-teal-600" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
 
                   {/* Recent Activities */}
                   <Card>
@@ -419,96 +717,126 @@ export default function AdminDashboard() {
                   exit="hidden"
                   className="space-y-6"
                 >
+                  {/* 公告表單模態 */}
+                  {showAnnouncementForm && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                    >
+                      <motion.div
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+                      >
+                        <AnnouncementForm
+                          announcement={editingAnnouncement || undefined}
+                          onSubmit={handleFormSubmit}
+                          onCancel={handleFormCancel}
+                          loading={formLoading}
+                          error={formError}
+                          mode={editingAnnouncement ? 'edit' : 'create'}
+                        />
+                      </motion.div>
+                    </motion.div>
+                  )}
+
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">教師資訊管理</h2>
-                      <p className="text-gray-600 mt-1">管理教師公告與提醒事項</p>
+                      <h2 className="text-3xl font-bold text-gray-900">公告管理</h2>
+                      <p className="text-gray-600 mt-1">管理所有公告與通知</p>
                     </div>
-                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
-                      <Plus className="w-4 h-4 mr-2" />
-                      新增公告
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => fetchAnnouncements()}
+                        disabled={announcementsLoading}
+                        className="flex items-center gap-2"
+                      >
+                        <RefreshCw className={cn(
+                          "w-4 h-4",
+                          announcementsLoading && "animate-spin"
+                        )} />
+                        重新載入
+                      </Button>
+                      <Button 
+                        onClick={handleCreateAnnouncement}
+                        className="bg-gradient-to-r from-blue-600 to-purple-600"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        新增公告
+                      </Button>
+                    </div>
                   </div>
 
-                  {/* Teachers Announcements */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <MessageSquare className="w-5 h-5 mr-2 text-blue-600" />
-                        教師公告
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {teachersData.announcements.map((announcement) => (
-                          <div key={announcement.id} className="border rounded-lg p-4 bg-white">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <h3 className="font-semibold">{announcement.title}</h3>
-                                  <Badge 
-                                    variant={announcement.priority === 'high' ? 'destructive' : 'secondary'}
-                                  >
-                                    {announcement.priority === 'high' ? '高優先級' : '一般'}
-                                  </Badge>
-                                </div>
-                                <p className="text-gray-600 mb-2">{announcement.content}</p>
-                                <p className="text-sm text-gray-500">{announcement.date}</p>
-                              </div>
-                              <div className="flex space-x-2">
-                                <Button variant="outline" size="sm">
-                                  <Edit className="w-4 h-4" />
-                                </Button>
-                                <Button variant="outline" size="sm">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
+                  {/* 公告統計卡片 */}
+                  {announcementStats && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-blue-600 text-sm font-medium">總公告數</p>
+                              <p className="text-xl font-bold text-blue-800">{announcementStats.total}</p>
                             </div>
+                            <MessageSquare className="w-6 h-6 text-blue-600" />
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </CardContent>
+                      </Card>
 
-                  {/* Teachers Reminders */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <Bell className="w-5 h-5 mr-2 text-orange-600" />
-                        教師提醒
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {teachersData.reminders.map((reminder) => (
-                          <div key={reminder.id} className="border rounded-lg p-4 bg-white">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <h3 className="font-semibold">{reminder.title}</h3>
-                                  <Badge 
-                                    variant={reminder.status === 'active' ? 'default' : 'secondary'}
-                                  >
-                                    {reminder.status === 'active' ? '進行中' : '待處理'}
-                                  </Badge>
-                                </div>
-                                <p className="text-gray-600 mb-2">{reminder.content}</p>
-                                <p className="text-sm text-gray-500">{reminder.date}</p>
-                              </div>
-                              <div className="flex space-x-2">
-                                <Button variant="outline" size="sm">
-                                  <Edit className="w-4 h-4" />
-                                </Button>
-                                <Button variant="outline" size="sm">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
+                      <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-green-600 text-sm font-medium">已發佈</p>
+                              <p className="text-xl font-bold text-green-800">{announcementStats.published}</p>
                             </div>
+                            <Send className="w-6 h-6 text-green-600" />
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-amber-600 text-sm font-medium">草稿</p>
+                              <p className="text-xl font-bold text-amber-800">{announcementStats.draft}</p>
+                            </div>
+                            <FileText className="w-6 h-6 text-amber-600" />
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-red-600 text-sm font-medium">高優先級</p>
+                              <p className="text-xl font-bold text-red-800">{announcementStats.byPriority.high}</p>
+                            </div>
+                            <AlertTriangle className="w-6 h-6 text-red-600" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
+
+                  {/* 公告列表 */}
+                  <AnnouncementList
+                    announcements={announcements}
+                    loading={announcementsLoading}
+                    error={announcementsError}
+                    onEdit={handleEditAnnouncement}
+                    onDelete={deleteAnnouncement}
+                    onFiltersChange={handleFiltersChange}
+                    onPageChange={handlePageChange}
+                    pagination={pagination}
+                    filters={filters}
+                    showActions={true}
+                  />
                 </motion.div>
               )}
 
