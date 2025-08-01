@@ -3,11 +3,12 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar } from "lucide-react"
+import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar, Bell, AlertTriangle, Info, CheckCircle, ArrowRight, Clock } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
+import { Announcement } from "@/lib/types"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -21,6 +22,11 @@ export default function HomePage() {
   // 頁面載入狀態 | Page loading state
   const [isLoaded, setIsLoaded] = useState(false)
   
+  // 公告相關狀態 | Announcement related states
+  const [announcements, setAnnouncements] = useState<Announcement[]>([])
+  const [announcementsLoading, setAnnouncementsLoading] = useState(true)
+  const [expandedAnnouncements, setExpandedAnnouncements] = useState<Set<number>>(new Set())
+  
   // 滾動效果相關 hooks | Scroll effect related hooks
   const { scrollY } = useScroll()
   const heroRef = useRef(null)
@@ -33,7 +39,68 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsLoaded(true)
+    fetchPublicAnnouncements()
   }, [])
+
+  // 獲取公開公告 | Fetch public announcements
+  const fetchPublicAnnouncements = async () => {
+    try {
+      setAnnouncementsLoading(true)
+      const response = await fetch('/api/announcements?status=published&limit=5&targetAudience=parents')
+      const data = await response.json()
+      
+      if (data.success) {
+        // 篩選未過期的公告 | Filter non-expired announcements
+        const now = new Date()
+        const validAnnouncements = data.data.filter((announcement: Announcement) => 
+          !announcement.expiresAt || new Date(announcement.expiresAt) > now
+        )
+        setAnnouncements(validAnnouncements)
+      }
+    } catch (error) {
+      console.error('Failed to fetch announcements:', error)
+    } finally {
+      setAnnouncementsLoading(false)
+    }
+  }
+
+  // 處理公告展開/收合 | Handle announcement expand/collapse
+  const handleToggleAnnouncement = (announcementId: number) => {
+    setExpandedAnnouncements(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(announcementId)) {
+        newSet.delete(announcementId)
+      } else {
+        newSet.add(announcementId)
+      }
+      return newSet
+    })
+  }
+
+  // 取得優先級圖示 | Get priority icon
+  const getPriorityIcon = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return <AlertTriangle className="w-4 h-4" />
+      case 'medium':
+        return <Info className="w-4 h-4" />
+      case 'low':
+        return <CheckCircle className="w-4 h-4" />
+      default:
+        return <Info className="w-4 h-4" />
+    }
+  }
+
+  // 格式化日期 | Format date
+  const formatDate = (date: Date | string | undefined) => {
+    if (!date) return null
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    return dateObj.toLocaleDateString('zh-TW', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
 
   // KCFSID 小隊列表 | KCFSID Squad list
   const squads = ["Achievers", "Adventurers", "Discoverers", "Explorers", "Innovators", "Leaders"]
@@ -320,6 +387,214 @@ export default function HomePage() {
                 </motion.div>
               </motion.div>
             </div>
+          </div>
+        </motion.section>
+
+        {/* Important Announcements Section */}
+        <motion.section
+          className="py-20 relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+        >
+          <div className="container mx-auto px-4">
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+                <motion.div
+                  className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center shadow-lg"
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <Bell className="w-6 h-6 text-white" />
+                </motion.div>
+                重要公告 Important Announcements
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                最新的學校通知與重要資訊，讓您隨時掌握學校動態
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={containerVariants}
+              className="max-w-4xl mx-auto"
+            >
+              {announcementsLoading ? (
+                // 載入動畫 | Loading animation
+                <div className="space-y-4">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <motion.div
+                      key={index}
+                      variants={itemVariants}
+                      className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50 animate-pulse"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="h-6 bg-gray-200 rounded-lg mb-3 w-3/4"></div>
+                          <div className="h-4 bg-gray-200 rounded-lg mb-2 w-full"></div>
+                          <div className="h-4 bg-gray-200 rounded-lg mb-4 w-2/3"></div>
+                          <div className="flex gap-2">
+                            <div className="h-6 bg-gray-200 rounded-full w-16"></div>
+                            <div className="h-6 bg-gray-200 rounded-full w-12"></div>
+                          </div>
+                        </div>
+                        <div className="h-8 w-8 bg-gray-200 rounded-lg"></div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : announcements.length > 0 ? (
+                // 公告列表 | Announcements list
+                <div className="space-y-4">
+                  {announcements.map((announcement) => {
+                    const isExpanded = expandedAnnouncements.has(announcement.id)
+                    const priorityColors = {
+                      high: 'from-red-50 to-pink-50 border-red-200',
+                      medium: 'from-blue-50 to-cyan-50 border-blue-200',
+                      low: 'from-green-50 to-emerald-50 border-green-200'
+                    }
+                    
+                    return (
+                      <motion.div
+                        key={announcement.id}
+                        variants={itemVariants}
+                        className={`bg-gradient-to-br ${priorityColors[announcement.priority]} backdrop-blur-sm rounded-2xl p-6 shadow-lg border transition-all duration-300 hover:shadow-xl`}
+                        whileHover={{ scale: 1.01, y: -2 }}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            {/* 標題和優先級 */}
+                            <div className="flex items-start gap-3 mb-3">
+                              <motion.div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md flex-shrink-0 ${
+                                  announcement.priority === 'high' 
+                                    ? 'bg-gradient-to-br from-red-500 to-red-700' 
+                                    : announcement.priority === 'medium'
+                                    ? 'bg-gradient-to-br from-blue-500 to-blue-700'
+                                    : 'bg-gradient-to-br from-green-500 to-green-700'
+                                }`}
+                                whileHover={{ scale: 1.1 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <span className="text-white">
+                                  {getPriorityIcon(announcement.priority)}
+                                </span>
+                              </motion.div>
+                              <div className="flex-1">
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                  {announcement.title}
+                                </h3>
+                                {announcement.summary && (
+                                  <p className="text-gray-700 text-sm mb-3 leading-relaxed">
+                                    {announcement.summary}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* 標籤區域 */}
+                            <div className="flex flex-wrap items-center gap-2 mb-3">
+                              <Badge 
+                                variant={announcement.priority === 'high' ? 'destructive' : 'default'}
+                                className="flex items-center gap-1"
+                              >
+                                {getPriorityIcon(announcement.priority)}
+                                {announcement.priority === 'high' ? '高優先級' : 
+                                 announcement.priority === 'medium' ? '一般' : '低優先級'}
+                              </Badge>
+                              
+                              {announcement.publishedAt && (
+                                <Badge variant="outline" className="text-xs">
+                                  <Calendar className="w-3 h-3 mr-1" />
+                                  {formatDate(announcement.publishedAt)}
+                                </Badge>
+                              )}
+
+                              {announcement.expiresAt && (
+                                <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  有效至 {formatDate(announcement.expiresAt)}
+                                </Badge>
+                              )}
+                            </div>
+
+                            {/* 展開的完整內容 */}
+                            <motion.div
+                              initial={false}
+                              animate={{ 
+                                height: isExpanded ? 'auto' : 0,
+                                opacity: isExpanded ? 1 : 0
+                              }}
+                              transition={{ duration: 0.3 }}
+                              style={{ overflow: 'hidden' }}
+                            >
+                              {isExpanded && (
+                                <div className="pt-4 border-t border-gray-200/50">
+                                  <div className="prose prose-sm max-w-none text-gray-700">
+                                    <div 
+                                      className="whitespace-pre-wrap"
+                                      dangerouslySetInnerHTML={{ 
+                                        __html: announcement.content.replace(/\n/g, '<br />') 
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </motion.div>
+                          </div>
+
+                          {/* 展開/收合按鈕 */}
+                          <motion.button
+                            onClick={() => handleToggleAnnouncement(announcement.id)}
+                            className="flex-shrink-0 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 border border-white/50"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <motion.div
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <ChevronDown className="w-5 h-5 text-gray-600" />
+                            </motion.div>
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+
+                  {/* 查看更多公告按鈕 */}
+                  <motion.div 
+                    variants={itemVariants}
+                    className="text-center pt-6"
+                  >
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Link href="/announcements">
+                        <Button className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+                          查看所有公告
+                          <ArrowRight className="w-4 h-4" />
+                        </Button>
+                      </Link>
+                    </motion.div>
+                  </motion.div>
+                </div>
+              ) : (
+                // 沒有公告時的顯示 | No announcements display
+                <motion.div
+                  variants={itemVariants}
+                  className="text-center py-12"
+                >
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Bell className="w-8 h-8 text-gray-500" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                    目前沒有重要公告
+                  </h3>
+                  <p className="text-gray-600">
+                    我們會在有重要資訊時及時發布公告，請持續關注
+                  </p>
+                </motion.div>
+              )}
+            </motion.div>
           </div>
         </motion.section>
 
