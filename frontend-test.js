@@ -9,10 +9,12 @@ const puppeteer = require('puppeteer');
 
 async function testFrontendComponents() {
   let browser;
+  const baseUrl = process.env.TEST_BASE_URL || 'https://landing-app-v2.zeabur.app';
   const results = {
     passed: 0,
     failed: 0,
-    tests: []
+    tests: [],
+    baseUrl: baseUrl
   };
 
   function logResult(name, passed, details = {}) {
@@ -27,7 +29,7 @@ async function testFrontendComponents() {
   }
 
   try {
-    console.log('🚀 開始前端組件測試\n');
+    console.log(`🚀 開始前端組件測試 - 目標: ${baseUrl}\n`);
 
     // 檢查是否安裝了 puppeteer
     try {
@@ -48,7 +50,7 @@ async function testFrontendComponents() {
 
     // 1. 測試首頁載入
     try {
-      await page.goto('http://localhost:3000', { waitUntil: 'networkidle2', timeout: 10000 });
+      await page.goto(baseUrl, { waitUntil: 'networkidle2', timeout: 10000 });
       const title = await page.title();
       logResult('首頁載入', title.includes('ES'), { title });
     } catch (error) {
@@ -57,7 +59,7 @@ async function testFrontendComponents() {
 
     // 2. 測試首頁公告顯示
     try {
-      await page.goto('http://localhost:3000', { waitUntil: 'networkidle2' });
+      await page.goto(baseUrl, { waitUntil: 'networkidle2' });
       const announcements = await page.$$('[data-testid="announcement-card"], .announcement-card, article');
       logResult('首頁公告顯示', announcements.length > 0, { 
         count: announcements.length 
@@ -69,7 +71,7 @@ async function testFrontendComponents() {
     // 3. 測試響應式設計 - 手機視窗
     try {
       await page.setViewport({ width: 375, height: 667 });
-      await page.goto('http://localhost:3000', { waitUntil: 'networkidle2' });
+      await page.goto(baseUrl, { waitUntil: 'networkidle2' });
       const isMobile = await page.evaluate(() => window.innerWidth <= 768);
       logResult('響應式設計 - 手機', isMobile, { 
         width: await page.evaluate(() => window.innerWidth) 
@@ -81,7 +83,7 @@ async function testFrontendComponents() {
     // 4. 測試管理員頁面存取（預期會重導向到登入）
     try {
       await page.setViewport({ width: 1200, height: 800 });
-      await page.goto('http://localhost:3000/admin', { waitUntil: 'networkidle2' });
+      await page.goto(`${baseUrl}/admin`, { waitUntil: 'networkidle2' });
       const currentUrl = page.url();
       const isLoginPage = currentUrl.includes('/login') || currentUrl.includes('/unauthorized');
       logResult('管理員頁面權限控制', isLoginPage, { 
@@ -94,7 +96,7 @@ async function testFrontendComponents() {
 
     // 5. 測試登入頁面
     try {
-      await page.goto('http://localhost:3000/login', { waitUntil: 'networkidle2' });
+      await page.goto(`${baseUrl}/login`, { waitUntil: 'networkidle2' });
       const loginForm = await page.$('form, [data-testid="login-form"]');
       const hasEmailInput = await page.$('input[type="email"], input[name="email"]');
       const hasPasswordInput = await page.$('input[type="password"], input[name="password"]');
@@ -110,7 +112,7 @@ async function testFrontendComponents() {
 
     // 6. 測試導航連結
     try {
-      await page.goto('http://localhost:3000', { waitUntil: 'networkidle2' });
+      await page.goto(baseUrl, { waitUntil: 'networkidle2' });
       const navLinks = await page.$$('nav a, header a, [role="navigation"] a');
       
       // 測試事件頁面連結
@@ -125,7 +127,7 @@ async function testFrontendComponents() {
 
     // 7. 測試資源頁面
     try {
-      await page.goto('http://localhost:3000/resources', { waitUntil: 'networkidle2' });
+      await page.goto(`${baseUrl}/resources`, { waitUntil: 'networkidle2' });
       const pageContent = await page.$('main, [role="main"], .content');
       logResult('資源頁面載入', !!pageContent, {
         hasMainContent: !!pageContent,
@@ -137,7 +139,7 @@ async function testFrontendComponents() {
 
     // 8. 測試教師頁面
     try {
-      await page.goto('http://localhost:3000/teachers', { waitUntil: 'networkidle2' });
+      await page.goto(`${baseUrl}/teachers`, { waitUntil: 'networkidle2' });
       const pageContent = await page.$('main, [role="main"], .content');
       logResult('教師頁面載入', !!pageContent, {
         hasMainContent: !!pageContent,
@@ -150,7 +152,7 @@ async function testFrontendComponents() {
     // 9. 測試頁面性能（載入時間）
     try {
       const startTime = Date.now();
-      await page.goto('http://localhost:3000', { waitUntil: 'networkidle2' });
+      await page.goto(baseUrl, { waitUntil: 'networkidle2' });
       const loadTime = Date.now() - startTime;
       
       logResult('頁面載入性能', loadTime < 3000, {
@@ -168,7 +170,7 @@ async function testFrontendComponents() {
     });
 
     try {
-      await page.goto('http://localhost:3000', { waitUntil: 'networkidle2' });
+      await page.goto(baseUrl, { waitUntil: 'networkidle2' });
       // 等待一下讓 JS 執行
       await page.waitForTimeout(2000);
       

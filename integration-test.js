@@ -6,7 +6,8 @@
  */
 
 async function makeRequest(endpoint, options = {}) {
-  const url = `http://localhost:3000${endpoint}`;
+  const baseUrl = process.env.TEST_BASE_URL || 'https://landing-app-v2.zeabur.app';
+  const url = `${baseUrl}${endpoint}`;
   try {
     const response = await fetch(url, {
       headers: { 'Content-Type': 'application/json' },
