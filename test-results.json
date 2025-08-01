@@ -1,0 +1,323 @@
+{
+  "summary": {
+    "total": 32,
+    "passed": 0,
+    "failed": 32,
+    "errors": [
+      "API - Health Check: {\"status\":500,\"response\":{\"text\":\"Internal Server Error\"}}",
+      "API - GET /api/announcements (基本查詢): {\"status\":500,\"hasData\":false,\"hasPagination\":false}",
+      "API - GET /api/announcements (分頁查詢): {\"status\":500,\"params\":\"page=1&limit=5\",\"hasFilters\":false}",
+      "API - GET /api/announcements (篩選目標對象): {\"status\":500,\"params\":\"targetAudience=teachers\",\"hasFilters\":false}",
+      "API - GET /api/announcements (篩選優先級): {\"status\":500,\"params\":\"priority=high\",\"hasFilters\":false}",
+      "API - GET /api/announcements (篩選狀態): {\"status\":500,\"params\":\"status=published\",\"hasFilters\":false}",
+      "API - GET /api/announcements (搜尋功能): {\"status\":500,\"params\":\"search=test\",\"hasFilters\":false}",
+      "API - GET /api/announcements (複合篩選): {\"status\":500,\"params\":\"targetAudience=all&priority=medium&status=published&page=1&limit=10\",\"hasFilters\":false}",
+      "API - POST /api/announcements (創建公告): {\"status\":500,\"requiresAuth\":false,\"created\":false}",
+      "API - 無效 ID 處理: {\"status\":500,\"expectError400\":false}",
+      "API - 不存在公告處理: {\"status\":500,\"expectError404\":false}",
+      "驗證 - 資料驗證 - 空標題: {\"status\":500,\"expectError400\":false}",
+      "驗證 - 資料驗證 - 空內容: {\"status\":500,\"expectError400\":false}",
+      "驗證 - 資料驗證 - 無效目標對象: {\"status\":500,\"expectError400\":false}",
+      "驗證 - 資料驗證 - 無效優先級: {\"status\":500,\"expectError400\":false}",
+      "驗證 - 資料驗證 - 無效狀態: {\"status\":500,\"expectError400\":false}",
+      "驗證 - 資料驗證 - 過長標題: {\"status\":500,\"expectError400\":false}",
+      "驗證 - 資料驗證 - 過長內容: {\"status\":500,\"expectError400\":false}",
+      "權限 - 未認證請求 - 創建公告: {\"status\":500,\"expectError401\":false}",
+      "權限 - 未認證請求 - 更新公告: {\"status\":500,\"expectError401\":false}",
+      "權限 - 未認證請求 - 刪除公告: {\"status\":500,\"expectError401\":false}",
+      "邊界 - 空搜尋結果: {\"status\":500,\"hasEmptyData\":false}",
+      "邊界 - 大分頁數處理: {\"status\":500}",
+      "邊界 - 無效分頁參數 - page=-1&limit=10: {\"status\":500,\"params\":\"page=-1&limit=10\"}",
+      "邊界 - 無效分頁參數 - page=0&limit=10: {\"status\":500,\"params\":\"page=0&limit=10\"}",
+      "邊界 - 無效分頁參數 - page=1&limit=0: {\"status\":500,\"params\":\"page=1&limit=0\"}",
+      "邊界 - 無效分頁參數 - page=1&limit=101: {\"status\":500,\"params\":\"page=1&limit=101\"}",
+      "邊界 - 無效分頁參數 - page=abc&limit=10: {\"status\":500,\"params\":\"page=abc&limit=10\"}",
+      "邊界 - 無效分頁參數 - page=1&limit=xyz: {\"status\":500,\"params\":\"page=1&limit=xyz\"}",
+      "性能 - 並發請求處理: {\"concurrentRequests\":5,\"totalTime\":\"5ms\",\"avgTime\":\"1.00ms\",\"allSuccessful\":false}",
+      "性能 - 平均響應時間: {\"error\":\"無法測量響應時間\"}",
+      "完整性 - 資料欄位完整性: {\"error\":\"無法獲取公告資料\"}"
+    ],
+    "totalTime": "145ms",
+    "completedAt": "2025-08-01T04:48:10.178Z",
+    "passRate": "0.00%"
+  },
+  "tests": {
+    "API": {
+      "Health Check": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "response": {
+            "text": "Internal Server Error"
+          }
+        },
+        "timestamp": "2025-08-01T04:48:10.088Z"
+      },
+      "GET /api/announcements (基本查詢)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "hasData": false,
+          "hasPagination": false
+        },
+        "timestamp": "2025-08-01T04:48:10.094Z"
+      },
+      "GET /api/announcements (分頁查詢)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "page=1&limit=5",
+          "hasFilters": false
+        },
+        "timestamp": "2025-08-01T04:48:10.099Z"
+      },
+      "GET /api/announcements (篩選目標對象)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "targetAudience=teachers",
+          "hasFilters": false
+        },
+        "timestamp": "2025-08-01T04:48:10.107Z"
+      },
+      "GET /api/announcements (篩選優先級)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "priority=high",
+          "hasFilters": false
+        },
+        "timestamp": "2025-08-01T04:48:10.110Z"
+      },
+      "GET /api/announcements (篩選狀態)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "status=published",
+          "hasFilters": false
+        },
+        "timestamp": "2025-08-01T04:48:10.113Z"
+      },
+      "GET /api/announcements (搜尋功能)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "search=test",
+          "hasFilters": false
+        },
+        "timestamp": "2025-08-01T04:48:10.116Z"
+      },
+      "GET /api/announcements (複合篩選)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "targetAudience=all&priority=medium&status=published&page=1&limit=10",
+          "hasFilters": false
+        },
+        "timestamp": "2025-08-01T04:48:10.119Z"
+      },
+      "POST /api/announcements (創建公告)": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "requiresAuth": false,
+          "created": false
+        },
+        "timestamp": "2025-08-01T04:48:10.128Z"
+      },
+      "無效 ID 處理": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.134Z"
+      },
+      "不存在公告處理": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError404": false
+        },
+        "timestamp": "2025-08-01T04:48:10.137Z"
+      }
+    },
+    "驗證": {
+      "資料驗證 - 空標題": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.139Z"
+      },
+      "資料驗證 - 空內容": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.142Z"
+      },
+      "資料驗證 - 無效目標對象": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.143Z"
+      },
+      "資料驗證 - 無效優先級": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.144Z"
+      },
+      "資料驗證 - 無效狀態": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.146Z"
+      },
+      "資料驗證 - 過長標題": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.148Z"
+      },
+      "資料驗證 - 過長內容": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError400": false
+        },
+        "timestamp": "2025-08-01T04:48:10.150Z"
+      }
+    },
+    "權限": {
+      "未認證請求 - 創建公告": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError401": false
+        },
+        "timestamp": "2025-08-01T04:48:10.152Z"
+      },
+      "未認證請求 - 更新公告": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError401": false
+        },
+        "timestamp": "2025-08-01T04:48:10.153Z"
+      },
+      "未認證請求 - 刪除公告": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "expectError401": false
+        },
+        "timestamp": "2025-08-01T04:48:10.155Z"
+      }
+    },
+    "邊界": {
+      "空搜尋結果": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "hasEmptyData": false
+        },
+        "timestamp": "2025-08-01T04:48:10.156Z"
+      },
+      "大分頁數處理": {
+        "passed": false,
+        "details": {
+          "status": 500
+        },
+        "timestamp": "2025-08-01T04:48:10.158Z"
+      },
+      "無效分頁參數 - page=-1&limit=10": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "page=-1&limit=10"
+        },
+        "timestamp": "2025-08-01T04:48:10.159Z"
+      },
+      "無效分頁參數 - page=0&limit=10": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "page=0&limit=10"
+        },
+        "timestamp": "2025-08-01T04:48:10.160Z"
+      },
+      "無效分頁參數 - page=1&limit=0": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "page=1&limit=0"
+        },
+        "timestamp": "2025-08-01T04:48:10.162Z"
+      },
+      "無效分頁參數 - page=1&limit=101": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "page=1&limit=101"
+        },
+        "timestamp": "2025-08-01T04:48:10.165Z"
+      },
+      "無效分頁參數 - page=abc&limit=10": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "page=abc&limit=10"
+        },
+        "timestamp": "2025-08-01T04:48:10.166Z"
+      },
+      "無效分頁參數 - page=1&limit=xyz": {
+        "passed": false,
+        "details": {
+          "status": 500,
+          "params": "page=1&limit=xyz"
+        },
+        "timestamp": "2025-08-01T04:48:10.167Z"
+      }
+    },
+    "性能": {
+      "並發請求處理": {
+        "passed": false,
+        "details": {
+          "concurrentRequests": 5,
+          "totalTime": "5ms",
+          "avgTime": "1.00ms",
+          "allSuccessful": false
+        },
+        "timestamp": "2025-08-01T04:48:10.172Z"
+      },
+      "平均響應時間": {
+        "passed": false,
+        "details": {
+          "error": "無法測量響應時間"
+        },
+        "timestamp": "2025-08-01T04:48:10.177Z"
+      }
+    },
+    "完整性": {
+      "資料欄位完整性": {
+        "passed": false,
+        "details": {
+          "error": "無法獲取公告資料"
+        },
+        "timestamp": "2025-08-01T04:48:10.178Z"
+      }
+    }
+  }
+}
