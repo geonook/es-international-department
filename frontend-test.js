@@ -171,8 +171,8 @@ async function testFrontendComponents() {
 
     try {
       await page.goto(baseUrl, { waitUntil: 'networkidle2' });
-      // 等待一下讓 JS 執行
-      await page.waitForTimeout(2000);
+      // 等待一下讓 JS 執行 - 使用新的 API
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       logResult('JavaScript 錯誤檢查', jsErrors.length === 0, {
         errorCount: jsErrors.length,

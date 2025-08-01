@@ -284,53 +284,84 @@ async function main() {
     }
     console.log(`✅ Created ${defaultSystemSettings.length} system settings`)
     
-    // 5. 建立預設管理員（僅在開發和測試環境）
-    if (environment !== 'production') {
-      console.log('👤 Creating default admin user...')
-      await createDefaultAdmin()
-    } else {
-      console.log('⚠️  Skipping default admin creation in production environment')
-    }
+    // 5. 建立預設管理員（所有環境都需要基本管理員）
+    console.log('👤 Creating default admin user...')
+    await createDefaultAdmin()
     
-    // 6. 建立範例公告（僅在開發環境）
-    if (environment === 'development') {
-      console.log('📢 Creating sample announcements...')
+    // 6. 建立基本公告（所有環境都需要基本內容）
+    console.log('📢 Creating basic announcements...')
+    
+    const adminUser = await prisma.user.findUnique({
+      where: { email: 'admin@kcislk.ntpc.edu.tw' }
+    })
+    
+    if (adminUser) {
+      // 檢查是否已有公告，避免重複創建
+      const existingAnnouncements = await prisma.announcement.count()
       
-      const adminUser = await prisma.user.findUnique({
-        where: { email: 'admin@kcislk.ntpc.edu.tw' }
-      })
-      
-      if (adminUser) {
-        const sampleAnnouncements = [
+      if (existingAnnouncements === 0) {
+        const basicAnnouncements = [
           {
             title: 'Welcome to ES International Department',
-            content: 'Welcome to our new parent portal! Here you can access important announcements, events, and resources.',
-            summary: 'Welcome message for parents',
+            content: 'Welcome to our parent portal! Here you can access important announcements, events, and resources. This system provides a comprehensive platform for school-parent communication.',
+            summary: 'Welcome message for parents and community',
             authorId: adminUser.id,
-            targetAudience: 'parents',
+            targetAudience: 'all',
             priority: 'high',
             status: 'published',
             publishedAt: new Date()
           },
           {
-            title: 'Staff Meeting Next Week',
-            content: 'Please attend the monthly staff meeting next Tuesday at 3:00 PM in the conference room.',
-            summary: 'Monthly staff meeting reminder',
+            title: 'Parent Portal System Launch',
+            content: 'We are excited to announce the launch of our new parent portal system. This platform will serve as your primary source for school announcements, event information, and educational resources.',
+            summary: 'System launch announcement',
+            authorId: adminUser.id,
+            targetAudience: 'parents',
+            priority: 'high',
+            status: 'published',
+            publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 day ago
+          },
+          {
+            title: 'Teacher Resources Available',
+            content: 'Teachers can now access the resource center with educational materials, teaching tools, and administrative forms. Please explore the Teachers section for more information.',
+            summary: 'Teacher resources announcement',
             authorId: adminUser.id,
             targetAudience: 'teachers',
             priority: 'medium',
             status: 'published',
-            publishedAt: new Date()
+            publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // 2 days ago
+          },
+          {
+            title: 'Coffee with Principal Sessions',
+            content: 'Monthly Coffee with Principal sessions are now available for booking through the Events section. These sessions provide an opportunity for direct communication with school leadership.',
+            summary: 'Coffee with Principal information',
+            authorId: adminUser.id,
+            targetAudience: 'all',
+            priority: 'medium',
+            status: 'published',
+            publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) // 3 days ago
+          },
+          {
+            title: 'System Maintenance Schedule',
+            content: 'Regular system maintenance will be performed monthly during off-peak hours. Users will be notified in advance of any scheduled downtime.',
+            summary: 'Maintenance schedule information',
+            authorId: adminUser.id,
+            targetAudience: 'all',
+            priority: 'low',
+            status: 'published',
+            publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 1 week ago
           }
         ]
         
-        for (const announcement of sampleAnnouncements) {
+        for (const announcement of basicAnnouncements) {
           await prisma.announcement.create({
             data: announcement
           })
         }
         
-        console.log(`✅ Created ${sampleAnnouncements.length} sample announcements`)
+        console.log(`✅ Created ${basicAnnouncements.length} basic announcements`)
+      } else {
+        console.log(`ℹ️  Found ${existingAnnouncements} existing announcements, skipping creation`)
       }
     }
     

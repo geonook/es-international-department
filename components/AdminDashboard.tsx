@@ -55,7 +55,7 @@ import {
 } from '@/lib/types'
 
 export default function AdminDashboard() {
-  const { user, isLoading, isAuthenticated, logout, isAdmin } = useAuth()
+  const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin } = useAuth()
   const [activeTab, setActiveTab] = useState("dashboard")
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
@@ -380,7 +380,14 @@ export default function AdminDashboard() {
     )
   }
 
-  // 未登入或無管理員權限
+  // 檢查認證和權限 - 自動重導向到登入頁面
+  useEffect(() => {
+    if (!isLoading && (!isAuthenticated || !isAdmin())) {
+      redirectToLogin('/admin')
+    }
+  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
+
+  // 未登入或無管理員權限 - 顯示載入畫面等待重導向
   if (!isAuthenticated || !isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
@@ -389,38 +396,8 @@ export default function AdminDashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="text-center">
-              <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <CardTitle className="text-xl text-red-600">存取受限</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Alert variant="destructive">
-                <AlertDescription>
-                  您沒有權限存取管理員介面。請使用管理員帳戶登入。
-                </AlertDescription>
-              </Alert>
-              <div className="mt-6 space-y-3">
-                <Button 
-                  asChild 
-                  className="w-full"
-                >
-                  <Link href="/login?redirect=/admin">
-                    重新登入
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  asChild 
-                  className="w-full"
-                >
-                  <Link href="/">
-                    返回首頁
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">驗證權限中，正在重導向...</p>
         </motion.div>
       </div>
     )
