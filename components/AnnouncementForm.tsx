@@ -32,6 +32,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -52,6 +53,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
+import { sanitizeHtml, extractTextFromHtml, validateHtmlContent } from '@/lib/html-sanitizer'
 import {
   AnnouncementFormProps,
   AnnouncementFormData,
@@ -69,7 +71,16 @@ const announcementSchema = z.object({
   content: z
     .string()
     .min(1, '內容為必填項目')
-    .max(10000, '內容不能超過 10000 個字元'),
+    .refine((content) => {
+      const validation = validateHtmlContent(content, {
+        maxLength: 50000,
+        maxWordCount: 10000,
+        required: true
+      })
+      return validation.isValid
+    }, {
+      message: '內容格式無效或超出限制'
+    }),
   summary: z
     .string()
     .max(500, '摘要不能超過 500 個字元')
@@ -118,6 +129,7 @@ export default function AnnouncementForm({
 }: AnnouncementFormProps) {
   const [isDirty, setIsDirty] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
   
   const isEditMode = mode === 'edit' && announcement
 
@@ -154,7 +166,14 @@ export default function AnnouncementForm({
   // 處理表單提交
   const onSubmitHandler = async (data: FormData) => {
     try {
-      await onSubmit(data)
+      // 清理 HTML 內容
+      const sanitizedData = {
+        ...data,
+        content: sanitizeHtml(data.content),
+        summary: data.summary ? extractTextFromHtml(data.summary) : data.summary
+      }
+      
+      await onSubmit(sanitizedData)
       setIsDirty(false)
     } catch (error) {
       console.error('Form submission error:', error)
@@ -165,6 +184,11 @@ export default function AnnouncementForm({
   const handleSaveDraft = async () => {
     const data = form.getValues()
     data.status = 'draft'
+    // 生成摘要（如果沒有手動輸入）
+    if (!data.summary && data.content) {
+      const textContent = extractTextFromHtml(data.content)
+      data.summary = textContent.length > 200 ? textContent.substring(0, 200) + '...' : textContent
+    }
     await onSubmitHandler(data)
   }
 
@@ -174,6 +198,11 @@ export default function AnnouncementForm({
     data.status = 'published'
     if (!data.publishedAt) {
       data.publishedAt = format(new Date(), "yyyy-MM-dd'T'HH:mm")
+    }
+    // 生成摘要（如果沒有手動輸入）
+    if (!data.summary && data.content) {
+      const textContent = extractTextFromHtml(data.content)
+      data.summary = textContent.length > 200 ? textContent.substring(0, 200) + '...' : textContent
     }
     await onSubmitHandler(data)
   }
@@ -315,9 +344,9 @@ export default function AnnouncementForm({
                 </div>
 
                 <div 
-                  className="whitespace-pre-wrap"
+                  className="prose prose-sm max-w-none dark:prose-invert"
                   dangerouslySetInnerHTML={{ 
-                    __html: watchedValues.content.replace(/\n/g, '<br />') 
+                    __html: watchedValues.content || '<p>暫無內容</p>'
                   }}
                 />
 
@@ -388,18 +417,51 @@ export default function AnnouncementForm({
                       )}
                     />
 
-                    {/* 內容 */}
+                    {/* 內容 - 富文本編輯器 */}
                     <FormField
                       control={form.control}
                       name="content"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>內容 *</FormLabel>
+                          <FormLabel className="flex items-center justify-between">
+                            <span>內容 *</span>
+                            <div className="flex items-center gap-2 text-xs text-gray-600">
+                              <label className="flex items-center gap-1 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={autoSaveEnabled}
+                                  onChange={(e) => setAutoSaveEnabled(e.target.checked)}
+                                  className="w-3 h-3 rounded"
+                                />
+                                自動儲存
+                              </label>
+                            </div>
+                          </FormLabel>
                           <FormControl>
-                            <Textarea 
-                              placeholder="請輸入公告詳細內容"
-                              className="min-h-[200px]"
-                              {...field}
+                            <RichTextEditor
+                              value={field.value}
+                              onChange={field.onChange}
+                              onBlur={() => field.onBlur()}
+                              placeholder="請輸入公告詳細內容，支援富文本格式..."
+                              minHeight={250}
+                              maxHeight={500}
+                              maxLength={50000}
+                              showWordCount={true}
+                              showCharCount={true}
+                              autoSave={autoSaveEnabled}
+                              autoSaveInterval={5000}
+                              onAutoSave={(content) => {
+                                // 自動儲存草稿邏輯
+                                const currentData = form.getValues()
+                                if (currentData.status !== 'published') {
+                                  currentData.content = content
+                                  currentData.status = 'draft'
+                                  // 可以在這裡調用 API 進行自動儲存
+                                  console.log('Auto-saving draft...', { title: currentData.title, contentLength: content.length })
+                                }
+                              }}
+                              error={errors.content?.message}
+                              disabled={loading || isSubmitting}
                             />
                           </FormControl>
                           <FormMessage />
