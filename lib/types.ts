@@ -548,3 +548,250 @@ export const GRADE_OPTIONS = [
   { value: '5-6', label: 'Grades 5-6' },
   { value: 'all', label: 'All Grades' }
 ]
+
+// ========================================
+// 日曆管理系統類型定義 | Calendar Management System Types
+// ========================================
+
+import { EventInput } from '@fullcalendar/core'
+
+// 日曆檢視模式
+export type CalendarView = 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay' | 'listWeek' | 'multiMonthYear'
+
+// FullCalendar 事件介面（基於 Event 介面）
+export interface CalendarEvent extends EventInput {
+  id: string | number
+  title: string
+  start: Date | string
+  end?: Date | string
+  allDay?: boolean
+  backgroundColor?: string
+  borderColor?: string
+  textColor?: string
+  classNames?: string[]
+  extendedProps?: {
+    event: Event
+    eventType: EventType
+    status: EventStatus
+    location?: string
+    description?: string
+    registrationCount?: number
+    maxParticipants?: number
+    registrationRequired?: boolean
+  }
+}
+
+// 日曆配置
+export interface CalendarConfig {
+  initialView: CalendarView
+  headerToolbar: {
+    left: string
+    center: string
+    right: string
+  }
+  height: string | number
+  locale: string
+  firstDay: number
+  weekends: boolean
+  slotMinTime: string
+  slotMaxTime: string
+  slotDuration: string
+  selectable: boolean
+  selectMirror: boolean
+  dayMaxEvents: boolean | number
+  moreLinkClick: string
+  eventTimeFormat: {
+    hour: 'numeric' | '2-digit'
+    minute: '2-digit'
+    meridiem: boolean
+  }
+  slotLabelFormat: {
+    hour: 'numeric' | '2-digit'
+    minute: '2-digit'
+    meridiem: boolean
+  }
+}
+
+// 日曆事件操作
+export interface CalendarEventActions {
+  onEventClick?: (info: any) => void
+  onEventDrop?: (info: any) => void
+  onEventResize?: (info: any) => void
+  onSelect?: (info: any) => void
+  onDateClick?: (info: any) => void
+  onEventMouseEnter?: (info: any) => void
+  onEventMouseLeave?: (info: any) => void
+}
+
+// 日曆事件衝突檢測
+export interface EventConflict {
+  event1: Event
+  event2: Event
+  type: 'time_overlap' | 'resource_conflict' | 'location_conflict'
+  description: string
+  severity: 'warning' | 'error'
+}
+
+// 日曆篩選器
+export interface CalendarFilters extends EventFilters {
+  viewType?: CalendarView
+  showWeekends?: boolean
+  eventTypes?: EventType[]
+  statuses?: EventStatus[]
+}
+
+// 日曆組件 Props
+export interface EventCalendarProps {
+  events?: Event[]
+  loading?: boolean
+  error?: string
+  view?: CalendarView
+  filters?: CalendarFilters
+  config?: Partial<CalendarConfig>
+  actions?: CalendarEventActions
+  onEventCreate?: (eventData: Partial<EventFormData>) => void
+  onEventUpdate?: (eventId: number, eventData: Partial<EventFormData>) => void
+  onEventDelete?: (eventId: number) => void
+  onViewChange?: (view: CalendarView) => void
+  onFiltersChange?: (filters: CalendarFilters) => void
+  showCreateModal?: boolean
+  showEditModal?: boolean
+  selectedEvent?: Event | null
+  className?: string
+}
+
+// 日曆工具列配置
+export interface CalendarToolbarConfig {
+  showViewButtons?: boolean
+  showTodayButton?: boolean
+  showPrevNext?: boolean
+  showTitle?: boolean
+  customButtons?: Record<string, {
+    text: string
+    click: () => void
+  }>
+}
+
+// 日曆主題配置
+export interface CalendarTheme {
+  eventColors: Record<EventType, {
+    backgroundColor: string
+    borderColor: string
+    textColor: string
+  }>
+  statusColors: Record<EventStatus, {
+    backgroundColor: string
+    borderColor: string
+    textColor: string
+  }>
+}
+
+// 默認日曆主題
+export const DEFAULT_CALENDAR_THEME: CalendarTheme = {
+  eventColors: {
+    meeting: {
+      backgroundColor: '#3B82F6',
+      borderColor: '#2563EB',
+      textColor: '#FFFFFF'
+    },
+    celebration: {
+      backgroundColor: '#8B5CF6',
+      borderColor: '#7C3AED',
+      textColor: '#FFFFFF'
+    },
+    academic: {
+      backgroundColor: '#10B981',
+      borderColor: '#059669',
+      textColor: '#FFFFFF'
+    },
+    sports: {
+      backgroundColor: '#F59E0B',
+      borderColor: '#D97706',
+      textColor: '#FFFFFF'
+    },
+    cultural: {
+      backgroundColor: '#EC4899',
+      borderColor: '#DB2777',
+      textColor: '#FFFFFF'
+    },
+    workshop: {
+      backgroundColor: '#06B6D4',
+      borderColor: '#0891B2',
+      textColor: '#FFFFFF'
+    },
+    performance: {
+      backgroundColor: '#8B5CF6',
+      borderColor: '#7C3AED',
+      textColor: '#FFFFFF'
+    },
+    parent_meeting: {
+      backgroundColor: '#F59E0B',
+      borderColor: '#D97706',
+      textColor: '#FFFFFF'
+    },
+    coffee_session: {
+      backgroundColor: '#14B8A6',
+      borderColor: '#0D9488',
+      textColor: '#FFFFFF'
+    },
+    other: {
+      backgroundColor: '#6B7280',
+      borderColor: '#4B5563',
+      textColor: '#FFFFFF'
+    }
+  },
+  statusColors: {
+    draft: {
+      backgroundColor: '#9CA3AF',
+      borderColor: '#6B7280',
+      textColor: '#FFFFFF'
+    },
+    published: {
+      backgroundColor: '#10B981',
+      borderColor: '#059669',
+      textColor: '#FFFFFF'
+    },
+    in_progress: {
+      backgroundColor: '#3B82F6',
+      borderColor: '#2563EB',
+      textColor: '#FFFFFF'
+    },
+    completed: {
+      backgroundColor: '#059669',
+      borderColor: '#047857',
+      textColor: '#FFFFFF'
+    },
+    cancelled: {
+      backgroundColor: '#EF4444',
+      borderColor: '#DC2626',
+      textColor: '#FFFFFF'
+    },
+    postponed: {
+      backgroundColor: '#EAB308',
+      borderColor: '#CA8A04',
+      textColor: '#FFFFFF'
+    }
+  }
+}
+
+// 日曆本地化配置
+export const CALENDAR_LOCALE_CONFIG = {
+  code: 'zh-tw',
+  week: {
+    dow: 0, // Sunday = 0
+    doy: 4  // The week that contains Jan 4th is the first week of the year
+  },
+  buttonText: {
+    prev: '上一頁',
+    next: '下一頁',
+    today: '今天',
+    month: '月檢視',
+    week: '週檢視',
+    day: '日檢視',
+    list: '列表檢視'
+  },
+  weekText: '週',
+  allDayText: '全天',
+  moreLinkText: '顯示更多',
+  noEventsText: '沒有活動'
+}

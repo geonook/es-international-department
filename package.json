@@ -40,6 +40,13 @@
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
+    "@fullcalendar/core": "^6.1.18",
+    "@fullcalendar/daygrid": "^6.1.18",
+    "@fullcalendar/interaction": "^6.1.18",
+    "@fullcalendar/list": "^6.1.18",
+    "@fullcalendar/multimonth": "^6.1.18",
+    "@fullcalendar/react": "^6.1.18",
+    "@fullcalendar/timegrid": "^6.1.18",
     "@hookform/resolvers": "^3.9.1",
     "@prisma/client": "5.22.0",
     "@radix-ui/react-accordion": "1.2.2",

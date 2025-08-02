@@ -58,6 +58,7 @@ interface EventFormProps {
   loading?: boolean
   error?: string
   mode?: 'create' | 'edit'
+  defaultStartDate?: string
   className?: string
 }
 
@@ -68,6 +69,7 @@ export default function EventForm({
   loading = false,
   error,
   mode = 'create',
+  defaultStartDate,
   className
 }: EventFormProps) {
   // 表單狀態
@@ -75,7 +77,7 @@ export default function EventForm({
     title: '',
     description: '',
     eventType: 'meeting',
-    startDate: '',
+    startDate: defaultStartDate || '',
     endDate: '',
     startTime: '',
     endTime: '',

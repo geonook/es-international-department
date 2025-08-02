@@ -35,6 +35,8 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import EventManager from '@/components/admin/EventManager'
+import EventCalendar from '@/components/admin/EventCalendar'
+import CalendarViewToggle, { ViewMode, useCalendarView } from '@/components/admin/CalendarViewToggle'
 import { 
   Event,
   EventStats,
@@ -44,11 +46,15 @@ import {
   EVENT_STATUS_LABELS,
   EVENT_STATUS_COLORS,
   ApiResponse,
-  EventListResponse
+  EventListResponse,
+  EventFormData
 } from '@/lib/types'
 
 export default function AdminEventsPage() {
   const { user, isLoading, isAuthenticated, isAdmin, redirectToLogin } = useAuth()
+  
+  // 檢視模式狀態
+  const { currentView, setCurrentView } = useCalendarView('list')
   
   // 活動管理狀態
   const [events, setEvents] = useState<Event[]>([])
@@ -144,6 +150,93 @@ export default function AdminEventsPage() {
   // 處理分頁變更
   const handlePageChange = (page: number) => {
     fetchEvents(filters, page)
+  }
+
+  // 創建活動
+  const handleEventCreate = async (data: Partial<EventFormData>) => {
+    try {
+      const response = await fetch('/api/admin/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        fetchEvents() // 重新載入列表
+      } else {
+        throw new Error(result.message || '建立活動失敗')
+      }
+    } catch (error) {
+      console.error('Create event error:', error)
+      throw error
+    }
+  }
+
+  // 更新活動
+  const handleEventUpdate = async (eventId: number, data: Partial<EventFormData>) => {
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        fetchEvents() // 重新載入列表
+      } else {
+        throw new Error(result.message || '更新活動失敗')
+      }
+    } catch (error) {
+      console.error('Update event error:', error)
+      throw error
+    }
+  }
+
+  // 刪除活動
+  const handleEventDelete = async (eventId: number) => {
+    if (!confirm('確定要刪除這個活動嗎？此操作無法復原。')) {
+      return
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/events/${eventId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        fetchEvents() // 重新載入列表
+      } else {
+        throw new Error(result.message || '刪除活動失敗')
+      }
+    } catch (error) {
+      console.error('Delete event error:', error)
+      throw error
+    }
   }
 
   // 初始載入活動
@@ -263,6 +356,11 @@ export default function AdminEventsPage() {
                 <p className="text-gray-600 mt-1">管理所有學校活動與事件</p>
               </div>
               <div className="flex items-center gap-2">
+                <CalendarViewToggle
+                  currentView={currentView}
+                  onViewChange={setCurrentView}
+                  size="md"
+                />
                 <Button
                   variant="outline"
                   onClick={() => fetchEvents()}
@@ -360,18 +458,31 @@ export default function AdminEventsPage() {
             </motion.div>
           )}
 
-          {/* Event Manager Component */}
+          {/* Event Manager/Calendar Component */}
           <motion.div variants={itemVariants}>
-            <EventManager
-              events={events}
-              loading={eventsLoading}
-              error={eventsError}
-              onFiltersChange={handleFiltersChange}
-              onPageChange={handlePageChange}
-              onRefresh={() => fetchEvents()}
-              pagination={pagination}
-              filters={filters}
-            />
+            {currentView === 'calendar' ? (
+              <EventCalendar
+                events={events}
+                loading={eventsLoading}
+                error={eventsError}
+                filters={filters}
+                onEventCreate={handleEventCreate}
+                onEventUpdate={handleEventUpdate}
+                onEventDelete={handleEventDelete}
+                onFiltersChange={handleFiltersChange}
+              />
+            ) : (
+              <EventManager
+                events={events}
+                loading={eventsLoading}
+                error={eventsError}
+                onFiltersChange={handleFiltersChange}
+                onPageChange={handlePageChange}
+                onRefresh={() => fetchEvents()}
+                pagination={pagination}
+                filters={filters}
+              />
+            )}
           </motion.div>
 
           {/* Error Alert */}
