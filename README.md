@@ -22,6 +22,8 @@ ES 國際部家長門戶網站和資源中心是一個全面的 Next.js 應用�
 
 - **Parent Portal** - Dedicated space for parent-school communication  
   **家長門戶** - 專為家長與學校溝通設計的空間
+- **Google OAuth Authentication** - Secure one-click login with automatic role assignment  
+  **Google OAuth 認證** - 安全的一鍵登入與自動角色分配
 - **Event Management** - Coffee with Principal sessions and school events  
   **活動管理** - 校長有約會議和學校活動
 - **Resource Center** - Grade-level educational materials and tools  
@@ -38,6 +40,7 @@ ES 國際部家長門戶網站和資源中心是一個全面的 Next.js 應用�
 - **Framework**: Next.js 14 (App Router) | **框架**: Next.js 14 (App Router)
 - **Language**: TypeScript | **語言**: TypeScript
 - **Database**: PostgreSQL + Prisma ORM | **資料庫**: PostgreSQL + Prisma ORM
+- **Authentication**: Google OAuth 2.0 + JWT | **認證**: Google OAuth 2.0 + JWT
 - **Styling**: Tailwind CSS | **樣式**: Tailwind CSS
 - **UI Components**: shadcn/ui | **UI 組件**: shadcn/ui
 - **Animations**: Framer Motion | **動畫**: Framer Motion  
@@ -99,6 +102,9 @@ pnpm db:migrate   # Run database migrations | 執行資料庫遷移
 pnpm db:seed      # Seed database with initial data | 填充初始資料
 pnpm db:studio    # Open Prisma Studio | 開啟 Prisma Studio
 
+# OAuth Testing | OAuth 測試
+pnpm test:oauth-config  # Test Google OAuth configuration | 測試 Google OAuth 配置
+
 # Environment Management | 環境管理
 pnpm env:switch   # Switch between environments | 切換環境
 pnpm test:db      # Test database connection | 測試資料庫連接
@@ -112,6 +118,55 @@ git add .                           # 暫存所有變更
 git commit -m "feat: description"   # 提交變更
 git push origin main                # 推送到主分支（自動 GitHub 備份）
 ```
+
+## 🔐 Google OAuth Setup | Google OAuth 設定
+
+### 🚀 Quick Start (5 minutes) | 快速開始（5分鐘）
+
+1. **Follow the setup guide** | **按照設定指南**
+   ```bash
+   # Read the quick start guide | 閱讀快速開始指南
+   open docs/QUICK-START-OAUTH.md
+   ```
+
+2. **Configure Google Console** | **配置 Google Console**
+   - Visit: https://console.developers.google.com/
+   - Create OAuth 2.0 credentials
+   - Add redirect URI: `http://localhost:3000/api/auth/callback/google`
+
+3. **Set up environment variables** | **設定環境變數**
+   ```bash
+   # Copy environment template | 複製環境範本
+   cp .env.local.example .env.local
+   
+   # Edit with your Google OAuth credentials | 編輯填入您的 Google OAuth 憑證
+   # GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
+   # GOOGLE_CLIENT_SECRET="your-client-secret"
+   ```
+
+4. **Test OAuth configuration** | **測試 OAuth 配置**
+   ```bash
+   # Validate OAuth setup | 驗證 OAuth 設定
+   npm run test:oauth-config
+   
+   # Start development server | 啟動開發伺服器
+   npm run dev
+   
+   # Test OAuth flow | 測試 OAuth 流程
+   # Visit: http://localhost:3000/test-oauth
+   ```
+
+### 📚 Documentation | 文件
+- 📋 **Quick Start**: `docs/QUICK-START-OAUTH.md` - 5-minute setup guide
+- 📖 **Detailed Setup**: `docs/google-oauth-setup.md` - Complete configuration guide  
+- 📊 **Status Summary**: `docs/OAUTH-STATUS-SUMMARY.md` - Implementation overview
+
+### 🎯 Features | 功能
+- ✅ Secure Google OAuth 2.0 authentication
+- 🤖 Automatic role assignment by email domain
+- 🔗 Account linking for existing users
+- 🛡️ CSRF protection and secure token handling
+- 📱 Mobile-responsive login interface
 
 ## Project Structure
 
