@@ -1,0 +1,262 @@
+'use client'
+
+/**
+ * Event List Component
+ * 活動列表組件
+ * 
+ * @description 活動列表顯示組件，支援分頁、排序和批量操作
+ * @features 響應式設計、狀態指示器、快速操作、分頁導航
+ * @author Claude Code | Generated for ES International Department
+ */
+
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Edit,
+  Trash2,
+  Eye,
+  MoreHorizontal,
+  ChevronLeft,
+  ChevronRight,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Pause,
+  Play,
+  UserCheck,
+} from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import EventCard from '@/components/admin/EventCard'
+import { 
+  Event,
+  EventListProps,
+  PaginationInfo,
+  EVENT_STATUS_LABELS,
+  EVENT_STATUS_COLORS,
+  EVENT_TYPE_LABELS,
+  EVENT_TYPE_COLORS
+} from '@/lib/types'
+import { cn } from '@/lib/utils'
+
+export default function EventList({
+  events = [],
+  loading = false,
+  error,
+  onEdit,
+  onDelete,
+  onView,
+  onManageRegistrations,
+  onPageChange,
+  pagination,
+  showActions = false,
+  className
+}: EventListProps) {
+  const [expandedCard, setExpandedCard] = useState<number | null>(null)
+
+  // 處理卡片展開/收合
+  const handleToggleExpand = (eventId: number) => {
+    setExpandedCard(expandedCard === eventId ? null : eventId)
+  }
+
+  // 分頁組件
+  const PaginationControls = () => {
+    if (!pagination || pagination.totalPages <= 1) return null
+
+    const pages = []
+    const currentPage = pagination.page
+    const totalPages = pagination.totalPages
+
+    // 計算顯示的頁碼範圍
+    let startPage = Math.max(1, currentPage - 2)
+    let endPage = Math.min(totalPages, currentPage + 2)
+
+    // 調整範圍以確保總是顯示5頁（如果可能）
+    if (endPage - startPage < 4) {
+      if (startPage === 1) {
+        endPage = Math.min(totalPages, startPage + 4)
+      } else if (endPage === totalPages) {
+        startPage = Math.max(1, endPage - 4)
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i)
+    }
+
+    return (
+      <div className="flex items-center justify-between mt-6">
+        <div className="flex items-center text-sm text-gray-700">
+          顯示第 {((currentPage - 1) * pagination.limit) + 1} - {Math.min(currentPage * pagination.limit, pagination.totalCount)} 項，
+          共 {pagination.totalCount} 項
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange?.(currentPage - 1)}
+            disabled={!pagination.hasPrevPage}
+          >
+            <ChevronLeft className="w-4 h-4" />
+            上一頁
+          </Button>
+          
+          {pages.map((page) => (
+            <Button
+              key={page}
+              variant={page === currentPage ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange?.(page)}
+              className={page === currentPage ? "bg-purple-600 hover:bg-purple-700" : ""}
+            >
+              {page}
+            </Button>
+          ))}
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange?.(currentPage + 1)}
+            disabled={!pagination.hasNextPage}
+          >
+            下一頁
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // 載入骨架
+  const LoadingSkeleton = () => (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Card key={index}>
+          <CardContent className="p-6">
+            <div className="space-y-3">
+              <div className="flex items-start justify-between">
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+                <div className="flex space-x-2">
+                  <Skeleton className="h-6 w-16" />
+                  <Skeleton className="h-6 w-16" />
+                </div>
+              </div>
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+              <div className="flex items-center space-x-4 mt-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+
+  // 空狀態
+  const EmptyState = () => (
+    <Card>
+      <CardContent className="p-12 text-center">
+        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">沒有找到活動</h3>
+        <p className="text-gray-600 mb-4">目前沒有符合篩選條件的活動</p>
+        <Button variant="outline">
+          <Plus className="w-4 h-4 mr-2" />
+          新增活動
+        </Button>
+      </CardContent>
+    </Card>
+  )
+
+  // 錯誤狀態
+  if (error) {
+    return (
+      <Card className={className}>
+        <CardContent className="p-6">
+          <div className="flex items-center text-red-600">
+            <AlertTriangle className="w-5 h-5 mr-2" />
+            <span>{error}</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <div className={cn("space-y-6", className)}>
+      {/* 活動列表 */}
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <LoadingSkeleton />
+          </motion.div>
+        ) : events.length === 0 ? (
+          <motion.div
+            key="empty"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <EmptyState />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="events"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-4"
+          >
+            {events.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <EventCard
+                  event={event}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  onView={onView}
+                  onManageRegistrations={onManageRegistrations}
+                  showActions={showActions}
+                  isExpanded={expandedCard === event.id}
+                  onToggleExpand={() => handleToggleExpand(event.id)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 分頁控制 */}
+      {!loading && events.length > 0 && <PaginationControls />}
+    </div>
+  )
+}

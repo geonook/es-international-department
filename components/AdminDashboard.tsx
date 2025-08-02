@@ -38,6 +38,8 @@ import {
   Loader2,
   Send,
   AlertTriangle,
+  Play,
+  CheckCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
@@ -429,6 +431,7 @@ export default function AdminDashboard() {
   const sidebarItems = [
     { id: "dashboard", label: "儀表板", icon: BarChart3 },
     { id: "teachers", label: "教師管理", icon: GraduationCap },
+    { id: "events", label: "活動管理", icon: Calendar },
     { id: "parents", label: "家長資訊", icon: Users },
     { id: "settings", label: "系統設定", icon: Settings },
   ]
@@ -564,8 +567,8 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-purple-600 text-sm font-medium">本月活動</p>
-                            <p className="text-2xl font-bold text-purple-800">8</p>
+                            <p className="text-purple-600 text-sm font-medium">總活動數</p>
+                            <p className="text-2xl font-bold text-purple-800">28</p>
                           </div>
                           <Calendar className="w-8 h-8 text-purple-600" />
                         </div>
@@ -675,8 +678,8 @@ export default function AdminDashboard() {
                         <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
                           <div className="w-2 h-2 bg-purple-600 rounded-full mt-2"></div>
                           <div>
-                            <p className="font-medium">系統更新</p>
-                            <p className="text-sm text-gray-600">認證系統升級完成 - 1 小時前</p>
+                            <p className="font-medium">活動管理系統</p>
+                            <p className="text-sm text-gray-600">活動管理功能上線 - 5 分鐘前</p>
                           </div>
                         </div>
                       </div>
@@ -814,6 +817,178 @@ export default function AdminDashboard() {
                     filters={filters}
                     showActions={true}
                   />
+                </motion.div>
+              )}
+
+              {activeTab === "events" && (
+                <motion.div
+                  key="events"
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  className="space-y-6"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-900">活動管理</h2>
+                      <p className="text-gray-600 mt-1">管理所有學校活動與事件</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link href="/admin/events">
+                        <Button className="bg-gradient-to-r from-purple-600 to-purple-700">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          進入活動管理
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* 活動概覽統計 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-indigo-600 text-sm font-medium">總活動數</p>
+                            <p className="text-2xl font-bold text-indigo-800">28</p>
+                          </div>
+                          <Calendar className="w-8 h-8 text-indigo-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-emerald-600 text-sm font-medium">已發佈</p>
+                            <p className="text-2xl font-bold text-emerald-800">23</p>
+                          </div>
+                          <CheckCircle className="w-8 h-8 text-emerald-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-amber-600 text-sm font-medium">進行中</p>
+                            <p className="text-2xl font-bold text-amber-800">3</p>
+                          </div>
+                          <Play className="w-8 h-8 text-amber-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-violet-50 to-violet-100 border-violet-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-violet-600 text-sm font-medium">總報名數</p>
+                            <p className="text-2xl font-bold text-violet-800">156</p>
+                          </div>
+                          <Users className="w-8 h-8 text-violet-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* 最近活動 */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
+                        最近活動
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-blue-800">校長有約 - 1-2 年級</h4>
+                              <Badge variant="outline" className="text-xs">會議</Badge>
+                            </div>
+                            <p className="text-sm text-blue-600 mb-2">與家長面對面交流，探討學生學習進度</p>
+                            <div className="flex items-center text-xs text-blue-500 gap-4">
+                              <span>📅 2025-02-15</span>
+                              <span>🕰️ 14:00-15:30</span>
+                              <span>📍 會議室 A</span>
+                              <span>👥 12/20 人報名</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-green-100 text-green-700">已發佈</Badge>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start justify-between p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-purple-800">國際文化日</h4>
+                              <Badge variant="outline" className="text-xs">文化活動</Badge>
+                            </div>
+                            <p className="text-sm text-purple-600 mb-2">庆祝多元文化，了解不同國家的特色與傳統</p>
+                            <div className="flex items-center text-xs text-purple-500 gap-4">
+                              <span>📅 2025-02-28</span>
+                              <span>🕰️ 09:00-15:00</span>
+                              <span>📍 校園大堂</span>
+                              <span>👥 全校參加</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-blue-100 text-blue-700">策劃中</Badge>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start justify-between p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-green-800">春季運動會</h4>
+                              <Badge variant="outline" className="text-xs">體育活動</Badge>
+                            </div>
+                            <p className="text-sm text-green-600 mb-2">全校師生同歡，展現運動精神與團隊合作</p>
+                            <div className="flex items-center text-xs text-green-500 gap-4">
+                              <span>📅 2025-04-20</span>
+                              <span>🕰️ 08:00-12:00</span>
+                              <span>📍 校園運動場</span>
+                              <span>👥 全校參加</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-gray-100 text-gray-700">草稿</Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 快速操作 */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>快速操作</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Link href="/admin/events">
+                          <Button variant="outline" className="h-20 w-full flex flex-col hover:bg-purple-50">
+                            <Plus className="w-6 h-6 mb-2 text-purple-600" />
+                            新增活動
+                          </Button>
+                        </Link>
+                        <Button variant="outline" className="h-20 flex flex-col hover:bg-blue-50">
+                          <Users className="w-6 h-6 mb-2 text-blue-600" />
+                          管理報名
+                        </Button>
+                        <Button variant="outline" className="h-20 flex flex-col hover:bg-green-50">
+                          <Download className="w-6 h-6 mb-2 text-green-600" />
+                          導出報告
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               )}
 

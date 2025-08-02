@@ -263,3 +263,288 @@ export const STATUS_LABELS: Record<AnnouncementStatus, string> = {
   draft: '草稿',
   archived: '已封存'
 }
+
+// ========================================
+// 活動管理系統類型定義 | Event Management System Types
+// ========================================
+
+// 活動類型
+export type EventType = 
+  | 'meeting'         // 會議
+  | 'celebration'     // 慶典
+  | 'academic'        // 學術活動
+  | 'sports'          // 體育活動
+  | 'cultural'        // 文化活動
+  | 'workshop'        // 工作坊
+  | 'performance'     // 表演
+  | 'parent_meeting'  // 家長會
+  | 'coffee_session'  // 校長有約
+  | 'other'           // 其他
+
+// 活動狀態
+export type EventStatus = 
+  | 'draft'           // 草稿
+  | 'published'       // 已發布
+  | 'in_progress'     // 進行中
+  | 'completed'       // 已完成
+  | 'cancelled'       // 已取消
+  | 'postponed'       // 已延期
+
+// 報名狀態
+export type RegistrationStatus = 
+  | 'open'            // 開放報名
+  | 'closed'          // 報名截止
+  | 'full'            // 名額已滿
+  | 'cancelled'       // 已取消
+
+// 活動介面
+export interface Event {
+  id: number
+  title: string
+  description?: string
+  eventType: EventType
+  startDate: Date | string
+  endDate?: Date | string
+  startTime?: Date | string
+  endTime?: Date | string
+  location?: string
+  maxParticipants?: number
+  registrationRequired: boolean
+  registrationDeadline?: Date | string
+  targetGrades?: string[] // JSON array from Prisma
+  createdBy: string
+  creator?: {
+    id: string
+    email: string
+    firstName?: string
+    lastName?: string
+    displayName?: string
+  }
+  status: EventStatus
+  createdAt: Date | string
+  updatedAt: Date | string
+  // 計算欄位
+  registrationCount?: number
+  availableSlots?: number
+  isRegistrationOpen?: boolean
+  daysUntilEvent?: number
+}
+
+// 活動表單資料
+export interface EventFormData {
+  title: string
+  description?: string
+  eventType: EventType
+  startDate: string
+  endDate?: string
+  startTime?: string
+  endTime?: string
+  location?: string
+  maxParticipants?: number
+  registrationRequired: boolean
+  registrationDeadline?: string
+  targetGrades?: string[]
+  status: EventStatus
+}
+
+// 活動篩選參數
+export interface EventFilters {
+  eventType?: EventType | 'all'
+  status?: EventStatus | 'all'
+  targetGrade?: string
+  registrationRequired?: boolean
+  dateRange?: {
+    start?: string
+    end?: string
+  }
+  search?: string
+}
+
+// 活動統計資訊
+export interface EventStats {
+  total: number
+  published: number
+  draft: number
+  inProgress: number
+  completed: number
+  cancelled: number
+  byType: Record<EventType, number>
+  byMonth: Record<string, number>
+  totalRegistrations: number
+  averageParticipants: number
+}
+
+// 報名管理介面
+export interface EventRegistration {
+  id: number
+  eventId: number
+  userId: string
+  user?: {
+    id: string
+    email: string
+    firstName?: string
+    lastName?: string
+    displayName?: string
+    phone?: string
+  }
+  status: 'registered' | 'waiting' | 'cancelled'
+  registeredAt: Date | string
+  notes?: string
+  priority?: number // For waiting list ordering
+}
+
+// 報名表單資料
+export interface RegistrationFormData {
+  eventId: number
+  notes?: string
+}
+
+// 活動組件 Props
+export interface EventCardProps {
+  event: Event
+  onEdit?: (event: Event) => void
+  onDelete?: (eventId: number) => void
+  onView?: (event: Event) => void
+  onManageRegistrations?: (event: Event) => void
+  showActions?: boolean
+  showRegistrationInfo?: boolean
+  className?: string
+}
+
+export interface EventListProps {
+  events?: Event[]
+  loading?: boolean
+  error?: string
+  onEdit?: (event: Event) => void
+  onDelete?: (eventId: number) => void
+  onView?: (event: Event) => void
+  onManageRegistrations?: (event: Event) => void
+  onFiltersChange?: (filters: EventFilters) => void
+  onPageChange?: (page: number) => void
+  pagination?: PaginationInfo
+  filters?: EventFilters
+  showActions?: boolean
+  className?: string
+}
+
+export interface EventFormProps {
+  event?: Event
+  onSubmit: (data: EventFormData) => Promise<void>
+  onCancel?: () => void
+  loading?: boolean
+  error?: string
+  mode?: 'create' | 'edit'
+  className?: string
+}
+
+export interface EventManagerProps {
+  className?: string
+}
+
+// 活動 API 回應類型
+export interface EventListResponse extends ApiResponse {
+  data: Event[]
+  pagination: PaginationInfo
+  filters: EventFilters
+  stats?: EventStats
+}
+
+export interface EventResponse extends ApiResponse {
+  data: Event
+}
+
+export interface RegistrationListResponse extends ApiResponse {
+  data: EventRegistration[]
+  pagination: PaginationInfo
+  event: Event
+}
+
+// Hook 回傳類型
+export interface UseEventsReturn {
+  events: Event[]
+  loading: boolean
+  error?: string
+  pagination: PaginationInfo
+  filters: EventFilters
+  stats?: EventStats
+  fetchEvents: (filters?: EventFilters, page?: number) => Promise<void>
+  createEvent: (data: EventFormData) => Promise<Event>
+  updateEvent: (id: number, data: Partial<EventFormData>) => Promise<Event>
+  deleteEvent: (id: number) => Promise<void>
+  refetch: () => Promise<void>
+}
+
+export interface UseEventRegistrationsReturn {
+  registrations: EventRegistration[]
+  loading: boolean
+  error?: string
+  pagination: PaginationInfo
+  event?: Event
+  fetchRegistrations: (eventId: number, page?: number) => Promise<void>
+  registerForEvent: (data: RegistrationFormData) => Promise<EventRegistration>
+  cancelRegistration: (registrationId: number) => Promise<void>
+  updateRegistrationStatus: (registrationId: number, status: string) => Promise<EventRegistration>
+  refetch: () => Promise<void>
+}
+
+// 活動類型標籤映射
+export const EVENT_TYPE_LABELS: Record<EventType, string> = {
+  meeting: '會議',
+  celebration: '慶典',
+  academic: '學術活動',
+  sports: '體育活動',
+  cultural: '文化活動',
+  workshop: '工作坊',
+  performance: '表演',
+  parent_meeting: '家長會',
+  coffee_session: '校長有約',
+  other: '其他'
+}
+
+// 活動狀態標籤映射
+export const EVENT_STATUS_LABELS: Record<EventStatus, string> = {
+  draft: '草稿',
+  published: '已發布',
+  in_progress: '進行中',
+  completed: '已完成',
+  cancelled: '已取消',
+  postponed: '已延期'
+}
+
+// 活動類型顏色映射
+export const EVENT_TYPE_COLORS: Record<EventType, string> = {
+  meeting: 'blue',
+  celebration: 'purple',
+  academic: 'green',
+  sports: 'orange',
+  cultural: 'pink',
+  workshop: 'cyan',
+  performance: 'violet',
+  parent_meeting: 'amber',
+  coffee_session: 'teal',
+  other: 'gray'
+}
+
+// 活動狀態顏色映射
+export const EVENT_STATUS_COLORS: Record<EventStatus, string> = {
+  draft: 'gray',
+  published: 'green',
+  in_progress: 'blue',
+  completed: 'emerald',
+  cancelled: 'red',
+  postponed: 'yellow'
+}
+
+// 年級選項
+export const GRADE_OPTIONS = [
+  { value: '1', label: 'Grade 1' },
+  { value: '2', label: 'Grade 2' },
+  { value: '3', label: 'Grade 3' },
+  { value: '4', label: 'Grade 4' },
+  { value: '5', label: 'Grade 5' },
+  { value: '6', label: 'Grade 6' },
+  { value: '1-2', label: 'Grades 1-2' },
+  { value: '3-4', label: 'Grades 3-4' },
+  { value: '5-6', label: 'Grades 5-6' },
+  { value: 'all', label: 'All Grades' }
+]
