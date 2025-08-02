@@ -11,23 +11,23 @@
       "passed": 4,
       "failed": 12,
       "pass_rate": "25.00%",
-      "improvement": "from 0% to 25%"
+      "improvement": "no change - still 500 errors due to missing seed data"
     },
     "frontend_tests": {
       "total": 10,
-      "passed": 7,
-      "failed": 3,
-      "pass_rate": "70.00%",
-      "improvement": "new baseline"
+      "passed": 8,
+      "failed": 2,
+      "pass_rate": "80.00%",
+      "improvement": "improved from 70% to 80%"
     },
     "overall": {
       "total": 26,
-      "passed": 11,
-      "failed": 15,
-      "pass_rate": "42.31%",
-      "status": "significant_improvement"
+      "passed": 12,
+      "failed": 14,
+      "pass_rate": "46.15%",
+      "status": "moderate_improvement"
     },
-    "timestamp": "2025-08-01T01:44:00.000Z"
+    "timestamp": "2025-08-02T00:05:00.000Z"
   },
   "api_test_details": {
     "passed": [
@@ -60,12 +60,12 @@
       "導航連結 - 事件頁面",
       "資源頁面載入",
       "教師頁面載入",
-      "頁面載入性能"
+      "頁面載入性能",
+      "JavaScript 錯誤檢查"
     ],
     "failed": [
       "首頁公告顯示 (0 announcements - related to API issue)",
-      "管理員頁面權限控制 (no redirect to login)",
-      "JavaScript 錯誤檢查 (Puppeteer API issue)"
+      "管理員頁面權限控制 (no redirect to login)"
     ],
     "performance": {
       "response_time": "fast",
