@@ -130,6 +130,8 @@ export default function AnnouncementForm({
   const [isDirty, setIsDirty] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
+  const [imageUploadError, setImageUploadError] = useState<string>()
   
   const isEditMode = mode === 'edit' && announcement
 
@@ -214,6 +216,19 @@ export default function AnnouncementForm({
     }
     onCancel?.()
   }
+
+  // 處理圖片上傳
+  const handleImageUpload = useCallback((images: UploadedImage[]) => {
+    setUploadedImages(prev => [...prev, ...images])
+    setImageUploadError(undefined)
+    console.log('Images uploaded successfully:', images)
+  }, [])
+
+  // 處理圖片上傳錯誤
+  const handleImageUploadError = useCallback((error: string) => {
+    setImageUploadError(error)
+    console.error('Image upload error:', error)
+  }, [])
 
   // 取得目標對象圖示
   const getTargetAudienceIcon = (audience: string) => {
@@ -312,6 +327,25 @@ export default function AnnouncementForm({
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* 圖片上傳錯誤 */}
+          {imageUploadError && (
+            <Alert variant="destructive">
+              <Image className="h-4 w-4" />
+              <AlertDescription>
+                圖片上傳失敗: {imageUploadError}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-2 h-6 text-xs"
+                  onClick={() => setImageUploadError(undefined)}
+                >
+                  <X className="w-3 h-3 mr-1" />
+                  關閉
+                </Button>
+              </AlertDescription>
             </Alert>
           )}
         </CardHeader>
@@ -460,8 +494,16 @@ export default function AnnouncementForm({
                                   console.log('Auto-saving draft...', { title: currentData.title, contentLength: content.length })
                                 }
                               }}
-                              error={errors.content?.message}
+                              error={errors.content?.message || imageUploadError}
                               disabled={loading || isSubmitting}
+                              // 圖片上傳相關
+                              enableImageUpload={true}
+                              onImageUpload={handleImageUpload}
+                              uploadEndpoint="/api/upload/images"
+                              maxImageSize={5 * 1024 * 1024} // 5MB
+                              maxImages={10}
+                              relatedType="announcement"
+                              relatedId={announcement?.id}
                             />
                           </FormControl>
                           <FormMessage />
@@ -472,6 +514,53 @@ export default function AnnouncementForm({
 
                   {/* 設定面板 */}
                   <div className="space-y-4">
+                    {/* 圖片管理區域 */}
+                    {uploadedImages.length > 0 && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-3 flex items-center gap-2">
+                          <Image className="w-4 h-4" />
+                          已上傳的圖片 ({uploadedImages.length})
+                        </h4>
+                        <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                          {uploadedImages.map((image, index) => (
+                            <div
+                              key={image.fileId}
+                              className="flex items-center gap-3 p-2 bg-white dark:bg-gray-800 rounded border"
+                            >
+                              <img
+                                src={image.thumbnailUrl || image.publicUrl}
+                                alt={image.originalName}
+                                className="w-8 h-8 object-cover rounded"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium truncate">{image.originalName}</p>
+                                <p className="text-xs text-gray-500">
+                                  {(image.fileSize / 1024).toFixed(1)} KB
+                                </p>
+                              </div>
+                              <Badge variant="outline" className="text-xs">
+                                已插入
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 圖片上傳說明 */}
+                    <div className="text-xs text-gray-500 bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                      <div className="flex items-center gap-1 mb-2">
+                        <Image className="w-3 h-3" />
+                        <span className="font-medium">圖片上傳說明：</span>
+                      </div>
+                      <ul className="list-disc list-inside space-y-1 ml-4">
+                        <li>支援 JPG、PNG、GIF、WebP 格式</li>
+                        <li>單張圖片最大 5MB，一次最多 10 張</li>
+                        <li>圖片會自動壓縮最佳化</li>
+                        <li>可直接拖拽或複製貼上圖片</li>
+                        <li>Image upload tips: 支援拖放上傳和複製貼上</li>
+                      </ul>
+                    </div>
                     {/* 目標對象 */}
                     <FormField
                       control={form.control}

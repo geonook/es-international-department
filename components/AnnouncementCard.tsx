@@ -5,7 +5,7 @@
  * 單一公告顯示卡片組件
  */
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { format, formatDistanceToNow, isAfter, isBefore } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
@@ -24,7 +24,12 @@ import {
   Info,
   Users,
   GraduationCap,
-  Globe
+  Globe,
+  Image,
+  Maximize2,
+  X,
+  Download,
+  ExternalLink
 } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -53,6 +58,8 @@ export default function AnnouncementCard({
 }: AnnouncementCardProps) {
   const [localExpanded, setLocalExpanded] = useState(isExpanded)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null)
+  const [imageError, setImageError] = useState<Set<string>>(new Set())
 
   // 處理展開/收合
   const handleToggleExpand = () => {
@@ -131,6 +138,47 @@ export default function AnnouncementCard({
       default:
         return <Info className="w-4 h-4" />
     }
+  }
+
+  // 處理圖片點擊放大
+  const handleImageClick = useCallback((imageSrc: string) => {
+    setLightboxImage(imageSrc)
+  }, [])
+
+  // 關閉圖片燈箱
+  const handleCloseLightbox = useCallback(() => {
+    setLightboxImage(null)
+  }, [])
+
+  // 處理圖片載入錯誤
+  const handleImageError = useCallback((imageSrc: string) => {
+    setImageError(prev => new Set([...prev, imageSrc]))
+  }, [])
+
+  // 檢查內容是否包含圖片
+  const hasImages = announcement.content.includes('<img')
+  
+  // 提取圖片數量
+  const getImageCount = () => {
+    const imgMatches = announcement.content.match(/<img[^>]*>/g)
+    return imgMatches ? imgMatches.length : 0
+  }
+
+  // 處理圖片內容渲染
+  const renderContentWithClickableImages = (content: string) => {
+    return content.replace(
+      /<img([^>]*?)src=["']([^"']*)["']([^>]*?)>/g,
+      (match, beforeSrc, src, afterSrc) => {
+        const alt = match.match(/alt=["']([^"']*)["']/)?.[1] || ''
+        const style = 'max-width: 100%; height: auto; cursor: pointer; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s ease; hover:transform: scale(1.02);'
+        return `<img${beforeSrc}src="${src}"${afterSrc} alt="${alt}" style="${style}" onclick="window.handleAnnouncementImageClick && window.handleAnnouncementImageClick('${src}')" />`
+      }
+    )
+  }
+
+  // 設置全局圖片點擊處理器
+  if (typeof window !== 'undefined') {
+    (window as any).handleAnnouncementImageClick = handleImageClick
   }
 
   const cardVariants = {
@@ -225,6 +273,14 @@ export default function AnnouncementCard({
                   {getTargetAudienceIcon(announcement.targetAudience)}
                   {TARGET_AUDIENCE_LABELS[announcement.targetAudience]}
                 </Badge>
+
+                {/* 圖片標籤 */}
+                {hasImages && (
+                  <Badge variant="outline" className="flex items-center gap-1">
+                    <Image className="w-3 h-3" />
+                    {getImageCount()} 張圖片
+                  </Badge>
+                )}
 
                 {/* 過期警告 */}
                 {isExpired && (
@@ -350,12 +406,18 @@ export default function AnnouncementCard({
                 {/* 完整內容 */}
                 <div className={cn(
                   "prose prose-sm max-w-none",
+                  "[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:shadow-sm [&_img]:cursor-pointer",
+                  "[&_img:hover]:shadow-md [&_img:hover]:scale-[1.02] [&_img]:transition-all [&_img]:duration-200",
+                  "[&_p]:mb-3 [&_h1]:mb-4 [&_h2]:mb-3 [&_h3]:mb-2",
+                  "[&_ul]:mb-3 [&_ol]:mb-3 [&_blockquote]:mb-3",
                   isExpired && "text-gray-600"
                 )}>
                   <div 
                     className="whitespace-pre-wrap"
                     dangerouslySetInnerHTML={{ 
-                      __html: announcement.content.replace(/\n/g, '<br />') 
+                      __html: hasImages ? 
+                        renderContentWithClickableImages(announcement.content) : 
+                        announcement.content.replace(/\n/g, '<br />') 
                     }}
                   />
                 </div>
@@ -386,6 +448,61 @@ export default function AnnouncementCard({
           )}
         </AnimatePresence>
       </Card>
+
+      {/* 圖片燈箱 */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+            onClick={handleCloseLightbox}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="relative max-w-[90vw] max-h-[90vh] p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* 關閉按鈕 */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCloseLightbox}
+                className="absolute -top-2 -right-2 z-10 h-8 w-8 p-0 bg-black/50 hover:bg-black/70 text-white border-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+
+              {/* 下載按鈕 */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const link = document.createElement('a')
+                  link.href = lightboxImage
+                  link.download = 'announcement-image'
+                  link.click()
+                }}
+                className="absolute -top-2 -right-12 z-10 h-8 w-8 p-0 bg-black/50 hover:bg-black/70 text-white border-none"
+                title="下載圖片"
+              >
+                <Download className="w-4 h-4" />
+              </Button>
+
+              {/* 圖片 */}
+              <img
+                src={lightboxImage}
+                alt="放大檢視"
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                onError={() => handleImageError(lightboxImage)}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
