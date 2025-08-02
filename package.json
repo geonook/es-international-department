@@ -34,7 +34,8 @@
     "typecheck": "tsc --noEmit",
     "test": "echo \"No tests specified\" && exit 0",
     "test:db": "tsx scripts/test-db-connection.ts",
-    "test:zeabur": "tsx scripts/test-zeabur-connections.ts"
+    "test:zeabur": "tsx scripts/test-zeabur-connections.ts",
+    "test:oauth-config": "tsx scripts/test-oauth-config.ts"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
