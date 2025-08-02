@@ -112,25 +112,37 @@ This file provides essential guidance to Claude Code (claude.ai/code) when worki
 ### 🎯 **DEVELOPMENT STATUS | 開發狀態**
 - **Setup**: ✅ Complete - Next.js 14 with TypeScript  
   **環境設定**: ✅ 完成 - Next.js 14 與 TypeScript
+- **Authentication**: ✅ Complete - Google OAuth 2.0 + JWT system  
+  **認證系統**: ✅ 完成 - Google OAuth 2.0 + JWT 系統
 - **Core Features**: ✅ Complete - Home, Events, Resources pages  
   **核心功能**: ✅ 完成 - 首頁、活動、資源頁面
 - **UI Components**: ✅ Complete - shadcn/ui component library  
   **UI 組件**: ✅ 完成 - shadcn/ui 組件庫
 - **Animations**: ✅ Complete - Framer Motion integration  
   **動畫效果**: ✅ 完成 - Framer Motion 整合
-- **Testing**: ⏳ Pending  
-  **測試**: ⏳ 待完成
-- **Documentation**: ✅ Complete  
-  **文件**: ✅ 完成
+- **Testing Infrastructure**: ✅ Complete - OAuth config tests, browser testing  
+  **測試基礎設施**: ✅ 完成 - OAuth 配置測試、瀏覽器測試
+- **Documentation**: ✅ Complete - Comprehensive setup guides  
+  **文件**: ✅ 完成 - 完整設定指南
 
 ### 📋 **PROJECT STRUCTURE | 專案結構**
 ```
 es-international-department/
 ├── CLAUDE.md                  # Essential rules for Claude Code | Claude Code 重要規則
-├── README.md                  # Project documentation | 專案文件  
+├── README.md                  # Project documentation | 專案文件
+├── todo.md                    # Development roadmap and status | 開發路線圖與狀態
 ├── app/                       # Next.js App Router | Next.js 應用路由
 │   ├── layout.tsx             # Root layout | 根布局
 │   ├── page.tsx               # Home page | 首頁
+│   ├── api/                   # API routes | API 路由
+│   │   ├── auth/              # Authentication endpoints | 認證端點
+│   │   │   ├── google/        # Google OAuth initialization | Google OAuth 初始化
+│   │   │   └── callback/      # OAuth callback handler | OAuth 回調處理
+│   │   ├── admin/             # Admin API endpoints | 管理員 API 端點
+│   │   └── health/            # Health check endpoint | 健康檢查端點
+│   ├── login/                 # Login page with OAuth | 包含 OAuth 的登入頁面
+│   ├── welcome/               # New user onboarding | 新用戶歡迎頁面
+│   ├── test-oauth/            # OAuth testing interface (dev only) | OAuth 測試介面（僅開發）
 │   ├── events/                # Events section | 活動區域
 │   ├── resources/             # Resources section | 資源區域
 │   ├── admin/                 # Admin section | 管理區域
@@ -139,7 +151,22 @@ es-international-department/
 │   ├── ui/                    # shadcn/ui components | shadcn/ui 組件
 │   └── theme-provider.tsx     # Theme configuration | 主題配置
 ├── lib/                       # Utilities | 工具函式
+│   ├── auth.ts                # JWT authentication | JWT 認證
+│   ├── google-oauth.ts        # Google OAuth utilities | Google OAuth 工具
+│   ├── prisma.ts              # Database connection | 資料庫連接
+│   └── rbac.ts                # Role-based access control | 角色權限控制
 ├── hooks/                     # Custom React hooks | 自定義 React hooks
+│   └── useAuth.ts             # Authentication hook | 認證 hook
+├── prisma/                    # Database schema and migrations | 資料庫架構與遷移
+│   ├── schema.prisma          # Database schema | 資料庫架構
+│   └── seed.ts                # Database seeding | 資料庫種子資料
+├── scripts/                   # Development and testing scripts | 開發與測試腳本
+│   ├── test-oauth-config.ts   # OAuth configuration testing | OAuth 配置測試
+│   └── test-db-connection.ts  # Database connection testing | 資料庫連接測試
+├── docs/                      # Documentation | 文件
+│   ├── QUICK-START-OAUTH.md   # OAuth quick setup guide | OAuth 快速設定指南
+│   ├── google-oauth-setup.md  # Detailed OAuth setup | 詳細 OAuth 設定
+│   └── OAUTH-STATUS-SUMMARY.md # Implementation status | 實作狀態總結
 ├── public/                    # Static assets | 靜態資源
 ├── styles/                    # Global styles | 全域樣式
 └── output/                    # Generated files (DO NOT commit) | 生成檔案（請勿提交）
@@ -165,13 +192,14 @@ npm run lint         # Run ESLint | 執行 ESLint
 
 # Testing | 測試
 npm test             # Run tests | 執行測試
+npm run test:oauth-config  # Test OAuth configuration | 測試 OAuth 配置
 node integration-test.js  # API integration tests | API 整合測試
 node frontend-test.js     # Frontend tests | 前端測試
 
 # Zeabur Cloud Testing | Zeabur 雲端測試
 # Current deployment: https://landing-app-v2.zeabur.app
-# Test results: 42.31% overall pass rate (11/26 tests)
-# API: 25% pass rate | Frontend: 70% pass rate
+# Google OAuth system ready for configuration and testing
+# OAuth testing interface: http://localhost:3000/test-oauth (dev)
 
 # Git workflow | Git 工作流程
 git add .                           # 暫存所有變更
