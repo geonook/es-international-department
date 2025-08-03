@@ -374,6 +374,9 @@ export interface EventStats {
   averageParticipants: number
 }
 
+// 報名狀態類型
+export type EventRegistrationStatus = 'confirmed' | 'waiting_list' | 'cancelled'
+
 // 報名管理介面
 export interface EventRegistration {
   id: number
@@ -387,16 +390,28 @@ export interface EventRegistration {
     displayName?: string
     phone?: string
   }
-  status: 'registered' | 'waiting' | 'cancelled'
+  participantName?: string
+  participantEmail?: string
+  participantPhone?: string
+  grade?: string
+  specialRequests?: string
+  status: EventRegistrationStatus
   registeredAt: Date | string
-  notes?: string
-  priority?: number // For waiting list ordering
+  checkedIn: boolean
+  checkedInAt?: Date | string
+  attendanceNotes?: string
+  createdAt: Date | string
+  updatedAt: Date | string
 }
 
 // 報名表單資料
 export interface RegistrationFormData {
   eventId: number
-  notes?: string
+  participantName?: string
+  participantEmail?: string
+  participantPhone?: string
+  grade?: string
+  specialRequests?: string
 }
 
 // 活動組件 Props
@@ -483,8 +498,137 @@ export interface UseEventRegistrationsReturn {
   fetchRegistrations: (eventId: number, page?: number) => Promise<void>
   registerForEvent: (data: RegistrationFormData) => Promise<EventRegistration>
   cancelRegistration: (registrationId: number) => Promise<void>
-  updateRegistrationStatus: (registrationId: number, status: string) => Promise<EventRegistration>
+  updateRegistrationStatus: (registrationId: number, status: EventRegistrationStatus) => Promise<EventRegistration>
   refetch: () => Promise<void>
+}
+
+// ========================================
+// 活動通知系統類型定義 | Event Notification System Types
+// ========================================
+
+// 通知類型
+export type EventNotificationType = 
+  | 'reminder'              // 提醒
+  | 'update'                // 更新
+  | 'cancellation'          // 取消
+  | 'registration_confirmed' // 報名確認
+  | 'registration_waitlist'  // 候補名單
+  | 'registration_cancelled' // 取消報名
+  | 'event_start'           // 活動開始
+  | 'event_completed'       // 活動結束
+
+// 通知接收者類型
+export type NotificationRecipientType =
+  | 'all_registered'        // 所有報名者
+  | 'specific_users'        // 特定用戶
+  | 'target_audience'       // 目標對象
+  | 'grade_level'           // 特定年級
+
+// 通知狀態
+export type NotificationStatus = 'pending' | 'sent' | 'failed' | 'cancelled'
+
+// 活動通知介面
+export interface EventNotification {
+  id: number
+  eventId: number
+  type: EventNotificationType
+  recipientType: NotificationRecipientType
+  title: string
+  message: string
+  scheduledFor?: Date | string
+  sentAt?: Date | string
+  status: NotificationStatus
+  recipientCount: number
+  deliveredCount: number
+  errorMessage?: string
+  createdBy?: string
+  creator?: {
+    id: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+  createdAt: Date | string
+  updatedAt: Date | string
+}
+
+// 通知表單資料
+export interface NotificationFormData {
+  eventId: number
+  type: EventNotificationType
+  recipientType: NotificationRecipientType
+  title: string
+  message: string
+  scheduledFor?: string
+  targetGrades?: string[]
+  specificUserIds?: string[]
+}
+
+// ========================================
+// 活動日曆系統類型定義 | Event Calendar System Types
+// ========================================
+
+// 日曆活動介面
+export interface CalendarEvent {
+  id: number
+  title: string
+  start: Date | string
+  end?: Date | string
+  startTime?: Date | string
+  endTime?: Date | string
+  location?: string
+  eventType: EventType
+  targetGrades?: string[]
+  description?: string
+  creator?: string
+  registrationRequired: boolean
+  registrationDeadline?: Date | string
+  maxParticipants?: number
+  registrationCount: number
+  spotsRemaining?: number
+  userRegistration?: {
+    id: number
+    status: EventRegistrationStatus
+    participantName?: string
+    grade?: string
+  }
+  isUserRegistered: boolean
+  className?: string
+  color: string
+  allDay: boolean
+  url?: string
+}
+
+// 日曆查詢參數
+export interface CalendarFilters {
+  year: number
+  month?: number
+  eventType?: EventType | 'all'
+  targetGrade?: string
+  userOnly?: boolean
+}
+
+// 日曆統計資訊
+export interface CalendarStats {
+  totalEvents: number
+  byType: Record<string, number>
+  byMonth: Record<string, number>
+  userRegistrations: number
+}
+
+// 日曆回應資料
+export interface CalendarResponse extends ApiResponse {
+  data: {
+    events: CalendarEvent[]
+    groupedByMonth?: Record<string, CalendarEvent[]>
+    period: {
+      year: number
+      month?: number
+      startDate: Date | string
+      endDate: Date | string
+    }
+    stats: CalendarStats
+  }
 }
 
 // 活動類型標籤映射

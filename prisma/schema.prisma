@@ -51,6 +51,8 @@ model User {
   assignedFeedback FeedbackForm[] @relation("FeedbackAssigned")
   fileUploads     FileUpload[]
   settingsUpdated SystemSetting[]
+  eventRegistrations EventRegistration[] @relation("UserEventRegistrations")
+  eventNotifications EventNotification[] @relation("EventNotificationCreator")
 
   @@map("users")
 }
@@ -180,14 +182,73 @@ model Event {
   registrationDeadline  DateTime? @map("registration_deadline") @db.Date
   targetGrades          Json?     @map("target_grades") // Array of grade levels
   createdBy             String?   @map("created_by")
+  isFeatured            Boolean   @default(false) @map("is_featured")
   status                String    @default("draft") @db.VarChar(20) // 'draft', 'published', 'cancelled'
   createdAt             DateTime  @default(now()) @map("created_at")
   updatedAt             DateTime  @updatedAt @map("updated_at")
 
   // Relations
   creator User? @relation(fields: [createdBy], references: [id])
+  registrations EventRegistration[]
+  notifications EventNotification[]
+  attachments   FileUpload[] @relation("EventAttachments")
 
   @@map("events")
+}
+
+// 活動報名管理 | Event Registration Management
+model EventRegistration {
+  id                Int       @id @default(autoincrement())
+  eventId           Int       @map("event_id")
+  userId            String    @map("user_id")
+  participantName   String?   @map("participant_name") @db.VarChar(100) // For family members
+  participantEmail  String?   @map("participant_email") @db.VarChar(255)
+  participantPhone  String?   @map("participant_phone") @db.VarChar(20)
+  grade             String?   @db.VarChar(20) // For student events
+  specialRequests   String?   @map("special_requests")
+  status            String    @default("confirmed") @db.VarChar(20) // 'confirmed', 'waiting_list', 'cancelled'
+  registeredAt      DateTime  @default(now()) @map("registered_at")
+  checkedIn         Boolean   @default(false) @map("checked_in")
+  checkedInAt       DateTime? @map("checked_in_at")
+  attendanceNotes   String?   @map("attendance_notes")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation("UserEventRegistrations", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([eventId, status])
+  @@index([userId, status])
+  @@map("event_registrations")
+}
+
+// 活動通知管理 | Event Notification Management
+model EventNotification {
+  id              Int       @id @default(autoincrement())
+  eventId         Int       @map("event_id")
+  type            String    @db.VarChar(50) // 'reminder', 'update', 'cancellation', 'registration_confirmed'
+  recipientType   String    @map("recipient_type") @db.VarChar(20) // 'all_registered', 'specific_users', 'target_audience'
+  title           String    @db.VarChar(255)
+  message         String
+  scheduledFor    DateTime? @map("scheduled_for") // For scheduled notifications
+  sentAt          DateTime? @map("sent_at")
+  status          String    @default("pending") @db.VarChar(20) // 'pending', 'sent', 'failed', 'cancelled'
+  recipientCount  Int       @default(0) @map("recipient_count")
+  deliveredCount  Int       @default(0) @map("delivered_count")
+  errorMessage    String?   @map("error_message")
+  createdBy       String?   @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  creator User? @relation("EventNotificationCreator", fields: [createdBy], references: [id])
+
+  @@index([eventId, type])
+  @@index([status, scheduledFor])
+  @@map("event_notifications")
 }
 
 model CoffeeWithPrincipal {
@@ -404,8 +465,9 @@ model FileUpload {
   fileSize         BigInt   @map("file_size")
   mimeType         String?  @map("mime_type") @db.VarChar(100)
   uploadedBy       String?  @map("uploaded_by")
-  relatedType      String?  @map("related_type") @db.VarChar(50) // 'announcement', 'newsletter', 'resource', etc.
+  relatedType      String?  @map("related_type") @db.VarChar(50) // 'announcement', 'newsletter', 'resource', 'event', etc.
   relatedId        Int?     @map("related_id")
+  eventAttachment  Event?   @relation("EventAttachments", fields: [relatedId], references: [id])
   createdAt        DateTime @default(now()) @map("created_at")
 
   // Relations

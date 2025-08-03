@@ -1,0 +1,421 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { verifyAuth } from '@/lib/auth'
+
+/**
+ * Event Registration API - /api/events/[id]/registration
+ * 活動報名 API
+ * 
+ * @description 處理活動報名相關操作
+ * @features 新增報名、取消報名、查詢報名狀態、候補名單管理
+ * @author Claude Code | Generated for ES International Department
+ */
+
+/**
+ * GET /api/events/[id]/registration
+ * 獲取用戶的報名狀態
+ */
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // 驗證用戶身份
+    const authResult = await verifyAuth(request)
+    if (!authResult.success || !authResult.user) {
+      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    }
+
+    const eventId = parseInt(params.id)
+    if (isNaN(eventId)) {
+      return NextResponse.json(
+        { success: false, message: '無效的活動ID' },
+        { status: 400 }
+      )
+    }
+
+    // 檢查活動是否存在且已發布
+    const event = await prisma.event.findFirst({
+      where: { 
+        id: eventId,
+        status: 'published'
+      },
+      select: {
+        id: true,
+        title: true,
+        registrationRequired: true,
+        registrationDeadline: true,
+        maxParticipants: true,
+        _count: {
+          select: {
+            registrations: {
+              where: {
+                status: 'confirmed'
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!event) {
+      return NextResponse.json(
+        { success: false, message: '活動不存在或尚未發布' },
+        { status: 404 }
+      )
+    }
+
+    if (!event.registrationRequired) {
+      return NextResponse.json(
+        { success: false, message: '此活動無需報名' },
+        { status: 400 }
+      )
+    }
+
+    // 查詢用戶報名狀態
+    const registration = await prisma.eventRegistration.findUnique({
+      where: {
+        eventId_userId: {
+          eventId: eventId,
+          userId: authResult.user.id
+        }
+      },
+      select: {
+        id: true,
+        status: true,
+        participantName: true,
+        participantEmail: true,
+        participantPhone: true,
+        grade: true,
+        specialRequests: true,
+        registeredAt: true,
+        checkedIn: true,
+        checkedInAt: true
+      }
+    })
+
+    // 計算報名狀態
+    const registrationCount = event._count.registrations
+    const spotsAvailable = event.maxParticipants ? event.maxParticipants - registrationCount : null
+    const isRegistrationOpen = !event.registrationDeadline || new Date(event.registrationDeadline) > new Date()
+    const canRegister = !registration && isRegistrationOpen && 
+      (!event.maxParticipants || registrationCount < event.maxParticipants)
+    const canCancelRegistration = registration && 
+      registration.status !== 'cancelled' && isRegistrationOpen
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        event: {
+          id: event.id,
+          title: event.title,
+          registrationRequired: event.registrationRequired,
+          registrationDeadline: event.registrationDeadline,
+          maxParticipants: event.maxParticipants,
+          registrationCount,
+          spotsAvailable,
+          isRegistrationOpen
+        },
+        registration,
+        canRegister,
+        canCancelRegistration
+      }
+    })
+
+  } catch (error) {
+    console.error('Get registration status error:', error)
+    return NextResponse.json(
+      { success: false, message: '獲取報名狀態失敗' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * POST /api/events/[id]/registration
+ * 新增活動報名
+ */
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // 驗證用戶身份
+    const authResult = await verifyAuth(request)
+    if (!authResult.success || !authResult.user) {
+      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    }
+
+    const eventId = parseInt(params.id)
+    if (isNaN(eventId)) {
+      return NextResponse.json(
+        { success: false, message: '無效的活動ID' },
+        { status: 400 }
+      )
+    }
+
+    // 解析請求資料
+    const data = await request.json()
+    const {
+      participantName,
+      participantEmail,
+      participantPhone,
+      grade,
+      specialRequests
+    } = data
+
+    // 檢查活動是否存在且需要報名
+    const event = await prisma.event.findFirst({
+      where: { 
+        id: eventId,
+        status: 'published',
+        registrationRequired: true
+      },
+      select: {
+        id: true,
+        title: true,
+        registrationDeadline: true,
+        maxParticipants: true,
+        _count: {
+          select: {
+            registrations: {
+              where: {
+                status: 'confirmed'
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!event) {
+      return NextResponse.json(
+        { success: false, message: '活動不存在、尚未發布或無需報名' },
+        { status: 404 }
+      )
+    }
+
+    // 檢查報名期限
+    if (event.registrationDeadline && new Date(event.registrationDeadline) <= new Date()) {
+      return NextResponse.json(
+        { success: false, message: '報名期限已過' },
+        { status: 400 }
+      )
+    }
+
+    // 檢查是否已報名
+    const existingRegistration = await prisma.eventRegistration.findUnique({
+      where: {
+        eventId_userId: {
+          eventId: eventId,
+          userId: authResult.user.id
+        }
+      }
+    })
+
+    if (existingRegistration && existingRegistration.status !== 'cancelled') {
+      return NextResponse.json(
+        { success: false, message: '您已報名此活動' },
+        { status: 400 }
+      )
+    }
+
+    // 檢查報名人數限制
+    const registrationCount = event._count.registrations
+    let registrationStatus = 'confirmed'
+
+    if (event.maxParticipants && registrationCount >= event.maxParticipants) {
+      registrationStatus = 'waiting_list'
+    }
+
+    // 建立或更新報名記錄
+    const registrationData = {
+      eventId,
+      userId: authResult.user.id,
+      participantName: participantName || authResult.user.displayName,
+      participantEmail: participantEmail || authResult.user.email,
+      participantPhone,
+      grade,
+      specialRequests,
+      status: registrationStatus
+    }
+
+    let registration
+    if (existingRegistration) {
+      // 重新啟用已取消的報名
+      registration = await prisma.eventRegistration.update({
+        where: { id: existingRegistration.id },
+        data: {
+          ...registrationData,
+          registeredAt: new Date()
+        }
+      })
+    } else {
+      // 建立新報名
+      registration = await prisma.eventRegistration.create({
+        data: registrationData
+      })
+    }
+
+    // 建立報名確認通知
+    await prisma.eventNotification.create({
+      data: {
+        eventId,
+        type: 'registration_confirmed',
+        recipientType: 'specific_users',
+        title: `報名確認：${event.title}`,
+        message: registrationStatus === 'confirmed' 
+          ? `您已成功報名 ${event.title}。我們期待您的參與！`
+          : `您已加入 ${event.title} 的候補名單。如有名額空出，我們會立即通知您。`,
+        recipientCount: 1,
+        createdBy: authResult.user.id
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: registrationStatus === 'confirmed' 
+        ? '報名成功！' 
+        : '已加入候補名單',
+      data: {
+        id: registration.id,
+        status: registration.status,
+        registeredAt: registration.registeredAt,
+        participantName: registration.participantName,
+        grade: registration.grade
+      }
+    })
+
+  } catch (error) {
+    console.error('Create registration error:', error)
+    return NextResponse.json(
+      { success: false, message: '報名失敗' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * DELETE /api/events/[id]/registration
+ * 取消活動報名
+ */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // 驗證用戶身份
+    const authResult = await verifyAuth(request)
+    if (!authResult.success || !authResult.user) {
+      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    }
+
+    const eventId = parseInt(params.id)
+    if (isNaN(eventId)) {
+      return NextResponse.json(
+        { success: false, message: '無效的活動ID' },
+        { status: 400 }
+      )
+    }
+
+    // 檢查活動是否存在
+    const event = await prisma.event.findFirst({
+      where: { 
+        id: eventId,
+        status: 'published'
+      },
+      select: {
+        id: true,
+        title: true,
+        registrationDeadline: true
+      }
+    })
+
+    if (!event) {
+      return NextResponse.json(
+        { success: false, message: '活動不存在或尚未發布' },
+        { status: 404 }
+      )
+    }
+
+    // 檢查報名期限（通常取消也要在期限內）
+    if (event.registrationDeadline && new Date(event.registrationDeadline) <= new Date()) {
+      return NextResponse.json(
+        { success: false, message: '已超過取消報名期限' },
+        { status: 400 }
+      )
+    }
+
+    // 查找用戶的報名記錄
+    const registration = await prisma.eventRegistration.findUnique({
+      where: {
+        eventId_userId: {
+          eventId: eventId,
+          userId: authResult.user.id
+        }
+      }
+    })
+
+    if (!registration || registration.status === 'cancelled') {
+      return NextResponse.json(
+        { success: false, message: '您尚未報名此活動' },
+        { status: 400 }
+      )
+    }
+
+    // 更新報名狀態為已取消
+    await prisma.eventRegistration.update({
+      where: { id: registration.id },
+      data: { 
+        status: 'cancelled',
+        updatedAt: new Date()
+      }
+    })
+
+    // 如果原本是確認狀態，檢查候補名單
+    if (registration.status === 'confirmed') {
+      const waitingListRegistration = await prisma.eventRegistration.findFirst({
+        where: {
+          eventId,
+          status: 'waiting_list'
+        },
+        orderBy: {
+          registeredAt: 'asc'
+        }
+      })
+
+      // 將候補名單第一人移至確認狀態
+      if (waitingListRegistration) {
+        await prisma.eventRegistration.update({
+          where: { id: waitingListRegistration.id },
+          data: { status: 'confirmed' }
+        })
+
+        // 發送候補轉正通知
+        await prisma.eventNotification.create({
+          data: {
+            eventId,
+            type: 'registration_confirmed',
+            recipientType: 'specific_users',
+            title: `候補轉正：${event.title}`,
+            message: `好消息！您已從候補名單轉為正式報名 ${event.title}。期待您的參與！`,
+            recipientCount: 1,
+            createdBy: authResult.user.id
+          }
+        })
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: '報名已取消'
+    })
+
+  } catch (error) {
+    console.error('Cancel registration error:', error)
+    return NextResponse.json(
+      { success: false, message: '取消報名失敗' },
+      { status: 500 }
+    )
+  }
+}
