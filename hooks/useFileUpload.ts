@@ -238,13 +238,13 @@ export function useFileManager() {
     setError(null)
 
     try {
-      const { getFileInfo } = await import('@/lib/fileUpload')
-      const fileInfo = await getFileInfo(fileId)
-      
-      if (!fileInfo) {
+      // Use API endpoint instead of direct import
+      const response = await fetch(`/api/files/info/${fileId}`)
+      if (!response.ok) {
         throw new Error('File not found')
       }
-
+      
+      const fileInfo = await response.json()
       return fileInfo
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to get file info'
