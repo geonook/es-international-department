@@ -1,0 +1,635 @@
+{
+  "totalTests": 38,
+  "passed": 27,
+  "failed": 11,
+  "skipped": 0,
+  "categories": {
+    "Health Check": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "基本健康檢查",
+          "passed": true,
+          "details": {
+            "status": 200,
+            "responseData": {
+              "status": "OK",
+              "service": "ES International Department",
+              "timestamp": "2025-08-03T03:43:44.798Z",
+              "environment": "development",
+              "version": "1.0.0"
+            },
+            "hasRequiredFields": true
+          },
+          "performance": {
+            "responseTime": 233
+          },
+          "timestamp": "2025-08-03T03:43:44.804Z"
+        },
+        {
+          "name": "HEAD 請求支援",
+          "passed": true,
+          "details": {
+            "status": 200,
+            "method": "HEAD"
+          },
+          "performance": {
+            "responseTime": 7
+          },
+          "timestamp": "2025-08-03T03:43:44.811Z"
+        },
+        {
+          "name": "回應格式驗證",
+          "passed": true,
+          "details": {
+            "fields": {
+              "status": true,
+              "service": true,
+              "timestamp": true,
+              "environment": true
+            }
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:44.815Z"
+        }
+      ]
+    },
+    "Authentication": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "未認證訪問 /auth/me",
+          "passed": true,
+          "details": {
+            "expectedStatus": 401,
+            "actualStatus": 401,
+            "hasErrorMessage": true
+          },
+          "performance": {
+            "responseTime": 182
+          },
+          "timestamp": "2025-08-03T03:43:44.997Z"
+        },
+        {
+          "name": "JWT Token 格式驗證",
+          "passed": true,
+          "details": {
+            "expectedStatus": 401,
+            "actualStatus": 401,
+            "tokenProvided": true
+          },
+          "performance": {
+            "responseTime": 6
+          },
+          "timestamp": "2025-08-03T03:43:45.004Z"
+        },
+        {
+          "name": "無效 JWT Token 處理",
+          "passed": true,
+          "details": {
+            "expectedStatus": 401,
+            "actualStatus": 401
+          },
+          "performance": {
+            "responseTime": 3
+          },
+          "timestamp": "2025-08-03T03:43:45.007Z"
+        },
+        {
+          "name": "不支援的 HTTP 方法: POST",
+          "passed": true,
+          "details": {
+            "method": "POST",
+            "expectedStatus": 405,
+            "actualStatus": 405
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:45.010Z"
+        },
+        {
+          "name": "不支援的 HTTP 方法: DELETE",
+          "passed": true,
+          "details": {
+            "method": "DELETE",
+            "expectedStatus": 405,
+            "actualStatus": 405
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:45.013Z"
+        }
+      ]
+    },
+    "Announcements": {
+      "total": 10,
+      "passed": 9,
+      "failed": 1,
+      "tests": [
+        {
+          "name": "取得公告列表",
+          "passed": true,
+          "details": {
+            "status": 200,
+            "hasData": true,
+            "count": 2,
+            "hasPagination": true
+          },
+          "performance": {
+            "responseTime": 3468
+          },
+          "timestamp": "2025-08-03T03:43:48.482Z"
+        },
+        {
+          "name": "分頁功能測試",
+          "passed": {
+            "page": 2,
+            "limit": 2,
+            "totalCount": 2,
+            "totalPages": 1,
+            "hasNextPage": false,
+            "hasPrevPage": true
+          },
+          "details": {
+            "page1Status": 200,
+            "page2Status": 200,
+            "page1Count": 2,
+            "page2Count": 0,
+            "page1Pagination": {
+              "page": 1,
+              "limit": 2,
+              "totalCount": 2,
+              "totalPages": 1,
+              "hasNextPage": false,
+              "hasPrevPage": false
+            },
+            "page2Pagination": {
+              "page": 2,
+              "limit": 2,
+              "totalCount": 2,
+              "totalPages": 1,
+              "hasNextPage": false,
+              "hasPrevPage": true
+            }
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:49.690Z"
+        },
+        {
+          "name": "目標對象篩選 - teachers",
+          "passed": true,
+          "details": {
+            "filter": "targetAudience=teachers",
+            "status": 200,
+            "count": 1
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:50.379Z"
+        },
+        {
+          "name": "目標對象篩選 - parents",
+          "passed": true,
+          "details": {
+            "filter": "targetAudience=parents",
+            "status": 200,
+            "count": 1
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:50.991Z"
+        },
+        {
+          "name": "優先級篩選 - high",
+          "passed": true,
+          "details": {
+            "filter": "priority=high",
+            "status": 200,
+            "count": 1
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:51.741Z"
+        },
+        {
+          "name": "狀態篩選 - published",
+          "passed": true,
+          "details": {
+            "filter": "status=published",
+            "status": 200,
+            "count": 2
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:52.436Z"
+        },
+        {
+          "name": "搜尋功能測試",
+          "passed": true,
+          "details": {
+            "searchTerm": "test",
+            "status": 200,
+            "count": 0
+          },
+          "performance": {
+            "responseTime": 564
+          },
+          "timestamp": "2025-08-03T03:43:53.000Z"
+        },
+        {
+          "name": "未認證建立公告權限控制",
+          "passed": true,
+          "details": {
+            "expectedStatus": 401,
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:53.022Z"
+        },
+        {
+          "name": "排序邏輯驗證",
+          "passed": false,
+          "details": {
+            "itemCount": 2,
+            "firstItemPriority": "medium",
+            "sortingCorrect": false
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:53.877Z"
+        },
+        {
+          "name": "無效公告 ID 處理",
+          "passed": true,
+          "details": {
+            "expectedStatus": "400 or 404",
+            "actualStatus": 400
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.122Z"
+        }
+      ]
+    },
+    "Events": {
+      "total": 5,
+      "passed": 1,
+      "failed": 4,
+      "tests": [
+        {
+          "name": "取得活動列表",
+          "passed": false,
+          "details": {
+            "status": 500,
+            "hasData": true
+          },
+          "performance": {
+            "responseTime": 40
+          },
+          "timestamp": "2025-08-03T03:43:54.162Z"
+        },
+        {
+          "name": "活動日曆資料端點",
+          "passed": false,
+          "details": {
+            "status": 500,
+            "hasCalendarData": true
+          },
+          "performance": {
+            "responseTime": 34
+          },
+          "timestamp": "2025-08-03T03:43:54.196Z"
+        },
+        {
+          "name": "活動報名端點權限控制",
+          "passed": false,
+          "details": {
+            "expectedStatus": "401 or 404",
+            "actualStatus": 500
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.371Z"
+        },
+        {
+          "name": "管理員活動端點權限控制",
+          "passed": true,
+          "details": {
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.377Z"
+        },
+        {
+          "name": "活動通知端點",
+          "passed": false,
+          "details": {
+            "status": 500
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.545Z"
+        }
+      ]
+    },
+    "Resources": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "管理員資源端點權限控制",
+          "passed": true,
+          "details": {
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.548Z"
+        },
+        {
+          "name": "資源分類管理端點",
+          "passed": true,
+          "details": {
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.552Z"
+        },
+        {
+          "name": "資源分析端點",
+          "passed": true,
+          "details": {
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.555Z"
+        },
+        {
+          "name": "資源批量操作端點",
+          "passed": true,
+          "details": {
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.557Z"
+        },
+        {
+          "name": "年級層級端點",
+          "passed": true,
+          "details": {
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.559Z"
+        }
+      ]
+    },
+    "File Upload": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "檔案上傳端點存在性",
+          "passed": true,
+          "details": {
+            "status": 401,
+            "note": "Expected 401 (auth required) or 400 (bad request format)"
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.726Z"
+        },
+        {
+          "name": "圖片上傳端點",
+          "passed": true,
+          "details": {
+            "status": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.775Z"
+        },
+        {
+          "name": "檔案存取端點",
+          "passed": true,
+          "details": {
+            "status": 404
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.969Z"
+        },
+        {
+          "name": "未認證上傳權限控制",
+          "passed": true,
+          "details": {
+            "expectedStatus": 401,
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:54.976Z"
+        }
+      ]
+    },
+    "Notifications": {
+      "total": 6,
+      "passed": 0,
+      "failed": 6,
+      "tests": [
+        {
+          "name": "通知列表端點",
+          "passed": false,
+          "details": {
+            "status": 500
+          },
+          "performance": {
+            "responseTime": 48
+          },
+          "timestamp": "2025-08-03T03:43:55.024Z"
+        },
+        {
+          "name": "通知偏好設定端點",
+          "passed": false,
+          "details": {
+            "status": 500
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:55.064Z"
+        },
+        {
+          "name": "通知統計端點",
+          "passed": false,
+          "details": {
+            "status": 500
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:55.103Z"
+        },
+        {
+          "name": "即時通知串流端點",
+          "passed": false,
+          "details": {
+            "status": 500
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:55.144Z"
+        },
+        {
+          "name": "通知模板端點",
+          "passed": false,
+          "details": {
+            "status": 500
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:55.186Z"
+        },
+        {
+          "name": "標記已讀端點",
+          "passed": false,
+          "details": {
+            "status": 500
+          },
+          "performance": {},
+          "timestamp": "2025-08-03T03:43:55.232Z"
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "category": "Announcements",
+      "testName": "排序邏輯驗證",
+      "details": {
+        "itemCount": 2,
+        "firstItemPriority": "medium",
+        "sortingCorrect": false
+      }
+    },
+    {
+      "category": "Events",
+      "testName": "取得活動列表",
+      "details": {
+        "status": 500,
+        "hasData": true
+      }
+    },
+    {
+      "category": "Events",
+      "testName": "活動日曆資料端點",
+      "details": {
+        "status": 500,
+        "hasCalendarData": true
+      }
+    },
+    {
+      "category": "Events",
+      "testName": "活動報名端點權限控制",
+      "details": {
+        "expectedStatus": "401 or 404",
+        "actualStatus": 500
+      }
+    },
+    {
+      "category": "Events",
+      "testName": "活動通知端點",
+      "details": {
+        "status": 500
+      }
+    },
+    {
+      "category": "Notifications",
+      "testName": "通知列表端點",
+      "details": {
+        "status": 500
+      }
+    },
+    {
+      "category": "Notifications",
+      "testName": "通知偏好設定端點",
+      "details": {
+        "status": 500
+      }
+    },
+    {
+      "category": "Notifications",
+      "testName": "通知統計端點",
+      "details": {
+        "status": 500
+      }
+    },
+    {
+      "category": "Notifications",
+      "testName": "即時通知串流端點",
+      "details": {
+        "status": 500
+      }
+    },
+    {
+      "category": "Notifications",
+      "testName": "通知模板端點",
+      "details": {
+        "status": 500
+      }
+    },
+    {
+      "category": "Notifications",
+      "testName": "標記已讀端點",
+      "details": {
+        "status": 500
+      }
+    }
+  ],
+  "performance": {
+    "Health Check": [
+      {
+        "test": "基本健康檢查",
+        "responseTime": 233
+      },
+      {
+        "test": "HEAD 請求支援",
+        "responseTime": 7
+      }
+    ],
+    "Authentication": [
+      {
+        "test": "未認證訪問 /auth/me",
+        "responseTime": 182
+      },
+      {
+        "test": "JWT Token 格式驗證",
+        "responseTime": 6
+      },
+      {
+        "test": "無效 JWT Token 處理",
+        "responseTime": 3
+      }
+    ],
+    "Announcements": [
+      {
+        "test": "取得公告列表",
+        "responseTime": 3468
+      },
+      {
+        "test": "搜尋功能測試",
+        "responseTime": 564
+      }
+    ],
+    "Events": [
+      {
+        "test": "取得活動列表",
+        "responseTime": 40
+      },
+      {
+        "test": "活動日曆資料端點",
+        "responseTime": 34
+      }
+    ],
+    "Notifications": [
+      {
+        "test": "通知列表端點",
+        "responseTime": 48
+      }
+    ]
+  },
+  "startTime": "2025-08-03T03:43:44.569Z",
+  "endTime": "2025-08-03T03:43:55.233Z",
+  "duration": 10664
+}
