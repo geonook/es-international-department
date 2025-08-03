@@ -694,6 +694,292 @@ export const GRADE_OPTIONS = [
 ]
 
 // ========================================
+// 通知系統類型定義 | Notification System Types  
+// ========================================
+
+// 通知類型 (擴展現有類型)
+export type NotificationType = 
+  | 'system'          // 系統通知
+  | 'announcement'    // 公告通知
+  | 'event'          // 活動通知
+  | 'registration'   // 報名通知
+  | 'resource'       // 資源通知
+  | 'newsletter'     // 電子報通知
+  | 'maintenance'    // 維護通知
+  | 'reminder'       // 提醒通知
+
+// 通知優先級
+export type NotificationPriority = 'low' | 'medium' | 'high' | 'urgent'
+
+// 通知狀態
+export type NotificationStatus = 'unread' | 'read' | 'archived' | 'deleted'
+
+// 通知傳送狀態
+export type NotificationDeliveryStatus = 'pending' | 'sent' | 'failed' | 'cancelled'
+
+// 通知模板類型
+export type NotificationTemplate = 
+  | 'announcement_published'
+  | 'event_created'
+  | 'event_updated'
+  | 'event_cancelled'
+  | 'registration_confirmed'
+  | 'registration_waitlist'
+  | 'registration_cancelled'
+  | 'resource_uploaded'
+  | 'newsletter_published'
+  | 'system_maintenance'
+  | 'reminder_event'
+  | 'reminder_deadline'
+
+// 通知偏好設定
+export interface NotificationPreferences {
+  email: boolean
+  system: boolean
+  browser: boolean
+  doNotDisturb: {
+    enabled: boolean
+    startTime: string
+    endTime: string
+  }
+  categories: {
+    [K in NotificationType]: {
+      enabled: boolean
+      email: boolean
+      system: boolean
+    }
+  }
+}
+
+// 通知介面
+export interface Notification {
+  id: number
+  recipientId: string
+  title: string
+  message: string
+  type: NotificationType
+  priority: NotificationPriority
+  relatedId?: number
+  relatedType?: string
+  isRead: boolean
+  readAt?: Date | string
+  expiresAt?: Date | string
+  createdAt: Date | string
+  updatedAt: Date | string
+  
+  // 關聯資料
+  recipient?: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+  
+  // 計算欄位
+  isExpired?: boolean
+  timeAgo?: string
+}
+
+// 通知統計
+export interface NotificationStats {
+  total: number
+  unread: number
+  read: number
+  archived: number
+  byType: Record<NotificationType, number>
+  byPriority: Record<NotificationPriority, number>
+  recent: number // 最近24小時
+  thisWeek: number
+  thisMonth: number
+}
+
+// 通知篩選
+export interface NotificationFilters {
+  type?: NotificationType | 'all'
+  priority?: NotificationPriority | 'all'
+  status?: 'unread' | 'read' | 'all'
+  dateRange?: {
+    start?: string
+    end?: string
+  }
+  search?: string
+}
+
+// 通知表單資料
+export interface NotificationFormData {
+  title: string
+  message: string
+  type: NotificationType
+  priority: NotificationPriority
+  recipientType: 'all' | 'specific' | 'role_based' | 'grade_based'
+  recipientIds?: string[]
+  targetRoles?: string[]
+  targetGrades?: string[]
+  scheduledFor?: string
+  expiresAt?: string
+  template?: NotificationTemplate
+  relatedId?: number
+  relatedType?: string
+}
+
+// 批量通知操作
+export interface BulkNotificationOperation {
+  action: 'mark_read' | 'mark_unread' | 'archive' | 'delete'
+  notificationIds: number[]
+}
+
+// 通知模板設定
+export interface NotificationTemplateConfig {
+  id: NotificationTemplate
+  name: string
+  description: string
+  subject: string
+  body: string
+  variables: string[]
+  defaultPriority: NotificationPriority
+  category: NotificationType
+}
+
+// 通知發送結果
+export interface NotificationSendResult {
+  success: boolean
+  totalSent: number
+  totalFailed: number
+  recipients: {
+    success: string[]
+    failed: string[]
+  }
+  errors?: string[]
+}
+
+// 通知 API 回應類型
+export interface NotificationListResponse extends ApiResponse {
+  data: Notification[]
+  pagination: PaginationInfo
+  stats: NotificationStats
+  filters: NotificationFilters
+}
+
+export interface NotificationResponse extends ApiResponse {
+  data: Notification
+}
+
+export interface NotificationStatsResponse extends ApiResponse {
+  data: NotificationStats
+}
+
+export interface NotificationSendResponse extends ApiResponse {
+  data: NotificationSendResult
+}
+
+// 通知組件 Props
+export interface NotificationListProps {
+  notifications?: Notification[]
+  loading?: boolean
+  error?: string
+  onRead?: (notificationId: number) => void
+  onBulkOperation?: (operation: BulkNotificationOperation) => void
+  onFiltersChange?: (filters: NotificationFilters) => void
+  onPageChange?: (page: number) => void
+  pagination?: PaginationInfo
+  filters?: NotificationFilters
+  stats?: NotificationStats
+  className?: string
+}
+
+export interface NotificationCardProps {
+  notification: Notification
+  onRead?: (notificationId: number) => void
+  onArchive?: (notificationId: number) => void
+  onDelete?: (notificationId: number) => void
+  showActions?: boolean
+  compact?: boolean
+  className?: string
+}
+
+export interface NotificationBellProps {
+  unreadCount?: number
+  notifications?: Notification[]
+  loading?: boolean
+  onRead?: (notificationId: number) => void
+  onMarkAllRead?: () => void
+  onViewAll?: () => void
+  maxDisplay?: number
+  className?: string
+}
+
+export interface NotificationPreferencesProps {
+  preferences?: NotificationPreferences
+  onSave?: (preferences: NotificationPreferences) => Promise<void>
+  loading?: boolean
+  error?: string
+  className?: string
+}
+
+// Hook 回傳類型
+export interface UseNotificationsReturn {
+  notifications: Notification[]
+  loading: boolean
+  error?: string
+  pagination: PaginationInfo
+  stats: NotificationStats
+  filters: NotificationFilters
+  fetchNotifications: (filters?: NotificationFilters, page?: number) => Promise<void>
+  markAsRead: (notificationId: number) => Promise<void>
+  markAllAsRead: () => Promise<void>
+  bulkOperation: (operation: BulkNotificationOperation) => Promise<void>
+  sendNotification: (data: NotificationFormData) => Promise<NotificationSendResult>
+  refetch: () => Promise<void>
+}
+
+export interface UseNotificationPreferencesReturn {
+  preferences?: NotificationPreferences
+  loading: boolean
+  error?: string
+  updatePreferences: (preferences: Partial<NotificationPreferences>) => Promise<void>
+  resetToDefault: () => Promise<void>
+  refetch: () => Promise<void>
+}
+
+// 通知常數
+export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
+  system: '系統',
+  announcement: '公告',
+  event: '活動',
+  registration: '報名',
+  resource: '資源',
+  newsletter: '電子報',
+  maintenance: '維護',
+  reminder: '提醒'
+}
+
+export const NOTIFICATION_PRIORITY_LABELS: Record<NotificationPriority, string> = {
+  low: '低',
+  medium: '一般',
+  high: '高',
+  urgent: '緊急'
+}
+
+export const NOTIFICATION_TYPE_COLORS: Record<NotificationType, string> = {
+  system: 'blue',
+  announcement: 'green',
+  event: 'purple',
+  registration: 'orange',
+  resource: 'cyan',
+  newsletter: 'pink',
+  maintenance: 'yellow',
+  reminder: 'gray'
+}
+
+export const NOTIFICATION_PRIORITY_COLORS: Record<NotificationPriority, string> = {
+  low: 'gray',
+  medium: 'blue',
+  high: 'orange',
+  urgent: 'red'
+}
+
+// ========================================
 // 日曆管理系統類型定義 | Calendar Management System Types
 // ========================================
 
