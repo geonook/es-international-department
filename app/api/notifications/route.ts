@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
 import NotificationService from '@/lib/notificationService'
 import { 
   NotificationFilters, 
@@ -26,15 +26,19 @@ import {
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
-        { success: false, message: '未授權訪問' }, 
+        { 
+          success: false, 
+          error: AUTH_ERRORS.TOKEN_REQUIRED,
+          message: '未授權訪問' 
+        }, 
         { status: 401 }
       )
     }
 
-    const userId = authResult.user.id
+    const userId = currentUser.id
     const { searchParams } = new URL(request.url)
 
     // 解析查詢參數
@@ -116,7 +120,7 @@ export async function GET(request: NextRequest) {
     })
 
     // 計算統計資訊
-    const stats: NotificationStats = await this.calculateStats(userId)
+    const stats: NotificationStats = await calculateStats(userId)
 
     // 構建篩選資訊
     const filters: NotificationFilters = {
@@ -164,33 +168,26 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
-        { success: false, message: '未授權訪問' }, 
+        { 
+          success: false, 
+          error: AUTH_ERRORS.TOKEN_REQUIRED,
+          message: '未授權訪問' 
+        }, 
         { status: 401 }
       )
     }
 
     // 檢查管理員權限
-    const user = await prisma.user.findUnique({
-      where: { id: authResult.user.id },
-      include: {
-        userRoles: {
-          include: {
-            role: true
-          }
-        }
-      }
-    })
-
-    const isAdmin = user?.userRoles.some(ur => 
-      ur.role.name === 'admin' || ur.role.name === 'super_admin'
-    )
-
-    if (!isAdmin) {
+    if (!isAdmin(currentUser)) {
       return NextResponse.json(
-        { success: false, message: '權限不足' },
+        { 
+          success: false, 
+          error: AUTH_ERRORS.ACCESS_DENIED,
+          message: '權限不足' 
+        },
         { status: 403 }
       )
     }

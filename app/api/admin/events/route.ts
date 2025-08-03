@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth, requireAdmin } from '@/lib/auth'
+import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
 import { EventFormData, EventStats } from '@/lib/types'
 
 /**
@@ -14,14 +14,21 @@ import { EventFormData, EventStats } from '@/lib/types'
 export async function GET(request: NextRequest) {
   try {
     // 驗證管理員權限
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
-    const adminCheck = await requireAdmin(authResult.user.id)
-    if (!adminCheck.success) {
-      return NextResponse.json({ success: false, message: '權限不足' }, { status: 403 })
+    if (!isAdmin(currentUser)) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.ACCESS_DENIED,
+        message: '權限不足' 
+      }, { status: 403 })
     }
 
     // 解析查詢參數
@@ -182,14 +189,21 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // 驗證管理員權限
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
-    const adminCheck = await requireAdmin(authResult.user.id)
-    if (!adminCheck.success) {
-      return NextResponse.json({ success: false, message: '權限不足' }, { status: 403 })
+    if (!isAdmin(currentUser)) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.ACCESS_DENIED,
+        message: '權限不足' 
+      }, { status: 403 })
     }
 
     // 解析請求資料
@@ -226,7 +240,7 @@ export async function POST(request: NextRequest) {
       registrationDeadline: data.registrationDeadline ? new Date(data.registrationDeadline) : null,
       targetGrades: data.targetGrades || [],
       status: data.status,
-      createdBy: authResult.user.id
+      createdBy: currentUser.id
     }
 
     // 建立活動
