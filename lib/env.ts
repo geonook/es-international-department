@@ -24,6 +24,16 @@ const envSchema = z.object({
   NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters long'),
   NEXTAUTH_URL: z.string().url('Invalid NEXTAUTH_URL format'),
 
+  // Google OAuth
+  GOOGLE_CLIENT_ID: z.string().refine(
+    (id) => id.includes('.apps.googleusercontent.com') || id === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+    'GOOGLE_CLIENT_ID must be a valid Google OAuth client ID ending with .apps.googleusercontent.com'
+  ),
+  GOOGLE_CLIENT_SECRET: z.string().min(24, 'GOOGLE_CLIENT_SECRET must be at least 24 characters long').refine(
+    (secret) => secret !== 'YOUR_GOOGLE_CLIENT_SECRET',
+    'GOOGLE_CLIENT_SECRET must be set to your actual Google OAuth client secret'
+  ),
+
   // Cache (Optional)
   REDIS_URL: z.string().url('Invalid REDIS_URL format').optional(),
 
@@ -140,6 +150,20 @@ export function checkEnvironmentHealth() {
   
   if (env.NODE_ENV === 'production' && !info.monitoring.sentry) {
     issues.push('Sentry monitoring not configured for production')
+  }
+  
+  // 檢查 OAuth 配置
+  if (env.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com') {
+    issues.push('Google OAuth Client ID not configured - still using placeholder value')
+  }
+  
+  if (env.GOOGLE_CLIENT_SECRET === 'YOUR_GOOGLE_CLIENT_SECRET') {
+    issues.push('Google OAuth Client Secret not configured - still using placeholder value')
+  }
+  
+  // 檢查生產環境 HTTPS
+  if (env.NODE_ENV === 'production' && !env.NEXTAUTH_URL.startsWith('https://')) {
+    issues.push('Production environment must use HTTPS for NEXTAUTH_URL')
   }
   
   return {

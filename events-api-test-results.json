@@ -1,0 +1,435 @@
+{
+  "totalTests": 25,
+  "passed": 24,
+  "failed": 1,
+  "skipped": 0,
+  "categories": {
+    "Basic Availability": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "端點存在性: /api/events",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/events",
+            "status": 401,
+            "responseReceived": true
+          },
+          "performance": {
+            "responseTime": 597
+          },
+          "timestamp": "2025-08-06T22:40:51.894Z"
+        },
+        {
+          "name": "端點存在性: /api/admin/events",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/admin/events",
+            "status": 401,
+            "responseReceived": true
+          },
+          "performance": {
+            "responseTime": 6
+          },
+          "timestamp": "2025-08-06T22:40:51.901Z"
+        },
+        {
+          "name": "端點存在性: /api/events/1",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/events/1",
+            "status": 401,
+            "responseReceived": true
+          },
+          "performance": {
+            "responseTime": 179
+          },
+          "timestamp": "2025-08-06T22:40:52.080Z"
+        }
+      ]
+    },
+    "Authentication": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "未認證請求保護: GET /api/events",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/events",
+            "method": "GET",
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401,
+            "hasAuthError": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.089Z"
+        },
+        {
+          "name": "未認證請求保護: GET /api/admin/events",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/admin/events",
+            "method": "GET",
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401,
+            "hasAuthError": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.093Z"
+        },
+        {
+          "name": "未認證請求保護: POST /api/admin/events",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/admin/events",
+            "method": "POST",
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401,
+            "hasAuthError": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.097Z"
+        }
+      ]
+    },
+    "Events List": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "GET /api/events 基本回應",
+          "passed": true,
+          "details": {
+            "status": 401,
+            "hasData": true,
+            "isAuthRequired": true,
+            "dataStructure": [
+              "success",
+              "error",
+              "message"
+            ]
+          },
+          "performance": {
+            "responseTime": 6
+          },
+          "timestamp": "2025-08-06T22:40:52.103Z"
+        }
+      ]
+    },
+    "Events Filters": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "分頁測試",
+          "passed": true,
+          "details": {
+            "params": "page=1&limit=5",
+            "status": 401,
+            "hasData": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.107Z"
+        },
+        {
+          "name": "活動類型篩選",
+          "passed": true,
+          "details": {
+            "params": "eventType=meeting",
+            "status": 401,
+            "hasData": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.115Z"
+        },
+        {
+          "name": "目標年級篩選",
+          "passed": true,
+          "details": {
+            "params": "targetGrade=3-4",
+            "status": 401,
+            "hasData": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.119Z"
+        },
+        {
+          "name": "搜尋功能",
+          "passed": true,
+          "details": {
+            "params": "search=test",
+            "status": 401,
+            "hasData": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.124Z"
+        },
+        {
+          "name": "即將到來的活動",
+          "passed": true,
+          "details": {
+            "params": "upcoming=true",
+            "status": 401,
+            "hasData": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.128Z"
+        },
+        {
+          "name": "精選活動",
+          "passed": true,
+          "details": {
+            "params": "featured=true",
+            "status": 401,
+            "hasData": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.133Z"
+        },
+        {
+          "name": "日期範圍篩選",
+          "passed": true,
+          "details": {
+            "params": "startDate=2025-01-01&endDate=2025-12-31",
+            "status": 401,
+            "hasData": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.137Z"
+        }
+      ]
+    },
+    "Single Event": {
+      "total": 2,
+      "passed": 1,
+      "failed": 1,
+      "tests": [
+        {
+          "name": "GET /api/events/[id] 單一活動查詢",
+          "passed": true,
+          "details": {
+            "status": 401,
+            "validResponse": true
+          },
+          "performance": {
+            "responseTime": 6
+          },
+          "timestamp": "2025-08-06T22:40:52.143Z"
+        },
+        {
+          "name": "GET /api/events/[id] 無效ID處理",
+          "passed": false,
+          "details": {
+            "status": 401,
+            "expectedStatus": "400 or 404",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.147Z"
+        }
+      ]
+    },
+    "Create Event": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "POST /api/admin/events 權限驗證",
+          "passed": true,
+          "details": {
+            "status": 401,
+            "expectedStatus": "401 or 403",
+            "actualStatus": 401,
+            "requiresAuth": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.149Z"
+        }
+      ]
+    },
+    "Update Event": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "PUT /api/admin/events/[id] 權限驗證",
+          "passed": true,
+          "details": {
+            "eventId": 1,
+            "status": 401,
+            "expectedStatus": "401, 403, or 404",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.152Z"
+        }
+      ]
+    },
+    "Delete Event": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "DELETE /api/admin/events/[id] 權限驗證",
+          "passed": true,
+          "details": {
+            "eventId": 9999,
+            "status": 401,
+            "expectedStatus": "401, 403, or 404",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.154Z"
+        }
+      ]
+    },
+    "Input Validation": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "缺少必填欄位",
+          "passed": true,
+          "details": {
+            "testData": {
+              "title": "",
+              "eventType": "meeting"
+            },
+            "status": 401,
+            "expectedStatus": "400, 401, or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.156Z"
+        },
+        {
+          "name": "無效的活動類型",
+          "passed": true,
+          "details": {
+            "testData": {
+              "title": "Test",
+              "eventType": "invalid-type",
+              "startDate": "2025-03-15",
+              "status": "published"
+            },
+            "status": 401,
+            "expectedStatus": "400, 401, or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.158Z"
+        },
+        {
+          "name": "無效的日期格式",
+          "passed": true,
+          "details": {
+            "testData": {
+              "title": "Test",
+              "eventType": "meeting",
+              "startDate": "invalid-date",
+              "status": "published"
+            },
+            "status": 401,
+            "expectedStatus": "400, 401, or 403",
+            "actualStatus": 401
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:52.161Z"
+        }
+      ]
+    },
+    "Error Handling": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "大型請求處理",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/events",
+            "status": 0,
+            "noServerError": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:53.163Z"
+        },
+        {
+          "name": "不存在的活動ID",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/events/999999",
+            "status": 401,
+            "noServerError": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:53.171Z"
+        },
+        {
+          "name": "無效的 HTTP 方法",
+          "passed": true,
+          "details": {
+            "endpoint": "/api/events",
+            "status": 405,
+            "noServerError": true
+          },
+          "performance": {},
+          "timestamp": "2025-08-06T22:40:53.176Z"
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "category": "Single Event",
+      "testName": "GET /api/events/[id] 無效ID處理",
+      "details": {
+        "status": 401,
+        "expectedStatus": "400 or 404",
+        "actualStatus": 401
+      }
+    }
+  ],
+  "performance": {
+    "Basic Availability": [
+      {
+        "test": "端點存在性: /api/events",
+        "responseTime": 597
+      },
+      {
+        "test": "端點存在性: /api/admin/events",
+        "responseTime": 6
+      },
+      {
+        "test": "端點存在性: /api/events/1",
+        "responseTime": 179
+      }
+    ],
+    "Events List": [
+      {
+        "test": "GET /api/events 基本回應",
+        "responseTime": 6
+      }
+    ],
+    "Single Event": [
+      {
+        "test": "GET /api/events/[id] 單一活動查詢",
+        "responseTime": 6
+      }
+    ]
+  },
+  "testEvents": [],
+  "startTime": "2025-08-06T22:40:51.296Z",
+  "endTime": "2025-08-06T22:40:53.176Z",
+  "duration": 1880
+}

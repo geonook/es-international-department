@@ -6,6 +6,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/middleware'
 import { prisma } from '@/lib/prisma'
+import { withCache, cacheInvalidation, CACHE_TTL } from '@/lib/cache'
+import { performance } from 'perf_hooks'
 
 /**
  * GET /api/admin/announcements
@@ -52,40 +54,73 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    // 獲取公告列表
-    const [announcements, totalCount] = await Promise.all([
-      prisma.announcement.findMany({
-        where: whereClause,
-        skip,
-        take: limit,
-        include: {
-          author: {
-            select: {
-              id: true,
-              email: true,
-              displayName: true,
-              firstName: true,
-              lastName: true
-            }
+    // Generate cache key based on query parameters
+    const cacheKey = `announcements:admin:${JSON.stringify({ page, limit, status, targetAudience, priority, search })}`
+    
+    // Use caching for better performance
+    const result = await withCache(
+      cacheKey,
+      async () => {
+        const startTime = performance.now()
+        
+        const [announcements, totalCount] = await Promise.all([
+          prisma.announcement.findMany({
+            where: whereClause,
+            skip,
+            take: limit,
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  displayName: true,
+                  firstName: true,
+                  lastName: true
+                }
+              }
+            },
+            orderBy: { createdAt: 'desc' }
+          }),
+          prisma.announcement.count({ where: whereClause })
+        ])
+        
+        const queryTime = performance.now() - startTime
+        
+        // Log slow queries
+        if (queryTime > 200) {
+          console.warn(`🐌 Slow announcements query: ${queryTime.toFixed(2)}ms`)
+        }
+        
+        return { announcements, totalCount, queryTime }
+      },
+      CACHE_TTL.SHORT // Cache for 1 minute
+    )
+    
+    const { announcements, totalCount, queryTime } = result
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          announcements,
+          pagination: {
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit)
           }
         },
-        orderBy: { createdAt: 'desc' }
-      }),
-      prisma.announcement.count({ where: whereClause })
-    ])
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        announcements,
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit)
+        performance: {
+          queryTime: queryTime?.toFixed(2) || 'cached',
+          cached: !queryTime
+        }
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120'
         }
       }
-    })
+    )
 
   } catch (error) {
     console.error('Admin announcements list error:', error)
@@ -176,6 +211,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 創建公告
+    const startTime = performance.now()
+    
     const newAnnouncement = await prisma.announcement.create({
       data: {
         title,
@@ -200,11 +237,19 @@ export async function POST(request: NextRequest) {
         }
       }
     })
+    
+    const createTime = performance.now() - startTime
+    
+    // Invalidate announcements cache after creation
+    cacheInvalidation.announcements()
 
     return NextResponse.json({
       success: true,
       data: { announcement: newAnnouncement },
-      message: '公告創建成功'
+      message: '公告創建成功',
+      performance: {
+        createTime: createTime.toFixed(2) + 'ms'
+      }
     }, { status: 201 })
 
   } catch (error) {
