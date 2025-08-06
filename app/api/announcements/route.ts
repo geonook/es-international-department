@@ -90,7 +90,6 @@ export async function GET(request: NextRequest) {
           }
         },
         orderBy: [
-          { priority: 'desc' }, // 先按優先級排序
           { publishedAt: 'desc' }, 
           { updatedAt: 'desc' },
           { createdAt: 'desc' }
@@ -107,7 +106,7 @@ export async function GET(request: NextRequest) {
       const publishedAt = announcement.publishedAt || announcement.createdAt
       const daysSincePublished = Math.floor((now.getTime() - publishedAt.getTime()) / (1000 * 60 * 60 * 24))
       
-      // 優先級權重
+      // 優先級權重 (high > medium > low)
       const priorityWeight = {
         'high': 100,
         'medium': 50,

@@ -53,6 +53,8 @@ model User {
   settingsUpdated SystemSetting[]
   eventRegistrations EventRegistration[] @relation("UserEventRegistrations")
   eventNotifications EventNotification[] @relation("EventNotificationCreator")
+  notificationPreferences NotificationPreference?
+  gradeAssignments UserGradeAssignment[]
 
   @@map("users")
 }
@@ -134,7 +136,7 @@ model Announcement {
   summary        String?
   authorId       String?   @map("author_id")
   targetAudience String    @map("target_audience") @db.VarChar(20) // 'teachers', 'parents', 'all'
-  priority       String    @default("medium") @db.VarChar(10) // 'low', 'medium', 'high'
+  priority       String    @default("medium") @db.VarChar(10) // 'low', 'medium', 'high', 'urgent'
   status         String    @default("draft") @db.VarChar(20) // 'draft', 'published', 'archived'
   publishedAt    DateTime? @map("published_at")
   expiresAt      DateTime? @map("expires_at")
@@ -300,6 +302,7 @@ model GradeLevel {
 
   // Relations
   resources Resource[]
+  userAssignments UserGradeAssignment[]
 
   @@map("grade_levels")
 }
@@ -474,4 +477,49 @@ model FileUpload {
   uploader User? @relation(fields: [uploadedBy], references: [id])
 
   @@map("file_uploads")
+}
+
+// 用戶通知偏好設定 | User Notification Preferences
+model NotificationPreference {
+  id          Int      @id @default(autoincrement())
+  userId      String   @unique @map("user_id")
+  email       Boolean  @default(true)
+  system      Boolean  @default(true)
+  browser     Boolean  @default(true)
+  
+  // 免打擾時段
+  doNotDisturbEnabled Boolean  @default(false) @map("do_not_disturb_enabled")
+  doNotDisturbStart   String?  @map("do_not_disturb_start") @db.VarChar(5) // "22:00" format
+  doNotDisturbEnd     String?  @map("do_not_disturb_end") @db.VarChar(5)   // "08:00" format
+  
+  // 分類偏好 (JSON 格式存儲)
+  categoryPreferences Json     @default("{}") @map("category_preferences")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("notification_preferences")
+}
+
+// 用戶年級關聯 | User Grade Assignment
+model UserGradeAssignment {
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id")
+  gradeLevelId Int     @map("grade_level_id")
+  relationship String  @db.VarChar(20) // 'parent', 'teacher', 'student'
+  isActive    Boolean  @default(true) @map("is_active")
+  assignedAt  DateTime @default(now()) @map("assigned_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gradeLevel GradeLevel @relation(fields: [gradeLevelId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, gradeLevelId, relationship])
+  @@index([userId, isActive])
+  @@index([gradeLevelId, relationship, isActive])
+  @@map("user_grade_assignments")
 }
