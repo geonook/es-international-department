@@ -1,5 +1,5 @@
-# ES International Department | ES 國際部
-**Parent Portal & Resource Center | 家長門戶網站與資源中心**
+# KCISLK ESID Info Hub | KCISLK 小學國際處資訊中心
+**Information Service Website for KCISLK Elementary School International Department | 康橋國際學校小學國際處資訊服務網站**
 
 > **📊 項目狀態**: 73.7% 完成 | **🚀 API 健康度**: 28/38 端點正常運作  
 > **⚡ 最後更新**: 2025-01-31 | **🎯 下一里程碑**: 通知系統完善
@@ -52,9 +52,9 @@
 
 ## Project Overview | 專案概述
 
-The ES International Department parent portal and resource center is a comprehensive Next.js application providing parents, teachers, and students with access to educational resources, event information, and communication tools.
+KCISLK ESID Info Hub is a comprehensive Next.js application providing parents and teachers of KCISLK Elementary School International Department with access to the latest information, educational resources, event updates, and communication tools.
 
-ES 國際部家長門戶網站和資源中心是一個全面的 Next.js 應用程式，為家長、教師和學生提供教育資源、活動資訊和溝通工具的存取。
+KCISLK 小學國際處資訊中心是一個全面的 Next.js 應用程式，為康橋國際學校小學國際處的家長和老師提供最新資訊、教育資源、活動更新和溝通工具的存取。
 
 ### 🌟 Features | 功能特色
 
@@ -115,7 +115,7 @@ ES 國際部家長門戶網站和資源中心是一個全面的 Next.js 應用�
 ```bash
 # Clone the repository | 複製儲存庫
 git clone <repository-url>
-cd es-international-department
+cd kcislk-esid-info-hub
 
 # Install dependencies | 安裝依賴套件
 pnpm install
@@ -148,8 +148,8 @@ pnpm env:switch   # Switch between environments | 切換環境
 pnpm test:db      # Test database connection | 測試資料庫連接
 
 # Docker | Docker
-docker build -t es-international-department .  # Build Docker image | 建置 Docker 映像檔
-docker run -p 8080:8080 es-international-department  # Run container | 執行容器
+docker build -t kcislk-esid-info-hub .  # Build Docker image | 建置 Docker 映像檔
+docker run -p 8080:8080 kcislk-esid-info-hub  # Run container | 執行容器
 
 # Git workflow (follow CLAUDE.md rules) | Git 工作流程（遵循 CLAUDE.md 規則）
 git add .                           # 暫存所有變更
@@ -209,7 +209,7 @@ git push origin main                # 推送到主分支（自動 GitHub 備份�
 ## Project Structure
 
 ```
-es-international-department/
+kcislk-esid-info-hub/
 ├── CLAUDE.md                  # Essential rules for Claude Code
 ├── README.md                  # This file
 ├── Dockerfile                 # Docker configuration for deployment
@@ -248,11 +248,11 @@ es-international-department/
 
 ### 🏠 Home Page (`/`) | 首頁
 - Welcome message and hero section | 歡迎訊息和主視覺區域
-- Parent-focused quote and imagery | 以家長為焦點的標語和圖像
-- International Department news board | 國際部訊息看板
+- KCISLK ESID focused information display | 專注於 KCISLK 小學國際處的資訊展示
+- Elementary International Department news board | 小學國際處訊息看板
 - Monthly newsletter section | 月刊電子報區域
-- Quick statistics | 快速統計資訊
-- KCFSID squad information | KCFSID 小隊資訊
+- Quick statistics and updates | 快速統計資訊和更新
+- Parent and teacher resources | 家長和老師資源
 
 ### 📅 Events Page (`/events`) | 活動頁面
 - Coffee with the Principal materials | 校長有約相關資料
@@ -327,13 +327,13 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ```bash
 # Build Docker image | 建置 Docker 映像檔
-docker build -t es-international-department .
+docker build -t kcislk-esid-info-hub .
 
 # Run with environment variables | 運行並設定環境變數
 docker run -p 8080:8080 \
   -e DATABASE_URL="your_database_url" \
   -e NODE_ENV="production" \
-  es-international-department
+  kcislk-esid-info-hub
 
 # Health check | 健康檢查
 curl http://localhost:8080/api/health

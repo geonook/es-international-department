@@ -13,7 +13,7 @@
    ```
    - 點擊專案選擇器
    - 選擇現有專案或點擊「新增專案」
-   - 專案名稱：ES International Department
+   - 專案名稱：KCISLK ESID Info Hub
    ```
 
 3. **啟用 Google+ API**
@@ -33,15 +33,15 @@
 
 2. **配置 OAuth 同意畫面**
    ```
-   應用程式名稱：ES International Department
-   使用者支援電子郵件：your-email@domain.com
-   開發人員聯絡資訊：your-email@domain.com
+   應用程式名稱：KCISLK ESID Info Hub
+   使用者支援電子郵件：esid@kcislk.ntpc.edu.tw
+   開發人員聯絡資訊：esid@kcislk.ntpc.edu.tw
    ```
 
 3. **設定應用程式類型**
    ```
    應用程式類型：Web 應用程式
-   名稱：ES International OAuth
+   名稱：KCISLK ESID OAuth
    ```
 
 ### 3. 重定向 URI 設定
@@ -54,7 +54,7 @@ http://localhost:3000/api/auth/callback/google
 **生產環境**
 ```
 https://your-domain.com/api/auth/callback/google
-https://landing-app-v2.zeabur.app/api/auth/callback/google
+https://kcislk-esid.zeabur.app/api/auth/callback/google
 ```
 
 ### 4. 環境變數配置
@@ -68,7 +68,7 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
 # 確保設定正確的 URL
 NEXTAUTH_URL="http://localhost:3000"  # 開發環境
-# NEXTAUTH_URL="https://landing-app-v2.zeabur.app"  # 生產環境
+# NEXTAUTH_URL="https://kcislk-esid.zeabur.app"  # 生產環境
 ```
 
 ## 🧪 測試流程 | Testing Workflow
@@ -165,7 +165,7 @@ NEXTAUTH_URL=http://localhost:3000
 # 生產環境
 GOOGLE_CLIENT_ID=your-prod-client-id
 GOOGLE_CLIENT_SECRET=your-prod-client-secret
-NEXTAUTH_URL=https://landing-app-v2.zeabur.app
+NEXTAUTH_URL=https://kcislk-esid.zeabur.app
 ```
 
 ---

@@ -11,12 +11,12 @@ import { useRef, useEffect, useState } from "react"
 import { Announcement } from "@/lib/types"
 
 /**
- * 首頁組件 - ES 國際部家長門戶網站
- * Home Page Component - ES International Department Parent Portal
+ * 首頁組件 - KCISLK 小學國際處資訊中心
+ * Home Page Component - KCISLK ESID Info Hub
  * 
- * @description 展示 ES 國際部的主要功能，包括歡迎訊息、國際部新聞、月刊電子報和 KCFSID 小隊資訊
+ * @description 展示 KCISLK 小學國際處的主要功能，為家長和老師提供最新資訊、活動更新和溝通工具
  * @features 響應式設計、流暢動畫、視差滾動效果、互動式卡片
- * @author Claude Code | Generated with love for ES International Department
+ * @author Claude Code | Generated with love for KCISLK ESID Info Hub
  */
 export default function HomePage() {
   // 頁面載入狀態 | Page loading state
@@ -178,9 +178,9 @@ export default function HomePage() {
               </motion.div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                  ES International Department
+                  KCISLK ESID Info Hub
                 </h1>
-                <p className="text-xs text-gray-500">Excellence in Education</p>
+                <p className="text-xs text-gray-500">康橋小學國際處資訊中心</p>
               </div>
             </motion.div>
 
@@ -252,7 +252,7 @@ export default function HomePage() {
                 animate={isHeroInView ? { y: 0, opacity: 1 } : {}}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                Parents' Corner
+                Info Hub
               </motion.h3>
             </motion.div>
 
@@ -618,7 +618,7 @@ export default function HomePage() {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8 }}
             >
-              International Department
+              KCISLK Elementary
               <motion.span
                 className="inline-block ml-4"
                 animate={{
@@ -630,7 +630,7 @@ export default function HomePage() {
                 }}
                 transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
               >
-                NEWS
+                ESID NEWS
               </motion.span>
             </motion.h2>
 
@@ -648,7 +648,7 @@ export default function HomePage() {
                     <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                       <CardTitle className="text-2xl text-purple-700 cursor-pointer flex items-center justify-center gap-2 group-hover:text-purple-900 transition-colors">
                         <BookOpen className="w-6 h-6" />
-                        ID News Message Board
+                        ESID News Message Board
                       </CardTitle>
                     </motion.div>
                   </CardHeader>
@@ -668,7 +668,7 @@ export default function HomePage() {
                         </div>
                         <div className="flex items-start gap-3">
                           <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                            <span className="text-white font-bold text-xs">ID</span>
+                            <span className="text-white font-bold text-xs">ESID</span>
                           </div>
                           <div className="flex-1">
                             <h4 className="font-semibold text-gray-900 mb-1">期末評量週注意事項</h4>
@@ -837,7 +837,7 @@ export default function HomePage() {
                         transition={{ delay: 0.5 }}
                       >
                         We will be uploading a monthly newsletter filled with important updates, events, and highlights
-                        from our ID community.
+                        from our KCISLK Elementary School International Department community.
                       </motion.p>
                     </div>
                     <motion.div className="relative mb-4" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
@@ -1018,8 +1018,8 @@ export default function HomePage() {
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <p>&copy; 2025 ES International Department, KCIS. All rights reserved.</p>
-            <p className="text-purple-300 text-sm mt-2">Excellence in International Education</p>
+            <p>&copy; 2025 KCISLK Elementary School International Department. All rights reserved.</p>
+            <p className="text-purple-300 text-sm mt-2">康橋國際學校小學國際處 | Excellence in International Education</p>
           </motion.div>
         </div>
       </motion.footer>

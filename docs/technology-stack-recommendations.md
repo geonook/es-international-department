@@ -1,9 +1,9 @@
 # Technology Stack & Architecture Recommendations for Zeabur Deployment
-*ES 國際部技術棧與架構建議 - Zeabur 雲端部署專用*
+*KCISLK 小學國際處資訊中心技術棧與架構建議 - Zeabur 雲端部署專用*
 
 ## ☁️ Zeabur 雲端架構概述 | Zeabur Cloud Architecture Overview
 
-ES International Department 採用 **Zeabur 雲端平台**進行部署，實現多環境隔離與自動化部署流程。
+KCISLK ESID Info Hub 採用 **Zeabur 雲端平台**進行部署，實現多環境隔離與自動化部署流程。
 
 ### 🏗️ 多環境架構設計
 ```
@@ -513,12 +513,12 @@ export function OptimizedImage({ src, alt, width, height, priority = false }: Op
 ### 🚀 Zeabur 部署 (主要推薦)
 ```yaml
 # zeabur.yaml - Zeabur 部署配置檔
-name: es-international-department
+name: kcislk-esid-info-hub
 services:
   - name: web
     source:
       type: git
-      url: https://github.com/your-username/es-international-department
+      url: https://github.com/your-username/kcislk-esid-info-hub
     build:
       commands:
         - npm install
@@ -545,15 +545,15 @@ services:
 ```bash
 # Development Environment (開發環境)
 ZEABUR_ENVIRONMENT=development
-DATABASE_URL=postgresql://dev_user:password@dev-db.zeabur.com:5432/es_international_dev
+DATABASE_URL=postgresql://dev_user:password@dev-db.zeabur.com:5432/kcislk_esid_dev
 
 # Staging Environment (預備環境)
 ZEABUR_ENVIRONMENT=staging  
-DATABASE_URL=postgresql://stage_user:password@stage-db.zeabur.com:5432/es_international_staging
+DATABASE_URL=postgresql://stage_user:password@stage-db.zeabur.com:5432/kcislk_esid_staging
 
 # Production Environment (正式環境)
 ZEABUR_ENVIRONMENT=production
-DATABASE_URL=postgresql://prod_user:password@prod-db.zeabur.com:5432/es_international_prod
+DATABASE_URL=postgresql://prod_user:password@prod-db.zeabur.com:5432/kcislk_esid_prod
 ```
 
 ### 📋 Zeabur 部署腳本配置
@@ -595,14 +595,14 @@ triggers:
 
 ### 🐳 Docker 部署 (主要推薦)
 ```dockerfile
-# ES International Department - Optimized Dockerfile for Zeabur
+# KCISLK ESID Info Hub - Optimized Dockerfile for Zeabur
 # 基於 Zeabur 建議的優化版本
 
 # Base image with pnpm
 FROM node:22-slim AS base
 LABEL "language"="nodejs"
 LABEL "framework"="next.js"
-LABEL "project"="es-international-department"
+LABEL "project"="kcislk-esid-info-hub"
 
 # Install pnpm globally
 RUN npm install -g pnpm
@@ -704,7 +704,7 @@ const logger = winston.createLogger({
     winston.format.errors({ stack: true }),
     winston.format.json()
   ),
-  defaultMeta: { service: 'esid-portal' },
+  defaultMeta: { service: 'kcislk-esid-portal' },
   transports: [
     new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
     new winston.transports.File({ filename: 'logs/combined.log' })
@@ -814,7 +814,7 @@ SENTRY_DSN="your-sentry-dsn"
 
 ## 總結 | Summary
 
-此技術棧建議提供了一個完整的、雲端原生的、現代化的解決方案，專為 ES International Department 系統在 **Zeabur 平台**上的部署需求設計：
+此技術棧建議提供了一個完整的、雲端原生的、現代化的解決方案，專為 KCISLK ESID Info Hub 系統在 **Zeabur 平台**上的部署需求設計：
 
 ### 🌟 核心優勢 | Core Advantages
 1. **☁️ 雲端原生**: 完整的 Zeabur 平台整合，多環境自動化部署
@@ -866,4 +866,4 @@ SENTRY_DSN="your-sentry-dsn"
 ✅ **安全合規**的資料管理機制  
 ✅ **成本優化**的雲端資源使用  
 
-**🎉 立即開始使用 Zeabur 部署您的 ES International Department 系統！**
+**🎉 立即開始使用 Zeabur 部署您的 KCISLK ESID Info Hub 系統！**

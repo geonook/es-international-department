@@ -1,8 +1,8 @@
 # 📸 圖片上傳功能使用指南
 # Image Upload Feature User Guide
 
-> **ES 國際部 - 富文本編輯器圖片上傳整合功能**  
-> **ES International Department - Rich Text Editor Image Upload Integration**
+> **KCISLK 小學國際處資訊中心 - 富文本編輯器圖片上傳整合功能**  
+> **KCISLK ESID Info Hub - Rich Text Editor Image Upload Integration**
 
 ## 🎯 功能概述 | Feature Overview
 
@@ -259,7 +259,7 @@ const handleUpload = async (files: File[]) => {
 
 如有任何問題或建議，請聯繫開發團隊：
 
-- **專案倉庫**: ES International Department GitHub
+- **專案倉庫**: KCISLK ESID Info Hub GitHub
 - **問題回報**: 使用 GitHub Issues
 - **技術文件**: 查看 `/docs` 目錄
 - **測試腳本**: 執行 `npm run test:image-integration`

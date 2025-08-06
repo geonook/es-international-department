@@ -86,7 +86,7 @@ export default function WelcomePage() {
             </motion.div>
             
             <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
-              歡迎加入 ES 國際部！
+              歡迎加入 KCISLK ESID！
             </CardTitle>
             
             <CardDescription className="text-lg text-gray-600">
@@ -180,7 +180,7 @@ export default function WelcomePage() {
             >
               <p>
                 如有任何問題，請聯繫{' '}
-                <a href="mailto:support@es-international.edu" className="text-blue-600 hover:underline">
+                <a href="mailto:esid@kcislk.ntpc.edu.tw" className="text-blue-600 hover:underline">
                   系統管理員
                 </a>
               </p>

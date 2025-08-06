@@ -1,5 +1,5 @@
 # Zeabur Deployment Guide & Development Workflow
-*ES International Department - Zeabur 部署指南與開發協作流程*
+*KCISLK ESID Info Hub - Zeabur 部署指南與開發協作流程*
 
 ## 📋 目錄 | Table of Contents
 1. [Zeabur 平台概述](#zeabur-平台概述)
@@ -36,7 +36,7 @@ Zeabur 是一個現代化的雲端部署平台，專為開發者設計，提供�
 ### 環境劃分策略
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    ES International Department                  │
+│                    KCISLK ESID Info Hub                        │
 │                        Zeabur 多環境架構                        │
 └─────────────────────────────────────────────────────────────────┘
 
@@ -63,21 +63,21 @@ Zeabur 是一個現代化的雲端部署平台，專為開發者設計，提供�
 ### 資料庫環境隔離
 ```sql
 -- Development Database
-es_international_dev
+kcislk_esid_dev
 ├── 開發測試資料
 ├── 範例使用者帳戶
 ├── 模擬公告與活動
 └── 實驗性功能測試
 
 -- Staging Database  
-es_international_staging
+kcislk_esid_staging
 ├── 接近真實的測試資料
 ├── 完整功能驗證
 ├── 效能壓力測試
 └── 整合測試環境
 
 -- Production Database
-es_international_prod
+kcislk_esid_prod
 ├── 正式營運資料
 ├── 真實使用者資料
 ├── 完整備份機制
@@ -95,7 +95,7 @@ es_international_prod
 
 2. **連接 GitHub 儲存庫**
    - 授權 Zeabur 存取您的 GitHub 儲存庫
-   - 選擇 `es-international-department` 專案
+   - 選擇 `kcislk-esid-info-hub` 專案
 
 ### 步驟 2: 建立多環境資料庫
 ```bash
@@ -126,13 +126,13 @@ es_international_prod
 # Database → Connection → Connection String
 
 # Development Environment
-DATABASE_URL="postgresql://dev_user:dev_pass@dev-db.zeabur.com:5432/es_international_dev"
+DATABASE_URL="postgresql://dev_user:dev_pass@dev-db.zeabur.com:5432/kcislk_esid_dev"
 
 # Staging Environment
-DATABASE_URL="postgresql://stage_user:stage_pass@stage-db.zeabur.com:5432/es_international_staging"
+DATABASE_URL="postgresql://stage_user:stage_pass@stage-db.zeabur.com:5432/kcislk_esid_staging"
 
 # Production Environment  
-DATABASE_URL="postgresql://prod_user:prod_pass@prod-db.zeabur.com:5432/es_international_prod"
+DATABASE_URL="postgresql://prod_user:prod_pass@prod-db.zeabur.com:5432/kcislk_esid_prod"
 ```
 
 ### 步驟 4: 本地開發環境設定
@@ -234,7 +234,7 @@ git push origin feature/new-announcement-system
 # Zeabur 自動部署到開發環境
 
 # 7. 開發環境驗證
-# 在 https://dev.es-international.zeabur.app 驗證功能
+# 在 https://dev.kcislk-esid.zeabur.app 驗證功能
 
 # 8. 提升到 Staging 環境
 git checkout staging
@@ -244,7 +244,7 @@ git push origin staging
 # Zeabur 自動部署到預備環境
 
 # 9. Staging 環境驗證
-# 在 https://staging.es-international.zeabur.app 進行完整測試
+# 在 https://staging.kcislk-esid.zeabur.app 進行完整測試
 
 # 10. 部署到正式環境
 git checkout main
@@ -274,7 +274,7 @@ Zeabur 自動檢測根目錄的 `Dockerfile` 並使用 Docker 部署模式：
 #### Zeabur 環境配置
 ```yaml
 # .zeabur/config.yaml (可選，Zeabur 會自動檢測設定)
-name: es-international-department
+name: kcislk-esid-info-hub
 
 services:
   web:
@@ -294,21 +294,21 @@ environments:
     branch: dev
     auto_deploy: true
     database: es-international-dev
-    domain: dev.es-international.zeabur.app
+    domain: dev.kcislk-esid.zeabur.app
     port: 8080
     
   staging:
     branch: staging
     auto_deploy: true
     database: es-international-staging
-    domain: staging.es-international.zeabur.app
+    domain: staging.kcislk-esid.zeabur.app
     port: 8080
     
   production:
     branch: main
     auto_deploy: false
     database: es-international-prod
-    domain: es-international.zeabur.app
+    domain: kcislk-esid.zeabur.app
     port: 8080
 ```
 
@@ -374,22 +374,22 @@ zeabur rollback --env production --version previous
 ```bash
 # 1. Docker 健康檢查 (自動執行)
 # Zeabur 會自動監控 Docker HEALTHCHECK 狀態
-curl https://es-international.zeabur.app/api/health
+curl https://kcislk-esid.zeabur.app/api/health
 
 # 2. 應用程式健康檢查
-curl -I https://es-international.zeabur.app/api/health
+curl -I https://kcislk-esid.zeabur.app/api/health
 # 預期回應: HTTP/2 200 + JSON 回應包含服務狀態
 
 # 3. 資料庫連接驗證
 # 透過健康檢查端點驗證資料庫連接狀態
-curl https://es-international.zeabur.app/api/health | jq '.database'
+curl https://kcislk-esid.zeabur.app/api/health | jq '.database'
 
 # 4. 環境變數驗證
-curl https://es-international.zeabur.app/api/health | jq '.environment'
+curl https://kcislk-esid.zeabur.app/api/health | jq '.environment'
 
 # 5. 功能驗證測試
 # 透過 Zeabur 控制台或本地測試腳本
-npm run test:integration -- --baseURL=https://es-international.zeabur.app
+npm run test:integration -- --baseURL=https://kcislk-esid.zeabur.app
 
 # 6. 效能監控檢查
 # 透過 Zeabur 控制台監控面板檢查
@@ -412,20 +412,20 @@ npm run test:integration -- --baseURL=https://es-international.zeabur.app
 ```bash
 # 開發環境配置 (.env.development)
 NODE_ENV=development
-DATABASE_URL=postgresql://dev_user:pass@dev-db.zeabur.com:5432/es_international_dev
+DATABASE_URL=postgresql://dev_user:pass@dev-db.zeabur.com:5432/kcislk_esid_dev
 NEXTAUTH_URL=http://localhost:3000
 DEBUG=true
 
 # 預備環境配置 (.env.staging)
 NODE_ENV=staging  
-DATABASE_URL=postgresql://stage_user:pass@stage-db.zeabur.com:5432/es_international_staging
-NEXTAUTH_URL=https://staging.es-international.zeabur.app
+DATABASE_URL=postgresql://stage_user:pass@stage-db.zeabur.com:5432/kcislk_esid_staging
+NEXTAUTH_URL=https://staging.kcislk-esid.zeabur.app
 DEBUG=false
 
 # 正式環境配置 (.env.production)
 NODE_ENV=production
-DATABASE_URL=postgresql://prod_user:pass@prod-db.zeabur.com:5432/es_international_prod
-NEXTAUTH_URL=https://es-international.zeabur.app
+DATABASE_URL=postgresql://prod_user:pass@prod-db.zeabur.com:5432/kcislk_esid_prod
+NEXTAUTH_URL=https://kcislk-esid.zeabur.app
 DEBUG=false
 SENTRY_DSN=https://your-sentry-dsn
 ```
@@ -594,7 +594,7 @@ zeabur logs --follow --env production --service web
 
 # 3. 健康檢查監控
 # Zeabur 自動監控 Docker HEALTHCHECK
-curl -f https://es-international.zeabur.app/api/health
+curl -f https://kcislk-esid.zeabur.app/api/health
 
 # 4. 應用程式效能監控
 # CPU 使用率監控
@@ -604,7 +604,7 @@ curl -f https://es-international.zeabur.app/api/health
 
 # 5. 資料庫連接監控
 # 透過健康檢查端點監控資料庫狀態
-curl https://es-international.zeabur.app/api/health | jq '.database'
+curl https://kcislk-esid.zeabur.app/api/health | jq '.database'
 
 # 6. 資料庫查詢分析
 # 在本地環境執行 Prisma Studio
@@ -731,7 +731,7 @@ npm run db:studio
 ## 🐳 Docker + Zeabur 整合優勢 | Docker + Zeabur Integration Benefits
 
 ### 完整的容器化部署方案
-結合 Docker 容器化技術與 Zeabur 雲端平台，ES International Department 獲得了企業級的部署解決方案：
+結合 Docker 容器化技術與 Zeabur 雲端平台，KCISLK ESID Info Hub 獲得了企業級的部署解決方案：
 
 #### 🏗️ 技術架構優勢
 - **多階段建置優化**: 減少映像檔大小 60%+，提升部署速度
@@ -776,7 +776,7 @@ npm run db:studio
 
 ## 🎯 總結 | Summary
 
-這份更新的 Zeabur 部署指南整合了最新的 Docker 容器化技術，提供了完整的多環境部署策略，確保 ES International Department 系統能夠：
+這份更新的 Zeabur 部署指南整合了最新的 Docker 容器化技術，提供了完整的多環境部署策略，確保 KCISLK ESID Info Hub 系統能夠：
 
 ✅ **容器化優勢** - Docker 多階段建置，最佳化的生產環境  
 ✅ **安全可靠地**在雲端環境運行 - 非 root 使用者，健康檢查機制  
@@ -789,8 +789,8 @@ npm run db:studio
 ---
 
 **📞 需要協助？**
-- 📧 技術支援：[your-team@example.com](mailto:your-team@example.com)
+- 📧 技術支援：[esid@kcislk.ntpc.edu.tw](mailto:esid@kcislk.ntpc.edu.tw)
 - 📚 Zeabur 文檔：[https://docs.zeabur.com](https://docs.zeabur.com)
-- 🐛 問題回報：[GitHub Issues](https://github.com/your-org/es-international-department/issues)
+- 🐛 問題回報：[GitHub Issues](https://github.com/your-org/kcislk-esid-info-hub/issues)
 
 **🎉 祝您使用 Zeabur 部署愉快！**

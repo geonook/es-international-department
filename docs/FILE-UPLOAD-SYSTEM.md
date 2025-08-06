@@ -1,14 +1,14 @@
 # File Upload System Documentation
 # 檔案上傳系統文件
 
-> **ES International Department - Secure File Upload System**  
-> **ES 國際部 - 安全檔案上傳系統**
+> **KCISLK ESID Info Hub - Secure File Upload System**  
+> **KCISLK 小學國際處資訊中心 - 安全檔案上傳系統**
 
 ## 🚀 Overview | 系統概述
 
-The ES International Department file upload system provides a comprehensive, secure, and user-friendly solution for handling file uploads in the application. It supports multiple file types with robust security validation, automatic optimization, and seamless integration with the existing authentication system.
+The KCISLK ESID Info Hub file upload system provides a comprehensive, secure, and user-friendly solution for handling file uploads in the application. It supports multiple file types with robust security validation, automatic optimization, and seamless integration with the existing authentication system.
 
-ES 國際部檔案上傳系統提供全面、安全且用戶友好的檔案上傳解決方案。支援多種檔案類型，具備強大的安全驗證、自動最佳化功能，並與現有認證系統無縫整合。
+KCISLK 小學國際處資訊中心檔案上傳系統提供全面、安全且用戶友好的檔案上傳解決方案。支援多種檔案類型，具備強大的安全驗證、自動最佳化功能，並與現有認證系統無縫整合。
 
 ## 📋 Features | 功能特色
 
@@ -430,5 +430,5 @@ For technical support or questions about the file upload system:
 
 ---
 
-*ES International Department File Upload System v1.0*  
+*KCISLK ESID Info Hub File Upload System v1.0*  
 *Built with Next.js 14, TypeScript, Prisma, and Sharp*

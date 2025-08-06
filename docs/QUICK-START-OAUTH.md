@@ -29,7 +29,7 @@
 
 ### 1.2 創建專案（如需要）
 ```
-專案名稱：ES International Department OAuth
+專案名稱：KCISLK ESID Info Hub OAuth
 ```
 
 ### 1.3 啟用 API
@@ -51,7 +51,7 @@
 http://localhost:3000/api/auth/callback/google
 
 生產環境：
-https://landing-app-v2.zeabur.app/api/auth/callback/google
+https://kcislk-esid.zeabur.app/api/auth/callback/google
 ```
 
 ---

@@ -150,10 +150,10 @@ export default function LoginPage() {
               <LogIn className="w-8 h-8 text-white" />
             </motion.div>
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              ES 國際部
+              KCISLK ESID
             </CardTitle>
             <CardDescription className="text-gray-600">
-              請登入您的帳戶以存取系統
+              康橋小學國際處資訊中心 | 請登入您的帳戶以存取系統
             </CardDescription>
           </CardHeader>
 

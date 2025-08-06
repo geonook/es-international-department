@@ -1,7 +1,7 @@
 # API Documentation | API 文檔
 
-Welcome to the ES International Department API documentation.  
-歡迎來到 ES 國際部 API 文檔。
+Welcome to the KCISLK ESID Info Hub API documentation.  
+歡迎來到 KCISLK 小學國際處資訊中心 API 文檔。
 
 ## 📋 Available APIs | 可用的 API
 
@@ -19,8 +19,8 @@ Welcome to the ES International Department API documentation.
 ### Base URL | 基礎 URL
 ```
 Development:  http://localhost:3000/api
-Staging:      https://staging.es-international.zeabur.app/api
-Production:   https://es-international.zeabur.app/api
+Staging:      https://staging.kcislk-esid.zeabur.app/api
+Production:   https://kcislk-esid.zeabur.app/api
 ```
 
 ### Authentication | 身份驗證

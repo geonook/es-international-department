@@ -13,9 +13,9 @@ HEAD /api/health
 
 ## Description | 描述
 
-Returns the current health status of the ES International Department application. This endpoint is publicly accessible and does not require authentication.
+Returns the current health status of the KCISLK ESID Info Hub application. This endpoint is publicly accessible and does not require authentication.
 
-返回 ES 國際部應用程式的當前健康狀態。此端點可公開存取，不需要身份驗證。
+返回 KCISLK 小學國際處資訊中心應用程式的當前健康狀態。此端點可公開存取，不需要身份驗證。
 
 ## Request | 請求
 
@@ -35,7 +35,7 @@ No parameters required.
 ```json
 {
   "status": "OK",
-  "service": "ES International Department",
+  "service": "KCISLK ESID Info Hub",
   "timestamp": "2025-01-31T12:00:00.000Z",
   "environment": "production",
   "version": "1.0.0"
@@ -51,7 +51,7 @@ Returns empty body with 200 status code.
 ```json
 {
   "status": "ERROR",
-  "service": "ES International Department", 
+  "service": "KCISLK ESID Info Hub", 
   "timestamp": "2025-01-31T12:00:00.000Z",
   "error": "Database connection failed"
 }
@@ -102,8 +102,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ### Docker Compose
 ```yaml
 services:
-  es-international:
-    image: es-international-department
+  kcislk-esid:
+    image: kcislk-esid-info-hub
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
       interval: 30s
@@ -118,8 +118,8 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: es-international
-    image: es-international-department
+  - name: kcislk-esid
+    image: kcislk-esid-info-hub
     livenessProbe:
       httpGet:
         path: /api/health

@@ -1,9 +1,9 @@
-# ES International Department Database Requirements
-*ES 國際部資料庫需求文件*
+# KCISLK ESID Info Hub Database Requirements
+*KCISLK 小學國際處資訊中心資料庫需求文件*
 
 ## 系統概述 | System Overview
 
-ES International Department 系統是一個多角色的教育管理平台，包含家長門戶、教師中心和管理員後台。本文件詳細描述了系統的資料庫需求、架構設計和實作建議。
+KCISLK ESID Info Hub 系統是一個多角色的教育管理平台，包含家長門戶、教師中心和管理員後台。本文件詳細描述了系統的資料庫需求、架構設計和實作建議。
 
 ## 核心功能模組 | Core Functional Modules
 
@@ -344,8 +344,8 @@ CREATE TABLE system_settings (
 
 -- 預設系統設定
 INSERT INTO system_settings (key, value, description, data_type, is_public) VALUES
-('site_name', 'ES International Department', 'Site display name', 'string', true),
-('admin_email', 'admin@kcislk.ntpc.edu.tw', 'Administrator email', 'string', false),
+('site_name', 'KCISLK ESID Info Hub', 'Site display name', 'string', true),
+('admin_email', 'esid@kcislk.ntpc.edu.tw', 'Administrator email', 'string', false),
 ('max_file_size', '10485760', 'Maximum file upload size in bytes', 'number', false),
 ('session_timeout', '30', 'Session timeout in minutes', 'number', false),
 ('max_login_attempts', '5', 'Maximum login attempts before lockout', 'number', false);

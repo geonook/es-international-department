@@ -28,10 +28,10 @@ Each subdirectory should contain documentation relevant to its intended audience
 - Architecture decisions | 架構決策
 - Contribution guidelines | 貢獻指南
 
-## ES International Department | ES 國際部
+## KCISLK ESID Info Hub | KCISLK 小學國際處資訊中心
 
-This documentation supports the ES International Department parent portal and resource center project.  
-此文檔支援 ES 國際部家長門戶網站和資源中心專案。
+This documentation supports the KCISLK ESID Info Hub parent portal and resource center project.  
+此文檔支援 KCISLK 小學國際處資訊中心家長門戶網站和資源中心專案。
 
 For project-specific information, please refer to the main README.md file in the project root.  
 有關專案特定資訊，請參閱專案根目錄中的主要 README.md 檔案。

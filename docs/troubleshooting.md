@@ -1,11 +1,11 @@
 # Troubleshooting Guide | 故障排除指南
-*ES International Department - 常見問題解決方案*
+*KCISLK ESID Info Hub - 常見問題解決方案*
 
 ## 📋 Overview | 概述
 
-This comprehensive troubleshooting guide covers common issues you might encounter while developing, deploying, or using the ES International Department application. Each issue includes symptoms, root causes, and step-by-step solutions.
+This comprehensive troubleshooting guide covers common issues you might encounter while developing, deploying, or using the KCISLK ESID Info Hub application. Each issue includes symptoms, root causes, and step-by-step solutions.
 
-本綜合故障排除指南涵蓋了在開發、部署或使用 ES 國際部應用程式時可能遇到的常見問題。每個問題都包含症狀、根本原因和逐步解決方案。
+本綜合故障排除指南涵蓋了在開發、部署或使用 KCISLK 小學國際處資訊中心應用程式時可能遇到的常見問題。每個問題都包含症狀、根本原因和逐步解決方案。
 
 ## 🚨 Emergency Procedures | 緊急程序
 
@@ -13,7 +13,7 @@ This comprehensive troubleshooting guide covers common issues you might encounte
 
 ```bash
 # 1. Check application health | 檢查應用程式健康狀態
-curl -f https://es-international.zeabur.app/api/health
+curl -f https://kcislk-esid.zeabur.app/api/health
 
 # 2. Verify database connection | 驗證資料庫連接
 npm run test:db
@@ -27,9 +27,9 @@ zeabur logs --env production --tail 100
 
 ### Emergency Contacts | 緊急聯絡資訊
 
-- **Technical Support**: [tech-support@example.com](mailto:tech-support@example.com)
-- **Development Team**: [dev-team@example.com](mailto:dev-team@example.com)
-- **System Administrator**: [admin@example.com](mailto:admin@example.com)
+- **Technical Support**: [esid@kcislk.ntpc.edu.tw](mailto:esid@kcislk.ntpc.edu.tw)
+- **Development Team**: [esid@kcislk.ntpc.edu.tw](mailto:esid@kcislk.ntpc.edu.tw)
+- **System Administrator**: [esid@kcislk.ntpc.edu.tw](mailto:esid@kcislk.ntpc.edu.tw)
 
 ---
 
@@ -346,19 +346,19 @@ COPY --from=builder /src/.next/standalone ./
 docker logs <container-id>
 
 # 2. Run container interactively
-docker run -it --entrypoint /bin/sh es-international-department
+docker run -it --entrypoint /bin/sh kcislk-esid-info-hub
 
 # 3. Check health check
-docker run --rm es-international-department curl -f http://localhost:8080/api/health
+docker run --rm kcislk-esid-info-hub curl -f http://localhost:8080/api/health
 
 # 4. Verify environment variables
-docker run --rm -e DATABASE_URL="test" es-international-department env
+docker run --rm -e DATABASE_URL="test" kcislk-esid-info-hub env
 
 # 5. Check port binding
-docker run -p 8080:8080 es-international-department
+docker run -p 8080:8080 kcislk-esid-info-hub
 
 # 6. Debug startup command
-docker run --rm es-international-department ls -la /src
+docker run --rm kcislk-esid-info-hub ls -la /src
 ```
 
 #### Issue: Health Check Failing
@@ -743,9 +743,9 @@ When reporting an issue, please include:
 
 ### Support Channels | 支援管道
 
-- **GitHub Issues**: [Project Issues](https://github.com/your-org/es-international-department/issues)
-- **Development Team**: [dev-team@example.com](mailto:dev-team@example.com)
-- **Documentation**: [Project Wiki](https://github.com/your-org/es-international-department/wiki)
+- **GitHub Issues**: [Project Issues](https://github.com/your-org/kcislk-esid-info-hub/issues)
+- **Development Team**: [esid@kcislk.ntpc.edu.tw](mailto:esid@kcislk.ntpc.edu.tw)
+- **Documentation**: [Project Wiki](https://github.com/your-org/kcislk-esid-info-hub/wiki)
 - **Discord/Slack**: [Team Channel](#)
 
 ---

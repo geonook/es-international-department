@@ -1,11 +1,11 @@
 # Docker Deployment Guide | Docker 部署指南
-*ES International Department - Docker 容器化部署完整指南*
+*KCISLK ESID Info Hub - Docker 容器化部署完整指南*
 
 ## 📋 Overview | 概述
 
-This guide provides comprehensive instructions for deploying the ES International Department application using Docker. The application is optimized for containerized deployment with multi-stage builds, security best practices, and production-ready configuration.
+This guide provides comprehensive instructions for deploying the KCISLK ESID Info Hub application using Docker. The application is optimized for containerized deployment with multi-stage builds, security best practices, and production-ready configuration.
 
-本指南提供使用 Docker 部署 ES 國際部應用程式的完整說明。應用程式針對容器化部署進行了優化，包含多階段建置、安全最佳實踐和生產就緒配置。
+本指南提供使用 Docker 部署 KCISLK 小學國際處資訊中心應用程式的完整說明。應用程式針對容器化部署進行了優化，包含多階段建置、安全最佳實踐和生產就緒配置。
 
 ## 🎯 Docker Features | Docker 功能特色
 
@@ -32,16 +32,16 @@ Git
 ```bash
 # 1. Clone repository | 複製儲存庫
 git clone <repository-url>
-cd es-international-department
+cd kcislk-esid-info-hub
 
 # 2. Build Docker image | 建置 Docker 映像檔
-docker build -t es-international-department .
+docker build -t kcislk-esid-info-hub .
 
 # 3. Run container with environment variables | 運行容器並設定環境變數
 docker run -p 8080:8080 \
   -e DATABASE_URL="postgresql://user:password@host:5432/database" \
   -e NODE_ENV="production" \
-  es-international-department
+  kcislk-esid-info-hub
 
 # 4. Verify deployment | 驗證部署
 curl http://localhost:8080/api/health
@@ -161,7 +161,7 @@ version: '3.8'
 
 services:
   app:
-    image: es-international-department:latest
+    image: kcislk-esid-info-hub:latest
     ports:
       - "8080:8080"
     environment:
@@ -215,7 +215,7 @@ docker-compose -f docker-compose.dev.yml down
 
 ```bash
 # Build for staging | 為預備環境建置
-docker build -t es-international-department:staging .
+docker build -t kcislk-esid-info-hub:staging .
 
 # Run staging container | 運行預備環境容器
 docker run -d \
@@ -223,14 +223,14 @@ docker run -d \
   -p 8080:8080 \
   -e NODE_ENV=staging \
   -e DATABASE_URL="${STAGING_DATABASE_URL}" \
-  es-international-department:staging
+  kcislk-esid-info-hub:staging
 ```
 
 ### Production Environment | 正式環境
 
 ```bash
 # Build production image | 建置正式環境映像檔
-docker build -t es-international-department:latest .
+docker build -t kcislk-esid-info-hub:latest .
 
 # Run with production configuration | 使用正式環境配置運行
 docker-compose -f docker-compose.prod.yml up -d
@@ -271,7 +271,7 @@ NEXTAUTH_URL=<your-zeabur-app-url>
 ```yaml
 # ecs-task-definition.json
 {
-  "family": "es-international-department",
+  "family": "kcislk-esid-info-hub",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
@@ -280,7 +280,7 @@ NEXTAUTH_URL=<your-zeabur-app-url>
   "containerDefinitions": [
     {
       "name": "es-international-app",
-      "image": "your-registry/es-international-department:latest",
+      "image": "your-registry/kcislk-esid-info-hub:latest",
       "portMappings": [
         {
           "containerPort": 8080,
@@ -309,7 +309,7 @@ NEXTAUTH_URL=<your-zeabur-app-url>
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/es-international-department",
+          "awslogs-group": "/ecs/kcislk-esid-info-hub",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "ecs"
         }
@@ -323,12 +323,12 @@ NEXTAUTH_URL=<your-zeabur-app-url>
 
 ```bash
 # Build and push to Google Container Registry | 建置並推送到 Google Container Registry
-docker build -t gcr.io/PROJECT-ID/es-international-department:latest .
-docker push gcr.io/PROJECT-ID/es-international-department:latest
+docker build -t gcr.io/PROJECT-ID/kcislk-esid-info-hub:latest .
+docker push gcr.io/PROJECT-ID/kcislk-esid-info-hub:latest
 
 # Deploy to Cloud Run | 部署到 Cloud Run
-gcloud run deploy es-international-department \
-  --image gcr.io/PROJECT-ID/es-international-department:latest \
+gcloud run deploy kcislk-esid-info-hub \
+  --image gcr.io/PROJECT-ID/kcislk-esid-info-hub:latest \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
@@ -361,13 +361,13 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 # View container logs | 查看容器日誌
-docker logs -f es-international-department
+docker logs -f kcislk-esid-info-hub
 
 # Check resource usage | 檢查資源使用情況
-docker stats es-international-department
+docker stats kcislk-esid-info-hub
 
 # Execute commands in running container | 在運行中的容器執行命令
-docker exec -it es-international-department sh
+docker exec -it kcislk-esid-info-hub sh
 
 # Health check endpoint | 健康檢查端點
 curl http://localhost:8080/api/health
@@ -377,13 +377,13 @@ curl http://localhost:8080/api/health
 
 ```bash
 # Database connection status | 資料庫連接狀態
-docker exec es-international-department npm run test:db
+docker exec kcislk-esid-info-hub npm run test:db
 
 # Next.js build information | Next.js 建置資訊
-docker exec es-international-department cat .next/BUILD_ID
+docker exec kcislk-esid-info-hub cat .next/BUILD_ID
 
 # Prisma schema validation | Prisma 模式驗證
-docker exec es-international-department npx prisma validate
+docker exec kcislk-esid-info-hub npx prisma validate
 ```
 
 ## 🛠️ Development Workflow | 開發工作流程
@@ -448,23 +448,23 @@ docker-compose -f docker-compose.dev.yml exec app npm run db:studio
 docker system prune -a
 
 # Build with no cache | 無快取建置
-docker build --no-cache -t es-international-department .
+docker build --no-cache -t kcislk-esid-info-hub .
 
 # Check build logs | 檢查建置日誌
-docker build -t es-international-department . 2>&1 | tee build.log
+docker build -t kcislk-esid-info-hub . 2>&1 | tee build.log
 ```
 
 #### 2. Database Connection Issues | 資料庫連接問題
 
 ```bash
 # Test database connection | 測試資料庫連接
-docker exec es-international-department npm run test:db
+docker exec kcislk-esid-info-hub npm run test:db
 
 # Check database logs | 檢查資料庫日誌
 docker-compose logs db
 
 # Verify environment variables | 驗證環境變數
-docker exec es-international-department env | grep DATABASE
+docker exec kcislk-esid-info-hub env | grep DATABASE
 ```
 
 #### 3. Port Conflicts | 埠口衝突
@@ -477,7 +477,7 @@ lsof -i :8080
 sudo kill -9 $(lsof -t -i:8080)
 
 # Use different port mapping | 使用不同的埠口映射
-docker run -p 3001:8080 es-international-department
+docker run -p 3001:8080 kcislk-esid-info-hub
 ```
 
 #### 4. Memory Issues | 記憶體問題
@@ -487,10 +487,10 @@ docker run -p 3001:8080 es-international-department
 # For Docker Desktop: Settings > Resources > Memory > 4GB+
 
 # Monitor container memory usage | 監控容器記憶體使用
-docker stats --no-stream es-international-department
+docker stats --no-stream kcislk-esid-info-hub
 
 # Set container memory limit | 設定容器記憶體限制
-docker run --memory="1g" es-international-department
+docker run --memory="1g" kcislk-esid-info-hub
 ```
 
 ### Debug Mode | 除錯模式
@@ -501,13 +501,13 @@ docker run -it --rm \
   -p 8080:8080 \
   -e NODE_ENV=development \
   -e DEBUG=* \
-  es-international-department
+  kcislk-esid-info-hub
 
 # Access container shell for debugging | 存取容器 shell 進行除錯
-docker run -it --rm --entrypoint /bin/sh es-international-department
+docker run -it --rm --entrypoint /bin/sh kcislk-esid-info-hub
 
 # Check Next.js build output | 檢查 Next.js 建置輸出
-docker exec es-international-department ls -la .next/
+docker exec kcislk-esid-info-hub ls -la .next/
 ```
 
 ## 📊 Performance Optimization | 效能優化
@@ -547,13 +547,13 @@ DATABASE_URL="postgresql://user:pass@host:5432/db?connection_limit=10&pool_timeo
 
 ```bash
 # Analyze image layers | 分析映像檔層
-docker history es-international-department
+docker history kcislk-esid-info-hub
 
 # Use dive tool for detailed analysis | 使用 dive 工具詳細分析
-dive es-international-department
+dive kcislk-esid-info-hub
 
 # Multi-arch builds for different platforms | 多架構建置支援不同平台
-docker buildx build --platform linux/amd64,linux/arm64 -t es-international-department .
+docker buildx build --platform linux/amd64,linux/arm64 -t kcislk-esid-info-hub .
 ```
 
 ## 🔐 Security Best Practices | 安全最佳實踐
@@ -576,13 +576,13 @@ docker buildx build --platform linux/amd64,linux/arm64 -t es-international-depar
 echo "your-database-password" | docker secret create db_password -
 
 # Scan image for vulnerabilities | 掃描映像檔漏洞
-docker scout quickview es-international-department
-docker scout cves es-international-department
+docker scout quickview kcislk-esid-info-hub
+docker scout cves kcislk-esid-info-hub
 
 # Run security benchmark | 執行安全基準測試
 docker run --rm -it \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  aquasec/trivy image es-international-department
+  aquasec/trivy image kcislk-esid-info-hub
 ```
 
 ## 📋 Checklists | 檢查清單

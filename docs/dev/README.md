@@ -1,11 +1,11 @@
 # Developer Guide | 開發者指南
-*ES International Department - 開發者完整指南*
+*KCISLK ESID Info Hub - 開發者完整指南*
 
 ## 📋 Overview | 概述
 
-This comprehensive developer guide provides everything you need to know to contribute effectively to the ES International Department project. Whether you're a new team member or an experienced developer, this guide will help you understand the codebase, development workflow, and best practices.
+This comprehensive developer guide provides everything you need to know to contribute effectively to the KCISLK ESID Info Hub project. Whether you're a new team member or an experienced developer, this guide will help you understand the codebase, development workflow, and best practices.
 
-本開發者完整指南提供了為 ES 國際部專案有效貢獻所需的一切資訊。無論您是新團隊成員還是經驗豐富的開發者，本指南都將幫助您了解程式碼庫、開發工作流程和最佳實踐。
+本開發者完整指南提供了為 KCISLK 小學國際處資訊中心專案有效貢獻所需的一切資訊。無論您是新團隊成員還是經驗豐富的開發者，本指南都將幫助您了解程式碼庫、開發工作流程和最佳實踐。
 
 ## 🚀 Quick Start | 快速開始
 
@@ -25,7 +25,7 @@ VS Code + Extensions           # Recommended IDE
 ```bash
 # 1. Clone repository | 複製儲存庫
 git clone <repository-url>
-cd es-international-department
+cd kcislk-esid-info-hub
 
 # 2. Install dependencies | 安裝依賴套件
 pnpm install
@@ -35,7 +35,7 @@ cp .env.example .env.local
 
 # 4. Configure environment variables | 配置環境變數
 # Edit .env.local with your database connection and secrets
-DATABASE_URL="postgresql://user:password@localhost:5432/es_international_dev"
+DATABASE_URL="postgresql://user:password@localhost:5432/kcislk_esid_dev"
 JWT_SECRET="your-jwt-secret-32-chars-minimum"
 NEXTAUTH_SECRET="your-nextauth-secret-32-chars-minimum"
 NEXTAUTH_URL="http://localhost:3000"
@@ -72,7 +72,7 @@ Monitoring:            Health Check API
 ### Directory Structure | 目錄結構
 
 ```
-es-international-department/
+kcislk-esid-info-hub/
 ├── 📁 app/                    # Next.js App Router
 │   ├── 📄 layout.tsx          # Root layout
 │   ├── 📄 page.tsx            # Home page

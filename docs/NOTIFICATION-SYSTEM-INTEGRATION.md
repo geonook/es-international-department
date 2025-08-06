@@ -6,7 +6,7 @@
 
 ## 🎯 系統概述 | System Overview
 
-ES 國際部通知系統提供完整的通知管理功能，包括即時推送、模板管理、用戶偏好設定和業務整合觸發器。
+KCISLK 小學國際處資訊中心通知系統提供完整的通知管理功能，包括即時推送、模板管理、用戶偏好設定和業務整合觸發器。
 
 ### ✨ 核心功能 | Core Features
 
@@ -531,4 +531,4 @@ NOTIFICATION_BATCH_SIZE=100             # 批量操作限制
 **📝 文件版本 | Documentation Version**: 1.0  
 **🔄 最後更新 | Last Updated**: 2025-01-31
 
-*Generated with ❤️ by Claude Code for ES International Department*
+*Generated with ❤️ by Claude Code for KCISLK ESID Info Hub*
