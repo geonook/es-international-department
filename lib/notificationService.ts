@@ -860,33 +860,49 @@ export class NotificationService {
       for (const [userId, userNotifications] of Object.entries(notificationsByUser)) {
         try {
           // 調用 SSE 推送服務
-          const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/notifications/stream`, {
+          const baseUrl = process.env.NEXTAUTH_URL || 
+                         (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
+          
+          const response = await fetch(`${baseUrl}/api/notifications/stream`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'User-Agent': 'NotificationService/1.0'
             },
             body: JSON.stringify({
               userIds: [userId],
               notification: {
                 type: 'new_notifications',
-                data: userNotifications,
-                count: userNotifications.length
+                data: userNotifications.map(n => ({
+                  id: n.id || Date.now(),
+                  title: n.title,
+                  message: n.message,
+                  type: n.type,
+                  priority: n.priority,
+                  createdAt: new Date().toISOString()
+                })),
+                count: userNotifications.length,
+                timestamp: new Date().toISOString()
               }
             })
           })
 
-          if (response.ok) {
-            console.log(`✅ Pushed ${userNotifications.length} real-time notifications to user ${userId}`)
+          const result = await response.json().catch(() => ({ success: false }))
+          
+          if (response.ok && result.success) {
+            console.log(`✅ Pushed ${userNotifications.length} real-time notifications to user ${userId} (${result.activeConnections} active connections)`)
           } else {
-            console.warn(`⚠️ SSE push failed for user ${userId}:`, response.status)
+            console.warn(`⚠️ SSE push failed for user ${userId}:`, response.status, result.message)
           }
         } catch (error) {
           console.error(`❌ Failed to push notifications to user ${userId}:`, error)
+          // 不要拋出錯誤，即時推送失敗不應影響通知創建
         }
       }
 
     } catch (error) {
       console.error('Push real-time notifications error:', error)
+      // 即時推送失敗不應影響主要功能
     }
   }
 

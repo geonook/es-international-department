@@ -96,19 +96,25 @@ export default function NotificationCenter({
     try {
       setError('')
       const response = await fetch('/api/notifications', {
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
-        }
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
       })
 
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
           setNotifications(data.data || [])
-          setUnreadCount(data.unreadCount || 0)
+          setUnreadCount(data.stats?.unread || 0)
         } else {
           setError(data.message || '載入通知失敗')
         }
+      } else if (response.status === 401) {
+        setError('請先登入')
+        setNotifications([])
+        setUnreadCount(0)
       } else {
         setError('載入通知失敗')
       }
@@ -177,9 +183,9 @@ export default function NotificationCenter({
       const response = await fetch('/api/notifications/mark-read', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ notificationIds })
       })
 
@@ -207,9 +213,9 @@ export default function NotificationCenter({
       const response = await fetch('/api/notifications/mark-unread', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ notificationIds })
       })
 
@@ -241,9 +247,9 @@ export default function NotificationCenter({
       const response = await fetch('/api/notifications/bulk-delete', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ notificationIds })
       })
 

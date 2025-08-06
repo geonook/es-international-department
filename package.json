@@ -36,9 +36,13 @@
     "test:db": "tsx scripts/test-db-connection.ts",
     "test:zeabur": "tsx scripts/test-zeabur-connections.ts",
     "test:oauth-config": "tsx scripts/test-oauth-config.ts",
+    "validate:oauth-production": "tsx scripts/validate-production-oauth.ts",
+    "verify:production": "tsx scripts/verify-production-deployment.ts",
     "test:performance": "tsx scripts/performance-analysis.ts",
     "benchmark:api": "tsx scripts/performance-analysis.ts",
     "db:indexes": "psql $DATABASE_URL -f prisma/migrations/add_performance_indexes.sql",
+    "report:performance": "tsx scripts/generate-performance-report.ts",
+    "optimize:database": "npm run db:indexes && npm run test:performance",
     "test:upload": "tsx scripts/test-upload-system.ts"
   },
   "dependencies": {

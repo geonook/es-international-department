@@ -48,15 +48,17 @@ export default function NotificationBell({
     try {
       setIsLoading(true)
       const response = await fetch('/api/notifications/stats', {
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
-        }
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include' // 使用 cookie-based auth
       })
 
       if (response.ok) {
         const data = await response.json()
-        if (data.success) {
-          const newCount = data.unreadCount || 0
+        if (data.success && data.data?.user) {
+          const newCount = data.data.user.unread || 0
           
           // 檢查是否有新通知
           if (newCount > unreadCount && unreadCount > 0) {
@@ -67,6 +69,9 @@ export default function NotificationBell({
           
           setUnreadCount(newCount)
         }
+      } else if (response.status === 401) {
+        console.log('User not authenticated')
+        setUnreadCount(0)
       }
     } catch (error) {
       console.error('Fetch unread count error:', error)
@@ -79,8 +84,8 @@ export default function NotificationBell({
   useEffect(() => {
     fetchUnreadCount()
     
-    // 每 30 秒刷新一次未讀數量
-    const interval = setInterval(fetchUnreadCount, 30000)
+    // 每 60 秒刷新一次未讀數量（SSE 為主要更新方式）
+    const interval = setInterval(fetchUnreadCount, 60000)
     return () => clearInterval(interval)
   }, [])
 
@@ -109,41 +114,94 @@ export default function NotificationBell({
   // 監聽實時通知事件 (SSE)
   useEffect(() => {
     let eventSource: EventSource | null = null
+    let reconnectAttempts = 0
+    const maxReconnectAttempts = 5
 
     const connectSSE = () => {
-      const token = localStorage.getItem('authToken')
-      if (!token) return
-
-      eventSource = new EventSource(`/api/notifications/stream?token=${token}`)
-      
-      eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data)
-          if (data.type === 'new_notifications') {
-            setUnreadCount(prev => prev + (data.count || 1))
-            setHasNewNotifications(true)
-            setTimeout(() => setHasNewNotifications(false), 3000)
-          } else if (data.type === 'notification_read') {
-            setUnreadCount(prev => Math.max(0, prev - (data.count || 1)))
-          }
-        } catch (error) {
-          console.error('SSE message parsing error:', error)
-        }
-      }
-
-      eventSource.onerror = (error) => {
-        console.error('SSE connection error:', error)
-        eventSource?.close()
+      try {
+        // 使用 cookie-based authentication
+        eventSource = new EventSource('/api/notifications/stream', {
+          withCredentials: true
+        })
         
-        // 5秒後重連
-        setTimeout(connectSSE, 5000)
+        eventSource.onopen = () => {
+          console.log('✅ SSE connection established')
+          reconnectAttempts = 0 // Reset on successful connection
+        }
+        
+        eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data)
+            
+            switch (data.type) {
+              case 'connected':
+                console.log('SSE connection confirmed:', data.connectionId)
+                break
+                
+              case 'ping':
+                // Heart beat - connection is alive
+                break
+                
+              case 'new_notifications':
+              case 'notification':
+                const count = data.data?.count || data.count || 1
+                setUnreadCount(prev => prev + count)
+                setHasNewNotifications(true)
+                setTimeout(() => setHasNewNotifications(false), 3000)
+                break
+                
+              case 'notification_read':
+              case 'stats':
+                if (data.data?.unreadCount !== undefined) {
+                  setUnreadCount(data.data.unreadCount)
+                } else if (data.count) {
+                  setUnreadCount(prev => Math.max(0, prev - data.count))
+                }
+                break
+                
+              case 'broadcast':
+                // Handle broadcast notifications
+                setHasNewNotifications(true)
+                setTimeout(() => setHasNewNotifications(false), 3000)
+                fetchUnreadCount() // Refresh count
+                break
+            }
+          } catch (error) {
+            console.error('SSE message parsing error:', error)
+          }
+        }
+
+        eventSource.onerror = (error) => {
+          console.error('SSE connection error:', error)
+          eventSource?.close()
+          
+          if (reconnectAttempts < maxReconnectAttempts) {
+            reconnectAttempts++
+            const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000) // Exponential backoff
+            console.log(`Reconnecting SSE in ${delay}ms (attempt ${reconnectAttempts}/${maxReconnectAttempts})`)
+            setTimeout(connectSSE, delay)
+          } else {
+            console.warn('Max SSE reconnection attempts reached. Falling back to polling.')
+            // 使用輪詢作為後備方案
+            const pollInterval = setInterval(fetchUnreadCount, 60000) // 每分鐘輪詢一次
+            return () => clearInterval(pollInterval)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to establish SSE connection:', error)
+        // Fallback to polling
+        fetchUnreadCount()
       }
     }
 
-    connectSSE()
+    // Only connect if we're in browser environment
+    if (typeof window !== 'undefined') {
+      connectSSE()
+    }
 
     return () => {
       eventSource?.close()
+      eventSource = null
     }
   }, [])
 
