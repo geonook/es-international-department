@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
 /**
  * Public Event API - GET /api/events/[id]
@@ -15,9 +15,13 @@ export async function GET(
 ) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
@@ -95,7 +99,7 @@ export async function GET(
       where: {
         eventId_userId: {
           eventId: eventId,
-          userId: authResult.user.id
+          userId: currentUser.id
         }
       }
     })

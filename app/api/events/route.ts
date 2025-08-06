@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
 /**
  * Public Events API - GET /api/events
@@ -13,9 +13,13 @@ import { verifyAuth } from '@/lib/auth'
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份（需要登入才能查看活動）
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     // 解析查詢參數

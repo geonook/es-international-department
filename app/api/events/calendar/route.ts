@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
 /**
  * Events Calendar API - GET /api/events/calendar
@@ -13,9 +13,13 @@ import { verifyAuth } from '@/lib/auth'
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     // 解析查詢參數
@@ -63,7 +67,7 @@ export async function GET(request: NextRequest) {
     if (userOnly) {
       where.registrations = {
         some: {
-          userId: authResult.user.id,
+          userId: currentUser.id,
           status: {
             in: ['confirmed', 'waiting_list']
           }
@@ -84,7 +88,7 @@ export async function GET(request: NextRequest) {
         },
         registrations: userOnly ? {
           where: {
-            userId: authResult.user.id
+            userId: currentUser.id
           },
           select: {
             id: true,
@@ -165,7 +169,7 @@ export async function GET(request: NextRequest) {
       userRegistrations: userOnly ? events.filter(e => e.registrations.length > 0).length : 
         await prisma.eventRegistration.count({
           where: {
-            userId: authResult.user.id,
+            userId: currentUser.id,
             status: {
               in: ['confirmed', 'waiting_list']
             },

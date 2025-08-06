@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
 /**
  * Event Registration API - /api/events/[id]/registration
@@ -21,9 +21,13 @@ export async function GET(
 ) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
@@ -77,7 +81,7 @@ export async function GET(
       where: {
         eventId_userId: {
           eventId: eventId,
-          userId: authResult.user.id
+          userId: currentUser.id
         }
       },
       select: {
@@ -141,9 +145,13 @@ export async function POST(
 ) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
@@ -208,7 +216,7 @@ export async function POST(
       where: {
         eventId_userId: {
           eventId: eventId,
-          userId: authResult.user.id
+          userId: currentUser.id
         }
       }
     })
@@ -231,9 +239,9 @@ export async function POST(
     // 建立或更新報名記錄
     const registrationData = {
       eventId,
-      userId: authResult.user.id,
-      participantName: participantName || authResult.user.displayName,
-      participantEmail: participantEmail || authResult.user.email,
+      userId: currentUser.id,
+      participantName: participantName || currentUser.displayName,
+      participantEmail: participantEmail || currentUser.email,
       participantPhone,
       grade,
       specialRequests,
@@ -268,7 +276,7 @@ export async function POST(
           ? `您已成功報名 ${event.title}。我們期待您的參與！`
           : `您已加入 ${event.title} 的候補名單。如有名額空出，我們會立即通知您。`,
         recipientCount: 1,
-        createdBy: authResult.user.id
+        createdBy: currentUser.id
       }
     })
 
@@ -305,9 +313,13 @@ export async function DELETE(
 ) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
@@ -351,7 +363,7 @@ export async function DELETE(
       where: {
         eventId_userId: {
           eventId: eventId,
-          userId: authResult.user.id
+          userId: currentUser.id
         }
       }
     })
@@ -400,7 +412,7 @@ export async function DELETE(
             title: `候補轉正：${event.title}`,
             message: `好消息！您已從候補名單轉為正式報名 ${event.title}。期待您的參與！`,
             recipientCount: 1,
-            createdBy: authResult.user.id
+            createdBy: currentUser.id
           }
         })
       }
