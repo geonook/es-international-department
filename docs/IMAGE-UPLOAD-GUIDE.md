@@ -1,7 +1,7 @@
 # 📸 圖片上傳功能使用指南
 # Image Upload Feature User Guide
 
-> **KCISLK 小學國際處資訊中心 - 富文本編輯器圖片上傳整合功能**  
+> **KCISLK ESID Info Hub - 富文本編輯器圖片上傳整合功能**  
 > **KCISLK ESID Info Hub - Rich Text Editor Image Upload Integration**
 
 ## 🎯 功能概述 | Feature Overview

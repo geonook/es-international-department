@@ -5,7 +5,7 @@
 
 This comprehensive troubleshooting guide covers common issues you might encounter while developing, deploying, or using the KCISLK ESID Info Hub application. Each issue includes symptoms, root causes, and step-by-step solutions.
 
-本綜合故障排除指南涵蓋了在開發、部署或使用 KCISLK 小學國際處資訊中心應用程式時可能遇到的常見問題。每個問題都包含症狀、根本原因和逐步解決方案。
+本綜合故障排除指南涵蓋了在開發、部署或使用 KCISLK ESID Info Hub 應用程式時可能遇到的常見問題。每個問題都包含症狀、根本原因和逐步解決方案。
 
 ## 🚨 Emergency Procedures | 緊急程序
 

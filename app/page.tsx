@@ -11,10 +11,10 @@ import { useRef, useEffect, useState } from "react"
 import { Announcement } from "@/lib/types"
 
 /**
- * 首頁組件 - KCISLK 小學國際處資訊中心
+ * 首頁組件 - KCISLK ESID Info Hub
  * Home Page Component - KCISLK ESID Info Hub
  * 
- * @description 展示 KCISLK 小學國際處的主要功能，為家長和老師提供最新資訊、活動更新和溝通工具
+ * @description 展示 KCISLK ESID 的主要功能，為林口康橋的家長和老師提供最新資訊、活動更新和溝通工具
  * @features 響應式設計、流暢動畫、視差滾動效果、互動式卡片
  * @author Claude Code | Generated with love for KCISLK ESID Info Hub
  */
@@ -180,7 +180,7 @@ export default function HomePage() {
                 <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
                   KCISLK ESID Info Hub
                 </h1>
-                <p className="text-xs text-gray-500">康橋小學國際處資訊中心</p>
+                <p className="text-xs text-gray-500">KCISLK ESID Info Hub</p>
               </div>
             </motion.div>
 
@@ -1019,7 +1019,7 @@ export default function HomePage() {
             transition={{ delay: 0.5 }}
           >
             <p>&copy; 2025 KCISLK Elementary School International Department. All rights reserved.</p>
-            <p className="text-purple-300 text-sm mt-2">康橋國際學校小學國際處 | Excellence in International Education</p>
+            <p className="text-purple-300 text-sm mt-2">林口康橋國際學校 | Excellence in International Education</p>
           </motion.div>
         </div>
       </motion.footer>

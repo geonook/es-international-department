@@ -15,7 +15,7 @@ HEAD /api/health
 
 Returns the current health status of the KCISLK ESID Info Hub application. This endpoint is publicly accessible and does not require authentication.
 
-返回 KCISLK 小學國際處資訊中心應用程式的當前健康狀態。此端點可公開存取，不需要身份驗證。
+返回 KCISLK ESID Info Hub 應用程式的當前健康狀態。此端點可公開存取，不需要身份驗證。
 
 ## Request | 請求
 

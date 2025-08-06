@@ -1,5 +1,5 @@
-# KCISLK ESID Info Hub | KCISLK 小學國際處資訊中心
-**Information Service Website for KCISLK Elementary School International Department | 康橋國際學校小學國際處資訊服務網站**
+# KCISLK ESID Info Hub
+**Information Service Website for KCISLK Elementary School International Department | 林口康橋國際學校資訊服務網站**
 
 > **📊 項目狀態**: 73.7% 完成 | **🚀 API 健康度**: 28/38 端點正常運作  
 > **⚡ 最後更新**: 2025-01-31 | **🎯 下一里程碑**: 通知系統完善
@@ -54,7 +54,7 @@
 
 KCISLK ESID Info Hub is a comprehensive Next.js application providing parents and teachers of KCISLK Elementary School International Department with access to the latest information, educational resources, event updates, and communication tools.
 
-KCISLK 小學國際處資訊中心是一個全面的 Next.js 應用程式，為康橋國際學校小學國際處的家長和老師提供最新資訊、教育資源、活動更新和溝通工具的存取。
+KCISLK ESID Info Hub 是一個全面的 Next.js 應用程式，為林口康橋國際學校的家長和老師提供最新資訊、教育資源、活動更新和溝通工具的存取。
 
 ### 🌟 Features | 功能特色
 
@@ -248,8 +248,8 @@ kcislk-esid-info-hub/
 
 ### 🏠 Home Page (`/`) | 首頁
 - Welcome message and hero section | 歡迎訊息和主視覺區域
-- KCISLK ESID focused information display | 專注於 KCISLK 小學國際處的資訊展示
-- Elementary International Department news board | 小學國際處訊息看板
+- KCISLK ESID focused information display | 專注於 KCISLK ESID 的資訊展示
+- Elementary International Department news board | 國際處訊息看板
 - Monthly newsletter section | 月刊電子報區域
 - Quick statistics and updates | 快速統計資訊和更新
 - Parent and teacher resources | 家長和老師資源

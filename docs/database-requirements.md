@@ -1,5 +1,5 @@
 # KCISLK ESID Info Hub Database Requirements
-*KCISLK 小學國際處資訊中心資料庫需求文件*
+*KCISLK ESID Info Hub 資料庫需求文件*
 
 ## 系統概述 | System Overview
 

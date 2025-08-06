@@ -5,7 +5,7 @@
 
 This guide provides comprehensive instructions for deploying the KCISLK ESID Info Hub application using Docker. The application is optimized for containerized deployment with multi-stage builds, security best practices, and production-ready configuration.
 
-本指南提供使用 Docker 部署 KCISLK 小學國際處資訊中心應用程式的完整說明。應用程式針對容器化部署進行了優化，包含多階段建置、安全最佳實踐和生產就緒配置。
+本指南提供使用 Docker 部署 KCISLK ESID Info Hub 應用程式的完整說明。應用程式針對容器化部署進行了優化，包含多階段建置、安全最佳實踐和生產就緒配置。
 
 ## 🎯 Docker Features | Docker 功能特色
 

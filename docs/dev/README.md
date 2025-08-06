@@ -5,7 +5,7 @@
 
 This comprehensive developer guide provides everything you need to know to contribute effectively to the KCISLK ESID Info Hub project. Whether you're a new team member or an experienced developer, this guide will help you understand the codebase, development workflow, and best practices.
 
-本開發者完整指南提供了為 KCISLK 小學國際處資訊中心專案有效貢獻所需的一切資訊。無論您是新團隊成員還是經驗豐富的開發者，本指南都將幫助您了解程式碼庫、開發工作流程和最佳實踐。
+本開發者完整指南提供了為 KCISLK ESID Info Hub 專案有效貢獻所需的一切資訊。無論您是新團隊成員還是經驗豐富的開發者，本指南都將幫助您了解程式碼庫、開發工作流程和最佳實踐。
 
 ## 🚀 Quick Start | 快速開始
 

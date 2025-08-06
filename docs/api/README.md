@@ -1,7 +1,7 @@
 # API Documentation | API 文檔
 
 Welcome to the KCISLK ESID Info Hub API documentation.  
-歡迎來到 KCISLK 小學國際處資訊中心 API 文檔。
+歡迎來到 KCISLK ESID Info Hub API 文檔。
 
 ## 📋 Available APIs | 可用的 API
 

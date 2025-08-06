@@ -1,5 +1,5 @@
 # Technology Stack & Architecture Recommendations for Zeabur Deployment
-*KCISLK 小學國際處資訊中心技術棧與架構建議 - Zeabur 雲端部署專用*
+*KCISLK ESID Info Hub 技術棧與架構建議 - Zeabur 雲端部署專用*
 
 ## ☁️ Zeabur 雲端架構概述 | Zeabur Cloud Architecture Overview
 

@@ -153,7 +153,7 @@ export default function LoginPage() {
               KCISLK ESID
             </CardTitle>
             <CardDescription className="text-gray-600">
-              康橋小學國際處資訊中心 | 請登入您的帳戶以存取系統
+              請登入您的帳戶以存取系統
             </CardDescription>
           </CardHeader>
 
