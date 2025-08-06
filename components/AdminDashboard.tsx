@@ -40,6 +40,9 @@ import {
   AlertTriangle,
   Play,
   CheckCircle,
+  Folder,
+  Upload,
+  BookOpen,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
@@ -432,6 +435,7 @@ export default function AdminDashboard() {
     { id: "dashboard", label: "儀表板", icon: BarChart3 },
     { id: "teachers", label: "教師管理", icon: GraduationCap },
     { id: "events", label: "活動管理", icon: Calendar },
+    { id: "resources", label: "資源管理", icon: FileText },
     { id: "parents", label: "家長資訊", icon: Users },
     { id: "settings", label: "系統設定", icon: Settings },
   ]
@@ -452,7 +456,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  ES 國際部 - 管理中心
+                  KCISLK ESID Info Hub - 管理中心
                 </h1>
               </div>
             </div>
@@ -992,6 +996,214 @@ export default function AdminDashboard() {
                 </motion.div>
               )}
 
+              {activeTab === "resources" && (
+                <motion.div
+                  key="resources"
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  className="space-y-6"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-900">資源管理</h2>
+                      <p className="text-gray-600 mt-1">管理學習資源、檔案上傳和分類</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link href="/admin/resources">
+                        <Button className="bg-gradient-to-r from-green-600 to-green-700">
+                          <FileText className="w-4 h-4 mr-2" />
+                          進入資源管理
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* 資源概覽統計 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-emerald-600 text-sm font-medium">總資源數</p>
+                            <p className="text-2xl font-bold text-emerald-800">156</p>
+                          </div>
+                          <FileText className="w-8 h-8 text-emerald-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-blue-600 text-sm font-medium">PDF 檔案</p>
+                            <p className="text-2xl font-bold text-blue-800">89</p>
+                          </div>
+                          <Download className="w-8 h-8 text-blue-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-purple-600 text-sm font-medium">影片資源</p>
+                            <p className="text-2xl font-bold text-purple-800">34</p>
+                          </div>
+                          <Play className="w-8 h-8 text-purple-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-amber-600 text-sm font-medium">互動內容</p>
+                            <p className="text-2xl font-bold text-amber-800">33</p>
+                          </div>
+                          <BookOpen className="w-8 h-8 text-amber-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* 按年級分類的資源統計 */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Sparkles className="w-5 h-5 mr-2 text-green-600" />
+                        按年級分類統計
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                          <div className="text-center">
+                            <h4 className="font-semibold text-blue-800 mb-2">Grades 1-2</h4>
+                            <p className="text-2xl font-bold text-blue-600">52</p>
+                            <p className="text-sm text-blue-500">項資源</p>
+                          </div>
+                        </div>
+                        <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+                          <div className="text-center">
+                            <h4 className="font-semibold text-green-800 mb-2">Grades 3-4</h4>
+                            <p className="text-2xl font-bold text-green-600">58</p>
+                            <p className="text-sm text-green-500">項資源</p>
+                          </div>
+                        </div>
+                        <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                          <div className="text-center">
+                            <h4 className="font-semibold text-purple-800 mb-2">Grades 5-6</h4>
+                            <p className="text-2xl font-bold text-purple-600">46</p>
+                            <p className="text-sm text-purple-500">項資源</p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 最近資源活動 */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Sparkles className="w-5 h-5 mr-2 text-green-600" />
+                        最近資源活動
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-emerald-800">數學練習本 - Grade 3</h4>
+                              <Badge variant="outline" className="text-xs">PDF</Badge>
+                            </div>
+                            <p className="text-sm text-emerald-600 mb-2">新增了三年級數學練習教材</p>
+                            <div className="flex items-center text-xs text-emerald-500 gap-4">
+                              <span>📁 學習資料</span>
+                              <span>👤 Teacher Wang</span>
+                              <span>⏰ 2 小時前</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-green-100 text-green-700">已發佈</Badge>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-blue-800">英語朗讀影片系列</h4>
+                              <Badge variant="outline" className="text-xs">影片</Badge>
+                            </div>
+                            <p className="text-sm text-blue-600 mb-2">上傳了新的英語朗讀示範影片</p>
+                            <div className="flex items-center text-xs text-blue-500 gap-4">
+                              <span>📁 語言學習</span>
+                              <span>👤 Teacher Lin</span>
+                              <span>⏰ 5 小時前</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-blue-100 text-blue-700">處理中</Badge>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start justify-between p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-purple-800">科學實驗互動工具</h4>
+                              <Badge variant="outline" className="text-xs">互動</Badge>
+                            </div>
+                            <p className="text-sm text-purple-600 mb-2">新增虛擬科學實驗互動式學習工具</p>
+                            <div className="flex items-center text-xs text-purple-500 gap-4">
+                              <span>📁 科學教育</span>
+                              <span>👤 Teacher Chen</span>
+                              <span>⏰ 1 天前</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-green-100 text-green-700">已發佈</Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* 快速操作 */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>快速操作</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <Link href="/admin/resources">
+                          <Button variant="outline" className="h-20 w-full flex flex-col hover:bg-green-50">
+                            <Plus className="w-6 h-6 mb-2 text-green-600" />
+                            新增資源
+                          </Button>
+                        </Link>
+                        <Button variant="outline" className="h-20 flex flex-col hover:bg-blue-50">
+                          <Folder className="w-6 h-6 mb-2 text-blue-600" />
+                          分類管理
+                        </Button>
+                        <Button variant="outline" className="h-20 flex flex-col hover:bg-purple-50">
+                          <Upload className="w-6 h-6 mb-2 text-purple-600" />
+                          批量上傳
+                        </Button>
+                        <Button variant="outline" className="h-20 flex flex-col hover:bg-orange-50">
+                          <Download className="w-6 h-6 mb-2 text-orange-600" />
+                          導出清單
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
               {activeTab === "parents" && (
                 <motion.div
                   key="parents"
@@ -1151,7 +1363,7 @@ export default function AdminDashboard() {
                           <Label htmlFor="siteName">網站名稱</Label>
                           <Input 
                             id="siteName" 
-                            defaultValue="ES 國際部" 
+                            defaultValue="KCISLK ESID Info Hub" 
                             placeholder="請輸入網站名稱"
                           />
                         </div>
