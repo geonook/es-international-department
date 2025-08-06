@@ -627,6 +627,6 @@ docker run --rm -it \
 
 ---
 
-*This Docker deployment guide provides a comprehensive foundation for containerizing and deploying the ES International Department application. For additional support, refer to the troubleshooting section or contact the development team.*
+*This Docker deployment guide provides a comprehensive foundation for containerizing and deploying the KCISLK ESID Info Hub application. For additional support, refer to the troubleshooting section or contact the development team.*
 
-*此 Docker 部署指南為 ES 國際部應用程式的容器化和部署提供了全面的基礎。如需額外支援，請參考故障排除部分或聯繫開發團隊。*
+*此 Docker 部署指南為 KCISLK ESID Info Hub 應用程式的容器化和部署提供了全面的基礎。如需額外支援，請參考故障排除部分或聯繫開發團隊。*

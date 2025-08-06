@@ -1,4 +1,4 @@
-# ES International Department - API 狀態報告
+# KCISLK ESID Info Hub - API 狀態報告
 **API Status Report | API 狀態詳細報告**
 
 > **📊 整體健康度**: 73.7% (28/38 端點正常) | **🔄 最後測試**: 2025-01-31  
@@ -275,6 +275,6 @@
 **📊 報告生成**: 自動化 API 測試系統  
 **📅 報告時間**: 2025-01-31  
 **🔄 下次測試**: 完成修復後立即執行  
-**👥 負責團隊**: ES International Department Development Team
+**👥 負責團隊**: KCISLK ESID Info Hub Development Team
 
 *Comprehensive API Health Monitoring for Educational Excellence*

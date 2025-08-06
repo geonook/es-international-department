@@ -6,7 +6,7 @@
 
 ## 🎯 實現概述 | Implementation Overview
 
-ES 國際部通知系統已完整實現，提供了企業級的通知管理功能，包括即時推送、模板管理、用戶偏好設定和完整的業務整合。
+KCISLK ESID Info Hub 通知系統已完整實現，提供了企業級的通知管理功能，包括即時推送、模板管理、用戶偏好設定和完整的業務整合。
 
 ## ✅ 已完成功能 | Completed Features
 
@@ -276,7 +276,7 @@ await NotificationService.createAnnouncementNotification(announcementId);
 
 ## ✨ 總結 | Summary
 
-**🎉 ES 國際部通知系統基礎架構已完整實現！**
+**🎉 KCISLK ESID Info Hub 通知系統基礎架構已完整實現！**
 
 ✅ **10+ API 端點** - 完整的 CRUD 操作和管理功能  
 ✅ **12 種通知模板** - 覆蓋所有業務場景  
@@ -302,4 +302,4 @@ await NotificationService.createAnnouncementNotification(announcementId);
 **🧪 測試狀態**: ✅ 完整  
 **🚀 部署狀態**: ✅ 就緒
 
-*🤖 Generated with [Claude Code](https://claude.ai/code) for ES International Department*
+*🤖 Generated with [Claude Code](https://claude.ai/code) for KCISLK ESID Info Hub*

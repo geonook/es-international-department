@@ -1,4 +1,4 @@
-# ES International Department - 項目進度總結報告
+# KCISLK ESID Info Hub - 項目進度總結報告
 **Project Progress Summary Report | 專案進度總結報告**
 
 > **📊 整體完成度**: 73.7% | **🚀 API 健康度**: 28/38 端點  
@@ -205,7 +205,7 @@ const currentUser = await getCurrentUser()
 
 ---
 
-**📝 報告編制**: Claude Code | ES International Department Team  
+**📝 報告編制**: Claude Code | KCISLK ESID Info Hub Team  
 **📅 報告日期**: 2025-01-31  
 **🔄 下次更新**: 完成通知系統優化後
 

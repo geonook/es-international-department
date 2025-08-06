@@ -1,5 +1,5 @@
-# ES International Department - Development Todo
-# ES 國際部開發待辦事項
+# KCISLK ESID Info Hub - Development Todo
+# KCISLK ESID Info Hub 開發待辦事項
 
 > **Last Updated**: 2025-01-31  
 > **Status**: Core Systems Complete - API Optimization Phase  

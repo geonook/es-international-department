@@ -3,9 +3,9 @@
 
 ## 📋 概述 | Overview
 
-本指南詳細說明了 ES 國際部活動管理系統中 FullCalendar 日曆整合的完整實作。系統提供了強大的日曆管理功能，包括多檢視模式、拖拽編輯、快速建立活動等功能。
+本指南詳細說明了 KCISLK ESID Info Hub 活動管理系統中 FullCalendar 日曆整合的完整實作。系統提供了強大的日曆管理功能，包括多檢視模式、拖拽編輯、快速建立活動等功能。
 
-This guide details the complete implementation of FullCalendar integration in the ES International Department event management system. The system provides powerful calendar management features including multiple view modes, drag-and-drop editing, and quick event creation.
+This guide details the complete implementation of FullCalendar integration in the KCISLK ESID Info Hub event management system. The system provides powerful calendar management features including multiple view modes, drag-and-drop editing, and quick event creation.
 
 ## 🎯 功能特色 | Key Features
 
@@ -322,7 +322,7 @@ npm run test:performance
 
 - [FullCalendar 官方文件](https://fullcalendar.io/docs)
 - [React FullCalendar 指南](https://fullcalendar.io/docs/react)
-- [ES 國際部 API 文件](./API_DOCUMENTATION.md)
+- [KCISLK ESID Info Hub API 文件](./API_DOCUMENTATION.md)
 - [部署指南](./DEPLOYMENT_GUIDE.md)
 
 ## 🎯 結論 | Conclusion

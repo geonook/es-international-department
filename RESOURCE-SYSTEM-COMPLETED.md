@@ -275,9 +275,9 @@ The comprehensive resource management system is now fully implemented and ready 
 - **Scalable Architecture** for future growth
   - 為未來增長而設計的可擴展架構
 
-The system follows all established patterns, maintains code quality standards, and provides a solid foundation for educational resource management at ES International Department.
+The system follows all established patterns, maintains code quality standards, and provides a solid foundation for educational resource management at KCISLK ESID Info Hub.
 
-系統遵循所有既定模式，維持程式碼品質標準，並為 ES 國際部的教育資源管理提供堅實的基礎。
+系統遵循所有既定模式，維持程式碼品質標準，並為 KCISLK ESID Info Hub 的教育資源管理提供堅實的基礎。
 
 ---
 
