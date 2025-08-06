@@ -75,10 +75,6 @@ export async function GET(request: NextRequest) {
         roles: userRoles,
         avatar: user.avatarUrl,
         phone: user.phone,
-        dateOfBirth: user.dateOfBirth,
-        address: user.address,
-        emergencyContact: user.emergencyContact,
-        preferences: user.preferences,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         lastLoginAt: user.lastLoginAt,
@@ -124,11 +120,7 @@ export async function PUT(request: NextRequest) {
       firstName, 
       lastName, 
       displayName, 
-      phone, 
-      dateOfBirth, 
-      address, 
-      emergencyContact,
-      preferences 
+      phone
     } = body
 
     // 更新使用者資訊
@@ -139,10 +131,6 @@ export async function PUT(request: NextRequest) {
         lastName: lastName || undefined,
         displayName: displayName || undefined,
         phone: phone || undefined,
-        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
-        address: address || undefined,
-        emergencyContact: emergencyContact || undefined,
-        preferences: preferences || undefined,
         updatedAt: new Date()
       },
       include: {
@@ -169,10 +157,6 @@ export async function PUT(request: NextRequest) {
         roles: userRoles,
         avatar: updatedUser.avatarUrl,
         phone: updatedUser.phone,
-        dateOfBirth: updatedUser.dateOfBirth,
-        address: updatedUser.address,
-        emergencyContact: updatedUser.emergencyContact,
-        preferences: updatedUser.preferences,
         createdAt: updatedUser.createdAt,
         updatedAt: updatedUser.updatedAt,
         lastLoginAt: updatedUser.lastLoginAt,

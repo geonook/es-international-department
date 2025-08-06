@@ -1,41 +1,183 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Download, Calendar, Users, ExternalLink, Search, Sparkles, ChevronDown } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Skeleton } from "@/components/ui/skeleton"
+import { 
+  Calendar, 
+  Users, 
+  MapPin, 
+  Clock, 
+  Search, 
+  Sparkles, 
+  ChevronDown,
+  Filter,
+  Plus,
+  AlertCircle,
+  User,
+  ExternalLink,
+  ArrowLeft
+} from "lucide-react"
 import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
 
 /**
- * 活動頁面組件 - ES 國際部活動資訊
- * Events Page Component - ES International Department Events
+ * 活動頁面組件 - KCISLK ESID 活動資訊
+ * Events Page Component - KCISLK ESID Events
  * 
- * @description 展示學校活動資訊，包括校長有約會議資料和各年級活動簡報
- * @features 校長有約分級資料、活動簡報下載、響應式設計、動畫效果
- * @author Claude Code | Generated for ES International Department
+ * @description 完整功能的活動頁面，包含活動列表、篩選、搜尋、報名等功能
+ * @features 動態活動載入、活動篩選、搜尋、報名功能、響應式設計
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
+
+interface Event {
+  id: number
+  title: string
+  description?: string
+  eventType: string
+  startDate: string
+  endDate?: string
+  startTime?: string
+  endTime?: string
+  location?: string
+  maxParticipants?: number
+  registrationRequired: boolean
+  registrationDeadline?: string
+  targetGrades?: string[]
+  isFeatured: boolean
+  status: string
+  createdAt: string
+  creator?: {
+    displayName: string
+  }
+  registrations?: any[]
+}
+
 export default function EventsPage() {
   // 滾動視差效果 | Scroll parallax effect
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
 
-  // 校長有約分級簡報資料 | Coffee with Principal grade-level presentation materials
-  const coffeeWithPrincipalSlides = [
-    { grades: "Grades 1-2", link: "#", description: "Early elementary presentation materials" },
-    { grades: "Grades 3-4", link: "#", description: "Middle elementary presentation materials" },
-    { grades: "Grades 5-6", link: "#", description: "Upper elementary presentation materials" },
-  ]
+  // 狀態管理
+  const [events, setEvents] = useState<Event[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+  
+  // 篩選和搜尋狀態
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedEventType, setSelectedEventType] = useState('all')
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false)
+  
+  // 載入活動資料
+  useEffect(() => {
+    fetchEvents()
+  }, [])
 
-  // 其他活動簡報資料 | Other event presentation materials
-  const otherEventSlides = [
-    { date: "11/29", title: "Grade 1 Presentation", link: "#" },
-    { date: "11/29", title: "Grade 2 Presentation", link: "#" },
-    { date: "11/29", title: "Grade 3 Presentation", link: "#" },
-    { date: "11/29", title: "Grade 4 Presentation", link: "#" },
-    { date: "11/29", title: "Grade 5 Presentation", link: "#" },
-    { date: "11/29", title: "Grade 6 Presentation", link: "#" },
-  ]
+  const fetchEvents = async () => {
+    try {
+      setIsLoading(true)
+      setError('')
+      
+      // 建構查詢參數
+      const params = new URLSearchParams()
+      params.set('status', 'published')
+      params.set('limit', '50')
+      
+      const response = await fetch(`/api/events?${params.toString()}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setEvents(data.data || [])
+      } else {
+        setError('載入活動資料失敗')
+      }
+    } catch (error) {
+      console.error('Fetch events error:', error)
+      setError('網路錯誤，請稍後再試')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
+  // 過濾活動
+  const filteredEvents = events.filter(event => {
+    // 搜尋過濾
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      const matchesSearch = 
+        event.title.toLowerCase().includes(query) ||
+        (event.description && event.description.toLowerCase().includes(query)) ||
+        (event.location && event.location.toLowerCase().includes(query))
+      
+      if (!matchesSearch) return false
+    }
+    
+    // 活動類型過濾
+    if (selectedEventType !== 'all' && event.eventType !== selectedEventType) {
+      return false
+    }
+    
+    // 特色活動過濾
+    if (showFeaturedOnly && !event.isFeatured) {
+      return false
+    }
+    
+    return true
+  })
+
+  // 格式化日期
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('zh-TW', {
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long'
+    })
+  }
+
+  // 格式化時間
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return ''
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('zh-TW', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
+  }
+
+  // 檢查是否可以報名
+  const canRegister = (event: Event) => {
+    if (!event.registrationRequired) return false
+    
+    const now = new Date()
+    const eventDate = new Date(event.startDate)
+    const registrationDeadline = event.registrationDeadline 
+      ? new Date(event.registrationDeadline) 
+      : eventDate
+    
+    return now < registrationDeadline
+  }
+
+  // 獲取報名狀態
+  const getRegistrationStatus = (event: Event) => {
+    const registrationCount = event.registrations?.length || 0
+    
+    if (event.maxParticipants && registrationCount >= event.maxParticipants) {
+      return { status: 'full', text: '報名額滿', color: 'bg-red-500' }
+    }
+    
+    if (!canRegister(event)) {
+      return { status: 'closed', text: '報名截止', color: 'bg-gray-500' }
+    }
+    
+    return { status: 'open', text: '開放報名', color: 'bg-green-500' }
+  }
+
+  // 動畫變體
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -89,9 +231,9 @@ export default function EventsPage() {
               </motion.div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                  ES International Department
+                  KCISLK ESID Info Hub
                 </h1>
-                <p className="text-xs text-gray-500">Excellence in Education</p>
+                <p className="text-xs text-gray-500">KCISLK Elementary School International Department</p>
               </div>
             </motion.div>
 
@@ -99,7 +241,7 @@ export default function EventsPage() {
               {[
                 { name: "Home", href: "/" },
                 { name: "Events", href: "/events", active: true },
-                { name: "Resources", href: "/resources", hasDropdown: true },
+                { name: "Resources", href: "/resources" },
               ].map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -116,7 +258,6 @@ export default function EventsPage() {
                     }`}
                   >
                     {item.name}
-                    {item.hasDropdown && <ChevronDown className="w-3 h-3" />}
                     {item.active && (
                       <motion.div
                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full"
@@ -126,25 +267,33 @@ export default function EventsPage() {
                   </Link>
                 </motion.div>
               ))}
-              <motion.div whileHover={{ scale: 1.1 }}>
-                <Search className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600 transition-colors" />
-              </motion.div>
             </nav>
           </div>
         </div>
       </motion.header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* 導航 */}
+        <div className="mb-6">
+          <Link 
+            href="/" 
+            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回首頁
+          </Link>
+        </div>
+
         {/* Page Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-12"
           style={{ y: y1 }}
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           <motion.h2
-            className="text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6"
+            className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6"
             animate={{
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
             }}
@@ -155,7 +304,7 @@ export default function EventsPage() {
             }}
             style={{ backgroundSize: "200% 200%" }}
           >
-            Events
+            學校活動 Events
           </motion.h2>
           <motion.p
             className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed"
@@ -163,219 +312,254 @@ export default function EventsPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            Stay connected with our school community through various events and activities designed to enhance
-            communication between families and school leadership.
+            參與我們豐富多彩的學校活動，與教師、家長和同學們建立更緊密的聯繫
           </motion.p>
         </motion.div>
 
-        {/* Coffee with the Principal */}
-        <motion.section
-          className="mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+        {/* 搜尋和篩選 */}
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
         >
-          <motion.div variants={itemVariants}>
-            <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-amber-500 to-amber-600 text-white relative overflow-hidden">
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-amber-400/50 to-orange-500/50"
-                  animate={{
-                    x: ["-100%", "100%"],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "linear",
-                  }}
-                />
-                <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+          <Card className="bg-white/80 backdrop-blur-lg">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                {/* 搜尋欄 */}
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="搜尋活動名稱、描述或地點..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                
+                {/* 活動類型篩選 */}
+                <div className="w-full md:w-48">
+                  <Select value={selectedEventType} onValueChange={setSelectedEventType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="活動類型" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">所有類型</SelectItem>
+                      <SelectItem value="meeting">會議</SelectItem>
+                      <SelectItem value="workshop">工作坊</SelectItem>
+                      <SelectItem value="celebration">慶祝活動</SelectItem>
+                      <SelectItem value="sports">體育活動</SelectItem>
+                      <SelectItem value="academic">學術活動</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* 特色活動開關 */}
+                <div className="flex items-center">
+                  <Button
+                    variant={showFeaturedOnly ? "default" : "outline"}
+                    onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
+                    className="whitespace-nowrap"
                   >
-                    <Users className="h-8 w-8" />
-                  </motion.div>
-                  Coffee with the Principal
-                </CardTitle>
-                <CardDescription className="text-amber-100 text-lg relative z-10">
-                  Connect with school leadership and stay informed about our educational initiatives
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <motion.div
-                  className="mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <p className="text-gray-700 mb-6 text-lg leading-relaxed">
-                    Our "Coffee with the Principal" sessions provide an excellent platform for parents and community
-                    members to engage directly with school leadership. These informal yet informative gatherings offer
-                    insights into our educational programs, upcoming initiatives, and opportunities for feedback.
-                  </p>
-                  <motion.div
-                    className="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 p-6 rounded-lg"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <p className="text-amber-800 font-medium text-lg">
-                      Join us for meaningful conversations about your child's educational journey and our school's
-                      vision for the future.
-                    </p>
-                  </motion.div>
-                </motion.div>
+                    <Filter className="w-4 h-4 mr-2" />
+                    特色活動
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-                <h4 className="text-2xl font-semibold text-gray-900 mb-6">Presentation Materials by Grade Level</h4>
-                <motion.div
-                  className="grid md:grid-cols-3 gap-6"
-                  variants={containerVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                >
-                  {coffeeWithPrincipalSlides.map((slide, index) => (
-                    <motion.div key={index} variants={itemVariants}>
-                      <Card className="border-2 border-amber-200 hover:border-amber-400 transition-all duration-300 group overflow-hidden">
-                        <CardHeader className="pb-3 bg-gradient-to-br from-amber-50 to-orange-50">
-                          <CardTitle className="text-lg text-amber-700 group-hover:text-amber-900 transition-colors">
-                            {slide.grades}
-                          </CardTitle>
-                          <CardDescription className="text-sm">{slide.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="pt-4">
-                          <div className="flex gap-2">
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="gap-2 w-full bg-transparent hover:bg-amber-50"
-                              >
-                                <Download className="h-4 w-4" />
-                                Download
-                              </Button>
-                            </motion.div>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="gap-2 w-full bg-transparent hover:bg-amber-50"
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                                View
-                              </Button>
-                            </motion.div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </CardContent>
-            </Card>
+        {/* 錯誤訊息 */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8"
+          >
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           </motion.div>
-        </motion.section>
+        )}
 
-        {/* Other Event Slides */}
-        <motion.section
-          className="mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={itemVariants}>
-            <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 text-white relative overflow-hidden">
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-purple-400/50 to-pink-500/50"
-                  animate={{
-                    x: ["-100%", "100%"],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "linear",
-                  }}
-                />
-                <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                  >
-                    <Calendar className="h-8 w-8" />
-                  </motion.div>
-                  Other Event Presentations
-                </CardTitle>
-                <CardDescription className="text-purple-100 text-lg relative z-10">
-                  Additional event materials organized by date and grade level
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <motion.div
-                  className="mb-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <h4 className="text-2xl font-semibold text-gray-900 mb-3">November 29th Event Materials</h4>
-                  <p className="text-gray-600 text-lg">
-                    Access presentation slides from our recent grade-level events and activities.
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                  variants={containerVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                >
-                  {otherEventSlides.map((slide, index) => (
-                    <motion.div key={index} variants={itemVariants}>
-                      <Card className="border border-purple-200 hover:border-purple-400 transition-all duration-300 group hover:shadow-xl">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <motion.span
-                              className="text-sm font-medium text-purple-600 bg-purple-100 px-3 py-1 rounded-full"
-                              whileHover={{ scale: 1.05 }}
-                            >
-                              {slide.date}
-                            </motion.span>
-                          </div>
-                          <h5 className="font-medium text-gray-900 mb-4 text-lg group-hover:text-purple-700 transition-colors">
-                            {slide.title}
-                          </h5>
-                          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="w-full gap-2 bg-transparent hover:bg-purple-50"
-                            >
-                              <Download className="h-4 w-4" />
-                              Download Slides
-                            </Button>
-                          </motion.div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </CardContent>
-            </Card>
+        {/* 載入狀態 */}
+        {isLoading && (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {Array.from({ length: 6 }).map((_, index) => (
+              <motion.div key={index} variants={itemVariants}>
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-2/3" />
+                      <div className="flex gap-2">
+                        <Skeleton className="h-6 w-16" />
+                        <Skeleton className="h-6 w-20" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </motion.div>
-        </motion.section>
+        )}
+
+        {/* 活動列表 */}
+        {!isLoading && (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {filteredEvents.length > 0 ? (
+              filteredEvents.map((event) => {
+                const registrationStatus = getRegistrationStatus(event)
+                
+                return (
+                  <motion.div key={event.id} variants={itemVariants}>
+                    <Card className="h-full hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+                      {event.isFeatured && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 text-xs font-medium rounded-bl-lg">
+                          特色活動
+                        </div>
+                      )}
+                      
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <CardTitle className="text-lg group-hover:text-purple-600 transition-colors line-clamp-2">
+                              {event.title}
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2 mt-2">
+                              <Badge variant="secondary" className="text-xs">
+                                {event.eventType}
+                              </Badge>
+                            </CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      
+                      <CardContent className="flex-1 flex flex-col">
+                        {event.description && (
+                          <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                            {event.description}
+                          </p>
+                        )}
+                        
+                        <div className="space-y-2 mb-4">
+                          {/* 日期時間 */}
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Calendar className="w-4 h-4" />
+                            <span>{formatDate(event.startDate)}</span>
+                          </div>
+                          
+                          {/* 時間 */}
+                          {event.startTime && (
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <Clock className="w-4 h-4" />
+                              <span>
+                                {formatTime(event.startTime)}
+                                {event.endTime && ` - ${formatTime(event.endTime)}`}
+                              </span>
+                            </div>
+                          )}
+                          
+                          {/* 地點 */}
+                          {event.location && (
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <MapPin className="w-4 h-4" />
+                              <span>{event.location}</span>
+                            </div>
+                          )}
+                          
+                          {/* 報名人數 */}
+                          {event.registrationRequired && (
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <Users className="w-4 h-4" />
+                              <span>
+                                {event.registrations?.length || 0}
+                                {event.maxParticipants && `/${event.maxParticipants}`} 人報名
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* 報名狀態和按鈕 */}
+                        <div className="mt-auto">
+                          {event.registrationRequired && (
+                            <div className="flex items-center justify-between">
+                              <Badge 
+                                className={`${registrationStatus.color} text-white text-xs`}
+                              >
+                                {registrationStatus.text}
+                              </Badge>
+                              
+                              {registrationStatus.status === 'open' && (
+                                <Button size="sm" variant="outline" className="group-hover:bg-purple-50">
+                                  立即報名
+                                </Button>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* 活動創建者 */}
+                          {event.creator && (
+                            <div className="flex items-center gap-2 mt-3 pt-3 border-t text-xs text-gray-500">
+                              <User className="w-3 h-3" />
+                              <span>主辦：{event.creator.displayName}</span>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )
+              })
+            ) : (
+              // 無活動時的顯示
+              <motion.div
+                variants={itemVariants}
+                className="col-span-full text-center py-12"
+              >
+                <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                  {searchQuery || selectedEventType !== 'all' || showFeaturedOnly 
+                    ? '找不到符合條件的活動' 
+                    : '目前沒有活動'}
+                </h3>
+                <p className="text-gray-600">
+                  {searchQuery || selectedEventType !== 'all' || showFeaturedOnly 
+                    ? '請嘗試調整搜尋條件' 
+                    : '敬請期待更多精彩活動'}
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
       </main>
 
       {/* Footer */}
       <motion.footer
-        className="bg-gradient-to-r from-purple-800 to-purple-900 text-white py-12 relative overflow-hidden"
+        className="bg-gradient-to-r from-purple-800 to-purple-900 text-white py-12 relative overflow-hidden mt-16"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.p initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-            &copy; 2025 ES International Department, KCIS. All rights reserved.
+            &copy; 2025 KCISLK Elementary School International Department. All rights reserved.
           </motion.p>
           <motion.p
             className="text-purple-300 text-sm mt-2"
@@ -383,7 +567,7 @@ export default function EventsPage() {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            Excellence in International Education
+            林口康橋國際學校 | Excellence in International Education
           </motion.p>
         </div>
         <div className="absolute inset-0 opacity-10">
