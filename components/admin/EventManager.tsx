@@ -6,7 +6,7 @@
  * 
  * @description 活動管理主組件，包含列表、搜尋、篩選和操作功能
  * @features 活動CRUD、篩選、搜尋、分頁、批量操作
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { useState, useCallback } from 'react'

@@ -6,7 +6,7 @@
  * 
  * @description 活動管理主頁面，包含活動列表、統計和管理功能
  * @features 活動CRUD操作、分類管理、報名管理、統計分析
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { useEffect, useState, useCallback } from 'react'

@@ -1,5 +1,5 @@
 /**
- * File Upload Utilities for ES International Department
+ * File Upload Utilities for KCISLK ESID Info Hub
  * 檔案上傳工具函式 - 安全檔案處理與驗證
  */
 

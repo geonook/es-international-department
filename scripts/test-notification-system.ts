@@ -3,7 +3,7 @@
  * 通知系統測試腳本
  * 
  * @description 測試通知系統的各項功能，包括 API 端點、服務層和業務整合
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { PrismaClient } from '@prisma/client'

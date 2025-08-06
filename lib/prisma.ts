@@ -1,6 +1,6 @@
 /**
  * Prisma Client Configuration for Zeabur Multi-Environment Deployment
- * ES International Department - Zeabur 多環境雲端資料庫配置
+ * KCISLK ESID Info Hub - Zeabur 多環境雲端資料庫配置
  */
 
 import { PrismaClient } from '@prisma/client'

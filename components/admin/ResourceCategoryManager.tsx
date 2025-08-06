@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * Resource Category Manager Component - ES International Department
- * 資源分類管理組件 - ES 國際部
+ * Resource Category Manager Component - KCISLK ESID Info Hub
+ * 資源分類管理組件 - KCISLK ESID Info Hub
  */
 
 import { useState, useEffect, useCallback } from 'react'

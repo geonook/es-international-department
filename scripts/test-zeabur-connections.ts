@@ -1,6 +1,6 @@
 /**
  * Zeabur Database Connections Test Script
- * ES International Department - Zeabur 資料庫連接測試
+ * KCISLK ESID Info Hub - Zeabur 資料庫連接測試
  */
 
 import { Client } from 'pg'
@@ -58,7 +58,7 @@ async function testDatabaseConnection(environment: string, connectionString: str
  * 主測試函數
  */
 async function main() {
-  console.log('🚀 ES International Department - Zeabur Databases Connection Test')
+  console.log('🚀 KCISLK ESID Info Hub - Zeabur Databases Connection Test')
   console.log('=' .repeat(70))
   
   const results: Record<string, boolean> = {}

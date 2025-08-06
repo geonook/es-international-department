@@ -1,6 +1,6 @@
 /**
  * Environment Variables Validation Script for Zeabur Deployment
- * ES International Department - 環境變數驗證腳本
+ * KCISLK ESID Info Hub - 環境變數驗證腳本
  */
 
 import { z } from 'zod'
@@ -224,7 +224,7 @@ function checkEnvironmentFiles() {
  * Main function
  */
 function main() {
-  console.log('🚀 ES International Department - Environment Variables Validation')
+  console.log('🚀 KCISLK ESID Info Hub - Environment Variables Validation')
   console.log('=' .repeat(70))
   
   checkEnvironmentFiles()

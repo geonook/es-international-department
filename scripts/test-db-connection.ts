@@ -1,6 +1,6 @@
 /**
  * Database Connection Test Script for Zeabur Multi-Environment
- * ES International Department - Zeabur 資料庫連接測試腳本
+ * KCISLK ESID Info Hub - Zeabur 資料庫連接測試腳本
  */
 
 import { PrismaClient } from '@prisma/client'
@@ -107,7 +107,7 @@ async function testDatabaseConnection() {
  * Run the test
  */
 async function main() {
-  console.log('🚀 ES International Department - Database Connection Test')
+  console.log('🚀 KCISLK ESID Info Hub - Database Connection Test')
   console.log('=' .repeat(60))
   
   const success = await testDatabaseConnection()

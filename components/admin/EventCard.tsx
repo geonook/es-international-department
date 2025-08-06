@@ -6,7 +6,7 @@
  * 
  * @description 單一活動資訊展示卡片，支援展開/收合和操作按鈕
  * @features 狀態指示、快速操作、報名資訊、響應式設計
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { motion } from 'framer-motion'

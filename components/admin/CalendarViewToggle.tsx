@@ -6,7 +6,7 @@
  * 
  * @description 在列表檢視和日曆檢視之間切換的控制組件
  * @features 檢視模式切換、本地存儲記憶、動畫效果
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { useState, useEffect } from 'react'

@@ -1,5 +1,5 @@
 /**
- * Authentication Utilities for ES International Department
+ * Authentication Utilities for KCISLK ESID Info Hub
  * JWT Token 管理和密碼認證工具函式
  */
 

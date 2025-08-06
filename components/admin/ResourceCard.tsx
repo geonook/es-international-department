@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * Resource Card Component - ES International Department
- * 資源卡片組件 - ES 國際部
+ * Resource Card Component - KCISLK ESID Info Hub
+ * 資源卡片組件 - KCISLK ESID Info Hub
  */
 
 import { motion } from 'framer-motion'

@@ -16,7 +16,7 @@
             "status": 200,
             "responseData": {
               "status": "OK",
-              "service": "ES International Department",
+              "service": "KCISLK ESID Info Hub",
               "timestamp": "2025-08-03T03:52:48.894Z",
               "environment": "development",
               "version": "1.0.0"

@@ -2,7 +2,7 @@
 
 /**
  * Comprehensive API Endpoint Verification Test
- * ES International Department - 完整的 API 端點驗證測試
+ * KCISLK ESID Info Hub - 完整的 API 端點驗證測試
  * 
  * This script performs thorough testing of all API endpoints including:
  * - Health checks

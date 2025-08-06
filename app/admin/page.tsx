@@ -1,6 +1,6 @@
 /**
- * Admin Page - ES International Department
- * 管理員頁面 - ES 國際部
+ * Admin Page - KCISLK ESID Info Hub
+ * 管理員頁面 - KCISLK ESID Info Hub
  */
 
 import AdminDashboard from '@/components/AdminDashboard'

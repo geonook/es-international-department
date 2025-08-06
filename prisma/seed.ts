@@ -1,6 +1,6 @@
 /**
- * ES International Department Database Seeding Script
- * ES 國際部資料庫種子資料腳本 - Zeabur 多環境支援
+ * KCISLK ESID Info Hub Database Seeding Script
+ * KCISLK ESID Info Hub 資料庫種子資料腳本 - Zeabur 多環境支援
  */
 
 import { PrismaClient } from '@prisma/client'
@@ -131,7 +131,7 @@ const defaultResourceCategories = [
 const defaultSystemSettings = [
   {
     key: 'site_name',
-    value: 'ES International Department',
+    value: 'KCISLK ESID Info Hub',
     description: 'Site display name',
     dataType: 'string',
     isPublic: true
@@ -302,7 +302,7 @@ async function main() {
       if (existingAnnouncements === 0) {
         const basicAnnouncements = [
           {
-            title: 'Welcome to ES International Department',
+            title: 'Welcome to KCISLK ESID Info Hub',
             content: 'Welcome to our parent portal! Here you can access important announcements, events, and resources. This system provides a comprehensive platform for school-parent communication.',
             summary: 'Welcome message for parents and community',
             authorId: adminUser.id,

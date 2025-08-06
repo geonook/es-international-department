@@ -4,7 +4,7 @@
  * 
  * @description 日曆相關的工具函式和助手方法
  * @features 事件轉換、日期處理、衝突檢測、顏色管理
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { format, parseISO, startOfDay, endOfDay, isSameDay, isWithinInterval } from 'date-fns'

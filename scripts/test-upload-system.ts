@@ -1,5 +1,5 @@
 /**
- * File Upload System Test Script for ES International Department
+ * File Upload System Test Script for KCISLK ESID Info Hub
  * 檔案上傳系統測試腳本 - 驗證上傳系統功能
  */
 

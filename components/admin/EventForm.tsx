@@ -6,7 +6,7 @@
  * 
  * @description 活動建立和編輯表單，支援所有活動欄位和驗證
  * @features 表單驗證、日期時間選擇、富文本編輯、圖片上傳
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { useState, useEffect } from 'react'

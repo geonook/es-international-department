@@ -1,6 +1,6 @@
 /**
  * Role-Based Access Control (RBAC) System
- * ES International Department 角色權限控制系統
+ * KCISLK ESID Info Hub 角色權限控制系統
  */
 
 import { User } from '@/lib/auth'

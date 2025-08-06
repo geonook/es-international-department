@@ -1,5 +1,5 @@
 /**
- * File Upload Type Definitions for ES International Department
+ * File Upload Type Definitions for KCISLK ESID Info Hub
  * 檔案上傳系統型別定義
  */
 

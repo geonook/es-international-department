@@ -6,7 +6,7 @@
  * 
  * @description 基於 FullCalendar 的活動管理日曆組件
  * @features 多檢視模式、拖拽編輯、快速建立、事件顏色編碼、衝突檢測
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'

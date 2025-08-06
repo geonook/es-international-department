@@ -1,5 +1,5 @@
 /**
- * File List Component for ES International Department
+ * File List Component for KCISLK ESID Info Hub
  * 檔案列表組件 - 顯示已上傳的檔案並提供管理功能
  */
 

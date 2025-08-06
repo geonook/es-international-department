@@ -1,6 +1,6 @@
 /**
  * Environment Switcher for Zeabur Multi-Environment Setup
- * ES International Department - 環境切換工具
+ * KCISLK ESID Info Hub - 環境切換工具
  */
 
 import fs from 'fs'
@@ -13,7 +13,7 @@ type Environment = typeof ENVIRONMENTS[number]
  * 顯示使用說明
  */
 function showHelp() {
-  console.log('🔄 ES International Department - Environment Switcher')
+  console.log('🔄 KCISLK ESID Info Hub - Environment Switcher')
   console.log('='  .repeat(60))
   console.log('')
   console.log('Usage: npm run env:switch <environment>')

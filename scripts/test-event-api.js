@@ -1,6 +1,6 @@
 /**
  * Event CRUD API Testing Script
- * ES International Department Event Management System
+ * KCISLK ESID Info Hub Event Management System
  * 
  * This script tests all the event-related API endpoints
  * Run with: node scripts/test-event-api.js

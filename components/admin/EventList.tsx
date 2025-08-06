@@ -6,7 +6,7 @@
  * 
  * @description 活動列表顯示組件，支援分頁、排序和批量操作
  * @features 響應式設計、狀態指示器、快速操作、分頁導航
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { useState } from 'react'

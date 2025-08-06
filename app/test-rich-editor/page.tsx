@@ -130,7 +130,7 @@ export default function TestRichEditorPage() {
             富文本編輯器測試
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            這是 ES 國際部公告系統的富文本編輯器測試頁面。您可以在這裡測試編輯器的各種功能，包括格式化、自動儲存、內容驗證等。
+            這是 KCISLK ESID Info Hub 公告系統的富文本編輯器測試頁面。您可以在這裡測試編輯器的各種功能，包括格式化、自動儲存、內容驗證等。
           </p>
         </motion.div>
 

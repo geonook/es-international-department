@@ -1,6 +1,6 @@
 /**
  * Next.js Middleware - Global Authentication Protection
- * ES International Department 全域認證保護中介軟體
+ * KCISLK ESID Info Hub 全域認證保護中介軟體
  */
 
 import { NextRequest } from 'next/server'

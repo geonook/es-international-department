@@ -6,7 +6,7 @@
  * 
  * @description 在日曆事件上顯示報名狀態的徽章組件
  * @features 報名人數顯示、狀態指示、快速操作
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { motion } from 'framer-motion'

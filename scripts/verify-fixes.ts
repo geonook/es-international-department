@@ -1,6 +1,6 @@
 /**
  * Verification Script for Zeabur Configuration Fixes
- * ES International Department - 修正驗證腳本
+ * KCISLK ESID Info Hub - 修正驗證腳本
  */
 
 console.log('🔍 Verifying Zeabur Configuration Fixes...\n')

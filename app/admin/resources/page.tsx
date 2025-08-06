@@ -1,6 +1,6 @@
 /**
- * Admin Resources Management Page - ES International Department
- * 管理員資源管理頁面 - ES 國際部
+ * Admin Resources Management Page - KCISLK ESID Info Hub
+ * 管理員資源管理頁面 - KCISLK ESID Info Hub
  */
 
 'use client'

@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * Resource List Component - ES International Department
- * 資源列表組件 - ES 國際部
+ * Resource List Component - KCISLK ESID Info Hub
+ * 資源列表組件 - KCISLK ESID Info Hub
  */
 
 import { useState } from 'react'

@@ -1,5 +1,5 @@
 /**
- * File Upload React Hook for ES International Department
+ * File Upload React Hook for KCISLK ESID Info Hub
  * 檔案上傳 React Hook - 簡化前端檔案上傳功能
  */
 

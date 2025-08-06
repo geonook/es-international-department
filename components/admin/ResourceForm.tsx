@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * Resource Form Component - ES International Department
- * 資源表單組件 - ES 國際部
+ * Resource Form Component - KCISLK ESID Info Hub
+ * 資源表單組件 - KCISLK ESID Info Hub
  */
 
 import { useState, useEffect } from 'react'

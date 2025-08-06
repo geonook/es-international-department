@@ -1,6 +1,6 @@
 /**
  * Environment Configuration Check Script for Zeabur Deployment
- * ES International Department - 環境配置檢查腳本
+ * KCISLK ESID Info Hub - 環境配置檢查腳本
  */
 
 // Load environment variables from .env file
@@ -156,7 +156,7 @@ function showConfigurationGuide() {
  * Main function
  */
 function main() {
-  console.log('🚀 ES International Department - Environment Configuration Check')
+  console.log('🚀 KCISLK ESID Info Hub - Environment Configuration Check')
   console.log('=' .repeat(70))
   
   const isHealthy = checkEnvironmentConfiguration()

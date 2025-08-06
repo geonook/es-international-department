@@ -1,5 +1,5 @@
 /**
- * File Uploader Component for ES International Department
+ * File Uploader Component for KCISLK ESID Info Hub
  * 檔案上傳組件 - 支援拖放上傳與進度顯示
  */
 

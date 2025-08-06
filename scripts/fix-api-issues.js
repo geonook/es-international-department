@@ -2,7 +2,7 @@
 
 /**
  * API Issues Fix Script
- * ES International Department - API 問題修復腳本
+ * KCISLK ESID Info Hub - API 問題修復腳本
  * 
  * This script helps diagnose and fix common API issues found during testing
  */
@@ -192,7 +192,7 @@ class APIIssueFixer {
     const fixScript = `#!/bin/bash
 
 # API Issues Auto-Fix Script
-# ES International Department - API 問題自動修復腳本
+# KCISLK ESID Info Hub - API 問題自動修復腳本
 
 echo "🚀 開始修復 API 問題..."
 

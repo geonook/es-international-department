@@ -1,6 +1,6 @@
 /**
  * Environment Configuration Validation for Zeabur Multi-Environment Deployment
- * ES International Department - Zeabur 多環境配置驗證
+ * KCISLK ESID Info Hub - Zeabur 多環境配置驗證
  */
 
 import { z } from 'zod'

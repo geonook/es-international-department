@@ -1,6 +1,6 @@
 /**
  * Docker Configuration Test Script
- * ES International Department - Docker 配置測試腳本
+ * KCISLK ESID Info Hub - Docker 配置測試腳本
  * 
  * This script validates the Docker configuration without actually building
  * the Docker image, useful when Docker is not available locally.
