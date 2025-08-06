@@ -8,6 +8,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
+import emailService from '@/lib/emailService'
 import { 
   NotificationType, 
   NotificationPriority, 
@@ -855,15 +856,32 @@ export class NotificationService {
         return acc
       }, {} as Record<string, any[]>)
 
-      // 發送即時通知
+      // 發送即時通知到 SSE 流
       for (const [userId, userNotifications] of Object.entries(notificationsByUser)) {
         try {
-          // 這裡可以調用 SSE 推送
-          // 或者使用 WebSocket 連接
-          // 目前暫時記錄日誌
-          console.log(`Pushing ${userNotifications.length} notifications to user ${userId}`)
+          // 調用 SSE 推送服務
+          const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/notifications/stream`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userIds: [userId],
+              notification: {
+                type: 'new_notifications',
+                data: userNotifications,
+                count: userNotifications.length
+              }
+            })
+          })
+
+          if (response.ok) {
+            console.log(`✅ Pushed ${userNotifications.length} real-time notifications to user ${userId}`)
+          } else {
+            console.warn(`⚠️ SSE push failed for user ${userId}:`, response.status)
+          }
         } catch (error) {
-          console.error(`Failed to push notifications to user ${userId}:`, error)
+          console.error(`❌ Failed to push notifications to user ${userId}:`, error)
         }
       }
 
@@ -877,8 +895,6 @@ export class NotificationService {
    */
   private static async sendEmailNotifications(notifications: any[]): Promise<void> {
     try {
-      // TODO: 實作 Email 發送邏輯
-      // 可以使用 Nodemailer、SendGrid、AWS SES 等服務
       console.log(`Preparing to send ${notifications.length} email notifications`)
       
       // 群組通知按用戶
@@ -893,16 +909,71 @@ export class NotificationService {
       // 批量發送 Email
       for (const [userId, userNotifications] of Object.entries(notificationsByUser)) {
         try {
-          // 獲取用戶偏好設定
-          const preferences = await this.getUserPreferences(userId)
-          
-          if (preferences.email) {
-            // 發送 Email
-            console.log(`Sending email with ${userNotifications.length} notifications to user ${userId}`)
-            // await emailService.sendNotificationEmail(userId, userNotifications)
+          // 獲取用戶偏好設定和基本資料
+          const [preferences, user] = await Promise.all([
+            this.getUserPreferences(userId),
+            prisma.user.findUnique({
+              where: { id: userId },
+              select: { 
+                id: true, 
+                email: true, 
+                firstName: true, 
+                lastName: true, 
+                displayName: true 
+              }
+            })
+          ])
+
+          if (!user?.email) {
+            console.warn(`User ${userId} has no email address, skipping email notification`)
+            continue
           }
-        } catch (error) {
-          console.error(`Failed to send email to user ${userId}:`, error)
+
+          // 檢查用戶是否啟用 Email 通知
+          if (!preferences.email) {
+            console.log(`User ${userId} has email notifications disabled`)
+            continue
+          }
+
+          // 發送不同類型的通知郵件
+          for (const notification of userNotifications) {
+            try {
+              if (notification.type === 'announcement') {
+                await emailService.sendAnnouncementEmail(
+                  [user.email],
+                  notification.title,
+                  notification.message,
+                  notification.priority
+                )
+              } else if (notification.type === 'event') {
+                // 假設有活動日期在 metadata 中
+                const eventDate = notification.metadata?.eventDate 
+                  ? new Date(notification.metadata.eventDate) 
+                  : new Date()
+                
+                await emailService.sendEventNotificationEmail(
+                  [user.email],
+                  notification.title,
+                  eventDate,
+                  notification.message
+                )
+              } else {
+                // 其他類型的通知使用通用公告模板
+                await emailService.sendAnnouncementEmail(
+                  [user.email],
+                  notification.title,
+                  notification.message,
+                  notification.priority
+                )
+              }
+
+              console.log(`✅ Email sent successfully to ${user.email} for notification: ${notification.title}`)
+            } catch (emailError) {
+              console.error(`❌ Failed to send email to ${user.email}:`, emailError)
+            }
+          }
+        } catch (userError) {
+          console.error(`Error processing notifications for user ${userId}:`, userError)
         }
       }
 

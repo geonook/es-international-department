@@ -40,16 +40,42 @@ export async function GET(request: NextRequest) {
       where.status = status
     }
     
-    if (search) {
+    // 預設過濾掉過期的公告
+    const includeExpired = searchParams.get('includeExpired') === 'true'
+    if (!includeExpired) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { content: { contains: search, mode: 'insensitive' } },
-        { summary: { contains: search, mode: 'insensitive' } }
+        { expiresAt: null }, // 沒有過期時間的公告
+        { expiresAt: { gt: new Date() } } // 還沒過期的公告
       ]
+    }
+    
+    if (search) {
+      // 如果有搜尋條件，需要調整 OR 邏輯
+      if (where.OR && !includeExpired) {
+        where.AND = [
+          {
+            OR: where.OR // 過期條件
+          },
+          {
+            OR: [
+              { title: { contains: search, mode: 'insensitive' } },
+              { content: { contains: search, mode: 'insensitive' } },
+              { summary: { contains: search, mode: 'insensitive' } }
+            ]
+          }
+        ]
+        delete where.OR
+      } else {
+        where.OR = [
+          { title: { contains: search, mode: 'insensitive' } },
+          { content: { contains: search, mode: 'insensitive' } },
+          { summary: { contains: search, mode: 'insensitive' } }
+        ]
+      }
     }
 
     // 執行查詢
-    const [announcements, totalCount] = await Promise.all([
+    const [rawAnnouncements, totalCount] = await Promise.all([
       prisma.announcement.findMany({
         where,
         include: {
@@ -64,8 +90,9 @@ export async function GET(request: NextRequest) {
           }
         },
         orderBy: [
-          { priority: 'desc' }, // 高優先順序在前
-          { publishedAt: 'desc' }, // 最新發布的在前
+          { priority: 'desc' }, // 先按優先級排序
+          { publishedAt: 'desc' }, 
+          { updatedAt: 'desc' },
           { createdAt: 'desc' }
         ],
         skip: offset,
@@ -74,6 +101,45 @@ export async function GET(request: NextRequest) {
       prisma.announcement.count({ where })
     ])
 
+    // 智能排序：計算每個公告的權重分數
+    const announcements = rawAnnouncements.map(announcement => {
+      const now = new Date()
+      const publishedAt = announcement.publishedAt || announcement.createdAt
+      const daysSincePublished = Math.floor((now.getTime() - publishedAt.getTime()) / (1000 * 60 * 60 * 24))
+      
+      // 優先級權重
+      const priorityWeight = {
+        'high': 100,
+        'medium': 50,
+        'low': 20
+      }[announcement.priority] || 20
+      
+      // 新鮮度權重（越新權重越高）
+      const freshnessWeight = Math.max(0, 30 - daysSincePublished)
+      
+      // 即將過期權重（快過期的權重更高）
+      let urgencyWeight = 0
+      if (announcement.expiresAt) {
+        const hoursUntilExpiry = Math.floor((announcement.expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60))
+        if (hoursUntilExpiry > 0 && hoursUntilExpiry <= 48) {
+          urgencyWeight = 50 - hoursUntilExpiry // 48小時內過期的加權
+        }
+      }
+      
+      const totalScore = priorityWeight + freshnessWeight + urgencyWeight
+      
+      return {
+        ...announcement,
+        _sortScore: totalScore
+      }
+    })
+
+    // 根據計算分數重新排序
+    announcements.sort((a, b) => b._sortScore - a._sortScore)
+
+    // 移除排序分數（不返回給客戶端）
+    const finalAnnouncements = announcements.map(({ _sortScore, ...announcement }) => announcement)
+
     // 計算分頁資訊
     const totalPages = Math.ceil(totalCount / limit)
     const hasNextPage = page < totalPages
@@ -81,7 +147,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: announcements,
+      data: finalAnnouncements,
       pagination: {
         page,
         limit,
@@ -94,7 +160,8 @@ export async function GET(request: NextRequest) {
         targetAudience,
         priority,
         status,
-        search
+        search,
+        includeExpired
       }
     })
 
