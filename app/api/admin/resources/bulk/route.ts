@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyAuthToken } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS, isAdmin } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 interface BulkActionRequest {
@@ -14,19 +14,18 @@ interface BulkActionRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify authentication
-    const user = await verifyAuthToken(request)
-    if (!user) {
+    // Verify authentication and admin permissions
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED },
         { status: 401 }
       )
     }
 
-    // Check if user is admin (basic check - you might want to enhance this)
-    if (!user.email?.includes('@es-intl.edu') && user.email !== 'admin@example.com') {
+    if (!isAdmin(currentUser)) {
       return NextResponse.json(
-        { success: false, error: 'Forbidden - Admin access required' },
+        { success: false, error: AUTH_ERRORS.ACCESS_DENIED },
         { status: 403 }
       )
     }
@@ -110,7 +109,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Log the bulk action (optional - you might want to add an audit log table)
-    console.log(`Bulk action performed: ${action} on ${updateResult.count} resources by user ${user.email}`)
+    console.log(`Bulk action performed: ${action} on ${updateResult.count} resources by user ${currentUser.email}`)
 
     return NextResponse.json({
       success: true,

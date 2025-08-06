@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuth, requireAdmin } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS, isAdmin } from '@/lib/auth'
 import { EventFormData } from '@/lib/types'
 
 /**
@@ -13,14 +13,21 @@ export async function GET(
 ) {
   try {
     // 驗證管理員權限
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
-    const adminCheck = await requireAdmin(authResult.user.id)
-    if (!adminCheck.success) {
-      return NextResponse.json({ success: false, message: '權限不足' }, { status: 403 })
+    if (!isAdmin(currentUser)) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.ACCESS_DENIED,
+        message: '權限不足' 
+      }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
@@ -78,14 +85,21 @@ export async function PUT(
 ) {
   try {
     // 驗證管理員權限
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
-    const adminCheck = await requireAdmin(authResult.user.id)
-    if (!adminCheck.success) {
-      return NextResponse.json({ success: false, message: '權限不足' }, { status: 403 })
+    if (!isAdmin(currentUser)) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.ACCESS_DENIED,
+        message: '權限不足' 
+      }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
@@ -187,14 +201,21 @@ export async function DELETE(
 ) {
   try {
     // 驗證管理員權限
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({ success: false, message: '未授權訪問' }, { status: 401 })
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
-    const adminCheck = await requireAdmin(authResult.user.id)
-    if (!adminCheck.success) {
-      return NextResponse.json({ success: false, message: '權限不足' }, { status: 403 })
+    if (!isAdmin(currentUser)) {
+      return NextResponse.json({ 
+        success: false, 
+        error: AUTH_ERRORS.ACCESS_DENIED,
+        message: '權限不足' 
+      }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
