@@ -8,7 +8,7 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
  * 
  * @description 處理單一通知的獲取、標記已讀、刪除等操作
  * @features 通知詳情、標記已讀、刪除通知
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

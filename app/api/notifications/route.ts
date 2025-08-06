@@ -16,7 +16,7 @@ import {
  * 
  * @description 處理用戶通知的獲取、創建和管理
  * @features 通知列表、分頁、篩選、統計、發送通知
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

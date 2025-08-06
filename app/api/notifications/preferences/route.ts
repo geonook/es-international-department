@@ -9,7 +9,7 @@ import { NotificationPreferences } from '@/lib/types'
  * 
  * @description 處理用戶通知偏好設定的獲取和更新
  * @features 通知偏好獲取、更新、重置為預設值
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

@@ -8,7 +8,7 @@ import { calculateStats } from '../route'
  * 
  * @description 提供用戶通知統計資訊，包括未讀數量、類型分布等
  * @features 通知統計、未讀計數、類型分析、時間分析
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

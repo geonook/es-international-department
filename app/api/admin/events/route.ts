@@ -9,7 +9,7 @@ import { EventFormData, EventStats } from '@/lib/types'
  * 
  * @description 獲取活動列表，支援篩選、搜尋和分頁
  * @features 分頁、篩選、搜尋、統計資訊
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(request: NextRequest) {
   try {

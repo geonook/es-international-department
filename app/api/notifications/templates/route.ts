@@ -10,7 +10,7 @@ import { NotificationTemplate } from '@/lib/types'
  * 
  * @description 處理通知模板的獲取和管理（管理員功能）
  * @features 模板列表、模板詳情、模板變數
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

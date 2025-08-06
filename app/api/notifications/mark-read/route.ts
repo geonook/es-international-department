@@ -10,7 +10,7 @@ import { BulkNotificationOperation } from '@/lib/types'
  * 
  * @description 處理批量通知操作，如全部標記已讀、批量刪除等
  * @features 全部標記已讀、批量操作、清理過期通知
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

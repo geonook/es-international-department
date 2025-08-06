@@ -1,5 +1,5 @@
 /**
- * Image Upload API Route for ES International Department
+ * Image Upload API Route for KCISLK ESID Info Hub
  * 圖片專用上傳 API 端點 - 專門處理圖片上傳與最佳化
  */
 

@@ -1,6 +1,6 @@
 /**
- * Grade Levels API Route - ES International Department
- * 年級層級 API 端點 - ES 國際部
+ * Grade Levels API Route - KCISLK ESID Info Hub
+ * 年級層級 API 端點 - KCISLK ESID Info Hub
  */
 
 import { NextRequest, NextResponse } from 'next/server'

@@ -1,5 +1,5 @@
 /**
- * File Serving API Route for ES International Department
+ * File Serving API Route for KCISLK ESID Info Hub
  * 檔案服務 API 端點 - 提供安全的檔案存取與權限控制
  */
 

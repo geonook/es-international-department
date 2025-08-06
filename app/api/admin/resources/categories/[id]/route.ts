@@ -1,6 +1,6 @@
 /**
- * Individual Resource Category API Route - ES International Department
- * 個別資源分類 API 端點 - ES 國際部
+ * Individual Resource Category API Route - KCISLK ESID Info Hub
+ * 個別資源分類 API 端點 - KCISLK ESID Info Hub
  */
 
 import { NextRequest, NextResponse } from 'next/server'

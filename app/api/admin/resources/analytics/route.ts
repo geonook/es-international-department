@@ -1,6 +1,6 @@
 /**
- * Resource Analytics API - ES International Department
- * 資源分析 API - ES 國際部
+ * Resource Analytics API - KCISLK ESID Info Hub
+ * 資源分析 API - KCISLK ESID Info Hub
  */
 
 import { NextRequest, NextResponse } from 'next/server'

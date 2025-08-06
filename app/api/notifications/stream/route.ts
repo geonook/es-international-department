@@ -8,7 +8,7 @@ import { prisma } from '@/lib/prisma'
  * 
  * @description 使用 Server-Sent Events (SSE) 提供即時通知推送
  * @features 即時通知推送、長連接、自動重連
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 // 存儲活躍的 SSE 連接
