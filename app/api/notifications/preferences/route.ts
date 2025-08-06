@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 import NotificationService from '@/lib/notificationService'
 import { NotificationPreferences } from '@/lib/types'
 
@@ -19,15 +19,15 @@ import { NotificationPreferences } from '@/lib/types'
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
-        { success: false, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
         { status: 401 }
       )
     }
 
-    const userId = authResult.user.id
+    const userId = currentUser.id
 
     // 獲取用戶通知偏好
     const preferences = await NotificationService.getUserPreferences(userId)
@@ -53,15 +53,15 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
-        { success: false, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
         { status: 401 }
       )
     }
 
-    const userId = authResult.user.id
+    const userId = currentUser.id
 
     // 解析請求資料
     const preferences: Partial<NotificationPreferences> = await request.json()
@@ -102,15 +102,15 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
-        { success: false, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
         { status: 401 }
       )
     }
 
-    const userId = authResult.user.id
+    const userId = currentUser.id
 
     // 重置為預設偏好設定
     const defaultPreferences = await NotificationService.getUserPreferences(userId)

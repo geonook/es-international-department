@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -25,12 +25,12 @@ const activeConnections = new Map<string, {
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    const userId = authResult.user.id
+    const userId = currentUser.id
     const connectionId = `${userId}_${Date.now()}`
 
     // 創建 ReadableStream 用於 SSE

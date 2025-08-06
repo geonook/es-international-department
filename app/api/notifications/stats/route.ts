@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 import { calculateStats } from '../route'
 
 /**
@@ -18,15 +18,15 @@ import { calculateStats } from '../route'
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const authResult = await verifyAuth(request)
-    if (!authResult.success || !authResult.user) {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
       return NextResponse.json(
-        { success: false, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
         { status: 401 }
       )
     }
 
-    const userId = authResult.user.id
+    const userId = currentUser.id
 
     // 計算統計資訊
     const stats = await calculateStats(userId)
