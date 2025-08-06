@@ -4,7 +4,7 @@
  * 
  * @description 提供完整的通知管理服務，包括發送、模板、偏好設定等功能
  * @features 通知發送、模板管理、去重機制、批量操作、即時推送
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { prisma } from '@/lib/prisma'

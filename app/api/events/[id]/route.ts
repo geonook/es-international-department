@@ -7,7 +7,7 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
  * 公開活動 API - 獲取單一活動詳情
  * 
  * @description 獲取單一已發布活動的詳細資訊
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(
   request: NextRequest,

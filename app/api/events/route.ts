@@ -8,7 +8,7 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
  * 
  * @description 獲取已發布的活動列表，支援篩選、搜尋和分頁
  * @features 分頁、篩選、搜尋、僅顯示已發布活動
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(request: NextRequest) {
   try {

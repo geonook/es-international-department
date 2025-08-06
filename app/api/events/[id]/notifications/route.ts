@@ -9,7 +9,7 @@ import { EventNotificationType, NotificationRecipientType } from '@/lib/types'
  * 
  * @description 處理活動通知相關操作
  * @features 發送通知、查詢通知歷史、預約通知
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

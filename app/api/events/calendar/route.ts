@@ -8,7 +8,7 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
  * 
  * @description 提供適合日曆組件使用的活動資料格式
  * @features 月份檢視、年度檢視、活動摘要、快速篩選
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(request: NextRequest) {
   try {

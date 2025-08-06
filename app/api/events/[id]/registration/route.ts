@@ -8,7 +8,7 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
  * 
  * @description 處理活動報名相關操作
  * @features 新增報名、取消報名、查詢報名狀態、候補名單管理
- * @author Claude Code | Generated for ES International Department
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**

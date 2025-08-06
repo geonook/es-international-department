@@ -1,6 +1,6 @@
 /**
  * Health Check API Endpoint
- * ES International Department - 健康檢查 API 端點
+ * KCISLK ESID Info Hub - 健康檢查 API 端點
  * 
  * This endpoint is used by Docker health checks and monitoring systems
  * to verify that the application is running correctly.
@@ -13,7 +13,7 @@ export async function GET() {
     // Basic health check
     const healthStatus = {
       status: 'OK',
-      service: 'ES International Department',
+      service: 'KCISLK ESID Info Hub',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
       version: '1.0.0'
@@ -24,7 +24,7 @@ export async function GET() {
     // If there's any error, return unhealthy status
     const errorStatus = {
       status: 'ERROR',
-      service: 'ES International Department',
+      service: 'KCISLK ESID Info Hub',
       timestamp: new Date().toISOString(),
       error: error instanceof Error ? error.message : 'Unknown error'
     }

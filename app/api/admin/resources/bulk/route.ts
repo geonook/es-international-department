@@ -1,6 +1,6 @@
 /**
- * Bulk Resource Operations API - ES International Department
- * 大量資源操作 API - ES 國際部
+ * Bulk Resource Operations API - KCISLK ESID Info Hub
+ * 大量資源操作 API - KCISLK ESID Info Hub
  */
 
 import { NextRequest, NextResponse } from 'next/server'
