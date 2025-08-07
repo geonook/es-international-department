@@ -1,15 +1,58 @@
-# Zeabur Deployment Guide & Development Workflow
-*KCISLK ESID Info Hub - Zeabur 部署指南與開發協作流程*
+# Zeabur Production Deployment Guide
+# Zeabur 生產環境部署指南
 
-## 📋 目錄 | Table of Contents
-1. [Zeabur 平台概述](#zeabur-平台概述)
-2. [多環境架構設計](#多環境架構設計)
-3. [初始設定指南](#初始設定指南)
-4. [開發協作流程](#開發協作流程)
-5. [部署流程指南](#部署流程指南)
-6. [環境管理策略](#環境管理策略)
-7. [故障排除指南](#故障排除指南)
-8. [最佳實踐建議](#最佳實踐建議)
+> **🚀 READY FOR IMMEDIATE DEPLOYMENT**  
+> **準備好立即部署**  
+> **All OAuth credentials configured for: https://kcislk-esid.zeabur.app**
+
+## 📋 Quick Deployment Overview | 快速部署概覽
+
+This guide provides **copy-paste ready** environment variables for immediate Zeabur deployment. All OAuth credentials are pre-configured and ready to use.
+
+本指南提供**可直接複製貼上**的環境變數，用於立即部署到 Zeabur。所有 OAuth 憑證已預先配置完成。
+
+## 🔑 Environment Variables for Zeabur Console
+## 🔑 Zeabur 控制台環境變數
+
+### Step 1: Access Zeabur Dashboard | 進入 Zeabur 控制台
+```
+URL: https://dash.zeabur.com/
+Navigate to: Your Project > Environment Variables
+導航至：您的專案 > 環境變數
+```
+
+### Step 2: Copy-Paste These Variables | 複製貼上這些變數
+
+**🚨 CRITICAL VARIABLES (Must be set) | 重要變數（必須設定）:**
+
+```env
+NODE_ENV=production
+NEXTAUTH_URL=https://kcislk-esid.zeabur.app
+JWT_SECRET=HzBlFAYu3gIhtbWzFhpDf+U5rDoKoIQbWv+JUquPF4s=
+NEXTAUTH_SECRET=jijpSBnevnLZE9k6BlXhTL5GT2zubmXDAIh2AOVM9OQ=
+GOOGLE_CLIENT_ID=316204460450-[REDACTED].apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-[REDACTED]
+```
+
+**📡 DATABASE CONFIGURATION | 資料庫配置:**
+```env
+DATABASE_URL=your_zeabur_postgresql_connection_string_here
+```
+> ⚠️ **IMPORTANT**: Replace with your actual PostgreSQL connection string from Zeabur console  
+> ⚠️ **重要**：請替換為您在 Zeabur 控制台中的實際 PostgreSQL 連接字串
+
+**🔒 SECURITY CONFIGURATION | 安全配置:**
+```env
+ALLOWED_ORIGINS=https://kcislk-esid.zeabur.app
+RATE_LIMIT_MAX_REQUESTS=100
+RATE_LIMIT_WINDOW_MS=900000
+```
+
+**⚙️ BUILD CONFIGURATION | 建置配置:**
+```env
+SKIP_ENV_VALIDATION=0
+PRISMA_CLI_TELEMETRY_DISABLED=1
+```
 
 ---
 
