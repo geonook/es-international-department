@@ -165,14 +165,31 @@ export function useRealTimeNotifications(options: UseRealTimeNotificationsOption
         case 'new_notifications':
         case 'notification':
           const count = data.count || 1
-          updateNotifications({
-            unreadCount: state.unreadCount + count
-          })
+          const notifications = Array.isArray(data.data) ? data.data : [data.data]
+          
+          setState(prev => ({
+            ...prev,
+            unreadCount: prev.unreadCount + count,
+            notifications: [...(prev.notifications.slice(-19)), ...notifications] // Keep last 20 notifications
+          }))
           
           // 觸發自定義事件供其他組件監聽
           window.dispatchEvent(new CustomEvent('newNotification', {
-            detail: { count, data: data.data }
+            detail: { count, data: notifications }
           }))
+          
+          // 觸發瀏覽器通知（如果用戶允許）
+          if ('Notification' in window && Notification.permission === 'granted') {
+            notifications.forEach((notif: any) => {
+              new Notification(notif.title || '新通知', {
+                body: notif.message || '您收到了新通知',
+                icon: '/favicon.ico',
+                badge: '/favicon.ico',
+                tag: `notification-${notif.id || Date.now()}`,
+                requireInteraction: notif.priority === 'urgent'
+              })
+            })
+          }
           break
 
         case 'stats':
@@ -186,13 +203,32 @@ export function useRealTimeNotifications(options: UseRealTimeNotificationsOption
         case 'broadcast':
           // 處理廣播消息
           console.log('Received broadcast notification')
+          setState(prev => ({
+            ...prev,
+            unreadCount: prev.unreadCount + 1
+          }))
+          
+          // 觸發自定義事件
+          window.dispatchEvent(new CustomEvent('broadcastNotification', {
+            detail: { data: data.data }
+          }))
+          
           fetchNotificationStats()
+          break
+          
+        case 'notification_read':
+          // 處理通知已讀事件
+          const readCount = data.count || 1
+          setState(prev => ({
+            ...prev,
+            unreadCount: Math.max(0, prev.unreadCount - readCount)
+          }))
           break
       }
     } catch (error) {
       console.error('SSE message parsing error:', error)
     }
-  }, [state.unreadCount, updateConnectionStatus, updateNotifications, heartbeatTimeout, fetchNotificationStats])
+  }, [updateConnectionStatus, updateNotifications, heartbeatTimeout, fetchNotificationStats])
 
   // 建立 SSE 連接
   const connectSSE = useCallback(() => {
@@ -350,6 +386,54 @@ export function useRealTimeNotifications(options: UseRealTimeNotificationsOption
     }
   }, [disconnect])
 
+  // 標記通知為已讀
+  const markNotificationsAsRead = useCallback(async (notificationIds: number[]) => {
+    try {
+      const response = await fetch('/api/notifications/mark-read', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ notificationIds })
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setState(prev => ({
+            ...prev,
+            unreadCount: Math.max(0, prev.unreadCount - result.affectedCount)
+          }))
+          return true
+        }
+      }
+      return false
+    } catch (error) {
+      console.error('Mark notifications as read error:', error)
+      return false
+    }
+  }, [])
+
+  // 請求瀏覽器通知權限
+  const requestNotificationPermission = useCallback(async () => {
+    if (!('Notification' in window)) {
+      console.warn('This browser does not support notifications')
+      return false
+    }
+
+    if (Notification.permission === 'granted') {
+      return true
+    }
+
+    if (Notification.permission !== 'denied') {
+      const permission = await Notification.requestPermission()
+      return permission === 'granted'
+    }
+
+    return false
+  }, [])
+
   return {
     // 狀態
     unreadCount: state.unreadCount,
@@ -360,11 +444,18 @@ export function useRealTimeNotifications(options: UseRealTimeNotificationsOption
     reconnect,
     disconnect,
     fetchStats: fetchNotificationStats,
+    markAsRead: markNotificationsAsRead,
+    requestNotificationPermission,
     
     // 工具函數
     isConnected: state.connectionStatus.connected,
     isConnecting: state.connectionStatus.connecting,
-    hasError: !!state.connectionStatus.error
+    hasError: !!state.connectionStatus.error,
+    
+    // 連接統計
+    connectionUptime: state.connectionStatus.uptime,
+    connectionId: state.connectionStatus.connectionId,
+    lastPing: state.connectionStatus.lastPing
   }
 }
 

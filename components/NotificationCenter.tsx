@@ -33,7 +33,10 @@ import {
   ChevronDown,
   ChevronUp,
   Star,
-  Clock
+  Clock,
+  Wifi,
+  WifiOff,
+  RefreshCw
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -44,6 +47,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
+import useRealTimeNotifications from '@/hooks/useRealTimeNotifications'
 
 // 通知數據接口
 interface Notification {

@@ -11,11 +11,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, X } from 'lucide-react'
+import { Bell, X, Wifi, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import NotificationCenter from './NotificationCenter'
+import useRealTimeNotifications from '@/hooks/useRealTimeNotifications'
 
 interface NotificationBellProps {
   className?: string
@@ -37,57 +38,63 @@ export default function NotificationBell({
   onNotificationClick
 }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
   const [hasNewNotifications, setHasNewNotifications] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [showConnectionStatus, setShowConnectionStatus] = useState(false)
   const bellRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+  
+  // 使用即時通知 Hook
+  const {
+    unreadCount,
+    notifications,
+    connectionStatus,
+    isConnected,
+    isConnecting,
+    hasError,
+    reconnect,
+    requestNotificationPermission,
+    connectionUptime,
+    lastPing
+  } = useRealTimeNotifications({
+    enableSSE: true,
+    maxReconnectAttempts: 5,
+    reconnectDelay: 2000,
+    heartbeatTimeout: 90000
+  })
 
-  // 獲取未讀通知數量
-  const fetchUnreadCount = async () => {
-    try {
-      setIsLoading(true)
-      const response = await fetch('/api/notifications/stats', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include' // 使用 cookie-based auth
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success && data.data?.user) {
-          const newCount = data.data.user.unread || 0
-          
-          // 檢查是否有新通知
-          if (newCount > unreadCount && unreadCount > 0) {
-            setHasNewNotifications(true)
-            // 3秒後重置新通知標記
-            setTimeout(() => setHasNewNotifications(false), 3000)
-          }
-          
-          setUnreadCount(newCount)
-        }
-      } else if (response.status === 401) {
-        console.log('User not authenticated')
-        setUnreadCount(0)
-      }
-    } catch (error) {
-      console.error('Fetch unread count error:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // 初始載入和定期刷新
+  // 監聽新通知事件
   useEffect(() => {
-    fetchUnreadCount()
+    const handleNewNotification = (event: CustomEvent) => {
+      setHasNewNotifications(true)
+      setTimeout(() => setHasNewNotifications(false), 3000)
+    }
     
-    // 每 60 秒刷新一次未讀數量（SSE 為主要更新方式）
-    const interval = setInterval(fetchUnreadCount, 60000)
-    return () => clearInterval(interval)
+    const handleBroadcastNotification = (event: CustomEvent) => {
+      setHasNewNotifications(true)
+      setTimeout(() => setHasNewNotifications(false), 5000)
+    }
+
+    window.addEventListener('newNotification', handleNewNotification as EventListener)
+    window.addEventListener('broadcastNotification', handleBroadcastNotification as EventListener)
+
+    return () => {
+      window.removeEventListener('newNotification', handleNewNotification as EventListener)
+      window.removeEventListener('broadcastNotification', handleBroadcastNotification as EventListener)
+    }
   }, [])
+
+  // 初始化瀏覽器通知權限
+  useEffect(() => {
+    requestNotificationPermission()
+  }, [])
+  
+  // 連接狀態變化處理
+  useEffect(() => {
+    if (hasError && !isConnecting) {
+      setShowConnectionStatus(true)
+      setTimeout(() => setShowConnectionStatus(false), 5000)
+    }
+  }, [hasError, isConnecting])
 
   // 點擊外部關閉面板
   useEffect(() => {
@@ -111,99 +118,31 @@ export default function NotificationBell({
     }
   }, [isOpen])
 
-  // 監聽實時通知事件 (SSE)
-  useEffect(() => {
-    let eventSource: EventSource | null = null
-    let reconnectAttempts = 0
-    const maxReconnectAttempts = 5
-
-    const connectSSE = () => {
-      try {
-        // 使用 cookie-based authentication
-        eventSource = new EventSource('/api/notifications/stream', {
-          withCredentials: true
-        })
-        
-        eventSource.onopen = () => {
-          console.log('✅ SSE connection established')
-          reconnectAttempts = 0 // Reset on successful connection
-        }
-        
-        eventSource.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data)
-            
-            switch (data.type) {
-              case 'connected':
-                console.log('SSE connection confirmed:', data.connectionId)
-                break
-                
-              case 'ping':
-                // Heart beat - connection is alive
-                break
-                
-              case 'new_notifications':
-              case 'notification':
-                const count = data.data?.count || data.count || 1
-                setUnreadCount(prev => prev + count)
-                setHasNewNotifications(true)
-                setTimeout(() => setHasNewNotifications(false), 3000)
-                break
-                
-              case 'notification_read':
-              case 'stats':
-                if (data.data?.unreadCount !== undefined) {
-                  setUnreadCount(data.data.unreadCount)
-                } else if (data.count) {
-                  setUnreadCount(prev => Math.max(0, prev - data.count))
-                }
-                break
-                
-              case 'broadcast':
-                // Handle broadcast notifications
-                setHasNewNotifications(true)
-                setTimeout(() => setHasNewNotifications(false), 3000)
-                fetchUnreadCount() // Refresh count
-                break
-            }
-          } catch (error) {
-            console.error('SSE message parsing error:', error)
-          }
-        }
-
-        eventSource.onerror = (error) => {
-          console.error('SSE connection error:', error)
-          eventSource?.close()
-          
-          if (reconnectAttempts < maxReconnectAttempts) {
-            reconnectAttempts++
-            const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000) // Exponential backoff
-            console.log(`Reconnecting SSE in ${delay}ms (attempt ${reconnectAttempts}/${maxReconnectAttempts})`)
-            setTimeout(connectSSE, delay)
-          } else {
-            console.warn('Max SSE reconnection attempts reached. Falling back to polling.')
-            // 使用輪詢作為後備方案
-            const pollInterval = setInterval(fetchUnreadCount, 60000) // 每分鐘輪詢一次
-            return () => clearInterval(pollInterval)
-          }
-        }
-      } catch (error) {
-        console.error('Failed to establish SSE connection:', error)
-        // Fallback to polling
-        fetchUnreadCount()
-      }
+  // 格式化連接時間
+  const formatUptime = (uptime: number) => {
+    const seconds = Math.floor(uptime / 1000)
+    const minutes = Math.floor(seconds / 60)
+    const hours = Math.floor(minutes / 60)
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes % 60}m`
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds % 60}s`
+    } else {
+      return `${seconds}s`
     }
-
-    // Only connect if we're in browser environment
-    if (typeof window !== 'undefined') {
-      connectSSE()
+  }
+  
+  // 獲取連接狀態顯示
+  const getConnectionStatusDisplay = () => {
+    if (isConnecting) {
+      return { icon: Wifi, color: 'text-yellow-500', text: '連接中...' }
+    } else if (isConnected) {
+      return { icon: Wifi, color: 'text-green-500', text: '已連接' }
+    } else {
+      return { icon: WifiOff, color: 'text-red-500', text: '連接中斷' }
     }
-
-    return () => {
-      eventSource?.close()
-      eventSource = null
-    }
-  }, [])
+  }
 
   // 獲取按鈕大小
   const getButtonSize = () => {
@@ -275,7 +214,7 @@ export default function NotificationBell({
           setIsOpen(!isOpen)
           setHasNewNotifications(false)
         }}
-        disabled={isLoading}
+        disabled={isConnecting}
       >
         <motion.div
           variants={bellVariants}
@@ -283,8 +222,9 @@ export default function NotificationBell({
         >
           <Bell className={cn(
             getIconSize(),
-            isLoading && "opacity-50",
-            hasNewNotifications && "text-blue-600"
+            isConnecting && "opacity-50",
+            hasNewNotifications && "text-blue-600",
+            !isConnected && !isConnecting && "text-gray-400"
           )} />
         </motion.div>
 
@@ -336,23 +276,57 @@ export default function NotificationBell({
             <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
               {/* 面板標題欄 */}
               <div className="flex items-center justify-between p-4 border-b bg-gray-50">
-                <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                  <Bell className="w-4 h-4" />
-                  通知中心
-                  {unreadCount > 0 && (
-                    <Badge className="bg-blue-500 text-white">
-                      {unreadCount}
-                    </Badge>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-medium text-gray-900 flex items-center gap-2">
+                    <Bell className="w-4 h-4" />
+                    通知中心
+                    {unreadCount > 0 && (
+                      <Badge className="bg-blue-500 text-white">
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </h3>
+                  
+                  {/* 連接狀態指示器 */}
+                  {(() => {
+                    const status = getConnectionStatusDisplay()
+                    return (
+                      <div 
+                        className="flex items-center gap-1 text-xs"
+                        title={`狀態: ${status.text}${connectionUptime > 0 ? ` | 運行時間: ${formatUptime(connectionUptime)}` : ''}${lastPing ? ` | 最後心跳: ${new Date(lastPing).toLocaleTimeString()}` : ''}`}
+                      >
+                        <status.icon className={cn('w-3 h-3', status.color)} />
+                        {(showConnectionStatus || hasError) && (
+                          <span className={status.color}>{status.text}</span>
+                        )}
+                      </div>
+                    )
+                  })()}
+                </div>
+                
+                <div className="flex items-center gap-1">
+                  {/* 重連按鈕 */}
+                  {hasError && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={reconnect}
+                      className="h-6 w-6 p-0 text-blue-600 hover:text-blue-700"
+                      title="重新連接"
+                    >
+                      <Wifi className="w-3 h-3" />
+                    </Button>
                   )}
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsOpen(false)}
-                  className="h-6 w-6 p-0"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsOpen(false)}
+                    className="h-6 w-6 p-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
 
               {/* 通知中心內容 */}
