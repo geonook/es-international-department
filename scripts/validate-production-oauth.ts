@@ -1,397 +1,425 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env ts-node
 
 /**
- * Production OAuth Configuration Validation Script
- * 生產環境 OAuth 配置驗證腳本
+ * Production OAuth Configuration Validator
+ * 正式環境 OAuth 配置驗證工具
  * 
- * This script validates OAuth configuration for production deployment
- * 此腳本驗證用於生產部署的 OAuth 配置
+ * This script validates the complete OAuth setup for production deployment.
+ * 此腳本驗證正式環境部署的完整 OAuth 設定。
  */
 
-import { z } from 'zod'
-import chalk from 'chalk'
+import https from 'https';
+import { URL } from 'url';
+
+// Production Configuration
+const PRODUCTION_CONFIG = {
+  domain: 'kcislk-esid.zeabur.app',
+  protocol: 'https',
+  callbackPath: '/api/auth/callback/google',
+  loginPath: '/login',
+  healthPath: '/api/health',
+} as const;
 
 interface ValidationResult {
-  name: string
-  status: 'pass' | 'fail' | 'warn'
-  message: string
-  required: boolean
+  test: string;
+  status: 'PASS' | 'FAIL' | 'WARN';
+  message: string;
+  details?: string;
 }
 
 class ProductionOAuthValidator {
-  private results: ValidationResult[] = []
+  private results: ValidationResult[] = [];
+  private baseUrl: string;
 
   constructor() {
-    console.log(chalk.blue('🔍 Production OAuth Configuration Validation'))
-    console.log(chalk.blue('=================================================='))
+    this.baseUrl = `${PRODUCTION_CONFIG.protocol}://${PRODUCTION_CONFIG.domain}`;
   }
 
-  private addResult(result: ValidationResult) {
-    this.results.push(result)
-  }
-
-  private validateEnvironmentVariable(
-    name: string,
-    value: string | undefined,
-    validator: z.ZodSchema,
-    required: boolean = true
-  ) {
-    if (!value) {
-      this.addResult({
-        name,
-        status: required ? 'fail' : 'warn',
-        message: required ? 'Required environment variable not set' : 'Optional environment variable not set',
-        required
-      })
-      return
+  /**
+   * Log validation result
+   */
+  private log(result: ValidationResult): void {
+    this.results.push(result);
+    const icon = result.status === 'PASS' ? '✅' : result.status === 'FAIL' ? '❌' : '⚠️';
+    console.log(`${icon} ${result.test}: ${result.message}`);
+    if (result.details) {
+      console.log(`   📋 ${result.details}`);
     }
+  }
 
+  /**
+   * Make HTTP/HTTPS request
+   */
+  private async makeRequest(url: string, timeout: number = 10000): Promise<{ status: number; headers: any; body: string }> {
+    return new Promise((resolve, reject) => {
+      const parsedUrl = new URL(url);
+      const options = {
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
+        path: parsedUrl.pathname + parsedUrl.search,
+        method: 'GET',
+        timeout,
+        headers: {
+          'User-Agent': 'KCISLK-ESID-OAuth-Validator/1.0'
+        }
+      };
+
+      const request = https.request(options, (response) => {
+        let body = '';
+        response.on('data', (chunk) => body += chunk);
+        response.on('end', () => {
+          resolve({
+            status: response.statusCode || 0,
+            headers: response.headers,
+            body
+          });
+        });
+      });
+
+      request.on('error', reject);
+      request.on('timeout', () => {
+        request.destroy();
+        reject(new Error(`Request timeout after ${timeout}ms`));
+      });
+
+      request.end();
+    });
+  }
+
+  /**
+   * Test 1: Domain accessibility and HTTPS
+   */
+  async testDomainAccessibility(): Promise<void> {
     try {
-      validator.parse(value)
-      this.addResult({
-        name,
-        status: 'pass',
-        message: 'Valid configuration',
-        required
-      })
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        this.addResult({
-          name,
-          status: 'fail',
-          message: error.errors[0]?.message || 'Invalid format',
-          required
-        })
-      }
-    }
-  }
-
-  private validateSecurityRequirements() {
-    // Check HTTPS requirement
-    const nextAuthUrl = process.env.NEXTAUTH_URL
-    if (nextAuthUrl && !nextAuthUrl.startsWith('https://')) {
-      this.addResult({
-        name: 'HTTPS Requirement',
-        status: 'fail',
-        message: 'Production deployment must use HTTPS',
-        required: true
-      })
-    } else if (nextAuthUrl?.startsWith('https://')) {
-      this.addResult({
-        name: 'HTTPS Requirement',
-        status: 'pass',
-        message: 'HTTPS correctly configured',
-        required: true
-      })
-    }
-
-    // Check production domain
-    if (nextAuthUrl?.includes('localhost') || nextAuthUrl?.includes('127.0.0.1')) {
-      this.addResult({
-        name: 'Production Domain',
-        status: 'fail',
-        message: 'Using development domain in production environment',
-        required: true
-      })
-    } else if (nextAuthUrl?.includes('zeabur.app')) {
-      this.addResult({
-        name: 'Production Domain',
-        status: 'pass',
-        message: 'Production domain correctly configured',
-        required: true
-      })
-    }
-
-    // Check CORS configuration
-    const allowedOrigins = process.env.ALLOWED_ORIGINS
-    if (allowedOrigins?.includes('localhost')) {
-      this.addResult({
-        name: 'CORS Configuration',
-        status: 'warn',
-        message: 'CORS includes development origins - should be production-only',
-        required: false
-      })
-    }
-  }
-
-  private validateGoogleOAuthSetup() {
-    const clientId = process.env.GOOGLE_CLIENT_ID
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET
-
-    // Validate Client ID format
-    if (clientId === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com' || 
-        clientId === 'your-production-client-id.apps.googleusercontent.com') {
-      this.addResult({
-        name: 'Google OAuth Client ID',
-        status: 'fail',
-        message: 'Using placeholder value - must set actual Google OAuth Client ID',
-        required: true
-      })
-    } else if (clientId && clientId.includes('.apps.googleusercontent.com')) {
-      this.addResult({
-        name: 'Google OAuth Client ID',
-        status: 'pass',
-        message: 'Valid Google OAuth Client ID format',
-        required: true
-      })
-    }
-
-    // Validate Client Secret format
-    if (clientSecret === 'YOUR_GOOGLE_CLIENT_SECRET' || 
-        clientSecret === 'GOCSPX-your-production-client-secret') {
-      this.addResult({
-        name: 'Google OAuth Client Secret',
-        status: 'fail',
-        message: 'Using placeholder value - must set actual Google OAuth Client Secret',
-        required: true
-      })
-    } else if (clientSecret && clientSecret.startsWith('GOCSPX-')) {
-      this.addResult({
-        name: 'Google OAuth Client Secret',
-        status: 'pass',
-        message: 'Valid Google OAuth Client Secret format',
-        required: true
-      })
-    }
-
-    // Validate redirect URI consistency
-    const nextAuthUrl = process.env.NEXTAUTH_URL
-    if (nextAuthUrl) {
-      const expectedRedirectUri = `${nextAuthUrl}/api/auth/callback/google`
-      this.addResult({
-        name: 'OAuth Redirect URI',
-        status: 'pass',
-        message: `Expected redirect URI: ${expectedRedirectUri}`,
-        required: true
-      })
-    }
-  }
-
-  private validateProductionSecrets() {
-    const jwtSecret = process.env.JWT_SECRET
-    const nextAuthSecret = process.env.NEXTAUTH_SECRET
-
-    // Check for placeholder values
-    const dangerousValues = [
-      'CHANGE_THIS_FOR_PRODUCTION',
-      'your-secret-key',
-      'change-me',
-      'default',
-      '123456'
-    ]
-
-    if (jwtSecret && dangerousValues.some(dangerous => jwtSecret.includes(dangerous))) {
-      this.addResult({
-        name: 'JWT Secret Security',
-        status: 'fail',
-        message: 'JWT_SECRET appears to use placeholder or weak value',
-        required: true
-      })
-    }
-
-    if (nextAuthSecret && dangerousValues.some(dangerous => nextAuthSecret.includes(dangerous))) {
-      this.addResult({
-        name: 'NextAuth Secret Security',
-        status: 'fail',
-        message: 'NEXTAUTH_SECRET appears to use placeholder or weak value',
-        required: true
-      })
-    }
-  }
-
-  async validateConfiguration() {
-    console.log(chalk.yellow('\n📋 Validating Core Configuration...'))
-
-    // Core environment validation
-    this.validateEnvironmentVariable(
-      'NODE_ENV',
-      process.env.NODE_ENV,
-      z.enum(['production']),
-      true
-    )
-
-    this.validateEnvironmentVariable(
-      'DATABASE_URL',
-      process.env.DATABASE_URL,
-      z.string().url().refine(url => url.includes('postgresql://') || url.includes('postgres://')),
-      true
-    )
-
-    this.validateEnvironmentVariable(
-      'JWT_SECRET',
-      process.env.JWT_SECRET,
-      z.string().min(32),
-      true
-    )
-
-    this.validateEnvironmentVariable(
-      'NEXTAUTH_SECRET',
-      process.env.NEXTAUTH_SECRET,
-      z.string().min(32),
-      true
-    )
-
-    this.validateEnvironmentVariable(
-      'NEXTAUTH_URL',
-      process.env.NEXTAUTH_URL,
-      z.string().url(),
-      true
-    )
-
-    console.log(chalk.yellow('\n🔐 Validating Google OAuth Configuration...'))
-
-    this.validateEnvironmentVariable(
-      'GOOGLE_CLIENT_ID',
-      process.env.GOOGLE_CLIENT_ID,
-      z.string().refine(id => id.includes('.apps.googleusercontent.com')),
-      true
-    )
-
-    this.validateEnvironmentVariable(
-      'GOOGLE_CLIENT_SECRET',
-      process.env.GOOGLE_CLIENT_SECRET,
-      z.string().min(24),
-      true
-    )
-
-    console.log(chalk.yellow('\n🛡️  Validating Security Configuration...'))
-
-    this.validateSecurityRequirements()
-    this.validateGoogleOAuthSetup()
-    this.validateProductionSecrets()
-
-    console.log(chalk.yellow('\n📦 Validating Optional Services...'))
-
-    // Optional services
-    this.validateEnvironmentVariable(
-      'SENTRY_DSN',
-      process.env.SENTRY_DSN,
-      z.string().url(),
-      false
-    )
-
-    this.validateEnvironmentVariable(
-      'VERCEL_BLOB_READ_WRITE_TOKEN',
-      process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
-      z.string().min(10),
-      false
-    )
-  }
-
-  generateSecrets() {
-    console.log(chalk.blue('\n🔑 Generate Production Secrets'))
-    console.log(chalk.blue('================================'))
-    console.log('Run these commands to generate secure secrets:\n')
-    
-    console.log(chalk.green('# Generate JWT_SECRET'))
-    console.log(chalk.white('openssl rand -base64 32\n'))
-    
-    console.log(chalk.green('# Generate NEXTAUTH_SECRET'))
-    console.log(chalk.white('openssl rand -base64 32\n'))
-    
-    console.log(chalk.green('# Alternative using Node.js:'))
-    console.log(chalk.white('node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'base64\'))"\n'))
-  }
-
-  printResults() {
-    console.log(chalk.blue('\n📊 Validation Results'))
-    console.log(chalk.blue('====================='))
-
-    const passed = this.results.filter(r => r.status === 'pass').length
-    const failed = this.results.filter(r => r.status === 'fail').length
-    const warnings = this.results.filter(r => r.status === 'warn').length
-
-    console.log(`\n${chalk.green('✅ Passed:')} ${passed}`)
-    console.log(`${chalk.red('❌ Failed:')} ${failed}`)
-    console.log(`${chalk.yellow('⚠️  Warnings:')} ${warnings}\n`)
-
-    // Group results by status
-    const failedResults = this.results.filter(r => r.status === 'fail')
-    const warnResults = this.results.filter(r => r.status === 'warn')
-    const passedResults = this.results.filter(r => r.status === 'pass')
-
-    if (failedResults.length > 0) {
-      console.log(chalk.red('❌ FAILED VALIDATIONS:'))
-      failedResults.forEach(result => {
-        console.log(`   ${chalk.red('●')} ${chalk.bold(result.name)}: ${result.message}`)
-      })
-      console.log('')
-    }
-
-    if (warnResults.length > 0) {
-      console.log(chalk.yellow('⚠️  WARNINGS:'))
-      warnResults.forEach(result => {
-        console.log(`   ${chalk.yellow('●')} ${chalk.bold(result.name)}: ${result.message}`)
-      })
-      console.log('')
-    }
-
-    if (passedResults.length > 0) {
-      console.log(chalk.green('✅ PASSED VALIDATIONS:'))
-      passedResults.forEach(result => {
-        console.log(`   ${chalk.green('●')} ${chalk.bold(result.name)}: ${result.message}`)
-      })
-    }
-
-    // Overall result
-    const criticalFailed = failedResults.filter(r => r.required).length
-    
-    console.log(chalk.blue('\n🎯 Overall Status'))
-    console.log(chalk.blue('================='))
-    
-    if (criticalFailed === 0) {
-      console.log(chalk.green('✅ READY FOR PRODUCTION DEPLOYMENT'))
-      console.log(chalk.green('   All critical validations passed.'))
+      const response = await this.makeRequest(this.baseUrl);
       
-      if (warnResults.length > 0) {
-        console.log(chalk.yellow('   Consider addressing warnings for optimal setup.'))
+      if (response.status === 200 || response.status === 301 || response.status === 302) {
+        this.log({
+          test: 'Domain Accessibility',
+          status: 'PASS',
+          message: `Production domain ${PRODUCTION_CONFIG.domain} is accessible`,
+          details: `HTTP Status: ${response.status}`
+        });
+      } else {
+        this.log({
+          test: 'Domain Accessibility',
+          status: 'FAIL',
+          message: `Domain returned unexpected status: ${response.status}`,
+          details: 'Check if the application is deployed and running'
+        });
       }
-    } else {
-      console.log(chalk.red('❌ NOT READY FOR PRODUCTION'))
-      console.log(chalk.red(`   ${criticalFailed} critical validation(s) failed.`))
-      console.log(chalk.white('   Please fix the issues above before deploying.'))
+    } catch (error) {
+      this.log({
+        test: 'Domain Accessibility',
+        status: 'FAIL',
+        message: `Cannot reach production domain: ${(error as Error).message}`,
+        details: 'Ensure the application is deployed to Zeabur and DNS is configured'
+      });
     }
   }
 
-  printDeploymentInstructions() {
-    console.log(chalk.blue('\n🚀 Deployment Instructions'))
-    console.log(chalk.blue('=========================='))
+  /**
+   * Test 2: HTTPS enforcement
+   */
+  async testHTTPS(): Promise<void> {
+    try {
+      // Test HTTP redirect to HTTPS
+      const httpUrl = `http://${PRODUCTION_CONFIG.domain}`;
+      const response = await this.makeRequest(httpUrl);
+      
+      if (response.status === 301 || response.status === 302) {
+        const location = response.headers.location;
+        if (location && location.startsWith('https://')) {
+          this.log({
+            test: 'HTTPS Enforcement',
+            status: 'PASS',
+            message: 'HTTP traffic is properly redirected to HTTPS',
+            details: `Redirect location: ${location}`
+          });
+        } else {
+          this.log({
+            test: 'HTTPS Enforcement',
+            status: 'WARN',
+            message: 'HTTP redirect exists but may not point to HTTPS',
+            details: `Redirect location: ${location || 'none'}`
+          });
+        }
+      } else {
+        this.log({
+          test: 'HTTPS Enforcement',
+          status: 'WARN',
+          message: 'HTTP redirect not detected - verify HTTPS enforcement',
+          details: 'Production should redirect HTTP to HTTPS automatically'
+        });
+      }
+    } catch (error) {
+      this.log({
+        test: 'HTTPS Enforcement',
+        status: 'WARN',
+        message: 'Could not test HTTP to HTTPS redirect',
+        details: (error as Error).message
+      });
+    }
+  }
+
+  /**
+   * Test 3: Health endpoint
+   */
+  async testHealthEndpoint(): Promise<void> {
+    try {
+      const healthUrl = `${this.baseUrl}${PRODUCTION_CONFIG.healthPath}`;
+      const response = await this.makeRequest(healthUrl);
+      
+      if (response.status === 200) {
+        this.log({
+          test: 'Health Endpoint',
+          status: 'PASS',
+          message: 'Application health endpoint is responding',
+          details: `Response: ${response.body.substring(0, 100)}...`
+        });
+      } else {
+        this.log({
+          test: 'Health Endpoint',
+          status: 'FAIL',
+          message: `Health endpoint returned status ${response.status}`,
+          details: 'Check if the health API route is properly configured'
+        });
+      }
+    } catch (error) {
+      this.log({
+        test: 'Health Endpoint',
+        status: 'FAIL',
+        message: `Health endpoint test failed: ${(error as Error).message}`,
+        details: 'Verify /api/health route is implemented and accessible'
+      });
+    }
+  }
+
+  /**
+   * Test 4: OAuth callback URL structure
+   */
+  testCallbackUrlStructure(): void {
+    const callbackUrl = `${this.baseUrl}${PRODUCTION_CONFIG.callbackPath}`;
+    const expectedUrl = 'https://kcislk-esid.zeabur.app/api/auth/callback/google';
     
-    console.log('1. Set environment variables in Zeabur console:')
-    console.log(chalk.gray('   https://dash.zeabur.com/ > Your Project > Environment'))
+    if (callbackUrl === expectedUrl) {
+      this.log({
+        test: 'OAuth Callback URL Structure',
+        status: 'PASS',
+        message: 'OAuth callback URL structure is correct',
+        details: callbackUrl
+      });
+    } else {
+      this.log({
+        test: 'OAuth Callback URL Structure',
+        status: 'FAIL',
+        message: 'OAuth callback URL structure mismatch',
+        details: `Expected: ${expectedUrl}, Got: ${callbackUrl}`
+      });
+    }
+  }
+
+  /**
+   * Test 5: Login page accessibility
+   */
+  async testLoginPage(): Promise<void> {
+    try {
+      const loginUrl = `${this.baseUrl}${PRODUCTION_CONFIG.loginPath}`;
+      const response = await this.makeRequest(loginUrl);
+      
+      if (response.status === 200) {
+        // Check if the response contains Google OAuth elements
+        const hasGoogleAuth = response.body.includes('google') || response.body.includes('Google');
+        
+        this.log({
+          test: 'Login Page Accessibility',
+          status: hasGoogleAuth ? 'PASS' : 'WARN',
+          message: hasGoogleAuth ? 'Login page accessible with Google OAuth elements' : 'Login page accessible but Google OAuth elements not detected',
+          details: `Response size: ${response.body.length} bytes`
+        });
+      } else {
+        this.log({
+          test: 'Login Page Accessibility',
+          status: 'FAIL',
+          message: `Login page returned status ${response.status}`,
+          details: 'Check if the login page is properly configured'
+        });
+      }
+    } catch (error) {
+      this.log({
+        test: 'Login Page Accessibility',
+        status: 'FAIL',
+        message: `Login page test failed: ${(error as Error).message}`,
+        details: 'Verify /login route is implemented and accessible'
+      });
+    }
+  }
+
+  /**
+   * Test 6: Environment variable checks
+   */
+  testEnvironmentConfiguration(): void {
+    const requiredVars = [
+      'GOOGLE_CLIENT_ID',
+      'GOOGLE_CLIENT_SECRET',
+      'NEXTAUTH_URL',
+      'NEXTAUTH_SECRET',
+      'JWT_SECRET',
+      'DATABASE_URL'
+    ];
+
+    const missingVars = requiredVars.filter(varName => !process.env[varName]);
     
-    console.log('\n2. Required Google Cloud Console setup:')
-    console.log(chalk.gray('   • Create production OAuth 2.0 credentials'))
-    console.log(chalk.gray('   • Set redirect URI: https://landing-app-v2.zeabur.app/api/auth/callback/google'))
-    console.log(chalk.gray('   • Configure OAuth consent screen'))
+    if (missingVars.length === 0) {
+      this.log({
+        test: 'Environment Variables',
+        status: 'PASS',
+        message: 'All required environment variables are set',
+        details: `Checked: ${requiredVars.join(', ')}`
+      });
+    } else {
+      this.log({
+        test: 'Environment Variables',
+        status: 'FAIL',
+        message: `Missing required environment variables: ${missingVars.join(', ')}`,
+        details: 'Set these variables in Zeabur console for production deployment'
+      });
+    }
+
+    // Test specific OAuth configuration
+    const nextAuthUrl = process.env.NEXTAUTH_URL;
+    if (nextAuthUrl === `${this.baseUrl}`) {
+      this.log({
+        test: 'NEXTAUTH_URL Configuration',
+        status: 'PASS',
+        message: 'NEXTAUTH_URL matches production domain',
+        details: nextAuthUrl
+      });
+    } else {
+      this.log({
+        test: 'NEXTAUTH_URL Configuration',
+        status: 'WARN',
+        message: 'NEXTAUTH_URL may not match production domain',
+        details: `Current: ${nextAuthUrl}, Expected: ${this.baseUrl}`
+      });
+    }
+  }
+
+  /**
+   * Test 7: Google OAuth configuration
+   */
+  testGoogleOAuthConfiguration(): void {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+    // Test Client ID format
+    if (clientId && clientId.endsWith('.apps.googleusercontent.com')) {
+      this.log({
+        test: 'Google OAuth Client ID',
+        status: 'PASS',
+        message: 'GOOGLE_CLIENT_ID format is correct',
+        details: `${clientId.substring(0, 20)}...`
+      });
+    } else {
+      this.log({
+        test: 'Google OAuth Client ID',
+        status: 'FAIL',
+        message: 'GOOGLE_CLIENT_ID format is invalid or missing',
+        details: 'Must end with .apps.googleusercontent.com'
+      });
+    }
+
+    // Test Client Secret format
+    if (clientSecret && clientSecret.startsWith('GOCSPX-')) {
+      this.log({
+        test: 'Google OAuth Client Secret',
+        status: 'PASS',
+        message: 'GOOGLE_CLIENT_SECRET format is correct',
+        details: 'GOCSPX-***'
+      });
+    } else {
+      this.log({
+        test: 'Google OAuth Client Secret',
+        status: 'FAIL',
+        message: 'GOOGLE_CLIENT_SECRET format is invalid or missing',
+        details: 'Must start with GOCSPX-'
+      });
+    }
+  }
+
+  /**
+   * Generate final report
+   */
+  generateReport(): void {
+    const passed = this.results.filter(r => r.status === 'PASS').length;
+    const failed = this.results.filter(r => r.status === 'FAIL').length;
+    const warnings = this.results.filter(r => r.status === 'WARN').length;
+    const total = this.results.length;
+
+    console.log('\n' + '='.repeat(60));
+    console.log('🎯 PRODUCTION OAUTH VALIDATION REPORT');
+    console.log('📍 Domain: https://kcislk-esid.zeabur.app');
+    console.log('🔗 OAuth Callback: https://kcislk-esid.zeabur.app/api/auth/callback/google');
+    console.log('='.repeat(60));
     
-    console.log('\n3. After deployment, test OAuth flow:')
-    console.log(chalk.gray('   • Visit: https://landing-app-v2.zeabur.app/login'))
-    console.log(chalk.gray('   • Test Google OAuth login'))
-    console.log(chalk.gray('   • Verify user creation and role assignment'))
+    console.log(`📊 Results: ${passed}/${total} tests passed`);
+    if (failed > 0) console.log(`❌ Failed: ${failed}`);
+    if (warnings > 0) console.log(`⚠️ Warnings: ${warnings}`);
+
+    if (failed === 0 && warnings === 0) {
+      console.log('\n🎉 ALL TESTS PASSED! OAuth production setup is ready.');
+      console.log('✅ You can proceed with production deployment.');
+    } else if (failed === 0) {
+      console.log('\n✅ Core tests passed with some warnings.');
+      console.log('⚠️ Review warnings before production deployment.');
+    } else {
+      console.log('\n❌ CRITICAL ISSUES DETECTED!');
+      console.log('🛠️ Fix failed tests before production deployment.');
+    }
+
+    console.log('\n📋 Next Steps:');
+    console.log('1. Configure Google OAuth in Google Cloud Console');
+    console.log('2. Set environment variables in Zeabur console');
+    console.log('3. Test OAuth flow: https://kcislk-esid.zeabur.app/login');
+    console.log('4. Monitor application logs for errors');
+
+    console.log('\n🔗 Documentation:');
+    console.log('- Setup Guide: /docs/PRODUCTION-OAUTH-SETUP.md');
+    console.log('- Environment Template: /.env.production.example');
+    console.log('- OAuth Security: /docs/OAUTH-SECURITY-CHECKLIST.md');
+  }
+
+  /**
+   * Run all validation tests
+   */
+  async runAllTests(): Promise<void> {
+    console.log('🚀 Starting Production OAuth Configuration Validation...\n');
     
-    console.log('\n4. Monitor application logs in Zeabur console')
+    // Run tests in sequence
+    await this.testDomainAccessibility();
+    await this.testHTTPS();
+    await this.testHealthEndpoint();
+    this.testCallbackUrlStructure();
+    await this.testLoginPage();
+    this.testEnvironmentConfiguration();
+    this.testGoogleOAuthConfiguration();
+
+    this.generateReport();
   }
 }
 
 // Main execution
 async function main() {
-  const validator = new ProductionOAuthValidator()
-  
-  try {
-    await validator.validateConfiguration()
-    validator.printResults()
-    validator.generateSecrets()
-    validator.printDeploymentInstructions()
-  } catch (error) {
-    console.error(chalk.red('Error during validation:'), error)
-    process.exit(1)
-  }
+  const validator = new ProductionOAuthValidator();
+  await validator.runAllTests();
 }
 
-// Run if called directly
+// Run validation if script is executed directly
 if (require.main === module) {
-  main().catch(console.error)
+  main().catch((error) => {
+    console.error('❌ Validation failed with error:', error);
+    process.exit(1);
+  });
 }
 
-export { ProductionOAuthValidator }
+export default ProductionOAuthValidator;

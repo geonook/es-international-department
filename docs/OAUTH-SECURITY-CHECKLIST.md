@@ -1,215 +1,273 @@
 # OAuth Security Checklist for Production
-# OAuth 生產環境安全檢查清單
+# OAuth 正式環境安全檢查清單
 
-> **🔒 SECURITY CRITICAL - Review before deployment**  
-> **安全關鍵 - 部署前必須檢查**  
-> **Target**: https://landing-app-v2.zeabur.app
+> **🔒 SECURITY-FIRST DEPLOYMENT GUIDE**  
+> **以安全為優先的部署指南**  
+> **Production Domain**: https://kcislk-esid.zeabur.app  
+> **OAuth Callback**: https://kcislk-esid.zeabur.app/api/auth/callback/google
 
-## 🛡️ Pre-Deployment Security Checklist
+## 🎯 Overview | 概述
 
-### ✅ Environment Configuration Security
+This checklist ensures that your Google OAuth implementation meets enterprise-level security standards for educational institutions. Each item must be verified before production deployment.
 
-#### Critical Requirements
-- [ ] **NODE_ENV=production** - Production environment set
-- [ ] **HTTPS Only** - All URLs use HTTPS (no HTTP)
-- [ ] **Strong Secrets** - JWT_SECRET and NEXTAUTH_SECRET are 32+ characters
-- [ ] **No Placeholders** - No "CHANGE_THIS" or "YOUR_VALUE" in production
-- [ ] **No Development Values** - No localhost or 127.0.0.1 URLs
-- [ ] **Environment Variables in Zeabur** - Secrets stored in Zeabur console, not code
+此檢查清單確保您的 Google OAuth 實作符合教育機構的企業級安全標準。每項都必須在正式環境部署前驗證。
 
-#### Recommended Security
-- [ ] **Database Security** - Production database with strong password
-- [ ] **Rate Limiting** - Appropriate limits for production load
-- [ ] **CORS Restriction** - Only production domain in ALLOWED_ORIGINS
-- [ ] **Error Monitoring** - Sentry or similar error tracking configured
-- [ ] **Logging** - Appropriate log levels (no debug in production)
+## 📋 Pre-Deployment Security Checklist
 
-### 🔐 Google OAuth Security
+### 🔐 **CRITICAL SECURITY (MUST COMPLETE)**
 
-#### Google Cloud Console Configuration
-- [ ] **Production Project** - Separate Google Cloud project for production
-- [ ] **OAuth Consent Screen** - Properly configured for public use
-- [ ] **Verified Domain** - Production domain verified in Google Console
-- [ ] **Correct Redirect URIs** - Exact match: `https://landing-app-v2.zeabur.app/api/auth/callback/google`
-- [ ] **Scope Limitation** - Only necessary scopes requested (email, profile)
-- [ ] **Client Credentials** - Production-specific Client ID and Secret
+#### Google Cloud Console Security
+- [ ] **Separate Production Project**: Created dedicated Google Cloud project for production
+- [ ] **OAuth Consent Screen**: Configured with correct domain and contact information
+- [ ] **Authorized Domains**: Only `kcislk-esid.zeabur.app` listed in authorized domains
+- [ ] **Exact Redirect URIs**: Only `https://kcislk-esid.zeabur.app/api/auth/callback/google` configured
+- [ ] **No Development URLs**: Removed all localhost and development URLs from production OAuth app
+- [ ] **API Quotas**: Verified sufficient quotas for expected production load
+- [ ] **App Verification**: OAuth consent screen approved for public use (if external)
 
-#### OAuth Security Headers
-- [ ] **Secure Cookies** - httpOnly, secure, sameSite configured
-- [ ] **CSRF Protection** - State parameter validates correctly
-- [ ] **Token Validation** - ID tokens properly verified
-- [ ] **Session Security** - Appropriate session timeout and rotation
-
-### 🌐 Network Security
+#### Environment Variables Security
+- [ ] **Unique Secrets**: Generated new JWT_SECRET and NEXTAUTH_SECRET for production
+- [ ] **Secret Strength**: All secrets are 32+ characters with high entropy
+- [ ] **No Hardcoded Values**: No secrets or credentials in source code
+- [ ] **Environment Isolation**: Production environment variables separate from development
+- [ ] **Zeabur Console Only**: All secrets configured through Zeabur dashboard, not in files
+- [ ] **No .env in Git**: Verified no .env files committed to version control
+- [ ] **Access Control**: Limited who has access to Zeabur environment variables
 
 #### HTTPS and Transport Security
-- [ ] **TLS 1.2+** - Modern TLS version enforced
-- [ ] **HSTS Headers** - HTTP Strict Transport Security enabled
-- [ ] **Secure Redirect** - All HTTP redirects to HTTPS
-- [ ] **Certificate Validation** - Valid SSL certificate for production domain
+- [ ] **HTTPS Enforced**: All production traffic uses HTTPS
+- [ ] **HTTP Redirects**: HTTP traffic automatically redirects to HTTPS
+- [ ] **NEXTAUTH_URL**: Set to `https://kcislk-esid.zeabur.app` (no trailing slash)
+- [ ] **Secure Cookies**: Cookies marked as secure and httpOnly
+- [ ] **HSTS Headers**: HTTP Strict Transport Security enabled
+- [ ] **Valid SSL Certificate**: SSL certificate is valid and trusted
 
-#### API Security
-- [ ] **Authentication Required** - Protected endpoints require valid JWT
-- [ ] **Authorization Checks** - Role-based access control implemented
-- [ ] **Input Validation** - All user inputs validated and sanitized
-- [ ] **Error Handling** - No sensitive information in error messages
+### 🛡️ **HIGH PRIORITY SECURITY**
 
-### 📊 Data Protection
+#### OAuth Flow Security
+- [ ] **State Parameter**: CSRF protection enabled in OAuth flow
+- [ ] **PKCE**: Proof Key for Code Exchange implemented where applicable
+- [ ] **Session Security**: Secure session management with proper expiration
+- [ ] **Token Storage**: JWT tokens stored securely (httpOnly cookies)
+- [ ] **Token Expiration**: Appropriate token lifetime configured
+- [ ] **Refresh Tokens**: Secure refresh token handling implemented
 
-#### User Data Security
-- [ ] **Data Minimization** - Only necessary user data collected
-- [ ] **Secure Storage** - User passwords not stored (OAuth only)
-- [ ] **Database Security** - Database connection encrypted
-- [ ] **Data Retention** - Appropriate data retention policies
+#### Access Control and Authorization
+- [ ] **Role-Based Access**: User roles assigned based on email domain
+- [ ] **Default Role Security**: Safe default role assignment for unknown domains
+- [ ] **Admin Protection**: Admin routes protected with proper authorization
+- [ ] **Resource Protection**: All protected routes validate authentication
+- [ ] **Session Validation**: Active session validation on sensitive operations
 
-#### Privacy Compliance
-- [ ] **Privacy Policy** - Clear privacy policy for OAuth data usage
-- [ ] **Consent Management** - User consent properly managed
-- [ ] **Data Access** - Users can view/delete their data
-- [ ] **Audit Logging** - Security events logged for monitoring
+#### Input Validation and Sanitization
+- [ ] **Email Validation**: Proper email format and domain validation
+- [ ] **User Data Sanitization**: All user input sanitized before database storage
+- [ ] **SQL Injection Protection**: Parameterized queries used throughout
+- [ ] **XSS Prevention**: Output encoding and CSP headers implemented
+- [ ] **CSRF Protection**: Cross-site request forgery protection enabled
 
-## 🧪 Security Testing Checklist
+### ⚠️ **MEDIUM PRIORITY SECURITY**
 
-### Automated Security Testing
-- [ ] **OAuth Flow Testing** - Complete OAuth flow works correctly
-- [ ] **Token Validation** - JWT tokens properly validated
-- [ ] **Session Testing** - Session management secure
-- [ ] **Error Handling** - Security errors handled gracefully
+#### Monitoring and Logging
+- [ ] **OAuth Event Logging**: Login attempts, failures, and successes logged
+- [ ] **Error Logging**: Comprehensive error logging without exposing secrets
+- [ ] **Security Alerts**: Monitoring for unusual login patterns
+- [ ] **Failed Login Tracking**: Failed authentication attempts tracked
+- [ ] **Token Usage Monitoring**: JWT token creation and validation logged
 
-### Manual Security Testing
-- [ ] **CSRF Testing** - Cross-site request forgery protection works
-- [ ] **XSS Testing** - Cross-site scripting prevention effective
-- [ ] **Injection Testing** - SQL/NoSQL injection prevention validated
-- [ ] **Authentication Bypass** - Cannot bypass authentication
+#### Rate Limiting and Abuse Prevention
+- [ ] **Login Rate Limiting**: Rate limits on login attempts per IP
+- [ ] **API Rate Limiting**: General API rate limiting implemented
+- [ ] **OAuth Callback Rate Limiting**: Rate limiting on OAuth callback endpoint
+- [ ] **Failed Login Lockout**: Temporary lockout after repeated failures
+- [ ] **IP Whitelisting**: Consider IP restrictions for admin accounts
 
-### Penetration Testing (Recommended)
-- [ ] **OAuth Security Scan** - Third-party OAuth security assessment
-- [ ] **Web Application Scan** - Comprehensive security scan
-- [ ] **Infrastructure Scan** - Server and network security assessment
+#### Data Protection
+- [ ] **Minimal Data Collection**: Only collect necessary user data
+- [ ] **Data Retention Policy**: Clear policy on user data retention
+- [ ] **Data Encryption**: Sensitive data encrypted at rest
+- [ ] **Database Security**: Database access properly restricted
+- [ ] **Backup Security**: Database backups encrypted and secured
 
-## 🚨 Security Monitoring
+### 📊 **NICE TO HAVE SECURITY**
 
-### Production Monitoring Setup
-- [ ] **Error Tracking** - Sentry or similar service configured
-- [ ] **Security Alerts** - Alerts for suspicious activities
-- [ ] **Performance Monitoring** - API performance and availability
-- [ ] **Audit Logging** - Security events logged and monitored
+#### Advanced Security Features
+- [ ] **Two-Factor Authentication**: 2FA available for admin accounts
+- [ ] **Security Headers**: Complete security header suite implemented
+- [ ] **Content Security Policy**: Strict CSP configured
+- [ ] **Subresource Integrity**: SRI hashes for external resources
+- [ ] **Feature Policy**: Permissions-Policy headers configured
 
-### Security Metrics
-- [ ] **Failed Login Attempts** - Monitor and alert on excessive failures
-- [ ] **Token Abuse** - Monitor for token reuse or manipulation
-- [ ] **Rate Limit Violations** - Track and respond to rate limit hits
-- [ ] **Security Headers** - Verify security headers are sent
+#### Compliance and Auditing
+- [ ] **Audit Trail**: Complete audit trail for admin actions
+- [ ] **Data Privacy Compliance**: GDPR/COPPA compliance measures
+- [ ] **Security Documentation**: Security procedures documented
+- [ ] **Incident Response Plan**: Clear procedure for security incidents
+- [ ] **Regular Security Review**: Scheduled security assessment process
 
-## 🔄 Incident Response
+## 🧪 Security Testing Procedures
 
-### Preparation
-- [ ] **Incident Response Plan** - Document procedures for security incidents
-- [ ] **Contact Information** - Security team contact details accessible
-- [ ] **Rollback Plan** - Quick rollback procedure documented
-- [ ] **Communication Plan** - User communication strategy for incidents
-
-### Response Capabilities
-- [ ] **Log Analysis** - Ability to quickly analyze security logs
-- [ ] **Token Revocation** - Ability to revoke compromised tokens
-- [ ] **User Account Control** - Ability to disable compromised accounts
-- [ ] **System Isolation** - Ability to isolate affected systems
-
-## 📚 Security Documentation
-
-### Required Documentation
-- [ ] **Security Architecture** - Document security design decisions
-- [ ] **OAuth Integration** - Document OAuth flow and security measures
-- [ ] **Deployment Guide** - Secure deployment procedures
-- [ ] **Troubleshooting** - Security troubleshooting guide
-
-### Team Knowledge
-- [ ] **Security Training** - Team understands OAuth security
-- [ ] **Best Practices** - Team follows security best practices
-- [ ] **Update Procedures** - Process for security updates
-- [ ] **Vulnerability Management** - Process for handling security issues
-
-## 🎯 Production Launch Security Checklist
-
-### Final Pre-Launch Review
-- [ ] **Complete Security Audit** - All checklist items verified
-- [ ] **Third-Party Review** - External security review completed (recommended)
-- [ ] **Penetration Testing** - Security testing completed
-- [ ] **Risk Assessment** - Security risks documented and accepted
-
-### Launch Readiness
-- [ ] **Monitoring Active** - All security monitoring active
-- [ ] **Incident Response Ready** - Response team and procedures ready
-- [ ] **Backup and Recovery** - Data backup and recovery tested
-- [ ] **Communication Ready** - User communication channels ready
-
-### Post-Launch
-- [ ] **Security Monitoring** - Continuous monitoring active
-- [ ] **Regular Reviews** - Schedule regular security reviews
-- [ ] **Update Management** - Process for security updates active
-- [ ] **Compliance Monitoring** - Ongoing compliance verification
-
-## 🚩 Red Flags - STOP Deployment If Present
-
-### Critical Security Issues
-- ❌ **HTTP in Production** - Any HTTP URLs in production configuration
-- ❌ **Weak Secrets** - Secrets less than 32 characters or using common values
-- ❌ **Development Credentials** - Development OAuth credentials in production
-- ❌ **Open CORS** - CORS allowing all origins (*)
-- ❌ **Debug Mode** - Debug or verbose logging enabled in production
-- ❌ **No Error Monitoring** - No error tracking or monitoring configured
-- ❌ **Unverified Domain** - Google OAuth domain not verified
-- ❌ **Missing HTTPS** - SSL certificate issues or mixed content
-
-### Warning Signs
-- ⚠️ **Placeholder Values** - Any configuration using placeholder values
-- ⚠️ **Wide Permissions** - OAuth requesting unnecessary permissions
-- ⚠️ **No Rate Limiting** - No rate limiting configured
-- ⚠️ **Weak Rate Limits** - Rate limits too permissive for production
-- ⚠️ **No Monitoring** - Limited or no application monitoring
-- ⚠️ **No Backup** - No backup or disaster recovery plan
-
-## ✅ Security Validation Commands
-
-### Environment Validation
+### Automated Security Tests
 ```bash
+# Run OAuth configuration validation
+npm run test:oauth-config
+
 # Run production OAuth validation
-npx tsx scripts/validate-production-oauth.ts
+npx ts-node scripts/validate-production-oauth.ts
 
-# Check environment health
-npx tsx scripts/check-env.ts
-
-# Validate all environment variables
-npx tsx scripts/validate-env.ts
+# Test environment variables
+npm run test:env-validation
 ```
 
 ### Manual Security Tests
+
+#### OAuth Flow Testing
+1. **Test Normal Flow**
+   - Visit: https://kcislk-esid.zeabur.app/login
+   - Complete Google OAuth
+   - Verify proper redirect and session creation
+
+2. **Test Error Scenarios**
+   - Test with invalid callback URL
+   - Test with expired/invalid tokens
+   - Test CSRF attack scenarios
+
+3. **Test Role Assignment**
+   - Test with different email domains
+   - Verify correct role assignment
+   - Test edge cases and unknown domains
+
+#### Security Headers Testing
 ```bash
-# Test OAuth flow
-curl -I "https://landing-app-v2.zeabur.app/api/auth/google"
+# Test security headers
+curl -I https://kcislk-esid.zeabur.app
 
-# Check security headers
-curl -I "https://landing-app-v2.zeabur.app/"
-
-# Test rate limiting
-for i in {1..10}; do curl -I "https://landing-app-v2.zeabur.app/api/health"; done
+# Check for required headers:
+# - Strict-Transport-Security
+# - X-Content-Type-Options
+# - X-Frame-Options
+# - X-XSS-Protection
+# - Content-Security-Policy
 ```
 
-## 🎉 Security Sign-Off
+#### Session Security Testing
+1. **Session Persistence**
+   - Login and verify session persists across page refreshes
+   - Test session expiration behavior
+   - Verify secure logout functionality
 
-**Security Review Completed By**: ________________________  
-**Date**: ________________________  
-**Security Approval**: ✅ APPROVED / ❌ DENIED  
-**Notes**: ________________________
+2. **Cross-Site Testing**
+   - Test CSRF protection is working
+   - Verify cookies are properly secured
+   - Test session hijacking protections
 
-**Deployment Authorization**: ________________________  
-**Date**: ________________________  
+## 🚨 Security Incident Response
+
+### Immediate Response (< 1 hour)
+1. **Identify Scope**: Determine extent of security issue
+2. **Isolate Issue**: If critical, consider disabling OAuth temporarily
+3. **Preserve Evidence**: Capture logs and evidence
+4. **Notify Stakeholders**: Inform relevant team members
+
+### Short-term Response (< 24 hours)
+1. **Root Cause Analysis**: Identify how security issue occurred
+2. **Implement Fix**: Deploy security fix if available
+3. **Monitor Systems**: Increased monitoring for related issues
+4. **User Communication**: Notify users if necessary
+
+### Long-term Response (< 1 week)
+1. **Security Review**: Comprehensive review of related systems
+2. **Process Improvement**: Update security procedures
+3. **Documentation Update**: Update security documentation
+4. **Training**: Additional security training if needed
+
+## 🔧 Security Maintenance
+
+### Daily Monitoring
+- [ ] Review OAuth login logs for anomalies
+- [ ] Monitor failed login attempt rates
+- [ ] Check application error logs
+- [ ] Verify SSL certificate status
+
+### Weekly Security Tasks
+- [ ] Review user account creation patterns
+- [ ] Check for new security vulnerabilities
+- [ ] Verify backup integrity
+- [ ] Review access logs
+
+### Monthly Security Tasks
+- [ ] Security dependency updates
+- [ ] Review and rotate secrets if needed
+- [ ] Audit user permissions and roles
+- [ ] Test incident response procedures
+
+### Quarterly Security Tasks
+- [ ] Comprehensive security assessment
+- [ ] Penetration testing (consider professional assessment)
+- [ ] Security documentation review
+- [ ] Staff security training updates
+
+## 📚 Security Resources
+
+### Internal Documentation
+- **Setup Guide**: `/docs/PRODUCTION-OAUTH-SETUP.md`
+- **Environment Template**: `/.env.production.example`
+- **Testing Scripts**: `/scripts/validate-production-oauth.ts`
+
+### External Security Resources
+- **OAuth 2.0 Security Best Practices**: https://tools.ietf.org/html/rfc6819
+- **OWASP OAuth Security Cheat Sheet**: https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Cheat_Sheet.html
+- **Google OAuth Security**: https://developers.google.com/identity/protocols/oauth2/security-best-practices
+- **Next.js Security**: https://nextjs.org/docs/advanced-features/security-headers
+
+### Security Contacts
+- **Technical Team**: [Your technical contact]
+- **Security Team**: [Your security contact]
+- **Infrastructure**: [Your infrastructure contact]
+
+## ✅ Pre-Deployment Final Check
+
+Before deploying to production, ensure ALL critical items are checked:
+
+### Final Security Verification
+- [ ] **All Critical Items Complete**: Every item in "CRITICAL SECURITY" section verified
+- [ ] **Automated Tests Pass**: All security tests pass successfully
+- [ ] **Manual Tests Pass**: Manual security tests completed successfully
+- [ ] **Documentation Updated**: All security documentation current
+- [ ] **Team Briefed**: Relevant team members briefed on security procedures
+- [ ] **Monitoring Ready**: Security monitoring systems active
+- [ ] **Incident Response Ready**: Incident response procedures verified
+
+### Deployment Authorization
+- [ ] **Security Review Complete**: Senior team member has reviewed security implementation
+- [ ] **Stakeholder Approval**: Required approvals obtained for production deployment
+- [ ] **Rollback Plan Ready**: Clear rollback procedure in case of security issues
 
 ---
 
-**🔒 This checklist must be completed and signed off before production deployment**  
-**安全檢查清單必須在生產部署前完成並簽核**
+## 🎯 Security Success Criteria
 
+**Your OAuth system is security-ready when:**
+
+1. ✅ **Zero Critical Vulnerabilities**: No critical security issues identified
+2. ✅ **Complete Access Control**: All resources properly protected
+3. ✅ **Secure Communication**: All traffic encrypted and secured
+4. ✅ **Proper Authentication**: Robust authentication and session management
+5. ✅ **Monitoring Active**: Comprehensive security monitoring in place
+6. ✅ **Incident Response Ready**: Clear procedures for security incidents
+7. ✅ **Team Prepared**: Team trained on security procedures
+
+## 🚀 Ready for Production
+
+Once all security items are verified, your OAuth system meets enterprise-level security standards and is ready for production deployment to serve KCISLK Elementary School's international department community.
+
+---
+
+**🔒 Security is not a destination, but a journey**  
+**安全不是終點，而是一個持續的過程**  
+**Regular review and updates ensure continued protection**  
+**定期審查和更新確保持續保護**
+
+*Last Updated: 2025-08-07*  
 *Version: 1.0.0*  
-*Last Updated: 2025-08-06*  
-*Target: https://landing-app-v2.zeabur.app*
+*Security Level: Enterprise-Ready*
