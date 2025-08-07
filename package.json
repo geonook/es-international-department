@@ -43,7 +43,10 @@
     "db:indexes": "psql $DATABASE_URL -f prisma/migrations/add_performance_indexes.sql",
     "report:performance": "tsx scripts/generate-performance-report.ts",
     "optimize:database": "npm run db:indexes && npm run test:performance",
-    "test:upload": "tsx scripts/test-upload-system.ts"
+    "test:upload": "tsx scripts/test-upload-system.ts",
+    "test:email-system": "tsx scripts/test-email-system.ts",
+    "setup:email": "tsx scripts/setup-email-service.ts",
+    "setup:email:gmail": "tsx scripts/setup-email-service.ts --gmail-guide"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
