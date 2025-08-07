@@ -137,7 +137,10 @@ class EmailService {
       }
       console.log(`✅ Email service initialized successfully with provider: ${this.provider}`)
     } catch (error) {
-      console.error('❌ Failed to initialize email service:', error)
+      console.warn(`⚠️ Email service initialization failed with provider ${this.provider}:`, error.message)
+      console.warn('⚠️ Email functionality may not work. Please configure email settings in environment variables.')
+      // Set transporter to null to indicate email is not available
+      this.transporter = null
     }
   }
 
@@ -195,9 +198,16 @@ class EmailService {
       throw new Error('AWS SES configuration missing: AWS_SES_REGION, AWS_SES_ACCESS_KEY_ID, AWS_SES_SECRET_ACCESS_KEY required')
     }
 
-    this.transporter = nodemailer.createTransporter({
-      SES: { aws: require('aws-sdk'), region }
-    })
+    try {
+      // Check if aws-sdk is available
+      const AWS = require('aws-sdk')
+      this.transporter = nodemailer.createTransporter({
+        SES: { aws: AWS, region }
+      })
+    } catch (error) {
+      console.warn('⚠️ AWS SDK not found. Please install aws-sdk package for AWS SES support.')
+      throw new Error('AWS SDK package not found. Install with: npm install aws-sdk')
+    }
   }
 
   /**
