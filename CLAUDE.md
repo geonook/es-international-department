@@ -166,7 +166,9 @@ kcislk-esid-info-hub/
 ├── docs/                      # Documentation | 文件
 │   ├── QUICK-START-OAUTH.md   # OAuth quick setup guide | OAuth 快速設定指南
 │   ├── google-oauth-setup.md  # Detailed OAuth setup | 詳細 OAuth 設定
-│   └── OAUTH-STATUS-SUMMARY.md # Implementation status | 實作狀態總結
+│   ├── OAUTH-STATUS-SUMMARY.md # Implementation status | 實作狀態總結
+│   ├── SECURITY-AUDIT-REPORT.md # Comprehensive security audit | 全面安全稽核
+│   └── SECURITY-BEST-PRACTICES.md # Security guidelines & procedures | 安全指南與程序
 ├── public/                    # Static assets | 靜態資源
 ├── styles/                    # Global styles | 全域樣式
 └── output/                    # Generated files (DO NOT commit) | 生成檔案（請勿提交）
