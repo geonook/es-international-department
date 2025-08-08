@@ -197,11 +197,14 @@ git push origin main                # 推送到主分支（自動 GitHub 備份�
 3. **Set up environment variables** | **設定環境變數**
    ```bash
    # Copy environment template | 複製環境範本
-   cp .env.local.example .env.local
+   cp .env.example .env
    
-   # Edit with your Google OAuth credentials | 編輯填入您的 Google OAuth 憑證
-   # GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
-   # GOOGLE_CLIENT_SECRET="your-client-secret"
+   # Edit with your credentials | 編輯填入您的憑證資訊
+   # 主要需要設定以下項目 | Main configurations needed:
+   # - DATABASE_URL (Zeabur PostgreSQL connection)
+   # - GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET (OAuth)
+   # - JWT_SECRET & NEXTAUTH_SECRET (Authentication)
+   # - Email SMTP settings (Notification system)
    ```
 
 4. **Test OAuth configuration** | **測試 OAuth 配置**
