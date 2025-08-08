@@ -199,14 +199,34 @@ class EmailService {
     }
 
     try {
-      // Check if aws-sdk is available
-      const AWS = require('aws-sdk')
+      // Dynamic import for AWS SDK - optional dependency
+      let AWS
+      try {
+        AWS = require('aws-sdk')
+      } catch (importError) {
+        console.warn('⚠️ AWS SDK not found. Falling back to SMTP configuration for production.')
+        throw new Error('AWS SDK package not found. Please install aws-sdk package or use SMTP configuration instead.')
+      }
+
+      // Configure AWS credentials
+      AWS.config.update({
+        accessKeyId,
+        secretAccessKey,
+        region
+      })
+
       this.transporter = nodemailer.createTransporter({
         SES: { aws: AWS, region }
       })
     } catch (error) {
-      console.warn('⚠️ AWS SDK not found. Please install aws-sdk package for AWS SES support.')
-      throw new Error('AWS SDK package not found. Install with: npm install aws-sdk')
+      console.warn('⚠️ AWS SES initialization failed:', error.message)
+      // Fallback to SMTP configuration if AWS SDK is not available
+      console.warn('⚠️ Falling back to SMTP configuration...')
+      try {
+        this.initializeSMTPTransporter()
+      } catch (smtpError) {
+        throw new Error('Both AWS SES and SMTP configuration failed. Please configure at least one email provider.')
+      }
     }
   }
 

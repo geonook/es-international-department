@@ -192,6 +192,25 @@ export function clearAuthCookie() {
 }
 
 /**
+ * 驗證 API 請求的認證狀態
+ */
+export async function verifyAuth(request?: Request): Promise<{ user: User | null, authenticated: boolean }> {
+  try {
+    const user = await getCurrentUser()
+    return {
+      user,
+      authenticated: user !== null
+    }
+  } catch (error) {
+    console.error('Auth verification error:', error)
+    return {
+      user: null,
+      authenticated: false
+    }
+  }
+}
+
+/**
  * API 認證錯誤回應
  */
 export const AUTH_ERRORS = {

@@ -23,7 +23,7 @@ import {
   FileText,
   Folder,
   RefreshCw,
-  Export,
+  FileDown,
   Filter,
   AlertTriangle,
   Loader2,
@@ -260,7 +260,7 @@ export default function ResourceAnalytics({
           </Button>
           
           <Button variant="outline" onClick={handleExport}>
-            <Export className="w-4 h-4 mr-2" />
+            <FileDown className="w-4 h-4 mr-2" />
             匯出
           </Button>
           
