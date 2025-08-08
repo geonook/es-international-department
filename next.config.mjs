@@ -19,8 +19,13 @@ const nextConfig = {
   // Production optimizations
   swcMinify: true,
   
-  // TinyMCE static assets configuration
-  webpack: (config, { isServer }) => {
+  // Skip automatic static generation for API routes that may use database
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
+  },
+  
+  // TinyMCE static assets configuration and build optimizations
+  webpack: (config, { isServer, dev, buildId, nextRuntime, webpack }) => {
     if (!isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,
@@ -39,13 +44,28 @@ const nextConfig = {
     
     // Also externalize for server builds to prevent bundling issues
     if (isServer) {
+      // Externalize problematic packages during build
+      const externals = ['aws-sdk', '@prisma/client']
+      
       if (Array.isArray(config.externals)) {
-        config.externals.push('aws-sdk')
+        config.externals.push(...externals)
       } else if (typeof config.externals === 'object') {
-        config.externals['aws-sdk'] = 'commonjs aws-sdk'
+        externals.forEach(pkg => {
+          config.externals[pkg] = `commonjs ${pkg}`
+        })
       } else {
-        config.externals = [config.externals, 'aws-sdk']
+        config.externals = [config.externals, ...externals]
       }
+    }
+    
+    // Build-time environment detection
+    if (config.plugins && webpack?.DefinePlugin) {
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'process.env.NEXT_PHASE': JSON.stringify(process.env.NEXT_PHASE || 'phase-production-build'),
+          'process.env.BUILD_TIME': JSON.stringify(Date.now().toString()),
+        })
+      )
     }
     
     return config

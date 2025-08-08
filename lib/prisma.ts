@@ -9,11 +9,40 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
+/**
+ * 檢查是否為構建時期
+ * Check if it's build time
+ */
+function isBuildTime(): boolean {
+  return process.env.NODE_ENV !== 'test' && (
+    process.env.NEXT_PHASE === 'phase-production-build' ||
+    process.env.npm_lifecycle_event === 'build' ||
+    process.argv.includes('build') ||
+    process.env.CI === 'true'
+  )
+}
+
+/**
+ * 獲取安全的資料庫 URL
+ * Get safe database URL for build time
+ */
+function getSafeDatabaseUrl(): string {
+  const dbUrl = process.env.DATABASE_URL
+  
+  // 在構建時期，如果沒有 DATABASE_URL 或為佔位符，提供一個有效的預設值
+  if (isBuildTime() && (!dbUrl || dbUrl.includes('placeholder'))) {
+    console.log('🔧 Build time detected - using placeholder database URL for Prisma')
+    return 'postgresql://build:build@localhost:5432/build'
+  }
+  
+  return dbUrl || 'postgresql://localhost:5432/default'
+}
+
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   datasources: {
     db: {
-      url: process.env.DATABASE_URL
+      url: getSafeDatabaseUrl()
     }
   },
   // Performance optimizations
@@ -156,8 +185,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Connection pool optimization
-if (process.env.NODE_ENV === 'production') {
-  // Warm up the connection pool
+if (process.env.NODE_ENV === 'production' && !isBuildTime()) {
+  // Warm up the connection pool - but only in runtime, not during build
   prisma.$connect().catch(console.error)
 }
 

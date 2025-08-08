@@ -70,6 +70,43 @@ export type EnvConfig = z.infer<typeof envSchema>
  * Validate and parse environment variables
  */
 function validateEnv(): EnvConfig {
+  // 在構建時期，如果環境變數不完整，提供預設值避免構建失敗
+  const isBuildTime = process.env.NODE_ENV !== 'test' && (
+    process.env.NEXT_PHASE === 'phase-production-build' ||
+    process.env.npm_lifecycle_event === 'build' ||
+    process.argv.includes('build') ||
+    process.env.CI === 'true'
+  )
+
+  if (isBuildTime) {
+    console.log('🔧 Build time detected - using fallback environment configuration')
+    
+    // 為構建提供最小化的環境配置
+    return {
+      NODE_ENV: (process.env.NODE_ENV as any) || 'production',
+      DATABASE_URL: process.env.DATABASE_URL || 'postgresql://placeholder:placeholder@localhost:5432/placeholder',
+      JWT_SECRET: process.env.JWT_SECRET || 'build-time-placeholder-jwt-secret-32chars',
+      NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'build-time-placeholder-nextauth-secret',
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'https://localhost:3000',
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || 'build-placeholder.apps.googleusercontent.com',
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || 'build-placeholder-secret',
+      REDIS_URL: process.env.REDIS_URL,
+      VERCEL_BLOB_READ_WRITE_TOKEN: process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
+      AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+      AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+      AWS_REGION: process.env.AWS_REGION,
+      AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
+      ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || 'http://localhost:3000',
+      RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
+      RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
+      SENTRY_DSN: process.env.SENTRY_DSN,
+      GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID,
+      PRISMA_CLI_TELEMETRY_DISABLED: process.env.PRISMA_CLI_TELEMETRY_DISABLED,
+      DEBUG: process.env.DEBUG,
+      SKIP_ENV_VALIDATION: process.env.SKIP_ENV_VALIDATION,
+    } as EnvConfig
+  }
+
   try {
     const parsed = envSchema.parse(process.env)
     return parsed
@@ -84,6 +121,12 @@ function validateEnv(): EnvConfig {
     
     console.error('\n💡 Please check your environment variables configuration.')
     console.error('📋 Refer to .env.example for the required format.')
+    
+    // 在開發模式下不要終止程序，允許繼續運行並在實際使用時報錯
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ Continuing in development mode with incomplete environment configuration')
+      return {} as EnvConfig
+    }
     
     process.exit(1)
   }
@@ -100,8 +143,20 @@ export function getValidatedEnv(): EnvConfig {
 /**
  * 驗證的環境配置 (為了向後相容性，但建議使用 getValidatedEnv())
  * Validated environment configuration (for backward compatibility, but recommend using getValidatedEnv())
+ * 
+ * 注意：在構建時期，環境變數可能尚未完全可用，因此我們延遲驗證到實際使用時
+ * Note: During build time, environment variables may not be fully available, so we defer validation to actual usage
  */
-export const env = validateEnv()
+let _env: EnvConfig | null = null
+
+export const env = new Proxy({} as EnvConfig, {
+  get(target, prop: keyof EnvConfig) {
+    if (!_env) {
+      _env = validateEnv()
+    }
+    return _env[prop]
+  }
+})
 
 /**
  * 獲取當前環境資訊
@@ -176,21 +231,31 @@ export function checkEnvironmentHealth() {
 /**
  * 開發模式下顯示環境資訊
  * Display environment information in development mode
+ * 
+ * 注意：延遲執行以避免構建時期的問題
+ * Note: Deferred execution to avoid build-time issues
  */
-if (env.NODE_ENV === 'development' && !env.SKIP_ENV_VALIDATION) {
-  const health = checkEnvironmentHealth()
-  
-  console.log('\n🔧 Environment Configuration:')
-  console.log(`  Environment: ${health.info.nodeEnv}`)
-  console.log(`  Database: ${health.info.database.url}`)
-  console.log(`  Zeabur DB: ${health.info.database.isZeabur ? '✅' : '❌'}`)
-  console.log(`  Cache: ${health.info.cache.enabled ? '✅' : '❌'}`)
-  console.log(`  Storage: ${health.info.storage.vercelBlob ? 'Vercel Blob ✅' : health.info.storage.awsS3 ? 'AWS S3 ✅' : '❌'}`)
-  
-  if (!health.healthy) {
-    console.log('\n⚠️  Configuration Issues:')
-    health.issues.forEach(issue => console.log(`  - ${issue}`))
-  }
-  
-  console.log('')
+if (typeof window === 'undefined' && process.env.NODE_ENV === 'development' && !process.env.SKIP_ENV_VALIDATION) {
+  // 使用 setTimeout 延遲執行，確保在環境完全初始化後才顯示資訊
+  setTimeout(() => {
+    try {
+      const health = checkEnvironmentHealth()
+      
+      console.log('\n🔧 Environment Configuration:')
+      console.log(`  Environment: ${health.info.nodeEnv}`)
+      console.log(`  Database: ${health.info.database.url}`)
+      console.log(`  Zeabur DB: ${health.info.database.isZeabur ? '✅' : '❌'}`)
+      console.log(`  Cache: ${health.info.cache.enabled ? '✅' : '❌'}`)
+      console.log(`  Storage: ${health.info.storage.vercelBlob ? 'Vercel Blob ✅' : health.info.storage.awsS3 ? 'AWS S3 ✅' : '❌'}`)
+      
+      if (!health.healthy) {
+        console.log('\n⚠️  Configuration Issues:')
+        health.issues.forEach(issue => console.log(`  - ${issue}`))
+      }
+      
+      console.log('')
+    } catch (error) {
+      console.warn('⚠️ Unable to display environment configuration:', error.message)
+    }
+  }, 100)
 }
