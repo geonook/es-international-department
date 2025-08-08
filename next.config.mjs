@@ -26,7 +26,28 @@ const nextConfig = {
         ...config.resolve.alias,
         tinymce: 'tinymce/tinymce.min.js',
       }
+      
+      // Externalize AWS SDK to prevent build warnings
+      if (Array.isArray(config.externals)) {
+        config.externals.push('aws-sdk')
+      } else if (typeof config.externals === 'object') {
+        config.externals['aws-sdk'] = 'aws-sdk'
+      } else {
+        config.externals = ['aws-sdk']
+      }
     }
+    
+    // Also externalize for server builds to prevent bundling issues
+    if (isServer) {
+      if (Array.isArray(config.externals)) {
+        config.externals.push('aws-sdk')
+      } else if (typeof config.externals === 'object') {
+        config.externals['aws-sdk'] = 'commonjs aws-sdk'
+      } else {
+        config.externals = [config.externals, 'aws-sdk']
+      }
+    }
+    
     return config
   },
   

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
+import { requireApiAuth, getSearchParams, parsePaginationParams, createApiErrorResponse, createApiSuccessResponse } from '@/lib/auth-utils'
 
 /**
  * Events Calendar API - GET /api/events/calendar
@@ -13,17 +13,14 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份
-    const currentUser = await getCurrentUser()
-    if (!currentUser) {
-      return NextResponse.json({ 
-        success: false, 
-        error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
-      }, { status: 401 })
+    const authResult = await requireApiAuth(request)
+    if (!authResult.success) {
+      return authResult.response!
     }
+    const currentUser = authResult.user!
 
     // 解析查詢參數
-    const { searchParams } = new URL(request.url)
+    const searchParams = getSearchParams(request)
     const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString())
     const month = searchParams.get('month') ? parseInt(searchParams.get('month')!) : null
     const eventType = searchParams.get('eventType')
@@ -199,27 +196,21 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        events: calendarEvents,
-        groupedByMonth,
-        period: {
-          year,
-          month,
-          startDate,
-          endDate
-        },
-        stats
-      }
+    return createApiSuccessResponse({
+      events: calendarEvents,
+      groupedByMonth,
+      period: {
+        year,
+        month,
+        startDate,
+        endDate
+      },
+      stats
     })
 
   } catch (error) {
     console.error('Get calendar events error:', error)
-    return NextResponse.json(
-      { success: false, message: '獲取日曆資料失敗' },
-      { status: 500 }
-    )
+    return createApiErrorResponse('獲取日曆資料失敗', 500)
   }
 }
 

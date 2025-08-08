@@ -6,11 +6,12 @@
 import { SignJWT, jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
+import { env } from './env-validation'
 
-// JWT 設定
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
+// JWT 設定 - 使用類型安全的環境變數
+const JWT_SECRET = new TextEncoder().encode(env.JWT_SECRET)
 const JWT_ALGORITHM = 'HS256'
-const JWT_EXPIRES_IN = '7d' // 7 天過期
+const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN || '7d'
 
 // 使用者介面定義
 export interface User {

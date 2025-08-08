@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAdminAuth, getSearchParams, parsePaginationParams, createApiErrorResponse, createApiSuccessResponse } from '@/lib/auth-utils'
 import { requireAdmin } from '@/lib/middleware'
 import { prisma } from '@/lib/prisma'
 import { withCache, cacheInvalidation, CACHE_TTL } from '@/lib/cache'
@@ -15,15 +16,15 @@ import { performance } from 'perf_hooks'
  */
 export async function GET(request: NextRequest) {
   // 檢查管理員權限
-  const adminUser = await requireAdmin(request)
-  if (adminUser instanceof NextResponse) {
-    return adminUser
+  const authResult = await requireAdminAuth(request)
+  if (!authResult.success) {
+    return authResult.response!
   }
+  const adminUser = authResult.user!
 
   try {
-    const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '20')
+    const searchParams = getSearchParams(request)
+    const { page, limit } = parsePaginationParams(searchParams)
     const status = searchParams.get('status')
     const targetAudience = searchParams.get('targetAudience')
     const priority = searchParams.get('priority')
@@ -98,40 +99,27 @@ export async function GET(request: NextRequest) {
     
     const { announcements, totalCount, queryTime } = result
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: {
-          announcements,
-          pagination: {
-            page,
-            limit,
-            totalCount,
-            totalPages: Math.ceil(totalCount / limit)
-          }
-        },
-        performance: {
-          queryTime: queryTime?.toFixed(2) || 'cached',
-          cached: !queryTime
-        }
+    const response = createApiSuccessResponse({
+      announcements,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit)
       },
-      {
-        headers: {
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120'
-        }
+      performance: {
+        queryTime: queryTime?.toFixed(2) || 'cached',
+        cached: !queryTime
       }
-    )
+    })
+    
+    // Add cache headers
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120')
+    return response
 
   } catch (error) {
     console.error('Admin announcements list error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to fetch announcements',
-        message: '獲取公告列表失敗'
-      },
-      { status: 500 }
-    )
+    return createApiErrorResponse('獲取公告列表失敗', 500, 'FETCH_ANNOUNCEMENTS_ERROR')
   }
 }
 

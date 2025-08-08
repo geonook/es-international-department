@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
+import { requireApiAuth, getSearchParams, parsePaginationParams, createApiErrorResponse, createApiSuccessResponse } from '@/lib/auth-utils'
 
 /**
  * Public Events API - GET /api/events
@@ -13,19 +13,15 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 export async function GET(request: NextRequest) {
   try {
     // 驗證用戶身份（需要登入才能查看活動）
-    const currentUser = await getCurrentUser()
-    if (!currentUser) {
-      return NextResponse.json({ 
-        success: false, 
-        error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
-      }, { status: 401 })
+    const authResult = await requireApiAuth(request)
+    if (!authResult.success) {
+      return authResult.response!
     }
+    const currentUser = authResult.user!
 
     // 解析查詢參數
-    const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '12')
+    const searchParams = getSearchParams(request)
+    const { page, limit } = parsePaginationParams(searchParams)
     const eventType = searchParams.get('eventType')
     const targetGrade = searchParams.get('targetGrade')
     const search = searchParams.get('search')
@@ -170,18 +166,14 @@ export async function GET(request: NextRequest) {
       featured
     }
 
-    return NextResponse.json({
-      success: true,
-      data: processedEvents,
+    return createApiSuccessResponse({
+      events: processedEvents,
       pagination,
       filters
     })
 
   } catch (error) {
     console.error('Get public events error:', error)
-    return NextResponse.json(
-      { success: false, message: '獲取活動列表失敗' },
-      { status: 500 }
-    )
+    return createApiErrorResponse('獲取活動列表失敗', 500)
   }
 }

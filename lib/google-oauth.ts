@@ -4,11 +4,12 @@
  */
 
 import { OAuth2Client } from 'google-auth-library'
+import { env } from './env-validation'
 
-// Google OAuth 設定
+// Google OAuth 設定 - 使用類型安全的環境變數
 export const GOOGLE_OAUTH_CONFIG = {
-  clientId: process.env.GOOGLE_CLIENT_ID!,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+  clientId: env.GOOGLE_CLIENT_ID,
+  clientSecret: env.GOOGLE_CLIENT_SECRET,
   redirectUri: process.env.NEXTAUTH_URL ? 
     `${process.env.NEXTAUTH_URL}/api/auth/callback/google` : 
     'http://localhost:3000/api/auth/callback/google',

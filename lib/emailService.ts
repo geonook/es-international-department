@@ -10,6 +10,7 @@
 
 import nodemailer, { Transporter } from 'nodemailer'
 import { prisma } from './prisma'
+import { env } from './env-validation'
 
 // Email 配置介面
 interface EmailConfig {
@@ -101,25 +102,43 @@ class EmailService {
   private readonly provider: string
   private emailQueue: EmailQueueItem[] = []
   private isProcessingQueue = false
+  private initialized = false
+  private initializationPromise: Promise<void> | null = null
   private readonly rateLimits = {
-    perMinute: parseInt(process.env.EMAIL_RATE_LIMIT_PER_MINUTE || '60'),
-    perHour: parseInt(process.env.EMAIL_RATE_LIMIT_PER_HOUR || '1000')
+    perMinute: env.RATE_LIMIT_MAX,
+    perHour: env.RATE_LIMIT_MAX * 10  // 10x the per-minute limit for hourly
   }
   private sentCounts = { minute: 0, hour: 0, lastReset: { minute: Date.now(), hour: Date.now() } }
 
   constructor() {
-    this.fromAddress = process.env.EMAIL_FROM || 'noreply@kcislk.ntpc.edu.tw'
-    this.fromName = process.env.EMAIL_FROM_NAME || 'KCISLK ESID Info Hub'
-    this.provider = process.env.EMAIL_PROVIDER || 'smtp'
+    this.fromAddress = env.SYSTEM_EMAIL
+    this.fromName = 'KCISLK ESID Info Hub'
+    this.provider = env.EMAIL_PROVIDER
     
-    this.initializeTransporter()
-    this.startQueueProcessor()
+    // 延遲初始化 - 不在構造函數中立即執行
+    // 將在第一次使用時初始化
+  }
+
+  /**
+   * 確保郵件傳輸器已初始化（延遲初始化模式）
+   */
+  private async ensureInitialized(): Promise<void> {
+    if (this.initialized) {
+      return
+    }
+
+    if (this.initializationPromise) {
+      return this.initializationPromise
+    }
+
+    this.initializationPromise = this.initializeTransporter()
+    return this.initializationPromise
   }
 
   /**
    * 初始化郵件傳輸器（支援多種提供商）
    */
-  private initializeTransporter() {
+  private async initializeTransporter(): Promise<void> {
     try {
       switch (this.provider) {
         case 'gmail':
@@ -129,18 +148,22 @@ class EmailService {
           this.initializeSendGridTransporter()
           break
         case 'aws-ses':
-          this.initializeAWSSESTransporter()
+          await this.initializeAWSSESTransporter()
           break
         case 'smtp':
         default:
           this.initializeSMTPTransporter()
       }
+      
+      this.initialized = true
+      this.startQueueProcessor()
       console.log(`✅ Email service initialized successfully with provider: ${this.provider}`)
     } catch (error) {
-      console.warn(`⚠️ Email service initialization failed with provider ${this.provider}:`, error.message)
+      console.warn(`⚠️ Email service initialization failed with provider ${this.provider}:`, error?.message || error)
       console.warn('⚠️ Email functionality may not work. Please configure email settings in environment variables.')
       // Set transporter to null to indicate email is not available
       this.transporter = null
+      this.initialized = true // Mark as initialized even if failed to prevent retry loops
     }
   }
 
@@ -189,24 +212,18 @@ class EmailService {
     })
   }
 
-  private initializeAWSSESTransporter() {
-    const region = process.env.AWS_SES_REGION
-    const accessKeyId = process.env.AWS_SES_ACCESS_KEY_ID
-    const secretAccessKey = process.env.AWS_SES_SECRET_ACCESS_KEY
+  private async initializeAWSSESTransporter() {
+    const region = env.awsSes.region
+    const accessKeyId = env.awsSes.accessKeyId
+    const secretAccessKey = env.awsSes.secretAccessKey
 
     if (!region || !accessKeyId || !secretAccessKey) {
       throw new Error('AWS SES configuration missing: AWS_SES_REGION, AWS_SES_ACCESS_KEY_ID, AWS_SES_SECRET_ACCESS_KEY required')
     }
 
     try {
-      // Dynamic import for AWS SDK - optional dependency
-      let AWS
-      try {
-        AWS = require('aws-sdk')
-      } catch (importError) {
-        console.warn('⚠️ AWS SDK not found. Falling back to SMTP configuration for production.')
-        throw new Error('AWS SDK package not found. Please install aws-sdk package or use SMTP configuration instead.')
-      }
+      // Dynamic import for AWS SDK - optional dependency with proper error handling
+      const AWS = await this.loadAWSSDK()
 
       // Configure AWS credentials
       AWS.config.update({
@@ -231,9 +248,29 @@ class EmailService {
   }
 
   /**
+   * Dynamically load AWS SDK with proper error handling
+   * 動態載入 AWS SDK，避免建置警告
+   */
+  private async loadAWSSDK(): Promise<any> {
+    try {
+      // Use dynamic import with explicit external marker
+      const awsSDK = await import('aws-sdk').catch(() => {
+        throw new Error('AWS SDK not available')
+      })
+      return awsSDK.default || awsSDK
+    } catch (error) {
+      console.warn('⚠️ AWS SDK not found. Falling back to SMTP configuration.')
+      throw new Error('AWS SDK package not found. Please install aws-sdk package or use SMTP configuration instead.')
+    }
+  }
+
+  /**
    * 發送單一郵件（支援速率限制和測試模式）
    */
   async sendEmail(emailContent: EmailContent): Promise<boolean> {
+    // 確保服務已初始化
+    await this.ensureInitialized()
+
     // 檢查測試模式
     if (process.env.EMAIL_TEST_MODE === 'true') {
       console.log('⚠️ Email test mode enabled - email not sent:', emailContent.subject)
@@ -251,7 +288,7 @@ class EmailService {
     }
 
     if (!this.transporter) {
-      console.error('❌ Email service not initialized')
+      console.error('❌ Email service not initialized or configuration invalid')
       return false
     }
 
@@ -1195,6 +1232,8 @@ class EmailService {
    * 測試郵件服務連接
    */
   async testConnection(): Promise<boolean> {
+    await this.ensureInitialized()
+    
     if (!this.transporter) {
       return false
     }
@@ -1213,6 +1252,8 @@ class EmailService {
    * 發送測試郵件
    */
   async sendTestEmail(recipient?: string): Promise<boolean> {
+    await this.ensureInitialized()
+    
     const testRecipient = recipient || process.env.EMAIL_TEST_RECIPIENT
     if (!testRecipient) {
       console.error('❌ No test recipient specified')
