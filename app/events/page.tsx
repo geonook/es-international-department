@@ -27,11 +27,10 @@ import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
 
 /**
- * 活動頁面組件 - KCISLK ESID 活動資訊
  * Events Page Component - KCISLK ESID Events
  * 
- * @description 完整功能的活動頁面，包含活動列表、篩選、搜尋、報名等功能
- * @features 動態活動載入、活動篩選、搜尋、報名功能、響應式設計
+ * @description Complete events page with event listings, filtering, search, and registration features
+ * @features Dynamic event loading, event filtering, search, registration functionality, responsive design
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -59,21 +58,21 @@ interface Event {
 }
 
 export default function EventsPage() {
-  // 滾動視差效果 | Scroll parallax effect
+  // Scroll parallax effect
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
 
-  // 狀態管理
+  // State management
   const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   
-  // 篩選和搜尋狀態
+  // Filter and search state
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedEventType, setSelectedEventType] = useState('all')
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false)
   
-  // 載入活動資料
+  // Load events data
   useEffect(() => {
     fetchEvents()
   }, [])
@@ -83,7 +82,7 @@ export default function EventsPage() {
       setIsLoading(true)
       setError('')
       
-      // 建構查詢參數
+      // Build query parameters
       const params = new URLSearchParams()
       params.set('status', 'published')
       params.set('limit', '50')
@@ -94,19 +93,19 @@ export default function EventsPage() {
       if (data.success) {
         setEvents(data.data || [])
       } else {
-        setError('載入活動資料失敗')
+        setError('Failed to load events data')
       }
     } catch (error) {
       console.error('Fetch events error:', error)
-      setError('網路錯誤，請稍後再試')
+      setError('Network error, please try again later')
     } finally {
       setIsLoading(false)
     }
   }
 
-  // 過濾活動
+  // Filter events
   const filteredEvents = events.filter(event => {
-    // 搜尋過濾
+    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       const matchesSearch = 
@@ -117,12 +116,12 @@ export default function EventsPage() {
       if (!matchesSearch) return false
     }
     
-    // 活動類型過濾
+    // Event type filter
     if (selectedEventType !== 'all' && event.eventType !== selectedEventType) {
       return false
     }
     
-    // 特色活動過濾
+    // Featured events filter
     if (showFeaturedOnly && !event.isFeatured) {
       return false
     }
@@ -130,22 +129,22 @@ export default function EventsPage() {
     return true
   })
 
-  // 格式化日期
+  // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('zh-TW', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
       weekday: 'long'
     })
   }
 
-  // 格式化時間
+  // Format time
   const formatTime = (timeString?: string) => {
     if (!timeString) return ''
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('zh-TW', {
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false
+      hour12: true
     })
   }
 
