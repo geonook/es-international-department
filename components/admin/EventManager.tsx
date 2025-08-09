@@ -2,10 +2,10 @@
 
 /**
  * Event Manager Component
- * 活動管理器組件
+ * Event Manager Component
  * 
- * @description 活動管理主組件，包含列表、搜尋、篩選和操作功能
- * @features 活動CRUD、篩選、搜尋、分頁、批量操作
+ * @description Main event management component with list, search, filter and operation functions
+ * @features Event CRUD, filtering, search, pagination, batch operations
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -85,20 +85,20 @@ export default function EventManager({
   filters,
   className
 }: EventManagerProps) {
-  // 表單狀態
+  // Form state
   const [showEventForm, setShowEventForm] = useState(false)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState<string>('')
 
-  // 本地篩選狀態
+  // Local filter state
   const [localFilters, setLocalFilters] = useState<EventFilters>(filters || {
     eventType: 'all',
     status: 'all',
     search: ''
   })
 
-  // 創建活動
+  // Create event
   const createEvent = async (data: EventFormData) => {
     setFormLoading(true)
     setFormError('')
@@ -121,20 +121,20 @@ export default function EventManager({
       if (result.success) {
         setShowEventForm(false)
         setEditingEvent(null)
-        onRefresh?.() // 重新載入列表
+        onRefresh?.() // Reload list
       } else {
-        throw new Error(result.message || '建立活動失敗')
+        throw new Error(result.message || 'Failed to create event')
       }
     } catch (error) {
       console.error('Create event error:', error)
-      setFormError(error instanceof Error ? error.message : '建立活動時發生錯誤')
+      setFormError(error instanceof Error ? error.message : 'Error occurred while creating event')
       throw error
     } finally {
       setFormLoading(false)
     }
   }
 
-  // 更新活動
+  // Update event
   const updateEvent = async (data: EventFormData) => {
     if (!editingEvent) return
     
@@ -159,22 +159,22 @@ export default function EventManager({
       if (result.success) {
         setShowEventForm(false)
         setEditingEvent(null)
-        onRefresh?.() // 重新載入列表
+        onRefresh?.() // Reload list
       } else {
-        throw new Error(result.message || '更新活動失敗')
+        throw new Error(result.message || 'Failed to update event')
       }
     } catch (error) {
       console.error('Update event error:', error)
-      setFormError(error instanceof Error ? error.message : '更新活動時發生錯誤')
+      setFormError(error instanceof Error ? error.message : 'Error occurred while updating event')
       throw error
     } finally {
       setFormLoading(false)
     }
   }
 
-  // 刪除活動
+  // Delete event
   const deleteEvent = async (eventId: number) => {
-    if (!confirm('確定要刪除這個活動嗎？此操作無法復原。')) {
+    if (!confirm('Are you sure you want to delete this event? This operation cannot be undone.')) {
       return
     }
     
@@ -193,38 +193,38 @@ export default function EventManager({
       const result: ApiResponse = await response.json()
       
       if (result.success) {
-        onRefresh?.() // 重新載入列表
+        onRefresh?.() // Reload list
       } else {
-        throw new Error(result.message || '刪除活動失敗')
+        throw new Error(result.message || 'Failed to delete event')
       }
     } catch (error) {
       console.error('Delete event error:', error)
-      // 這裡可以顯示錯誤訊息
+      // Error message can be displayed here
     }
   }
 
-  // 處理編輯活動
+  // Handle edit event
   const handleEditEvent = (event: Event) => {
     setEditingEvent(event)
     setShowEventForm(true)
     setFormError('')
   }
 
-  // 處理新增活動
+  // Handle create event
   const handleCreateEvent = () => {
     setEditingEvent(null)
     setShowEventForm(true)
     setFormError('')
   }
 
-  // 處理表單取消
+  // Handle form cancel
   const handleFormCancel = () => {
     setShowEventForm(false)
     setEditingEvent(null)
     setFormError('')
   }
 
-  // 處理表單提交
+  // Handle form submit
   const handleFormSubmit = async (data: EventFormData) => {
     if (editingEvent) {
       await updateEvent(data)
@@ -233,21 +233,21 @@ export default function EventManager({
     }
   }
 
-  // 處理搜尋
+  // Handle search
   const handleSearchChange = (value: string) => {
     const newFilters = { ...localFilters, search: value }
     setLocalFilters(newFilters)
     onFiltersChange?.(newFilters)
   }
 
-  // 處理篩選器變更
+  // Handle filter change
   const handleFilterChange = (key: keyof EventFilters, value: any) => {
     const newFilters = { ...localFilters, [key]: value }
     setLocalFilters(newFilters)
     onFiltersChange?.(newFilters)
   }
 
-  // 清除篩選器
+  // Clear filters
   const clearFilters = () => {
     const newFilters: EventFilters = {
       eventType: 'all',
@@ -260,7 +260,7 @@ export default function EventManager({
 
   return (
     <div className={cn("space-y-6", className)}>
-      {/* 活動表單模態 */}
+      {/* Event form modal */}
       {showEventForm && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -286,13 +286,13 @@ export default function EventManager({
         </motion.div>
       )}
 
-      {/* 標題和操作 */}
+      {/* Title and actions */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center">
               <Calendar className="w-5 h-5 mr-2 text-purple-600" />
-              活動管理
+              Event Management
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button
@@ -301,7 +301,7 @@ export default function EventManager({
                 onClick={clearFilters}
                 className="text-sm"
               >
-                清除篩選
+                Clear Filters
               </Button>
               <Button 
                 onClick={handleCreateEvent}
@@ -309,58 +309,58 @@ export default function EventManager({
                 size="sm"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                新增活動
+                Add Event
               </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          {/* 搜尋和篩選 */}
+          {/* Search and filters */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {/* 搜尋 */}
+            {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="搜尋活動..."
+                placeholder="Search events..."
                 value={localFilters.search || ''}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-10"
               />
             </div>
 
-            {/* 活動類型篩選 */}
+            {/* Event type filter */}
             <Select
               value={localFilters.eventType || 'all'}
               onValueChange={(value) => handleFilterChange('eventType', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="選擇活動類型" />
+                <SelectValue placeholder="Select Event Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">所有類型</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 {Object.entries(EVENT_TYPE_LABELS).map(([key, label]) => (
                   <SelectItem key={key} value={key}>{label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            {/* 狀態篩選 */}
+            {/* Status filter */}
             <Select
               value={localFilters.status || 'all'}
               onValueChange={(value) => handleFilterChange('status', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="選擇狀態" />
+                <SelectValue placeholder="Select Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">所有狀態</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 {Object.entries(EVENT_STATUS_LABELS).map(([key, label]) => (
                   <SelectItem key={key} value={key}>{label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            {/* 年級篩選 */}
+            {/* Grade filter */}
             <Select
               value={localFilters.targetGrade || 'all'}
               onValueChange={(value) => handleFilterChange('targetGrade', value)}

@@ -2,10 +2,10 @@
 
 /**
  * Event List Component
- * 活動列表組件
+ * Event List Component
  * 
- * @description 活動列表顯示組件，支援分頁、排序和批量操作
- * @features 響應式設計、狀態指示器、快速操作、分頁導航
+ * @description Event list display component with pagination, sorting and batch operations support
+ * @features Responsive design, status indicators, quick actions, pagination navigation
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -68,12 +68,12 @@ export default function EventList({
 }: EventListProps) {
   const [expandedCard, setExpandedCard] = useState<number | null>(null)
 
-  // 處理卡片展開/收合
+  // Handle card expand/collapse
   const handleToggleExpand = (eventId: number) => {
     setExpandedCard(expandedCard === eventId ? null : eventId)
   }
 
-  // 分頁組件
+  // Pagination component
   const PaginationControls = () => {
     if (!pagination || pagination.totalPages <= 1) return null
 
@@ -81,11 +81,11 @@ export default function EventList({
     const currentPage = pagination.page
     const totalPages = pagination.totalPages
 
-    // 計算顯示的頁碼範圍
+    // Calculate displayed page range
     let startPage = Math.max(1, currentPage - 2)
     let endPage = Math.min(totalPages, currentPage + 2)
 
-    // 調整範圍以確保總是顯示5頁（如果可能）
+    // Adjust range to ensure always showing 5 pages (if possible)
     if (endPage - startPage < 4) {
       if (startPage === 1) {
         endPage = Math.min(totalPages, startPage + 4)
@@ -101,8 +101,8 @@ export default function EventList({
     return (
       <div className="flex items-center justify-between mt-6">
         <div className="flex items-center text-sm text-gray-700">
-          顯示第 {((currentPage - 1) * pagination.limit) + 1} - {Math.min(currentPage * pagination.limit, pagination.totalCount)} 項，
-          共 {pagination.totalCount} 項
+          Showing {((currentPage - 1) * pagination.limit) + 1} - {Math.min(currentPage * pagination.limit, pagination.totalCount)} items,
+          total {pagination.totalCount} items
         </div>
         
         <div className="flex items-center space-x-2">
@@ -113,7 +113,7 @@ export default function EventList({
             disabled={!pagination.hasPrevPage}
           >
             <ChevronLeft className="w-4 h-4" />
-            上一頁
+            Previous
           </Button>
           
           {pages.map((page) => (
@@ -134,7 +134,7 @@ export default function EventList({
             onClick={() => onPageChange?.(currentPage + 1)}
             disabled={!pagination.hasNextPage}
           >
-            下一頁
+            Next
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
@@ -142,7 +142,7 @@ export default function EventList({
     )
   }
 
-  // 載入骨架
+  // Loading skeleton
   const LoadingSkeleton = () => (
     <div className="space-y-4">
       {Array.from({ length: 3 }).map((_, index) => (
@@ -173,22 +173,22 @@ export default function EventList({
     </div>
   )
 
-  // 空狀態
+  // Empty state
   const EmptyState = () => (
     <Card>
       <CardContent className="p-12 text-center">
         <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">沒有找到活動</h3>
-        <p className="text-gray-600 mb-4">目前沒有符合篩選條件的活動</p>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">No events found</h3>
+        <p className="text-gray-600 mb-4">There are currently no events that match the filter criteria</p>
         <Button variant="outline">
           <Plus className="w-4 h-4 mr-2" />
-          新增活動
+          Add Event
         </Button>
       </CardContent>
     </Card>
   )
 
-  // 錯誤狀態
+  // Error state
   if (error) {
     return (
       <Card className={className}>
@@ -204,7 +204,7 @@ export default function EventList({
 
   return (
     <div className={cn("space-y-6", className)}>
-      {/* 活動列表 */}
+      {/* Event list */}
       <AnimatePresence mode="wait">
         {loading ? (
           <motion.div
@@ -255,7 +255,7 @@ export default function EventList({
         )}
       </AnimatePresence>
 
-      {/* 分頁控制 */}
+      {/* Pagination control */}
       {!loading && events.length > 0 && <PaginationControls />}
     </div>
   )

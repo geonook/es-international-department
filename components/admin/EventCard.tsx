@@ -2,10 +2,10 @@
 
 /**
  * Event Card Component
- * 活動卡片組件
+ * Event Card Component
  * 
- * @description 單一活動資訊展示卡片，支援展開/收合和操作按鈕
- * @features 狀態指示、快速操作、報名資訊、響應式設計
+ * @description Single event information display card with expand/collapse and action buttons support
+ * @features Status indicators, quick actions, registration information, responsive design
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -62,7 +62,7 @@ export default function EventCard({
   onToggleExpand,
   className
 }: EventCardProps) {
-  // 格式化日期
+  // Format date
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString('zh-TW', {
       year: 'numeric',
@@ -71,7 +71,7 @@ export default function EventCard({
     })
   }
 
-  // 格式化時間
+  // Format time
   const formatTime = (time: Date | string) => {
     return new Date(time).toLocaleTimeString('zh-TW', {
       hour: '2-digit',
@@ -79,7 +79,7 @@ export default function EventCard({
     })
   }
 
-  // 計算活動狀態
+  // Calculate event status
   const getEventStatus = () => {
     const now = new Date()
     const startDate = new Date(event.startDate)
@@ -95,7 +95,7 @@ export default function EventCard({
     return event.status
   }
 
-  // 獲取狀態圖示
+  // Get status icon
   const getStatusIcon = () => {
     const status = getEventStatus()
     switch (status) {
@@ -114,7 +114,7 @@ export default function EventCard({
     }
   }
 
-  // 獲取狀態顏色
+  // Get status color
   const getStatusColor = () => {
     const status = getEventStatus()
     switch (status) {
@@ -133,12 +133,12 @@ export default function EventCard({
     }
   }
 
-  // 計算剩餘名額
+  // Calculate remaining slots
   const availableSlots = event.maxParticipants && event.registrationCount 
     ? event.maxParticipants - event.registrationCount 
     : null
 
-  // 判斷是否報名已滿
+  // Check if registration is full
   const isRegistrationFull = availableSlots !== null && availableSlots <= 0
 
   return (
@@ -150,7 +150,7 @@ export default function EventCard({
     >
       <Card className="border hover:shadow-lg transition-all duration-300">
         <CardContent className="p-6">
-          {/* 標題和操作區域 */}
+          {/* Title and action area */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-2">
@@ -158,7 +158,7 @@ export default function EventCard({
                   {event.title}
                 </h3>
                 
-                {/* 狀態標籤 */}
+                {/* Status badge */}
                 <Badge 
                   variant="outline" 
                   className={cn(
@@ -170,13 +170,13 @@ export default function EventCard({
                   {EVENT_STATUS_LABELS[event.status]}
                 </Badge>
 
-                {/* 活動類型標籤 */}
+                {/* Event type badge */}
                 <Badge variant="secondary">
                   {EVENT_TYPE_LABELS[event.eventType]}
                 </Badge>
               </div>
 
-              {/* 描述 */}
+              {/* Description */}
               {event.description && (
                 <p className="text-gray-600 text-sm line-clamp-2 mb-3">
                   {event.description}
@@ -184,7 +184,7 @@ export default function EventCard({
               )}
             </div>
 
-            {/* 操作按鈕 */}
+            {/* Action buttons */}
             {showActions && (
               <div className="flex items-center gap-2 ml-4">
                 <Button
@@ -223,20 +223,20 @@ export default function EventCard({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>操作</DropdownMenuLabel>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => onView?.(event)}>
                       <Eye className="w-4 h-4 mr-2" />
-                      查看詳情
+                      View Details
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onEdit?.(event)}>
                       <Edit className="w-4 h-4 mr-2" />
-                      編輯活動
+                      Edit Event
                     </DropdownMenuItem>
                     {event.registrationRequired && onManageRegistrations && (
                       <DropdownMenuItem onClick={() => onManageRegistrations(event)}>
                         <UserCheck className="w-4 h-4 mr-2" />
-                        管理報名
+                        Manage Registration
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
@@ -245,7 +245,7 @@ export default function EventCard({
                       className="text-red-600 focus:text-red-600"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
-                      刪除活動
+                      Delete Event
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -253,33 +253,33 @@ export default function EventCard({
             )}
           </div>
 
-          {/* 基本資訊 */}
+          {/* Basic information */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            {/* 日期 */}
+            {/* Date */}
             <div className="flex items-center text-sm text-gray-600">
               <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
               <div>
                 <div>{formatDate(event.startDate)}</div>
                 {event.endDate && event.endDate !== event.startDate && (
-                  <div className="text-xs">至 {formatDate(event.endDate)}</div>
+                  <div className="text-xs">to {formatDate(event.endDate)}</div>
                 )}
               </div>
             </div>
 
-            {/* 時間 */}
+            {/* Time */}
             {(event.startTime || event.endTime) && (
               <div className="flex items-center text-sm text-gray-600">
                 <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
                 <div>
                   {event.startTime && <div>{formatTime(event.startTime)}</div>}
                   {event.endTime && event.endTime !== event.startTime && (
-                    <div className="text-xs">至 {formatTime(event.endTime)}</div>
+                    <div className="text-xs">to {formatTime(event.endTime)}</div>
                   )}
                 </div>
               </div>
             )}
 
-            {/* 地點 */}
+            {/* Location */}
             {event.location && (
               <div className="flex items-center text-sm text-gray-600">
                 <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
@@ -287,13 +287,13 @@ export default function EventCard({
               </div>
             )}
 
-            {/* 參與者資訊 */}
+            {/* Participant information */}
             {showRegistrationInfo && event.registrationRequired && (
               <div className="flex items-center text-sm text-gray-600">
                 <Users className="w-4 h-4 mr-2 flex-shrink-0" />
                 <div>
                   <div>
-                    {event.registrationCount || 0} 人報名
+                    {event.registrationCount || 0} registered
                     {event.maxParticipants && ` / ${event.maxParticipants}`}
                   </div>
                   {availableSlots !== null && (
@@ -301,7 +301,7 @@ export default function EventCard({
                       "text-xs",
                       isRegistrationFull ? "text-red-600" : "text-green-600"
                     )}>
-                      {isRegistrationFull ? "名額已滿" : `剩餘 ${availableSlots} 個名額`}
+                      {isRegistrationFull ? "Full" : `${availableSlots} spots left`}
                     </div>
                   )}
                 </div>
@@ -309,10 +309,10 @@ export default function EventCard({
             )}
           </div>
 
-          {/* 目標年級 */}
+          {/* Target grades */}
           {event.targetGrades && event.targetGrades.length > 0 && (
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-sm text-gray-600">目標年級:</span>
+              <span className="text-sm text-gray-600">Target grades:</span>
               <div className="flex flex-wrap gap-1">
                 {event.targetGrades.map((grade) => (
                   <Badge key={grade} variant="outline" className="text-xs">
@@ -323,7 +323,7 @@ export default function EventCard({
             </div>
           )}
 
-          {/* 展開/收合詳細資訊 */}
+          {/* Expand/collapse detailed information */}
           {onToggleExpand && (
             <div className="border-t pt-4">
               <Button
@@ -334,18 +334,18 @@ export default function EventCard({
               >
                 {isExpanded ? (
                   <>
-                    收合詳細資訊
+                    Collapse Details
                     <ChevronUp className="w-4 h-4 ml-2" />
                   </>
                 ) : (
                   <>
-                    展開詳細資訊
+                    Show Details
                     <ChevronDown className="w-4 h-4 ml-2" />
                   </>
                 )}
               </Button>
 
-              {/* 展開的詳細資訊 */}
+              {/* Expanded detailed information */}
               {isExpanded && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
@@ -355,35 +355,35 @@ export default function EventCard({
                   className="mt-4 pt-4 border-t"
                 >
                   <div className="space-y-3">
-                    {/* 完整描述 */}
+                    {/* Complete description */}
                     {event.description && (
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">活動描述</h4>
+                        <h4 className="font-medium text-gray-900 mb-2">Event Description</h4>
                         <p className="text-gray-600 text-sm whitespace-pre-wrap">
                           {event.description}
                         </p>
                       </div>
                     )}
 
-                    {/* 報名資訊 */}
+                    {/* Registration information */}
                     {event.registrationRequired && (
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">報名資訊</h4>
+                        <h4 className="font-medium text-gray-900 mb-2">Registration Information</h4>
                         <div className="text-sm text-gray-600 space-y-1">
                           {event.registrationDeadline && (
-                            <div>報名截止: {formatDate(event.registrationDeadline)}</div>
+                            <div>Registration deadline: {formatDate(event.registrationDeadline)}</div>
                           )}
                           {event.maxParticipants && (
-                            <div>人數上限: {event.maxParticipants} 人</div>
+                            <div>Max participants: {event.maxParticipants} people</div>
                           )}
                           <div>
-                            目前報名: {event.registrationCount || 0} 人
+                            Currently registered: {event.registrationCount || 0} people
                             {availableSlots !== null && (
                               <span className={cn(
                                 "ml-2",
                                 isRegistrationFull ? "text-red-600" : "text-green-600"
                               )}>
-                                ({isRegistrationFull ? "已滿額" : `剩餘 ${availableSlots} 個名額`})
+                                ({isRegistrationFull ? "Full" : `${availableSlots} spots left`})
                               </span>
                             )}
                           </div>
@@ -391,15 +391,15 @@ export default function EventCard({
                       </div>
                     )}
 
-                    {/* 建立資訊 */}
+                    {/* Creation information */}
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">建立資訊</h4>
+                      <h4 className="font-medium text-gray-900 mb-2">Creation Information</h4>
                       <div className="text-sm text-gray-600 space-y-1">
                         {event.creator && (
-                          <div>建立者: {event.creator.displayName || event.creator.email}</div>
+                          <div>Creator: {event.creator.displayName || event.creator.email}</div>
                         )}
-                        <div>建立時間: {formatDate(event.createdAt)}</div>
-                        <div>最後更新: {formatDate(event.updatedAt)}</div>
+                        <div>Created: {formatDate(event.createdAt)}</div>
+                        <div>Last updated: {formatDate(event.updatedAt)}</div>
                       </div>
                     </div>
                   </div>
