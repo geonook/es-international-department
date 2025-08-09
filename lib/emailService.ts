@@ -342,7 +342,7 @@ class EmailService {
   }
 
   /**
-   * 批量發送郵件（使用佇列系統）
+   * Send bulk emails (using queue system)
    */
   async sendBulkEmails(emails: EmailContent[], priority: 'low' | 'normal' | 'high' = 'normal'): Promise<BulkEmailResult> {
     const queueId = this.generateQueueId()
@@ -355,7 +355,7 @@ class EmailService {
       queueId
     }
 
-    // 將郵件加入佇列
+    // Add emails to queue
     for (const email of emails) {
       await this.addToQueue({
         ...email,
@@ -368,7 +368,7 @@ class EmailService {
   }
 
   /**
-   * 加入郵件佇列
+   * Add to email queue
    */
   private async addToQueue(emailContent: EmailContent & { priority: 'low' | 'normal' | 'high' }): Promise<string> {
     const queueItem: EmailQueueItem = {
@@ -395,7 +395,7 @@ class EmailService {
   }
 
   /**
-   * 启動佇列處理器
+   * Start queue processor
    */
   private startQueueProcessor() {
     if (process.env.EMAIL_QUEUE_ENABLED !== 'true') {
@@ -418,7 +418,7 @@ class EmailService {
   }
 
   /**
-   * 處理郵件佇列
+   * Process email queue
    */
   private async processQueue(batchSize: number) {
     const batch = this.emailQueue.splice(0, batchSize).filter(item => 
@@ -460,14 +460,14 @@ class EmailService {
   }
 
   /**
-   * 生成佇列 ID
+   * Generate queue ID
    */
   private generateQueueId(): string {
     return `email_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
   }
 
   /**
-   * 發送公告通知郵件
+   * Send announcement notification email
    */
   async sendAnnouncementEmail(
     recipients: string[],
@@ -495,7 +495,7 @@ class EmailService {
   }
 
   /**
-   * 發送活動通知郵件
+   * Send event notification email
    */
   async sendEventNotificationEmail(
     recipients: string[],
@@ -503,21 +503,21 @@ class EmailService {
     eventDate: Date,
     eventDetails: string
   ): Promise<BulkEmailResult> {
-    const subject = `📅 活動提醒：${eventTitle} - KCISLK ESID`
+    const subject = `📅 Event Reminder: ${eventTitle} - KCISLK ESID`
     const html = this.generateEventTemplate(eventTitle, eventDate, eventDetails)
 
     const emails = recipients.map(email => ({
       to: email,
       subject,
       html,
-      text: `活動：${eventTitle}\n日期：${eventDate.toLocaleDateString('zh-TW')}\n詳情：${this.stripHtml(eventDetails)}`
+      text: `Event: ${eventTitle}\nDate: ${eventDate.toLocaleDateString('en-US')}\nDetails: ${this.stripHtml(eventDetails)}`
     }))
 
     return this.sendBulkEmails(emails)
   }
 
   /**
-   * 生成歡迎郵件模板
+   * Generate welcome email template
    */
   private generateWelcomeTemplate(userName: string): string {
     return `
@@ -526,7 +526,7 @@ class EmailService {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>歡迎加入 KCISLK ESID Info Hub</title>
+  <title>Welcome to KCISLK ESID Info Hub</title>
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f8fafc; }
     .container { max-width: 600px; margin: 0 auto; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
@@ -541,28 +541,28 @@ class EmailService {
   <div class="container">
     <div class="header">
       <div class="welcome-icon">🎉</div>
-      <h1 style="margin: 0; font-size: 28px;">歡迎加入!</h1>
+      <h1 style="margin: 0; font-size: 28px;">Welcome!</h1>
       <p style="margin: 10px 0 0 0; opacity: 0.9;">KCISLK ESID Info Hub</p>
     </div>
     <div class="content">
-      <h2 style="color: #4f46e5;">${userName} 您好！</h2>
-      <p>歡迎您加入林口康橋國際學校 Elementary School International Department (ESID) 資訊中心！</p>
+      <h2 style="color: #4f46e5;">Hello ${userName}!</h2>
+      <p>Welcome to Kang Chiao International School Elementary School International Department (ESID) Information Center!</p>
       
-      <h3>🎆 您可以在這裡：</h3>
+      <h3>🎆 What you can do here:</h3>
       <ul style="line-height: 1.8;">
-        <li>📢 最新學校公告和通知</li>
-        <li>📅 活動資訊和報名</li>
-        <li>📚 教育資源和教學材料</li>
-        <li>💬 與其他家長和老師交流</li>
-        <li>📨 個人化通知設定</li>
+        <li>📢 Latest school announcements and notifications</li>
+        <li>📅 Event information and registration</li>
+        <li>📚 Educational resources and teaching materials</li>
+        <li>💬 Connect with other parents and teachers</li>
+        <li>📨 Personalized notification settings</li>
       </ul>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${process.env.NEXTAUTH_URL}" class="button">開始探索</a>
+        <a href="${process.env.NEXTAUTH_URL}" class="button">Start Exploring</a>
       </div>
       
       <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
-        如果您有任何問題，請隨時聯繫我們。祝您使用愛快！
+        If you have any questions, please feel free to contact us. Enjoy using our platform!
       </p>
     </div>
     <div class="footer">
@@ -574,7 +574,7 @@ class EmailService {
   }
 
   /**
-   * 生成密碼重設郵件模板
+   * Generate password reset email template
    */
   private generatePasswordResetTemplate(resetUrl: string): string {
     return `
@@ -583,7 +583,7 @@ class EmailService {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>重設密碼</title>
+  <title>Reset Password</title>
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f8fafc; }
     .container { max-width: 600px; margin: 0 auto; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
@@ -597,28 +597,28 @@ class EmailService {
 <body>
   <div class="container">
     <div class="header">
-      <h1 style="margin: 0;">🔒 密碼重設</h1>
+      <h1 style="margin: 0;">🔒 Password Reset</h1>
       <p style="margin: 10px 0 0 0; opacity: 0.9;">KCISLK ESID Info Hub</p>
     </div>
     <div class="content">
-      <p>您好！</p>
-      <p>我們收到了您的密碼重設請求。請點擊下方按鈕來重設您的密碼：</p>
+      <p>Hello!</p>
+      <p>We received your password reset request. Please click the button below to reset your password:</p>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${resetUrl}" class="button">重設密碼</a>
+        <a href="${resetUrl}" class="button">Reset Password</a>
       </div>
       
       <div class="warning">
-        <p><strong>重要提醒：</strong></p>
+        <p><strong>Important Notice:</strong></p>
         <ul>
-          <li>此連結將在24小時後過期</li>
-          <li>如果您沒有請求重設密碼，請忽略此郵件</li>
-          <li>為了您的帳戶安全，請勿將此連結分享給他人</li>
+          <li>This link will expire in 24 hours</li>
+          <li>If you did not request a password reset, please ignore this email</li>
+          <li>For your account security, please do not share this link with others</li>
         </ul>
       </div>
       
       <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">
-        如果您無法點擊上方按鈕，請複製以下連結到瀏覽器中開啟：<br>
+        If you cannot click the button above, please copy the following link to your browser:<br>
         <span style="word-break: break-all; color: #4f46e5;">${resetUrl}</span>
       </p>
     </div>
@@ -1082,25 +1082,25 @@ class EmailService {
   }
 
   /**
-   * 發送歡迎郵件
+   * Send welcome email
    */
   async sendWelcomeEmail(userEmail: string, userName: string): Promise<boolean> {
-    const subject = '歡迎加入 KCISLK ESID Info Hub! 🎉'
+    const subject = 'Welcome to KCISLK ESID Info Hub! 🎉'
     const html = this.generateWelcomeTemplate(userName)
     
     return this.sendEmail({
       to: userEmail,
       subject,
       html,
-      text: `歡迎 ${userName} 加入 KCISLK ESID Info Hub!`
+      text: `Welcome ${userName} to KCISLK ESID Info Hub!`
     })
   }
 
   /**
-   * 發送密碼重設郵件
+   * Send password reset email
    */
   async sendPasswordResetEmail(userEmail: string, resetToken: string): Promise<boolean> {
-    const subject = '重設您的 KCISLK ESID 帳戶密碼'
+    const subject = 'Reset Your KCISLK ESID Account Password'
     const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`
     const html = this.generatePasswordResetTemplate(resetUrl)
     
@@ -1108,12 +1108,12 @@ class EmailService {
       to: userEmail,
       subject,
       html,
-      text: `請點擊以下連結重設密碼: ${resetUrl}`
+      text: `Please click the following link to reset your password: ${resetUrl}`
     })
   }
 
   /**
-   * 發送活動報名確認郵件
+   * Send event registration confirmation email
    */
   async sendEventRegistrationConfirmation(
     userEmail: string, 
@@ -1121,19 +1121,19 @@ class EmailService {
     eventTitle: string, 
     eventDate: Date
   ): Promise<boolean> {
-    const subject = `✅ 活動報名確認: ${eventTitle}`
+    const subject = `✅ Event Registration Confirmation: ${eventTitle}`
     const html = this.generateEventRegistrationTemplate(userName, eventTitle, eventDate)
     
     return this.sendEmail({
       to: userEmail,
       subject,
       html,
-      text: `${userName} 您好，您已成功報名參加活動: ${eventTitle}`
+      text: `Hello ${userName}, you have successfully registered for the event: ${eventTitle}`
     })
   }
 
   /**
-   * 發送電子報電子郵件
+   * Send newsletter email
    */
   async sendNewsletterEmail(
     recipients: string[],
@@ -1141,7 +1141,7 @@ class EmailService {
     newsletterContent: string,
     issueNumber?: number
   ): Promise<BulkEmailResult> {
-    const subject = `📨 ${newsletterTitle}${issueNumber ? ` - 第${issueNumber}期` : ''}`
+    const subject = `📨 ${newsletterTitle}${issueNumber ? ` - Issue ${issueNumber}` : ''}`
     const html = this.generateNewsletterTemplate(newsletterTitle, newsletterContent, issueNumber)
     
     const emails = recipients.map(email => ({
@@ -1155,7 +1155,7 @@ class EmailService {
   }
 
   /**
-   * 發送活動提醒郵件
+   * Send event reminder email
    */
   async sendEventReminderEmail(
     recipients: string[],
@@ -1183,7 +1183,7 @@ class EmailService {
   }
 
   /**
-   * 發送系統通知郵件
+   * Send system notification email
    */
   async sendSystemNotificationEmail(
     recipients: string[],
@@ -1206,7 +1206,7 @@ class EmailService {
   }
 
   /**
-   * 發送每日摘要郵件
+   * Send daily digest email
    */
   async sendDailyDigestEmail(
     userEmail: string,
@@ -1224,12 +1224,12 @@ class EmailService {
       to: userEmail,
       subject,
       html,
-      text: `${userName} 您好，以下是您的今日摘要...`
+      text: `Hello ${userName}, here is your daily digest...`
     })
   }
 
   /**
-   * 測試郵件服務連接
+   * Test email service connection
    */
   async testConnection(): Promise<boolean> {
     await this.ensureInitialized()
@@ -1249,7 +1249,7 @@ class EmailService {
   }
 
   /**
-   * 發送測試郵件
+   * Send test email
    */
   async sendTestEmail(recipient?: string): Promise<boolean> {
     await this.ensureInitialized()
@@ -1262,22 +1262,22 @@ class EmailService {
 
     const subject = '📧 KCISLK ESID Email Service Test'
     const html = `
-      <h2>電子郵件服務測試</h2>
-      <p>此為測試郵件，用於驗證 KCISLK ESID Info Hub 電子郵件服務正常運作。</p>
-      <p><strong>測試時間:</strong> ${new Date().toLocaleString('zh-TW')}</p>
-      <p><strong>提供商:</strong> ${this.provider}</p>
+      <h2>Email Service Test</h2>
+      <p>This is a test email to verify that the KCISLK ESID Info Hub email service is working properly.</p>
+      <p><strong>Test Time:</strong> ${new Date().toLocaleString('en-US')}</p>
+      <p><strong>Provider:</strong> ${this.provider}</p>
     `
 
     return this.sendEmail({
       to: testRecipient,
       subject,
       html,
-      text: '電子郵件服務測試成功'
+      text: 'Email service test successful'
     })
   }
 
   /**
-   * 取得佇列統計
+   * Get queue statistics
    */
   getQueueStats() {
     const stats = {
@@ -1293,6 +1293,6 @@ class EmailService {
   }
 }
 
-// 導出單例
+// Export singleton
 export default new EmailService()
 export { EmailService }

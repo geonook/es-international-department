@@ -1,6 +1,6 @@
 /**
  * Admin Resources Management Page - KCISLK ESID Info Hub
- * 管理員資源管理頁面 - KCISLK ESID Info Hub
+ * Admin Resources Management Page - KCISLK ESID Info Hub
  */
 
 'use client'
@@ -32,7 +32,7 @@ export default function AdminResourcesPage() {
           className="text-center"
         >
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">載入中...</p>
+          <p className="text-gray-600">Loading...</p>
         </motion.div>
       </div>
     )
@@ -48,7 +48,7 @@ export default function AdminResourcesPage() {
           className="text-center"
         >
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">驗證權限中，正在重導向...</p>
+          <p className="text-gray-600">Verifying permissions, redirecting...</p>
         </motion.div>
       </div>
     )
@@ -65,10 +65,10 @@ export default function AdminResourcesPage() {
           <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
               <CardTitle className="text-2xl font-bold">
-                資源管理系統
+                Resource Management System
               </CardTitle>
               <p className="text-purple-100 mt-2">
-                管理教育資源、檔案上傳和分類系統
+                Manage educational resources, file uploads and categorization system
               </p>
             </CardHeader>
             <CardContent className="p-0">

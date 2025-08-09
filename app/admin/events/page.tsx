@@ -2,10 +2,10 @@
 
 /**
  * Admin Events Management Page
- * 管理員活動管理頁面
+ * Admin Events Management Page
  * 
- * @description 活動管理主頁面，包含活動列表、統計和管理功能
- * @features 活動CRUD操作、分類管理、報名管理、統計分析
+ * @description Main event management page with event listings, statistics and management functions
+ * @features Event CRUD operations, category management, registration management, statistical analysis
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -53,10 +53,10 @@ import {
 export default function AdminEventsPage() {
   const { user, isLoading, isAuthenticated, isAdmin, redirectToLogin } = useAuth()
   
-  // 檢視模式狀態
+  // View mode state
   const { currentView, setCurrentView } = useCalendarView('list')
   
-  // 活動管理狀態
+  // Event management state
   const [events, setEvents] = useState<Event[]>([])
   const [eventsLoading, setEventsLoading] = useState(false)
   const [eventsError, setEventsError] = useState<string>('')
@@ -75,7 +75,7 @@ export default function AdminEventsPage() {
     search: ''
   })
 
-  // 獲取活動列表
+  // Fetch events list
   const fetchEvents = useCallback(async (newFilters?: EventFilters, page?: number) => {
     setEventsLoading(true)
     setEventsError('')
@@ -131,28 +131,28 @@ export default function AdminEventsPage() {
           setEventStats(data.stats)
         }
       } else {
-        throw new Error(data.message || '獲取活動失敗')
+        throw new Error(data.message || 'Failed to fetch events')
       }
     } catch (error) {
       console.error('Fetch events error:', error)
-      setEventsError(error instanceof Error ? error.message : '載入活動時發生錯誤')
+      setEventsError(error instanceof Error ? error.message : 'An error occurred while loading events')
     } finally {
       setEventsLoading(false)
     }
   }, [filters, pagination.page, pagination.limit])
 
-  // 處理篩選變更
+  // Handle filter changes
   const handleFiltersChange = (newFilters: EventFilters) => {
     setFilters(newFilters)
     fetchEvents(newFilters, 1) // 重置到第一頁
   }
 
-  // 處理分頁變更
+  // Handle pagination changes
   const handlePageChange = (page: number) => {
     fetchEvents(filters, page)
   }
 
-  // 創建活動
+  // Create event
   const handleEventCreate = async (data: Partial<EventFormData>) => {
     try {
       const response = await fetch('/api/admin/events', {
@@ -170,9 +170,9 @@ export default function AdminEventsPage() {
       const result = await response.json()
       
       if (result.success) {
-        fetchEvents() // 重新載入列表
+        fetchEvents() // Reload list
       } else {
-        throw new Error(result.message || '建立活動失敗')
+        throw new Error(result.message || 'Failed to create event')
       }
     } catch (error) {
       console.error('Create event error:', error)
@@ -180,7 +180,7 @@ export default function AdminEventsPage() {
     }
   }
 
-  // 更新活動
+  // Update event
   const handleEventUpdate = async (eventId: number, data: Partial<EventFormData>) => {
     try {
       const response = await fetch(`/api/admin/events/${eventId}`, {
@@ -198,9 +198,9 @@ export default function AdminEventsPage() {
       const result = await response.json()
       
       if (result.success) {
-        fetchEvents() // 重新載入列表
+        fetchEvents() // Reload list
       } else {
-        throw new Error(result.message || '更新活動失敗')
+        throw new Error(result.message || 'Failed to update event')
       }
     } catch (error) {
       console.error('Update event error:', error)
@@ -208,9 +208,9 @@ export default function AdminEventsPage() {
     }
   }
 
-  // 刪除活動
+  // Delete event
   const handleEventDelete = async (eventId: number) => {
-    if (!confirm('確定要刪除這個活動嗎？此操作無法復原。')) {
+    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
       return
     }
     
@@ -229,9 +229,9 @@ export default function AdminEventsPage() {
       const result = await response.json()
       
       if (result.success) {
-        fetchEvents() // 重新載入列表
+        fetchEvents() // Reload list
       } else {
-        throw new Error(result.message || '刪除活動失敗')
+        throw new Error(result.message || 'Failed to delete event')
       }
     } catch (error) {
       console.error('Delete event error:', error)
@@ -239,14 +239,14 @@ export default function AdminEventsPage() {
     }
   }
 
-  // 初始載入活動
+  // Initial load events
   useEffect(() => {
     if (isAuthenticated && isAdmin()) {
       fetchEvents()
     }
   }, [isAuthenticated, fetchEvents, isAdmin])
 
-  // 載入中狀態
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -256,20 +256,20 @@ export default function AdminEventsPage() {
           className="text-center"
         >
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">載入中...</p>
+          <p className="text-gray-600">Loading...</p>
         </motion.div>
       </div>
     )
   }
 
-  // 檢查認證和權限
+  // Check authentication and permissions
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !isAdmin())) {
       redirectToLogin('/admin/events')
     }
   }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
 
-  // 未登入或無管理員權限
+  // Not logged in or no admin permissions
   if (!isAuthenticated || !isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
@@ -279,7 +279,7 @@ export default function AdminEventsPage() {
           className="text-center"
         >
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">驗證權限中，正在重導向...</p>
+          <p className="text-gray-600">Verifying permissions, redirecting...</p>
         </motion.div>
       </div>
     )
@@ -324,16 +324,16 @@ export default function AdminEventsPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                  活動管理中心
+                  Event Management Center
                 </h1>
-                <p className="text-xs text-gray-500">Event Management Center</p>
+                <p className="text-xs text-gray-500">Comprehensive Event Administration</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
               <Link href="/admin">
                 <Button variant="outline" size="sm">
-                  返回管理中心
+                  Back to Admin Center
                 </Button>
               </Link>
             </div>
@@ -352,8 +352,8 @@ export default function AdminEventsPage() {
           <motion.div variants={itemVariants}>
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900">活動管理</h2>
-                <p className="text-gray-600 mt-1">管理所有學校活動與事件</p>
+                <h2 className="text-3xl font-bold text-gray-900">Event Management</h2>
+                <p className="text-gray-600 mt-1">Manage all school events and activities</p>
               </div>
               <div className="flex items-center gap-2">
                 <CalendarViewToggle
@@ -371,7 +371,7 @@ export default function AdminEventsPage() {
                     "w-4 h-4",
                     eventsLoading && "animate-spin"
                   )} />
-                  重新載入
+                  Reload
                 </Button>
               </div>
             </div>
@@ -385,7 +385,7 @@ export default function AdminEventsPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-blue-600 text-sm font-medium">總活動數</p>
+                        <p className="text-blue-600 text-sm font-medium">Total Events</p>
                         <p className="text-2xl font-bold text-blue-800">{eventStats.total}</p>
                       </div>
                       <Calendar className="w-8 h-8 text-blue-600" />
@@ -397,7 +397,7 @@ export default function AdminEventsPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-green-600 text-sm font-medium">已發佈</p>
+                        <p className="text-green-600 text-sm font-medium">Published</p>
                         <p className="text-2xl font-bold text-green-800">{eventStats.published}</p>
                       </div>
                       <CheckCircle className="w-8 h-8 text-green-600" />
@@ -409,7 +409,7 @@ export default function AdminEventsPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-orange-600 text-sm font-medium">進行中</p>
+                        <p className="text-orange-600 text-sm font-medium">In Progress</p>
                         <p className="text-2xl font-bold text-orange-800">{eventStats.inProgress}</p>
                       </div>
                       <Play className="w-8 h-8 text-orange-600" />
@@ -421,7 +421,7 @@ export default function AdminEventsPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-purple-600 text-sm font-medium">總報名數</p>
+                        <p className="text-purple-600 text-sm font-medium">Total Registrations</p>
                         <p className="text-2xl font-bold text-purple-800">{eventStats.totalRegistrations}</p>
                       </div>
                       <Users className="w-8 h-8 text-purple-600" />
@@ -439,7 +439,7 @@ export default function AdminEventsPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <BarChart3 className="w-5 h-5 mr-2 text-blue-600" />
-                    活動類型統計
+                    Event Type Statistics
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

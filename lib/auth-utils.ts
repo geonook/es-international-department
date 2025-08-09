@@ -148,11 +148,11 @@ export async function requireTeacherAuth(request?: NextRequest): Promise<AuthRes
 /**
  * API error response generator
  * 
- * @description 統一的錯誤回應格式
- * @param message - 錯誤訊息
- * @param status - HTTP 狀態碼
- * @param error - 錯誤代碼
- * @returns NextResponse 錯誤回應
+ * @description Unified error response format
+ * @param message - Error message
+ * @param status - HTTP status code
+ * @param error - Error code
+ * @returns NextResponse error response
  */
 export function createApiErrorResponse(
   message: string, 
@@ -170,12 +170,12 @@ export function createApiErrorResponse(
 }
 
 /**
- * API 成功回應生成器
+ * API success response generator
  * 
- * @description 統一的成功回應格式
- * @param data - 回應資料
- * @param message - 成功訊息（可選）
- * @returns NextResponse 成功回應
+ * @description Unified success response format
+ * @param data - Response data
+ * @param message - Success message (optional)
+ * @returns NextResponse success response
  */
 export function createApiSuccessResponse(
   data: any, 
@@ -189,11 +189,11 @@ export function createApiSuccessResponse(
 }
 
 /**
- * 從請求中安全地解析查詢參數
+ * Safely parse query parameters from request
  * 
- * @description 安全地解析 URL 查詢參數，避免直接使用 request.url
- * @param request - Next.js 請求物件
- * @returns URLSearchParams 物件
+ * @description Safely parse URL query parameters, avoiding direct use of request.url
+ * @param request - Next.js request object
+ * @returns URLSearchParams object
  */
 export function getSearchParams(request: NextRequest): URLSearchParams {
   try {
@@ -206,11 +206,11 @@ export function getSearchParams(request: NextRequest): URLSearchParams {
 }
 
 /**
- * 分頁參數解析器
+ * Pagination parameter parser
  * 
- * @description 從查詢參數中解析分頁資訊
- * @param searchParams - URLSearchParams 物件
- * @returns 分頁資訊
+ * @description Parse pagination information from query parameters
+ * @param searchParams - URLSearchParams object
+ * @returns Pagination information
  */
 export function parsePaginationParams(searchParams: URLSearchParams) {
   const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
@@ -221,13 +221,13 @@ export function parsePaginationParams(searchParams: URLSearchParams) {
 }
 
 /**
- * 排序參數解析器
+ * Sort parameter parser
  * 
- * @description 從查詢參數中解析排序資訊
- * @param searchParams - URLSearchParams 物件
- * @param defaultSort - 預設排序欄位
- * @param defaultOrder - 預設排序順序
- * @returns 排序資訊
+ * @description Parse sort information from query parameters
+ * @param searchParams - URLSearchParams object
+ * @param defaultSort - Default sort field
+ * @param defaultOrder - Default sort order
+ * @returns Sort information
  */
 export function parseSortParams(
   searchParams: URLSearchParams,
@@ -241,12 +241,12 @@ export function parseSortParams(
 }
 
 /**
- * API 處理器包裝器 - 統一錯誤處理
+ * API handler wrapper - unified error handling
  * 
- * @description 為 API 路由提供統一的錯誤處理和日誌記錄
- * @param handler - API 處理函式
- * @param requiresAuth - 是否需要認證（預設為 true）
- * @returns 包裝後的處理函式
+ * @description Provides unified error handling and logging for API routes
+ * @param handler - API handler function
+ * @param requiresAuth - Whether authentication is required (default true)
+ * @returns Wrapped handler function
  */
 export function withApiHandler(
   handler: (request: NextRequest, user?: User) => Promise<NextResponse>,

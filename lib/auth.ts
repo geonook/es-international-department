@@ -171,7 +171,7 @@ export function isTeacher(user: User | null): boolean {
 }
 
 /**
- * 設定認證 Cookie
+ * Set authentication cookie
  */
 export function setAuthCookie(token: string) {
   const cookieStore = cookies()
@@ -185,7 +185,7 @@ export function setAuthCookie(token: string) {
 }
 
 /**
- * 清除認證 Cookie
+ * Clear authentication cookie
  */
 export function clearAuthCookie() {
   const cookieStore = cookies()
@@ -239,7 +239,7 @@ export interface TokenPair {
 }
 
 /**
- * 生成存取 Token (短時效)
+ * Generate access token (short-lived)
  */
 export async function generateAccessToken(user: User): Promise<string> {
   try {
@@ -263,7 +263,7 @@ export async function generateAccessToken(user: User): Promise<string> {
 }
 
 /**
- * 生成刷新 Token (長時效)
+ * Generate refresh token (long-lived)
  */
 export async function generateRefreshToken(userId: string): Promise<string> {
   try {
@@ -279,7 +279,7 @@ export async function generateRefreshToken(userId: string): Promise<string> {
       .setExpirationTime(REFRESH_TOKEN_EXPIRES_IN)
       .sign(JWT_SECRET)
 
-    // 將 refresh token 存儲到資料庫
+    // Store refresh token to database
     await storeRefreshToken(userId, tokenId, token)
 
     return token
@@ -290,7 +290,7 @@ export async function generateRefreshToken(userId: string): Promise<string> {
 }
 
 /**
- * 驗證刷新 Token
+ * Verify refresh token
  */
 export async function verifyRefreshToken(token: string): Promise<RefreshTokenPayload | null> {
   try {
@@ -300,7 +300,7 @@ export async function verifyRefreshToken(token: string): Promise<RefreshTokenPay
 
     const refreshPayload = payload as RefreshTokenPayload
 
-    // 檢查 token 是否在資料庫中存在且有效
+    // Check if token exists in database and is valid
     const isValid = await validateRefreshToken(refreshPayload.userId, refreshPayload.tokenId)
     if (!isValid) {
       return null
@@ -314,7 +314,7 @@ export async function verifyRefreshToken(token: string): Promise<RefreshTokenPay
 }
 
 /**
- * 生成 Token 配對 (Access + Refresh)
+ * Generate token pair (Access + Refresh)
  */
 export async function generateTokenPair(user: User): Promise<TokenPair> {
   const [accessToken, refreshToken] = await Promise.all([
@@ -329,7 +329,7 @@ export async function generateTokenPair(user: User): Promise<TokenPair> {
 }
 
 /**
- * 刷新存取 Token
+ * Refresh access token
  */
 export async function refreshAccessToken(refreshToken: string): Promise<TokenPair | null> {
   try {
@@ -338,16 +338,16 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenPai
       return null
     }
 
-    // 從資料庫獲取使用者資訊
+    // Get user information from database
     const user = await getUserById(refreshPayload.userId)
     if (!user) {
       return null
     }
 
-    // 生成新的 token 配對
+    // Generate new token pair
     const newTokenPair = await generateTokenPair(user)
 
-    // 使舊的 refresh token 失效
+    // Invalidate old refresh token
     await revokeRefreshToken(refreshPayload.userId, refreshPayload.tokenId)
 
     return newTokenPair
@@ -358,32 +358,32 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenPai
 }
 
 /**
- * 設定認證 Cookies (Access + Refresh)
+ * Set authentication cookies (Access + Refresh)
  */
 export function setAuthCookies(tokenPair: TokenPair) {
   const cookieStore = cookies()
   
-  // Access Token (短時效)
+  // Access Token (short-lived)
   cookieStore.set('auth-token', tokenPair.accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 15 * 60, // 15 分鐘
+    maxAge: 15 * 60, // 15 minutes
     path: '/',
   })
 
-  // Refresh Token (長時效)
+  // Refresh Token (long-lived)
   cookieStore.set('refresh-token', tokenPair.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 30 * 24 * 60 * 60, // 30 天
+    maxAge: 30 * 24 * 60 * 60, // 30 days
     path: '/',
   })
 }
 
 /**
- * 清除認證 Cookies
+ * Clear authentication cookies
  */
 export function clearAuthCookies() {
   const cookieStore = cookies()
@@ -392,7 +392,7 @@ export function clearAuthCookies() {
 }
 
 /**
- * 獲取 Refresh Token
+ * Get refresh token
  */
 export function getRefreshTokenFromRequest(): string | null {
   try {
@@ -406,10 +406,10 @@ export function getRefreshTokenFromRequest(): string | null {
   }
 }
 
-// 資料庫操作函式 (需要實現)
+// Database operation functions (implementation required)
 async function storeRefreshToken(userId: string, tokenId: string, token: string): Promise<void> {
-  // 這裡需要實現資料庫存儲邏輯
-  // 可以存儲在 UserSession 表中
+  // Database storage logic implementation required here
+  // Can store in UserSession table
   try {
     const { prisma } = await import('@/lib/prisma')
     
@@ -417,7 +417,7 @@ async function storeRefreshToken(userId: string, tokenId: string, token: string)
       data: {
         userId,
         sessionToken: tokenId,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 天
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         userAgent: 'refresh-token',
         ipAddress: '0.0.0.0'
       }

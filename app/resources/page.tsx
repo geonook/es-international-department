@@ -28,11 +28,10 @@ import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
 
 /**
- * 資源頁面組件 - KCISLK ESID 學習資源中心
  * Resources Page Component - KCISLK ESID Learning Resource Center
  * 
- * @description 提供各年級學習資源，包括 PDF 教材、影片內容、互動工具和外部學習平台
- * @features 動態資源載入、分級學習資源、搜尋功能、多種資源類型、下載功能
+ * @description Provides learning resources for all grade levels, including PDF materials, video content, interactive tools, and external learning platforms
+ * @features Dynamic resource loading, graded learning resources, search functionality, multiple resource types, download capabilities
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -54,22 +53,22 @@ interface Resource {
   }
 }
 export default function ResourcesPage() {
-  // 滾動視差效果 | Scroll parallax effect
+  // Scroll parallax effect
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   
-  // 狀態管理
+  // State management
   const [resources, setResources] = useState<Resource[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   
-  // 篩選和搜尋狀態
+  // Filter and search state
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedGrade, setSelectedGrade] = useState('all')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
   
-  // 載入資源資料
+  // Load resource data
   useEffect(() => {
     fetchResources()
   }, [])
@@ -79,7 +78,7 @@ export default function ResourcesPage() {
       setIsLoading(true)
       setError('')
       
-      // 建構查詢參數
+      // Build query parameters
       const params = new URLSearchParams()
       params.set('status', 'published')
       params.set('limit', '100')
@@ -90,19 +89,19 @@ export default function ResourcesPage() {
       if (data.success) {
         setResources(data.data || [])
       } else {
-        // 如果 API 不存在，使用靜態資料
+        // If API doesn't exist, use static data
         setResources(staticResources)
       }
     } catch (error) {
       console.error('Fetch resources error:', error)
-      // 載入失敗時使用靜態資料
+      // Use static data when loading fails
       setResources(staticResources)
     } finally {
       setIsLoading(false)
     }
   }
 
-  // 靜態資源資料作為後備
+  // Static resource data as fallback
   const staticResources: Resource[] = [
     {
       id: 1,
@@ -223,9 +222,9 @@ export default function ResourcesPage() {
     }
   ]
 
-  // 過濾資源
+  // Filter resources
   const filteredResources = resources.filter(resource => {
-    // 搜尋過濾
+    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       const matchesSearch = 
@@ -236,17 +235,17 @@ export default function ResourcesPage() {
       if (!matchesSearch) return false
     }
     
-    // 年級過濾
+    // Grade level filter
     if (selectedGrade !== 'all' && resource.gradeLevel !== selectedGrade) {
       return false
     }
     
-    // 類別過濾
+    // Category filter
     if (selectedCategory !== 'all' && resource.category !== selectedCategory) {
       return false
     }
     
-    // 資源類型過濾
+    // Resource type filter
     if (selectedType !== 'all' && resource.resourceType !== selectedType) {
       return false
     }
@@ -254,7 +253,7 @@ export default function ResourcesPage() {
     return true
   })
 
-  // 獲取資源圖標
+  // Get resource icon
   const getResourceIcon = (type: string) => {
     switch (type) {
       case 'pdf': return FileText
@@ -266,19 +265,19 @@ export default function ResourcesPage() {
     }
   }
 
-  // 獲取資源類型顯示名稱
+  // Get resource type display name
   const getResourceTypeName = (type: string) => {
     switch (type) {
-      case 'pdf': return 'PDF 文件'
-      case 'video': return '影片'
-      case 'document': return '文檔'
-      case 'interactive': return '互動'
-      case 'external': return '外部連結'
+      case 'pdf': return 'PDF Document'
+      case 'video': return 'Video'
+      case 'document': return 'Document'
+      case 'interactive': return 'Interactive'
+      case 'external': return 'External Link'
       default: return type
     }
   }
 
-  // 按年級分組資源
+  // Group resources by grade level
   const groupedByGrade = filteredResources.reduce((acc, resource) => {
     const grade = resource.gradeLevel || 'other'
     if (!acc[grade]) acc[grade] = []
@@ -297,7 +296,7 @@ export default function ResourcesPage() {
     '1-2': 'Grades 1-2',
     '3-4': 'Grades 3-4', 
     '5-6': 'Grades 5-6',
-    'other': '其他年級'
+    'other': 'Other Grades'
   }
 
   const containerVariants = {
@@ -395,14 +394,14 @@ export default function ResourcesPage() {
       </motion.header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* 導航 */}
+        {/* Navigation */}
         <div className="mb-6">
           <Link 
             href="/" 
             className="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            返回首頁
+            Back to Home
           </Link>
         </div>
         {/* Page Header */}
@@ -425,7 +424,7 @@ export default function ResourcesPage() {
             }}
             style={{ backgroundSize: "200% 200%" }}
           >
-            學習資源 Resources
+            Learning Resources
           </motion.h2>
           <motion.p
             className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed"
@@ -433,11 +432,11 @@ export default function ResourcesPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            為家長、教師和學生提供全面的學習資源，支持學生各年級的學術發展和成功。
+            Comprehensive learning resources for parents, teachers, and students to support academic development and success across all grade levels.
           </motion.p>
         </motion.div>
 
-        {/* 搜尋和篩選 */}
+        {/* Search and Filter */}
         <motion.div
           className="mb-8"
           initial={{ opacity: 0, y: 30 }}
@@ -447,27 +446,27 @@ export default function ResourcesPage() {
           <Card className="bg-white/80 backdrop-blur-lg">
             <CardContent className="p-6">
               <div className="flex flex-col gap-4">
-                {/* 搜尋欄 */}
+                {/* Search Bar */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="搜尋資源標題、描述或標籤..."
+                    placeholder="Search resource titles, descriptions, or tags..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>
                 
-                {/* 篩選選項 */}
+                {/* Filter Options */}
                 <div className="flex flex-col md:flex-row gap-4">
-                  {/* 年級篩選 */}
+                  {/* Grade Level Filter */}
                   <div className="flex-1">
                     <Select value={selectedGrade} onValueChange={setSelectedGrade}>
                       <SelectTrigger>
-                        <SelectValue placeholder="選擇年級" />
+                        <SelectValue placeholder="Select Grade Level" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">所有年級</SelectItem>
+                        <SelectItem value="all">All Grade Levels</SelectItem>
                         <SelectItem value="1-2">Grades 1-2</SelectItem>
                         <SelectItem value="3-4">Grades 3-4</SelectItem>
                         <SelectItem value="5-6">Grades 5-6</SelectItem>
@@ -475,36 +474,36 @@ export default function ResourcesPage() {
                     </Select>
                   </div>
                   
-                  {/* 類別篩選 */}
+                  {/* Category Filter */}
                   <div className="flex-1">
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                       <SelectTrigger>
-                        <SelectValue placeholder="選擇類別" />
+                        <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">所有類別</SelectItem>
-                        <SelectItem value="reading">閱讀</SelectItem>
-                        <SelectItem value="writing">寫作</SelectItem>
-                        <SelectItem value="language">語言</SelectItem>
-                        <SelectItem value="thinking">思考</SelectItem>
-                        <SelectItem value="research">研究</SelectItem>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="reading">Reading</SelectItem>
+                        <SelectItem value="writing">Writing</SelectItem>
+                        <SelectItem value="language">Language</SelectItem>
+                        <SelectItem value="thinking">Critical Thinking</SelectItem>
+                        <SelectItem value="research">Research</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
-                  {/* 資源類型篩選 */}
+                  {/* Resource Type Filter */}
                   <div className="flex-1">
                     <Select value={selectedType} onValueChange={setSelectedType}>
                       <SelectTrigger>
-                        <SelectValue placeholder="資源類型" />
+                        <SelectValue placeholder="Resource Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">所有類型</SelectItem>
-                        <SelectItem value="pdf">PDF 文件</SelectItem>
-                        <SelectItem value="video">影片</SelectItem>
-                        <SelectItem value="document">文檔</SelectItem>
-                        <SelectItem value="interactive">互動</SelectItem>
-                        <SelectItem value="external">外部連結</SelectItem>
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="pdf">PDF Document</SelectItem>
+                        <SelectItem value="video">Video</SelectItem>
+                        <SelectItem value="document">Document</SelectItem>
+                        <SelectItem value="interactive">Interactive</SelectItem>
+                        <SelectItem value="external">External Link</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -514,7 +513,7 @@ export default function ResourcesPage() {
           </Card>
         </motion.div>
 
-        {/* 錯誤訊息 */}
+        {/* Error Message */}
         {error && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -576,7 +575,7 @@ export default function ResourcesPage() {
           </Card>
         </motion.section>
 
-        {/* 載入狀態 */}
+        {/* Loading State */}
         {isLoading && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -642,10 +641,10 @@ export default function ResourcesPage() {
                       >
                         <BookOpen className="h-8 w-8" />
                       </motion.div>
-                      {gradeNames[grade] || grade} 資源
+                      {gradeNames[grade] || grade} Resources
                     </CardTitle>
                     <CardDescription className="text-white/90 text-lg relative z-10">
-                      針對 {gradeNames[grade] || grade} 學生的專門學習資料
+                      Specialized learning materials for {gradeNames[grade] || grade} students
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
@@ -684,7 +683,7 @@ export default function ResourcesPage() {
                                       <p className="text-gray-600 mb-4 text-lg leading-relaxed">{resource.description}</p>
                                     )}
                                     
-                                    {/* 標籤 */}
+                                    {/* Tags */}
                                     {resource.tags && resource.tags.length > 0 && (
                                       <div className="flex flex-wrap gap-2 mb-4">
                                         {resource.tags.map((tag) => (
@@ -705,7 +704,7 @@ export default function ResourcesPage() {
                                             onClick={() => window.open(resource.externalUrl, '_blank')}
                                           >
                                             <ExternalLink className="h-4 w-4" />
-                                            開啟資源
+                                            Open Resource
                                           </Button>
                                         </motion.div>
                                       )}
@@ -718,7 +717,7 @@ export default function ResourcesPage() {
                                             onClick={() => window.open(resource.fileUrl, '_blank')}
                                           >
                                             <Eye className="h-4 w-4" />
-                                            檢視
+                                            View
                                           </Button>
                                         </motion.div>
                                       )}
@@ -736,17 +735,17 @@ export default function ResourcesPage() {
                                             }}
                                           >
                                             <Download className="h-4 w-4" />
-                                            下載
+                                            Download
                                           </Button>
                                         </motion.div>
                                       )}
                                     </div>
                                     
-                                    {/* 創建者資訊 */}
+                                    {/* Creator Information */}
                                     {resource.creator && (
                                       <div className="flex items-center gap-2 mt-4 pt-4 border-t text-xs text-gray-500">
                                         <Users className="w-3 h-3" />
-                                        <span>提供者：{resource.creator.displayName}</span>
+                                        <span>Provider: {resource.creator.displayName}</span>
                                       </div>
                                     )}
                                   </div>
@@ -763,7 +762,7 @@ export default function ResourcesPage() {
             </motion.section>
           ))
         ) : (
-          // 無資源時的顯示
+          // Display when no resources are available
           !isLoading && (
             <motion.div
               variants={itemVariants}
@@ -774,13 +773,13 @@ export default function ResourcesPage() {
               <Folder className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-700 mb-2">
                 {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
-                  ? '找不到符合條件的資源' 
-                  : '目前沒有資源'}
+                  ? 'No resources found matching criteria' 
+                  : 'No resources available'}
               </h3>
               <p className="text-gray-600">
                 {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
-                  ? '請嘗試調整搜尋條件' 
-                  : '敬請期待更多學習資源'}
+                  ? 'Please try adjusting your search criteria' 
+                  : 'Please stay tuned for more learning resources'}
               </p>
             </motion.div>
           )
@@ -935,7 +934,7 @@ export default function ResourcesPage() {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            林口康橋國際學校 | Excellence in International Education
+            KCISLK Elementary School International Department | Excellence in International Education
           </motion.p>
         </div>
         <div className="absolute inset-0 opacity-10">
