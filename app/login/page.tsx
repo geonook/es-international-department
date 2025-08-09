@@ -2,7 +2,7 @@
 
 /**
  * Login Page Component
- * 使用者登入頁面
+ * User Login Page
  */
 
 import { useState, useEffect } from 'react'
@@ -49,7 +49,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // 檢查是否已登入
+  // Check if user is already logged in
   useEffect(() => {
     checkAuth()
   }, [])
@@ -58,11 +58,11 @@ export default function LoginPage() {
     try {
       const response = await fetch('/api/auth/me')
       if (response.ok) {
-        // 已登入，重導向到目標頁面
+        // Already logged in, redirect to target page
         router.push(redirectUrl)
       }
     } catch (error) {
-      // 未登入，繼續顯示登入頁面
+      // Not logged in, continue showing login page
     }
   }
 
@@ -72,7 +72,7 @@ export default function LoginPage() {
       ...prev,
       [name]: value
     }))
-    // 清除錯誤訊息
+    // Clear error message
     if (error) setError('')
   }
 
@@ -94,17 +94,17 @@ export default function LoginPage() {
       const data: LoginResponse = await response.json()
 
       if (data.success) {
-        setSuccess(data.message || '登入成功')
-        // 延遲重導向，讓使用者看到成功訊息
+        setSuccess(data.message || 'Login successful')
+        // Delayed redirect to let user see success message
         setTimeout(() => {
           router.push(redirectUrl)
         }, 1000)
       } else {
-        setError(data.error || data.message || '登入失敗')
+        setError(data.error || data.message || 'Login failed')
       }
     } catch (error) {
       console.error('Login error:', error)
-      setError('網路錯誤，請稍後再試')
+      setError('Network error, please try again later')
     } finally {
       setIsLoading(false)
     }
@@ -115,7 +115,7 @@ export default function LoginPage() {
     setError('')
     
     try {
-      // 重定向到 Google OAuth
+      // Redirect to Google OAuth
       const currentUrl = new URL(window.location.href)
       const params = new URLSearchParams()
       if (redirectUrl && redirectUrl !== '/') {
@@ -126,7 +126,7 @@ export default function LoginPage() {
       window.location.href = oauthUrl
     } catch (error) {
       console.error('Google login error:', error)
-      setError('Google 登入失敗，請稍後再試')
+      setError('Google login failed, please try again later')
       setIsGoogleLoading(false)
     }
   }
@@ -153,19 +153,19 @@ export default function LoginPage() {
               KCISLK ESID
             </CardTitle>
             <CardDescription className="text-gray-600">
-              請登入您的帳戶以存取系統
+              Please log in to your account to access the system
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">電子郵件</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="請輸入電子郵件"
+                  placeholder="Please enter your email"
                   value={formData.email}
                   onChange={handleInputChange}
                   required
@@ -175,13 +175,13 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">密碼</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="請輸入密碼"
+                    placeholder="Please enter your password"
                     value={formData.password}
                     onChange={handleInputChange}
                     required
@@ -231,28 +231,28 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    登入中...
+                    Logging in...
                   </>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4 mr-2" />
-                    使用密碼登入
+                    Log in with Password
                   </>
                 )}
               </Button>
             </form>
 
-            {/* 分隔線 */}
+            {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">或</span>
+                <span className="px-2 bg-white text-gray-500">or</span>
               </div>
             </div>
 
-            {/* Google 登入按鈕 */}
+            {/* Google Login Button */}
             <Button
               type="button"
               variant="outline"
@@ -263,7 +263,7 @@ export default function LoginPage() {
               {isGoogleLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  連接 Google...
+                  Connecting to Google...
                 </>
               ) : (
                 <>
@@ -285,16 +285,16 @@ export default function LoginPage() {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  使用 Google 登入
+                  Log in with Google
                 </>
               )}
             </Button>
 
             <div className="text-center pt-4 border-t border-gray-100">
               <p className="text-sm text-gray-600">
-                忘記密碼？
+                Forgot password?
                 <Link href="/forgot-password" className="text-blue-600 hover:text-blue-800 ml-1">
-                  點此重設
+                  Click here to reset
                 </Link>
               </p>
             </div>
@@ -312,7 +312,7 @@ export default function LoginPage() {
             onClick={() => router.push('/')}
             className="text-gray-600 hover:text-gray-800"
           >
-            返回首頁
+            Return to Home
           </Button>
         </motion.div>
       </motion.div>

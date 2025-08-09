@@ -1,6 +1,6 @@
 /**
  * Welcome Page for New OAuth Users
- * 新 OAuth 用戶歡迎頁面
+ * New OAuth User Welcome Page
  */
 
 'use client'
@@ -19,13 +19,13 @@ export default function WelcomePage() {
   const [showFeatures, setShowFeatures] = useState(false)
 
   useEffect(() => {
-    // 延遲顯示功能介紹
+    // Delay showing features introduction
     const timer = setTimeout(() => setShowFeatures(true), 1000)
     return () => clearTimeout(timer)
   }, [])
 
   const handleGetStarted = () => {
-    // 根據用戶角色重定向到適當的儀表板
+    // Redirect to appropriate dashboard based on user role
     if (user?.roles.includes('admin')) {
       router.push('/admin')
     } else if (user?.roles.includes('teacher')) {
@@ -46,23 +46,23 @@ export default function WelcomePage() {
   const features = [
     {
       icon: <BookOpen className="h-6 w-6" />,
-      title: '學習資源',
-      description: '存取豐富的教育資源和學習材料'
+      title: 'Learning Resources',
+      description: 'Access rich educational resources and learning materials'
     },
     {
       icon: <Calendar className="h-6 w-6" />,
-      title: '活動資訊',
-      description: '掌握最新的學校活動和重要日程'
+      title: 'Event Information',
+      description: 'Stay updated with latest school activities and important schedules'
     },
     {
       icon: <MessageSquare className="h-6 w-6" />,
-      title: '即時通知',
-      description: '接收學校公告和重要消息通知'
+      title: 'Real-time Notifications',
+      description: 'Receive school announcements and important message notifications'
     },
     {
       icon: <Users className="h-6 w-6" />,
-      title: '社群互動',
-      description: '與其他家長和教師保持聯繫'
+      title: 'Community Interaction',
+      description: 'Stay connected with other parents and teachers'
     }
   ]
 
@@ -86,16 +86,16 @@ export default function WelcomePage() {
             </motion.div>
             
             <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
-              歡迎加入 KCISLK ESID！
+              Welcome to KCISLK ESID!
             </CardTitle>
             
             <CardDescription className="text-lg text-gray-600">
-              {user?.displayName && `${user.displayName}，`}您已成功註冊並登入系統
+              {user?.displayName && `${user.displayName}, `}You have successfully registered and logged into the system
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-8">
-            {/* 用戶資訊 */}
+            {/* User Information */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -106,7 +106,7 @@ export default function WelcomePage() {
                 {user?.avatar && (
                   <img
                     src={user.avatar}
-                    alt="用戶頭像"
+                    alt="User Avatar"
                     className="w-12 h-12 rounded-full"
                   />
                 )}
@@ -114,13 +114,13 @@ export default function WelcomePage() {
                   <p className="font-semibold text-gray-900">{user?.displayName}</p>
                   <p className="text-sm text-gray-600">{user?.email}</p>
                   <p className="text-sm text-blue-600 capitalize">
-                    身份：{user?.roles.join(', ')}
+                    Role: {user?.roles.join(', ')}
                   </p>
                 </div>
               </div>
             </motion.div>
 
-            {/* 功能介紹 */}
+            {/* Features Introduction */}
             {showFeatures && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -129,7 +129,7 @@ export default function WelcomePage() {
                 className="space-y-4"
               >
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  系統功能介紹
+                  System Features Introduction
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -154,7 +154,7 @@ export default function WelcomePage() {
               </motion.div>
             )}
 
-            {/* 行動按鈕 */}
+            {/* Action Button */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -166,12 +166,12 @@ export default function WelcomePage() {
                 onClick={handleGetStarted}
                 className="w-full sm:w-auto px-8 py-3 text-lg"
               >
-                開始使用
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </motion.div>
 
-            {/* 額外資訊 */}
+            {/* Additional Information */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -179,9 +179,9 @@ export default function WelcomePage() {
               className="text-sm text-gray-500 border-t pt-4"
             >
               <p>
-                如有任何問題，請聯繫{' '}
+                If you have any questions, please contact{' '}
                 <a href="mailto:esid@kcislk.ntpc.edu.tw" className="text-blue-600 hover:underline">
-                  系統管理員
+                  System Administrator
                 </a>
               </p>
             </motion.div>

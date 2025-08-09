@@ -148,7 +148,7 @@ export default function EventsPage() {
     })
   }
 
-  // 檢查是否可以報名
+  // Check if registration is available
   const canRegister = (event: Event) => {
     if (!event.registrationRequired) return false
     
@@ -161,22 +161,22 @@ export default function EventsPage() {
     return now < registrationDeadline
   }
 
-  // 獲取報名狀態
+  // Get registration status
   const getRegistrationStatus = (event: Event) => {
     const registrationCount = event.registrations?.length || 0
     
     if (event.maxParticipants && registrationCount >= event.maxParticipants) {
-      return { status: 'full', text: '報名額滿', color: 'bg-red-500' }
+      return { status: 'full', text: 'Registration Full', color: 'bg-red-500' }
     }
     
     if (!canRegister(event)) {
-      return { status: 'closed', text: '報名截止', color: 'bg-gray-500' }
+      return { status: 'closed', text: 'Registration Closed', color: 'bg-gray-500' }
     }
     
-    return { status: 'open', text: '開放報名', color: 'bg-green-500' }
+    return { status: 'open', text: 'Registration Open', color: 'bg-green-500' }
   }
 
-  // 動畫變體
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -272,14 +272,14 @@ export default function EventsPage() {
       </motion.header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* 導航 */}
+        {/* Navigation */}
         <div className="mb-6">
           <Link 
             href="/" 
             className="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            返回首頁
+            Return to Home
           </Link>
         </div>
 
@@ -303,7 +303,7 @@ export default function EventsPage() {
             }}
             style={{ backgroundSize: "200% 200%" }}
           >
-            學校活動 Events
+            School Events
           </motion.h2>
           <motion.p
             className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed"
@@ -311,11 +311,11 @@ export default function EventsPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            參與我們豐富多彩的學校活動，與教師、家長和同學們建立更緊密的聯繫
+            Participate in our rich and colorful school activities, building closer connections with teachers, parents and classmates
           </motion.p>
         </motion.div>
 
-        {/* 搜尋和篩選 */}
+        {/* Search and Filter */}
         <motion.div
           className="mb-8"
           initial={{ opacity: 0, y: 30 }}
@@ -325,35 +325,35 @@ export default function EventsPage() {
           <Card className="bg-white/80 backdrop-blur-lg">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-4">
-                {/* 搜尋欄 */}
+                {/* Search Bar */}
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="搜尋活動名稱、描述或地點..."
+                    placeholder="Search event name, description or location..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>
                 
-                {/* 活動類型篩選 */}
+                {/* Event Type Filter */}
                 <div className="w-full md:w-48">
                   <Select value={selectedEventType} onValueChange={setSelectedEventType}>
                     <SelectTrigger>
-                      <SelectValue placeholder="活動類型" />
+                      <SelectValue placeholder="Event Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">所有類型</SelectItem>
-                      <SelectItem value="meeting">會議</SelectItem>
-                      <SelectItem value="workshop">工作坊</SelectItem>
-                      <SelectItem value="celebration">慶祝活動</SelectItem>
-                      <SelectItem value="sports">體育活動</SelectItem>
-                      <SelectItem value="academic">學術活動</SelectItem>
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="meeting">Meeting</SelectItem>
+                      <SelectItem value="workshop">Workshop</SelectItem>
+                      <SelectItem value="celebration">Celebration</SelectItem>
+                      <SelectItem value="sports">Sports</SelectItem>
+                      <SelectItem value="academic">Academic</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
-                {/* 特色活動開關 */}
+                {/* Featured Events Toggle */}
                 <div className="flex items-center">
                   <Button
                     variant={showFeaturedOnly ? "default" : "outline"}
@@ -361,7 +361,7 @@ export default function EventsPage() {
                     className="whitespace-nowrap"
                   >
                     <Filter className="w-4 h-4 mr-2" />
-                    特色活動
+                    Featured Events
                   </Button>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export default function EventsPage() {
           </Card>
         </motion.div>
 
-        {/* 錯誤訊息 */}
+        {/* Error Message */}
         {error && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -383,7 +383,7 @@ export default function EventsPage() {
           </motion.div>
         )}
 
-        {/* 載入狀態 */}
+        {/* Loading State */}
         {isLoading && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -414,7 +414,7 @@ export default function EventsPage() {
           </motion.div>
         )}
 
-        {/* 活動列表 */}
+        {/* Event List */}
         {!isLoading && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -431,7 +431,7 @@ export default function EventsPage() {
                     <Card className="h-full hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
                       {event.isFeatured && (
                         <div className="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 text-xs font-medium rounded-bl-lg">
-                          特色活動
+                          Featured Event
                         </div>
                       )}
                       
@@ -458,13 +458,13 @@ export default function EventsPage() {
                         )}
                         
                         <div className="space-y-2 mb-4">
-                          {/* 日期時間 */}
+                          {/* Date and Time */}
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <Calendar className="w-4 h-4" />
                             <span>{formatDate(event.startDate)}</span>
                           </div>
                           
-                          {/* 時間 */}
+                          {/* Time */}
                           {event.startTime && (
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Clock className="w-4 h-4" />
@@ -475,7 +475,7 @@ export default function EventsPage() {
                             </div>
                           )}
                           
-                          {/* 地點 */}
+                          {/* Location */}
                           {event.location && (
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <MapPin className="w-4 h-4" />
@@ -483,19 +483,19 @@ export default function EventsPage() {
                             </div>
                           )}
                           
-                          {/* 報名人數 */}
+                          {/* Registration Count */}
                           {event.registrationRequired && (
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Users className="w-4 h-4" />
                               <span>
                                 {event.registrations?.length || 0}
-                                {event.maxParticipants && `/${event.maxParticipants}`} 人報名
+                                {event.maxParticipants && `/${event.maxParticipants}`} registered
                               </span>
                             </div>
                           )}
                         </div>
                         
-                        {/* 報名狀態和按鈕 */}
+                        {/* Registration Status and Button */}
                         <div className="mt-auto">
                           {event.registrationRequired && (
                             <div className="flex items-center justify-between">
@@ -507,17 +507,17 @@ export default function EventsPage() {
                               
                               {registrationStatus.status === 'open' && (
                                 <Button size="sm" variant="outline" className="group-hover:bg-purple-50">
-                                  立即報名
+                                  Register Now
                                 </Button>
                               )}
                             </div>
                           )}
                           
-                          {/* 活動創建者 */}
+                          {/* Event Creator */}
                           {event.creator && (
                             <div className="flex items-center gap-2 mt-3 pt-3 border-t text-xs text-gray-500">
                               <User className="w-3 h-3" />
-                              <span>主辦：{event.creator.displayName}</span>
+                              <span>Organized by: {event.creator.displayName}</span>
                             </div>
                           )}
                         </div>
@@ -527,7 +527,7 @@ export default function EventsPage() {
                 )
               })
             ) : (
-              // 無活動時的顯示
+              // Display when no events
               <motion.div
                 variants={itemVariants}
                 className="col-span-full text-center py-12"
@@ -535,13 +535,13 @@ export default function EventsPage() {
                 <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">
                   {searchQuery || selectedEventType !== 'all' || showFeaturedOnly 
-                    ? '找不到符合條件的活動' 
-                    : '目前沒有活動'}
+                    ? 'No events found matching criteria' 
+                    : 'No events currently available'}
                 </h3>
                 <p className="text-gray-600">
                   {searchQuery || selectedEventType !== 'all' || showFeaturedOnly 
-                    ? '請嘗試調整搜尋條件' 
-                    : '敬請期待更多精彩活動'}
+                    ? 'Please try adjusting search criteria' 
+                    : 'Please look forward to more exciting events'}
                 </p>
               </motion.div>
             )}
@@ -566,7 +566,7 @@ export default function EventsPage() {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            林口康橋國際學校 | Excellence in International Education
+            Kang Chiao International School | Excellence in International Education
           </motion.p>
         </div>
         <div className="absolute inset-0 opacity-10">

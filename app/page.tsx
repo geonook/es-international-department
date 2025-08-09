@@ -11,28 +11,27 @@ import { useRef, useEffect, useState } from "react"
 import { Announcement } from "@/lib/types"
 
 /**
- * 首頁組件 - KCISLK ESID Info Hub
  * Home Page Component - KCISLK ESID Info Hub
  * 
- * @description 展示 KCISLK ESID 的主要功能，為林口康橋的家長和老師提供最新資訊、活動更新和溝通工具
- * @features 響應式設計、流暢動畫、視差滾動效果、互動式卡片
+ * @description Showcase main features of KCISLK ESID, providing latest information, event updates and communication tools for parents and teachers
+ * @features Responsive design, smooth animations, parallax scrolling effects, interactive cards
  * @author Claude Code | Generated with love for KCISLK ESID Info Hub
  */
 export default function HomePage() {
-  // 頁面載入狀態 | Page loading state
+  // Page loading state
   const [isLoaded, setIsLoaded] = useState(false)
   
-  // 公告相關狀態 | Announcement related states
+  // Announcement related states
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [announcementsLoading, setAnnouncementsLoading] = useState(true)
   const [expandedAnnouncements, setExpandedAnnouncements] = useState<Set<number>>(new Set())
   
-  // 滾動效果相關 hooks | Scroll effect related hooks
+  // Scroll effect related hooks
   const { scrollY } = useScroll()
   const heroRef = useRef(null)
   const isHeroInView = useInView(heroRef, { once: true })
 
-  // 視差滾動變換 | Parallax scroll transforms
+  // Parallax scroll transforms
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
   const opacity = useTransform(scrollY, [0, 300], [1, 0.3])
@@ -42,7 +41,7 @@ export default function HomePage() {
     fetchPublicAnnouncements()
   }, [])
 
-  // 獲取公開公告 | Fetch public announcements
+  // Fetch public announcements
   const fetchPublicAnnouncements = async () => {
     try {
       setAnnouncementsLoading(true)
@@ -50,7 +49,7 @@ export default function HomePage() {
       const data = await response.json()
       
       if (data.success) {
-        // 篩選未過期的公告 | Filter non-expired announcements
+        // Filter non-expired announcements
         const now = new Date()
         const validAnnouncements = data.data.filter((announcement: Announcement) => 
           !announcement.expiresAt || new Date(announcement.expiresAt) > now
@@ -64,7 +63,7 @@ export default function HomePage() {
     }
   }
 
-  // 處理公告展開/收合 | Handle announcement expand/collapse
+  // Handle announcement expand/collapse
   const handleToggleAnnouncement = (announcementId: number) => {
     setExpandedAnnouncements(prev => {
       const newSet = new Set(prev)
@@ -77,7 +76,7 @@ export default function HomePage() {
     })
   }
 
-  // 取得優先級圖示 | Get priority icon
+  // Get priority icon
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case 'high':
@@ -102,22 +101,22 @@ export default function HomePage() {
     })
   }
 
-  // KCFSID 小隊列表 | KCFSID Squad list
+  // KCFSID Squad list
   const squads = ["Achievers", "Adventurers", "Discoverers", "Explorers", "Innovators", "Leaders"]
 
-  // 容器動畫變體 - 漸進式顯示子元素 | Container animation variants - staggered children
+  // Container animation variants - staggered children
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,    // 子元素間隔顯示時間
-        delayChildren: 0.3,      // 子元素延遲顯示時間
+        staggerChildren: 0.1,    // Stagger children display time
+        delayChildren: 0.3,      // Delay children display time
       },
     },
   }
 
-  // 項目動畫變體 - 從下往上淡入 | Item animation variants - fade up
+  // Item animation variants - fade up
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1 },
@@ -310,6 +309,81 @@ export default function HomePage() {
           />
         </section>
 
+        {/* Parents Quote Section */}
+        <motion.section
+          className="py-20 relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+        >
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
+              <motion.div className="lg:w-1/2" variants={itemVariants}>
+                <motion.div
+                  className="relative p-8 bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="absolute -top-6 -left-6 w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-2xl font-bold">"</span>
+                  </div>
+                  <blockquote className="text-xl leading-relaxed text-gray-700 mb-6 italic">
+                    "The international education environment at KCISLK ESID has opened up a whole new world for our child. The teachers are dedicated, and the learning atmosphere is vibrant and engaging."
+                  </blockquote>
+                  <footer className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                      A
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">Amy Chen</div>
+                      <div className="text-sm text-gray-600">Parent of Grade 3 Student</div>
+                    </div>
+                  </footer>
+                </motion.div>
+              </motion.div>
+
+              <motion.div className="lg:w-1/2 space-y-8" variants={itemVariants}>
+                <motion.h2 className="text-4xl font-bold text-gray-900 mb-8" variants={itemVariants}>
+                  What Parents Say About Us
+                </motion.h2>
+
+                <motion.div className="grid gap-6" variants={containerVariants}>
+                  {[
+                    {
+                      icon: "🌟",
+                      title: "Excellent Teaching Quality",
+                      description: "Professional international teachers provide high-quality bilingual education"
+                    },
+                    {
+                      icon: "🎯",
+                      title: "Personalized Learning",
+                      description: "Tailored learning plans to meet each child's unique development needs"
+                    },
+                    {
+                      icon: "🤝",
+                      title: "Strong Parent Partnership",
+                      description: "Open communication and active parent participation in education"
+                    }
+                  ].map((feature, index) => (
+                    <motion.div
+                      key={index}
+                      variants={itemVariants}
+                      className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl hover:bg-white/80 transition-all duration-300"
+                      whileHover={{ x: 5, scale: 1.02 }}
+                    >
+                      <div className="text-3xl flex-shrink-0">{feature.icon}</div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">{feature.title}</h3>
+                        <p className="text-gray-600 text-sm">{feature.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+        </motion.section>
 
         {/* Important Announcements Section */}
         <motion.section
@@ -341,7 +415,7 @@ export default function HomePage() {
               className="max-w-4xl mx-auto"
             >
               {announcementsLoading ? (
-                // 載入動畫 | Loading animation
+                // Loading animation
                 <div className="space-y-4">
                   {Array.from({ length: 3 }).map((_, index) => (
                     <motion.div
@@ -365,7 +439,7 @@ export default function HomePage() {
                   ))}
                 </div>
               ) : announcements.length > 0 ? (
-                // 公告列表 | Announcements list
+                // Announcements list
                 <div className="space-y-4">
                   {announcements.map((announcement) => {
                     const isExpanded = expandedAnnouncements.has(announcement.id)
@@ -384,7 +458,7 @@ export default function HomePage() {
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">
-                            {/* 標題和優先級 */}
+                            {/* Title and priority */}
                             <div className="flex items-start gap-3 mb-3">
                               <motion.div
                                 className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md flex-shrink-0 ${
@@ -413,7 +487,7 @@ export default function HomePage() {
                               </div>
                             </div>
 
-                            {/* 標籤區域 */}
+                            {/* Tags area */}
                             <div className="flex flex-wrap items-center gap-2 mb-3">
                               <Badge 
                                 variant={announcement.priority === 'high' ? 'destructive' : 'default'}
@@ -439,7 +513,7 @@ export default function HomePage() {
                               )}
                             </div>
 
-                            {/* 展開的完整內容 */}
+                            {/* Expanded full content */}
                             <motion.div
                               initial={false}
                               animate={{ 
@@ -464,7 +538,7 @@ export default function HomePage() {
                             </motion.div>
                           </div>
 
-                          {/* 展開/收合按鈕 */}
+                          {/* Expand/collapse button */}
                           <motion.button
                             onClick={() => handleToggleAnnouncement(announcement.id)}
                             className="flex-shrink-0 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 border border-white/50"
@@ -483,7 +557,7 @@ export default function HomePage() {
                     )
                   })}
 
-                  {/* 查看更多公告按鈕 */}
+                  {/* View more announcements button */}
                   <motion.div 
                     variants={itemVariants}
                     className="text-center pt-6"
@@ -499,7 +573,7 @@ export default function HomePage() {
                   </motion.div>
                 </div>
               ) : (
-                // 沒有公告時的顯示 | No announcements display
+                // No announcements display
                 <motion.div
                   variants={itemVariants}
                   className="text-center py-12"
@@ -519,7 +593,307 @@ export default function HomePage() {
           </div>
         </motion.section>
 
+        {/* International Department NEWS */}
+        <motion.section className="py-20 relative overflow-hidden" style={{ y: y2 }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/90 to-purple-800/90" />
+          <div className="absolute inset-0 opacity-10">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: "radial-gradient(circle at 25% 25%, white 2px, transparent 2px)",
+                backgroundSize: "60px 60px",
+              }}
+            />
+          </div>
 
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.h2
+              className="text-5xl font-bold text-white text-center mb-16"
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8 }}
+            >
+              KCISLK Elementary
+              <motion.span
+                className="inline-block ml-4"
+                animate={{
+                  textShadow: [
+                    "0 0 10px rgba(255,255,255,0.5)",
+                    "0 0 20px rgba(255,255,255,0.8)",
+                    "0 0 10px rgba(255,255,255,0.5)",
+                  ],
+                }}
+                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+              >
+                ESID NEWS
+              </motion.span>
+            </motion.h2>
+
+            <motion.div
+              className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {/* ESID News Message Board */}
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500">
+                  <CardHeader className="text-center pb-4 bg-gradient-to-r from-purple-50 to-pink-50">
+                    <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+                      <CardTitle className="text-2xl text-purple-700 cursor-pointer flex items-center justify-center gap-2 group-hover:text-purple-900 transition-colors">
+                        <BookOpen className="w-6 h-6" />
+                        ESID News Message Board
+                      </CardTitle>
+                    </motion.div>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
+                      {/* Important Notice */}
+                      <motion.div
+                        className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-4 border-l-4 border-red-400"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">
+                            Important Notice
+                          </span>
+                          <div className="text-right text-xs text-gray-600">Jan 15, 2025</div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                            <span className="text-white font-bold text-xs">ESID</span>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900 mb-1">Final Assessment Week Guidelines</h4>
+                            <p className="text-sm text-gray-700 mb-2">
+                              Dear parents, Final Assessment Week is approaching (Jan 20-24). Please help your child prepare for review. Assessment scope has been uploaded to class groups.
+                            </p>
+                            <div className="flex gap-2">
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Assessment Week</span>
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Parent Cooperation</span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Event Announcement */}
+                      <motion.div
+                        className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border-l-4 border-blue-400"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
+                            Event Announcement
+                          </span>
+                          <div className="text-right text-xs text-gray-600">Jan 12, 2025</div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                            <Calendar className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900 mb-1">International Culture Day Registration Open</h4>
+                            <p className="text-sm text-gray-700 mb-2">
+                              The 2025 International Culture Day will be held on February 28. Parents from all countries are welcome to share cultural features. Registration deadline: Jan 25.
+                            </p>
+                            <div className="flex gap-2">
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Cultural Exchange</span>
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Parent Participation</span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Learning Resources */}
+                      <motion.div
+                        className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-l-4 border-green-400"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                            Learning Resources
+                          </span>
+                          <div className="text-right text-xs text-gray-600">Jan 10, 2025</div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                            <BookOpen className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900 mb-1">New Online Learning Platform Available</h4>
+                            <p className="text-sm text-gray-700 mb-2">
+                              Our new interactive online learning platform is now available, providing rich learning resources and practice materials for students.
+                            </p>
+                            <div className="flex gap-2">
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Online Learning</span>
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Resources</span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    <motion.div className="text-center" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                        View More News
+                      </Button>
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Newsletter Section */}
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500">
+                  <CardHeader className="text-center pb-4 bg-gradient-to-r from-cyan-50 to-blue-50">
+                    <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+                      <CardTitle className="text-2xl text-cyan-700 cursor-pointer flex items-center justify-center gap-2 group-hover:text-cyan-900 transition-colors">
+                        <Mail className="w-6 h-6" />
+                        Monthly Newsletter
+                      </CardTitle>
+                    </motion.div>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="mb-6">
+                      <div className="aspect-video bg-gradient-to-br from-cyan-100 to-blue-200 rounded-xl flex items-center justify-center mb-4 relative overflow-hidden group-hover:scale-105 transition-transform duration-500">
+                        <motion.div
+                          className="text-6xl opacity-20"
+                          animate={{ rotate: [0, 5, -5, 0] }}
+                          transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
+                        >
+                          📰
+                        </motion.div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        <div className="absolute bottom-4 left-4 text-white">
+                          <h3 className="text-lg font-bold">January 2025 Edition</h3>
+                          <p className="text-sm opacity-90">Latest school updates</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h3 className="font-bold text-gray-900 text-lg">This Month's Highlights</h3>
+                        <ul className="space-y-2 text-sm text-gray-700">
+                          <li className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
+                            New semester course introduction
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full"></div>
+                            Outstanding student showcases
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full"></div>
+                            Upcoming parent activities
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
+                            International exchange program updates
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <motion.div className="text-center" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+                        <ExternalLink className="w-4 h-4" />
+                        View Latest Newsletter
+                      </Button>
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
+          </div>
+        </motion.section>
+
+        {/* Quick Stats */}
+        <motion.section
+          className="py-16 bg-white/50 backdrop-blur-sm"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={containerVariants}
+        >
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[
+                { number: "300+", label: "Students" },
+                { number: "25+", label: "International Teachers" },
+                { number: "15+", label: "Countries Represented" },
+                { number: "10", label: "Years of Excellence" },
+              ].map((stat, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="text-center group"
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.div
+                    className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2"
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ delay: index * 0.1, type: "spring", stiffness: 200 }}
+                  >
+                    {stat.number}
+                  </motion.div>
+                  <div className="text-gray-600 font-medium">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+
+        {/* KCFSID Squads */}
+        <motion.section
+          className="py-20 bg-gradient-to-br from-red-50 to-pink-50"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={containerVariants}
+        >
+          <div className="container mx-auto px-4">
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">KCFSID Squads</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Building team spirit and character development through our unique squad system
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+              variants={containerVariants}
+            >
+              {squads.map((squad, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="bg-white/80 backdrop-blur-sm rounded-xl p-6 text-center shadow-lg border border-white/50 group hover:bg-white/90 transition-all duration-300"
+                  whileHover={{ scale: 1.05, y: -5, rotateY: 5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.div
+                    className="w-16 h-16 bg-gradient-to-br from-red-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white font-bold text-xl"
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    {squad[0]}
+                  </motion.div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
+                    {squad}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Excellence • Character • Leadership
+                  </p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </motion.section>
 
       </main>
 
