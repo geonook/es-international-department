@@ -1071,7 +1071,7 @@ export default function AdminDashboard() {
                     </Card>
                   </div>
 
-                  {/* 按年級分類的資源統計 */}
+                  {/* Resource statistics by grade level */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center">
@@ -1092,21 +1092,21 @@ export default function AdminDashboard() {
                           <div className="text-center">
                             <h4 className="font-semibold text-green-800 mb-2">Grades 3-4</h4>
                             <p className="text-2xl font-bold text-green-600">58</p>
-                            <p className="text-sm text-green-500">項資源</p>
+                            <p className="text-sm text-green-500">resources</p>
                           </div>
                         </div>
                         <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
                           <div className="text-center">
                             <h4 className="font-semibold text-purple-800 mb-2">Grades 5-6</h4>
                             <p className="text-2xl font-bold text-purple-600">46</p>
-                            <p className="text-sm text-purple-500">項資源</p>
+                            <p className="text-sm text-purple-500">resources</p>
                           </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  {/* 最近資源活動 */}
+                  {/* Recent resource activities */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center">
@@ -1148,21 +1148,21 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge className="bg-blue-100 text-blue-700">處理中</Badge>
+                            <Badge className="bg-blue-100 text-blue-700">Processing</Badge>
                           </div>
                         </div>
 
                         <div className="flex items-start justify-between p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-purple-800">科學實驗互動工具</h4>
-                              <Badge variant="outline" className="text-xs">互動</Badge>
+                              <h4 className="font-medium text-purple-800">Science Experiment Interactive Tools</h4>
+                              <Badge variant="outline" className="text-xs">Interactive</Badge>
                             </div>
-                            <p className="text-sm text-purple-600 mb-2">新增虛擬科學實驗互動式學習工具</p>
+                            <p className="text-sm text-purple-600 mb-2">Added virtual science experiment interactive learning tools</p>
                             <div className="flex items-center text-xs text-purple-500 gap-4">
-                              <span>📁 科學教育</span>
+                              <span>📁 Science Education</span>
                               <span>👤 Teacher Chen</span>
-                              <span>⏰ 1 天前</span>
+                              <span>⏰ 1 day ago</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -1183,20 +1183,20 @@ export default function AdminDashboard() {
                         <Link href="/admin/resources">
                           <Button variant="outline" className="h-20 w-full flex flex-col hover:bg-green-50">
                             <Plus className="w-6 h-6 mb-2 text-green-600" />
-                            新增資源
+                            Add Resource
                           </Button>
                         </Link>
                         <Button variant="outline" className="h-20 flex flex-col hover:bg-blue-50">
                           <Folder className="w-6 h-6 mb-2 text-blue-600" />
-                          分類管理
+                          Category Management
                         </Button>
                         <Button variant="outline" className="h-20 flex flex-col hover:bg-purple-50">
                           <Upload className="w-6 h-6 mb-2 text-purple-600" />
-                          批量上傳
+                          Bulk Upload
                         </Button>
                         <Button variant="outline" className="h-20 flex flex-col hover:bg-orange-50">
                           <Download className="w-6 h-6 mb-2 text-orange-600" />
-                          導出清單
+                          Export List
                         </Button>
                       </div>
                     </CardContent>

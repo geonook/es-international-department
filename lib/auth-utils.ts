@@ -71,8 +71,8 @@ export async function requireApiAuth(request?: NextRequest): Promise<AuthResult>
  * Admin permission check (for API routes requiring admin permissions)
  * 
  * @description Check if user has admin permissions
- * @param request - Next.js 請求物件（可選）
- * @returns 認證結果和錯誤回應（如果權限不足）
+ * @param request - Next.js request object (optional)
+ * @returns Authentication result and error response (if insufficient permissions)
  */
 export async function requireAdminAuth(request?: NextRequest): Promise<AuthResult> {
   const authResult = await requireApiAuth(request)
@@ -110,8 +110,8 @@ export async function requireAdminAuth(request?: NextRequest): Promise<AuthResul
  * Teacher permission check (for API routes requiring teacher permissions)
  * 
  * @description Check if user has teacher or admin permissions
- * @param request - Next.js 請求物件（可選）
- * @returns 認證結果和錯誤回應（如果權限不足）
+ * @param request - Next.js request object (optional)
+ * @returns Authentication result and error response (if insufficient permissions)
  */
 export async function requireTeacherAuth(request?: NextRequest): Promise<AuthResult> {
   const authResult = await requireApiAuth(request)
@@ -146,7 +146,7 @@ export async function requireTeacherAuth(request?: NextRequest): Promise<AuthRes
 }
 
 /**
- * API 錯誤回應生成器
+ * API error response generator
  * 
  * @description 統一的錯誤回應格式
  * @param message - 錯誤訊息
