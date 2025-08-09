@@ -1,6 +1,6 @@
 /**
  * User Profile Page
- * 用戶個人資料頁面
+ * User Personal Profile Page
  */
 
 'use client'
@@ -54,7 +54,7 @@ export default function ProfilePage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   
-  // 編輯表單狀態
+  // Edit form state
   const [editForm, setEditForm] = useState({
     firstName: '',
     lastName: '',
@@ -62,7 +62,7 @@ export default function ProfilePage() {
     phone: ''
   })
 
-  // 載入用戶資料
+  // Load user profile data
   useEffect(() => {
     fetchUserProfile()
   }, [])
@@ -87,18 +87,18 @@ export default function ProfilePage() {
             phone: data.user.phone || ''
           })
         } else {
-          setError('載入用戶資料失敗')
+          setError('Failed to load user profile')
         }
       } else if (response.status === 401) {
-        // 未認證，跳轉到登入頁面
+        // Unauthenticated, redirect to login page
         router.push('/login')
         return
       } else {
-        setError('載入用戶資料失敗')
+        setError('Failed to load user profile')
       }
     } catch (error) {
       console.error('Load profile error:', error)
-      setError('網路錯誤，請稍後再試')
+      setError('Network error, please try again later')
     } finally {
       setIsLoading(false)
     }
@@ -127,11 +127,11 @@ export default function ProfilePage() {
         setSuccess(true)
         setTimeout(() => setSuccess(false), 3000)
       } else {
-        setError(data.message || '更新失敗')
+        setError(data.message || 'Update failed')
       }
     } catch (error) {
       console.error('Update profile error:', error)
-      setError('網路錯誤，請稍後再試')
+      setError('Network error, please try again later')
     } finally {
       setIsSaving(false)
     }
@@ -150,7 +150,7 @@ export default function ProfilePage() {
     setError('')
   }
 
-  // 獲取用戶姓名顯示
+  // Get user display name
   const getUserDisplayName = () => {
     if (user?.displayName) return user.displayName
     if (user?.firstName || user?.lastName) {
@@ -159,7 +159,7 @@ export default function ProfilePage() {
     return user?.email || 'Unknown User'
   }
 
-  // 獲取用戶頭像字母
+  // Get user avatar letters
   const getAvatarLetters = () => {
     const displayName = getUserDisplayName()
     const words = displayName.split(' ')
@@ -169,9 +169,9 @@ export default function ProfilePage() {
     return displayName.slice(0, 2).toUpperCase()
   }
 
-  // 格式化日期
+  // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('zh-TW', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -180,7 +180,7 @@ export default function ProfilePage() {
     })
   }
 
-  // 載入中狀態
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
@@ -213,7 +213,7 @@ export default function ProfilePage() {
     )
   }
 
-  // 錯誤狀態
+  // Error state
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
@@ -221,9 +221,9 @@ export default function ProfilePage() {
           <Card className="max-w-2xl mx-auto">
             <CardContent className="py-8 text-center">
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">載入失敗</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to Load</h2>
               <p className="text-gray-600 mb-4">{error}</p>
-              <Button onClick={fetchUserProfile}>重新載入</Button>
+              <Button onClick={fetchUserProfile}>Reload</Button>
             </CardContent>
           </Card>
         </div>
@@ -234,18 +234,18 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
-        {/* 導航 */}
+        {/* Navigation */}
         <div className="mb-6">
           <Link 
             href="/" 
             className="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            返回首頁
+            Return to Home
           </Link>
         </div>
 
-        {/* 個人資料卡片 */}
+        {/* Profile Card */}
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -269,24 +269,24 @@ export default function ProfilePage() {
               {!isEditing && (
                 <Button onClick={() => setIsEditing(true)} variant="outline">
                   <Edit className="w-4 h-4 mr-2" />
-                  編輯
+                  Edit
                 </Button>
               )}
             </div>
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {/* 成功訊息 */}
+            {/* Success Message */}
             {success && (
               <Alert>
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  個人資料更新成功！
+                  Profile updated successfully!
                 </AlertDescription>
               </Alert>
             )}
 
-            {/* 錯誤訊息 */}
+            {/* Error Message */}
             {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
@@ -294,11 +294,11 @@ export default function ProfilePage() {
               </Alert>
             )}
 
-            {/* 基本資訊 */}
+            {/* Basic Information */}
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <User className="w-5 h-5" />
-                基本資訊
+                Basic Information
               </h3>
               
               {isEditing ? (
@@ -306,45 +306,45 @@ export default function ProfilePage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-700">
-                        名字
+                        First Name
                       </label>
                       <Input
                         value={editForm.firstName}
                         onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
-                        placeholder="請輸入名字"
+                        placeholder="Enter your first name"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-700">
-                        姓氏
+                        Last Name
                       </label>
                       <Input
                         value={editForm.lastName}
                         onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
-                        placeholder="請輸入姓氏"
+                        placeholder="Enter your last name"
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      顯示名稱
+                      Display Name
                     </label>
                     <Input
                       value={editForm.displayName}
                       onChange={(e) => setEditForm({...editForm, displayName: e.target.value})}
-                      placeholder="請輸入顯示名稱"
+                      placeholder="Enter your display name"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      手機號碼
+                      Phone Number
                     </label>
                     <Input
                       value={editForm.phone}
                       onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                      placeholder="請輸入手機號碼"
+                      placeholder="Enter your phone number"
                     />
                   </div>
 
@@ -355,7 +355,7 @@ export default function ProfilePage() {
                       className="flex-1"
                     >
                       <Save className="w-4 h-4 mr-2" />
-                      {isSaving ? '儲存中...' : '儲存'}
+                      {isSaving ? 'Saving...' : 'Save'}
                     </Button>
                     <Button 
                       onClick={handleCancel} 
@@ -363,7 +363,7 @@ export default function ProfilePage() {
                       className="flex-1"
                     >
                       <X className="w-4 h-4 mr-2" />
-                      取消
+                      Cancel
                     </Button>
                   </div>
                 </div>
@@ -371,21 +371,21 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">名字</label>
-                      <p className="text-gray-900">{user.firstName || '未設定'}</p>
+                      <label className="text-sm font-medium text-gray-600">First Name</label>
+                      <p className="text-gray-900">{user.firstName || 'Not set'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">姓氏</label>
-                      <p className="text-gray-900">{user.lastName || '未設定'}</p>
+                      <label className="text-sm font-medium text-gray-600">Last Name</label>
+                      <p className="text-gray-900">{user.lastName || 'Not set'}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">顯示名稱</label>
-                      <p className="text-gray-900">{user.displayName || '未設定'}</p>
+                      <label className="text-sm font-medium text-gray-600">Display Name</label>
+                      <p className="text-gray-900">{user.displayName || 'Not set'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">手機號碼</label>
+                      <label className="text-sm font-medium text-gray-600">Phone Number</label>
                       <p className="text-gray-900 flex items-center gap-2">
                         {user.phone ? (
                           <>
@@ -393,7 +393,7 @@ export default function ProfilePage() {
                             {user.phone}
                           </>
                         ) : (
-                          '未設定'
+                          'Not set'
                         )}
                       </p>
                     </div>
@@ -402,17 +402,17 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* 帳戶資訊 */}
+            {/* Account Information */}
             <div className="border-t pt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                帳戶資訊
+                Account Information
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">用戶角色</label>
+                    <label className="text-sm font-medium text-gray-600">User Roles</label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {user.roles.map((role) => (
                         <Badge key={role} variant="secondary">
@@ -422,17 +422,17 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">帳戶狀態</label>
+                    <label className="text-sm font-medium text-gray-600">Account Status</label>
                     <p className="flex items-center gap-2">
                       <Badge variant={user.isActive ? 'default' : 'destructive'}>
-                        {user.isActive ? '啟用' : '停用'}
+                        {user.isActive ? 'Active' : 'Inactive'}
                       </Badge>
                     </p>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">註冊時間</label>
+                    <label className="text-sm font-medium text-gray-600">Registration Date</label>
                     <p className="text-gray-900 flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
                       {formatDate(user.createdAt)}
@@ -440,7 +440,7 @@ export default function ProfilePage() {
                   </div>
                   {user.lastLoginAt && (
                     <div>
-                      <label className="text-sm font-medium text-gray-600">最後登入</label>
+                      <label className="text-sm font-medium text-gray-600">Last Login</label>
                       <p className="text-gray-900">
                         {formatDate(user.lastLoginAt)}
                       </p>

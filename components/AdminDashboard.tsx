@@ -2,7 +2,7 @@
 
 /**
  * Admin Dashboard Component with Real Authentication
- * 管理員儀表板組件 - 使用真實認證
+ * Administrator Dashboard Component - Using Real Authentication
  */
 
 import { useEffect, useState, useCallback } from 'react'
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard")
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  // 公告管理狀態
+  // Announcement management state
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [announcementsLoading, setAnnouncementsLoading] = useState(false)
   const [announcementsError, setAnnouncementsError] = useState<string>('')
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState<string>('')
 
-  // 獲取公告列表
+  // Fetch announcement list
   const fetchAnnouncements = useCallback(async (newFilters?: AnnouncementFilters, page?: number) => {
     setAnnouncementsLoading(true)
     setAnnouncementsError('')
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
       const searchParams = new URLSearchParams({
         page: currentPage.toString(),
         limit: pagination.limit.toString(),
-        status: 'all' // 管理員可以看到所有狀態的公告
+        status: 'all' // Administrators can see announcements in all statuses
       })
       
       if (currentFilters.targetAudience && currentFilters.targetAudience !== 'all') {
@@ -134,20 +134,20 @@ export default function AdminDashboard() {
         setPagination(data.pagination)
         setFilters(currentFilters)
         
-        // 計算統計資訊
+        // Calculate statistics
         calculateStats(data.data)
       } else {
-        throw new Error(data.message || '獲取公告失敗')
+        throw new Error(data.message || 'Failed to fetch announcements')
       }
     } catch (error) {
       console.error('Fetch announcements error:', error)
-      setAnnouncementsError(error instanceof Error ? error.message : '載入公告時發生錯誤')
+      setAnnouncementsError(error instanceof Error ? error.message : 'An error occurred while loading announcements')
     } finally {
       setAnnouncementsLoading(false)
     }
   }, [filters, pagination.page, pagination.limit])
 
-  // 計算統計資訊
+  // Calculate statistics
   const calculateStats = (announcementList: Announcement[]) => {
     const stats: AnnouncementStats = {
       total: announcementList.length,
@@ -168,7 +168,7 @@ export default function AdminDashboard() {
     setAnnouncementStats(stats)
   }
 
-  // 建立公告
+  // Create announcement
   const createAnnouncement = async (data: AnnouncementFormData) => {
     setFormLoading(true)
     setFormError('')
@@ -191,20 +191,20 @@ export default function AdminDashboard() {
       if (result.success) {
         setShowAnnouncementForm(false)
         setEditingAnnouncement(null)
-        await fetchAnnouncements() // 重新載入列表
+        await fetchAnnouncements() // Reload list
       } else {
-        throw new Error(result.message || '建立公告失敗')
+        throw new Error(result.message || 'Failed to create announcement')
       }
     } catch (error) {
       console.error('Create announcement error:', error)
-      setFormError(error instanceof Error ? error.message : '建立公告時發生錯誤')
+      setFormError(error instanceof Error ? error.message : 'An error occurred while creating announcement')
       throw error
     } finally {
       setFormLoading(false)
     }
   }
 
-  // 更新公告
+  // Update announcement
   const updateAnnouncement = async (data: AnnouncementFormData) => {
     if (!editingAnnouncement) return
     
@@ -229,22 +229,22 @@ export default function AdminDashboard() {
       if (result.success) {
         setShowAnnouncementForm(false)
         setEditingAnnouncement(null)
-        await fetchAnnouncements() // 重新載入列表
+        await fetchAnnouncements() // Reload list
       } else {
-        throw new Error(result.message || '更新公告失敗')
+        throw new Error(result.message || 'Failed to update announcement')
       }
     } catch (error) {
       console.error('Update announcement error:', error)
-      setFormError(error instanceof Error ? error.message : '更新公告時發生錯誤')
+      setFormError(error instanceof Error ? error.message : 'An error occurred while updating announcement')
       throw error
     } finally {
       setFormLoading(false)
     }
   }
 
-  // 刪除公告
+  // Delete announcement
   const deleteAnnouncement = async (announcementId: number) => {
-    if (!confirm('確定要刪除這個公告嗎？此操作無法復原。')) {
+    if (!confirm('Are you sure you want to delete this announcement? This action cannot be undone.')) {
       return
     }
     
@@ -263,38 +263,38 @@ export default function AdminDashboard() {
       const result: ApiResponse = await response.json()
       
       if (result.success) {
-        await fetchAnnouncements() // 重新載入列表
+        await fetchAnnouncements() // Reload list
       } else {
-        throw new Error(result.message || '刪除公告失敗')
+        throw new Error(result.message || 'Failed to delete announcement')
       }
     } catch (error) {
       console.error('Delete announcement error:', error)
-      setAnnouncementsError(error instanceof Error ? error.message : '刪除公告時發生錯誤')
+      setAnnouncementsError(error instanceof Error ? error.message : 'An error occurred while deleting announcement')
     }
   }
 
-  // 處理編輯公告
+  // Handle edit announcement
   const handleEditAnnouncement = (announcement: Announcement) => {
     setEditingAnnouncement(announcement)
     setShowAnnouncementForm(true)
     setFormError('')
   }
 
-  // 處理新增公告
+  // Handle create announcement
   const handleCreateAnnouncement = () => {
     setEditingAnnouncement(null)
     setShowAnnouncementForm(true)
     setFormError('')
   }
 
-  // 處理表單取消
+  // Handle form cancel
   const handleFormCancel = () => {
     setShowAnnouncementForm(false)
     setEditingAnnouncement(null)
     setFormError('')
   }
 
-  // 處理表單提交
+  // Handle form submit
   const handleFormSubmit = async (data: AnnouncementFormData) => {
     if (editingAnnouncement) {
       await updateAnnouncement(data)
@@ -303,18 +303,18 @@ export default function AdminDashboard() {
     }
   }
 
-  // 處理篩選變更
+  // Handle filters change
   const handleFiltersChange = (newFilters: AnnouncementFilters) => {
     setFilters(newFilters)
-    fetchAnnouncements(newFilters, 1) // 重置到第一頁
+    fetchAnnouncements(newFilters, 1) // Reset to first page
   }
 
-  // 處理分頁變更
+  // Handle page change
   const handlePageChange = (page: number) => {
     fetchAnnouncements(filters, page)
   }
 
-  // 初始載入公告
+  // Initial load announcements
   useEffect(() => {
     if (isAuthenticated && isAdmin() && activeTab === 'teachers') {
       fetchAnnouncements()
@@ -356,12 +356,12 @@ export default function AdminDashboard() {
     ],
   })
 
-  // 處理登出
+  // Handle logout
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
       await logout()
-      // useAuth hook 會自動處理重導向
+      // useAuth hook will automatically handle redirect
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
@@ -369,7 +369,7 @@ export default function AdminDashboard() {
     }
   }
 
-  // 載入中狀態
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -379,20 +379,20 @@ export default function AdminDashboard() {
           className="text-center"
         >
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">載入中...</p>
+          <p className="text-gray-600">Loading...</p>
         </motion.div>
       </div>
     )
   }
 
-  // 檢查認證和權限 - 自動重導向到登入頁面
+  // Check authentication and permissions - Automatically redirect to login page
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !isAdmin())) {
       redirectToLogin('/admin')
     }
   }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
 
-  // 未登入或無管理員權限 - 顯示載入畫面等待重導向
+  // Not logged in or no administrator privileges - Show loading screen waiting for redirect
   if (!isAuthenticated || !isAdmin()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
@@ -402,7 +402,7 @@ export default function AdminDashboard() {
           className="text-center"
         >
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">驗證權限中，正在重導向...</p>
+          <p className="text-gray-600">Verifying permissions, redirecting...</p>
         </motion.div>
       </div>
     )
@@ -432,12 +432,12 @@ export default function AdminDashboard() {
   }
 
   const sidebarItems = [
-    { id: "dashboard", label: "儀表板", icon: BarChart3 },
-    { id: "teachers", label: "教師管理", icon: GraduationCap },
-    { id: "events", label: "活動管理", icon: Calendar },
-    { id: "resources", label: "資源管理", icon: FileText },
-    { id: "parents", label: "家長資訊", icon: Users },
-    { id: "settings", label: "系統設定", icon: Settings },
+    { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+    { id: "teachers", label: "Teacher Management", icon: GraduationCap },
+    { id: "events", label: "Event Management", icon: Calendar },
+    { id: "resources", label: "Resource Management", icon: FileText },
+    { id: "parents", label: "Parent Information", icon: Users },
+    { id: "settings", label: "System Settings", icon: Settings },
   ]
 
   return (
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  KCISLK ESID Info Hub - 管理中心
+                  KCISLK ESID Info Hub - Admin Center
                 </h1>
               </div>
             </div>
@@ -466,7 +466,7 @@ export default function AdminDashboard() {
                 <p className="text-sm font-medium text-gray-900">
                   {user?.displayName || user?.firstName || user?.email}
                 </p>
-                <p className="text-xs text-gray-600">管理員</p>
+                <p className="text-xs text-gray-600">Administrator</p>
               </div>
               
               <Button
@@ -481,7 +481,7 @@ export default function AdminDashboard() {
                 ) : (
                   <LogOut className="w-4 h-4 mr-2" />
                 )}
-                登出
+                Logout
               </Button>
             </div>
           </div>
@@ -532,12 +532,12 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">儀表板總覽</h2>
-                      <p className="text-gray-600 mt-1">系統狀態與重要資訊</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Dashboard Overview</h2>
+                      <p className="text-gray-600 mt-1">System status and important information</p>
                     </div>
                     <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
                       <RefreshCw className="w-4 h-4 mr-2" />
-                      更新資料
+                      Update Data
                     </Button>
                   </div>
 
@@ -547,7 +547,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-blue-600 text-sm font-medium">總教師數</p>
+                            <p className="text-blue-600 text-sm font-medium">Total Teachers</p>
                             <p className="text-2xl font-bold text-blue-800">25</p>
                           </div>
                           <GraduationCap className="w-8 h-8 text-blue-600" />
@@ -559,7 +559,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-green-600 text-sm font-medium">活躍家長</p>
+                            <p className="text-green-600 text-sm font-medium">Active Parents</p>
                             <p className="text-2xl font-bold text-green-800">342</p>
                           </div>
                           <Users className="w-8 h-8 text-green-600" />
@@ -571,7 +571,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-purple-600 text-sm font-medium">總活動數</p>
+                            <p className="text-purple-600 text-sm font-medium">Total Events</p>
                             <p className="text-2xl font-bold text-purple-800">28</p>
                           </div>
                           <Calendar className="w-8 h-8 text-purple-600" />
@@ -583,7 +583,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-orange-600 text-sm font-medium">總公告數</p>
+                            <p className="text-orange-600 text-sm font-medium">Total Announcements</p>
                             <p className="text-2xl font-bold text-orange-800">
                               {announcementStats?.total || 0}
                             </p>
@@ -601,7 +601,7 @@ export default function AdminDashboard() {
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-cyan-600 text-sm font-medium">已發佈</p>
+                              <p className="text-cyan-600 text-sm font-medium">Published</p>
                               <p className="text-2xl font-bold text-cyan-800">
                                 {announcementStats.published}
                               </p>
@@ -615,7 +615,7 @@ export default function AdminDashboard() {
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-amber-600 text-sm font-medium">草稿</p>
+                              <p className="text-amber-600 text-sm font-medium">Draft</p>
                               <p className="text-2xl font-bold text-amber-800">
                                 {announcementStats.draft}
                               </p>
@@ -629,7 +629,7 @@ export default function AdminDashboard() {
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-red-600 text-sm font-medium">高優先級</p>
+                              <p className="text-red-600 text-sm font-medium">High Priority</p>
                               <p className="text-2xl font-bold text-red-800">
                                 {announcementStats.byPriority.high}
                               </p>
@@ -643,7 +643,7 @@ export default function AdminDashboard() {
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-teal-600 text-sm font-medium">已封存</p>
+                              <p className="text-teal-600 text-sm font-medium">Archived</p>
                               <p className="text-2xl font-bold text-teal-800">
                                 {announcementStats.archived}
                               </p>
@@ -660,7 +660,7 @@ export default function AdminDashboard() {
                     <CardHeader>
                       <CardTitle className="flex items-center">
                         <Sparkles className="w-5 h-5 mr-2 text-blue-600" />
-                        最近活動
+                        Recent Activities
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -668,22 +668,22 @@ export default function AdminDashboard() {
                         <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
                           <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
                           <div>
-                            <p className="font-medium">新增教師公告</p>
-                            <p className="text-sm text-gray-600">Staff Meeting Tomorrow - 2 分鐘前</p>
+                            <p className="font-medium">New Teacher Announcement</p>
+                            <p className="text-sm text-gray-600">Staff Meeting Tomorrow - 2 minutes ago</p>
                           </div>
                         </div>
                         <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
                           <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
                           <div>
-                            <p className="font-medium">家長通訊發佈</p>
-                            <p className="text-sm text-gray-600">January Newsletter - 15 分鐘前</p>
+                            <p className="font-medium">Parent Newsletter Published</p>
+                            <p className="text-sm text-gray-600">January Newsletter - 15 minutes ago</p>
                           </div>
                         </div>
                         <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
                           <div className="w-2 h-2 bg-purple-600 rounded-full mt-2"></div>
                           <div>
-                            <p className="font-medium">活動管理系統</p>
-                            <p className="text-sm text-gray-600">活動管理功能上線 - 5 分鐘前</p>
+                            <p className="font-medium">Event Management System</p>
+                            <p className="text-sm text-gray-600">Event management features online - 5 minutes ago</p>
                           </div>
                         </div>
                       </div>
@@ -786,7 +786,7 @@ export default function AdminDashboard() {
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-amber-600 text-sm font-medium">草稿</p>
+                              <p className="text-amber-600 text-sm font-medium">Draft</p>
                               <p className="text-xl font-bold text-amber-800">{announcementStats.draft}</p>
                             </div>
                             <FileText className="w-6 h-6 text-amber-600" />
@@ -798,7 +798,7 @@ export default function AdminDashboard() {
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-red-600 text-sm font-medium">高優先級</p>
+                              <p className="text-red-600 text-sm font-medium">High Priority</p>
                               <p className="text-xl font-bold text-red-800">{announcementStats.byPriority.high}</p>
                             </div>
                             <AlertTriangle className="w-6 h-6 text-red-600" />
@@ -904,7 +904,7 @@ export default function AdminDashboard() {
                     <CardHeader>
                       <CardTitle className="flex items-center">
                         <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
-                        最近活動
+                        Recent Activities
                       </CardTitle>
                     </CardHeader>
                     <CardContent>

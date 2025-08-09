@@ -1,6 +1,6 @@
 /**
  * Admin Page - KCISLK ESID Info Hub
- * 管理員頁面 - KCISLK ESID Info Hub
+ * Administrator Page - KCISLK ESID Info Hub
  */
 
 import AdminDashboard from '@/components/AdminDashboard'
