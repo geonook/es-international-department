@@ -2,10 +2,10 @@
 
 /**
  * Calendar View Toggle Component
- * 日曆檢視切換組件
+ * Calendar View Toggle Component
  * 
- * @description 在列表檢視和日曆檢視之間切換的控制組件
- * @features 檢視模式切換、本地存儲記憶、動畫效果
+ * @description Control component for switching between list view and calendar view
+ * @features View mode switching, local storage memory, animation effects
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -38,18 +38,18 @@ interface CalendarViewToggleProps {
 const viewConfig = {
   list: {
     icon: List,
-    label: '列表檢視',
-    description: '以列表形式查看活動'
+    label: 'List View',
+    description: 'View events in list format'
   },
   calendar: {
     icon: Calendar,
-    label: '日曆檢視',
-    description: '以日曆形式查看活動'
+    label: 'Calendar View',
+    description: 'View events in calendar format'
   },
   grid: {
     icon: Grid3X3,
-    label: '網格檢視',
-    description: '以網格形式查看活動'
+    label: 'Grid View',
+    description: 'View events in grid format'
   }
 }
 
@@ -60,7 +60,7 @@ export default function CalendarViewToggle({
   size = 'md',
   variant = 'outline'
 }: CalendarViewToggleProps) {
-  // 記住用戶選擇的檢視模式
+  // Remember user's selected view mode
   useEffect(() => {
     const savedView = localStorage.getItem('admin-events-view')
     if (savedView && savedView !== currentView) {
@@ -117,7 +117,7 @@ export default function CalendarViewToggle({
                       </span>
                     )}
                     
-                    {/* 活躍狀態指示器 */}
+                    {/* Active state indicator */}
                     {isActive && (
                       <motion.div
                         className="absolute inset-0 rounded-md border-2 border-primary/20"

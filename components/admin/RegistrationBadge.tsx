@@ -2,10 +2,10 @@
 
 /**
  * Registration Badge Component
- * 報名徽章組件
+ * Registration Badge Component
  * 
- * @description 在日曆事件上顯示報名狀態的徽章組件
- * @features 報名人數顯示、狀態指示、快速操作
+ * @description Badge component that displays registration status on calendar events
+ * @features Registration count display, status indicators, quick actions
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -53,14 +53,14 @@ export default function RegistrationBadge({
   const isFull = hasLimit && registrationCount >= maxParticipants
   const isNearFull = hasLimit && registrationCount >= maxParticipants * 0.8
   
-  // 計算報名狀態
+  // Calculate registration status
   const getRegistrationStatus = () => {
     if (isFull) {
       return {
         status: 'full',
         color: 'destructive',
         icon: UserX,
-        label: '已滿額',
+        label: 'Full',
         bgColor: 'bg-red-100 border-red-200',
         textColor: 'text-red-800'
       }
@@ -69,7 +69,7 @@ export default function RegistrationBadge({
         status: 'nearly_full',
         color: 'outline',
         icon: AlertTriangle,
-        label: '即將額滿',
+        label: 'Nearly Full',
         bgColor: 'bg-orange-100 border-orange-200',
         textColor: 'text-orange-800'
       }
@@ -78,7 +78,7 @@ export default function RegistrationBadge({
         status: 'open',
         color: 'default',
         icon: UserCheck,
-        label: '開放報名',
+        label: 'Open for Registration',
         bgColor: 'bg-green-100 border-green-200',
         textColor: 'text-green-800'
       }
@@ -88,7 +88,7 @@ export default function RegistrationBadge({
   const statusInfo = getRegistrationStatus()
   const IconComponent = statusInfo.icon
 
-  // 檢查報名截止時間
+  // Check registration deadline
   const registrationDeadline = event.registrationDeadline
   const isDeadlinePassed = registrationDeadline && new Date(registrationDeadline) < new Date()
 
@@ -107,7 +107,7 @@ export default function RegistrationBadge({
     >
       <IconComponent className="w-3 h-3" />
       <span>
-        {hasLimit ? `${registrationCount}/${maxParticipants}` : `${registrationCount} 人`}
+        {hasLimit ? `${registrationCount}/${maxParticipants}` : `${registrationCount} people`}
       </span>
       
       {showDetails && (
@@ -121,7 +121,7 @@ export default function RegistrationBadge({
         <>
           <span className="text-gray-400">•</span>
           <Clock className="w-3 h-3 text-red-500" />
-          <span className="text-red-600">已截止</span>
+          <span className="text-red-600">Closed</span>
         </>
       )}
     </motion.div>
@@ -139,18 +139,18 @@ export default function RegistrationBadge({
               <div className="font-medium">{statusInfo.label}</div>
               <div className="text-xs text-muted-foreground mt-1">
                 {hasLimit 
-                  ? `已報名 ${registrationCount} 人，限額 ${maxParticipants} 人`
-                  : `已報名 ${registrationCount} 人，無人數限制`
+                  ? `${registrationCount} registered, limit ${maxParticipants} people`
+                  : `${registrationCount} registered, no limit`
                 }
               </div>
               {registrationDeadline && (
                 <div className="text-xs text-muted-foreground mt-1">
-                  報名截止：{new Date(registrationDeadline).toLocaleDateString('zh-TW')}
+                  Registration deadline: {new Date(registrationDeadline).toLocaleDateString()}
                 </div>
               )}
               {onClick && (
                 <div className="text-xs text-blue-600 mt-1">
-                  點擊管理報名
+                  Click to manage registration
                 </div>
               )}
             </div>
@@ -163,7 +163,7 @@ export default function RegistrationBadge({
   return content
 }
 
-// 快速報名狀態組件
+// Quick registration status component
 export function QuickRegistrationStatus({ 
   event, 
   onManage 
@@ -174,7 +174,7 @@ export function QuickRegistrationStatus({
   if (!event.registrationRequired) {
     return (
       <Badge variant="secondary" className="text-xs">
-        無需報名
+        No Registration Required
       </Badge>
     )
   }
@@ -194,14 +194,14 @@ export function QuickRegistrationStatus({
           onClick={onManage}
           className="h-6 px-2 text-xs"
         >
-          管理
+          Manage
         </Button>
       )}
     </div>
   )
 }
 
-// 報名進度條組件
+// Registration progress bar component
 export function RegistrationProgress({ 
   event, 
   showLabel = true 
@@ -228,7 +228,7 @@ export function RegistrationProgress({
     <div className="space-y-1">
       {showLabel && (
         <div className="flex justify-between text-xs text-gray-600">
-          <span>報名進度</span>
+          <span>Registration Progress</span>
           <span>{registrationCount}/{maxParticipants}</span>
         </div>
       )}
@@ -244,7 +244,7 @@ export function RegistrationProgress({
       
       {showLabel && (
         <div className="text-xs text-gray-500">
-          {percentage.toFixed(0)}% 已滿
+          {percentage.toFixed(0)}% Full
         </div>
       )}
     </div>
