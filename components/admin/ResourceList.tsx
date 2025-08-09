@@ -2,7 +2,7 @@
 
 /**
  * Resource List Component - KCISLK ESID Info Hub
- * 資源列表組件 - KCISLK ESID Info Hub
+ * Resource List Component - KCISLK ESID Info Hub
  */
 
 import { useState } from 'react'
@@ -190,11 +190,11 @@ export default function ResourceList({
     if (!onBulkAction || selectedResources.length === 0) return
 
     const confirmationMessages = {
-      'publish': `確定要發佈 ${selectedResources.length} 個資源嗎？`,
-      'archive': `確定要封存 ${selectedResources.length} 個資源嗎？`,
-      'delete': `確定要刪除 ${selectedResources.length} 個資源嗎？此操作無法復原。`,
-      'feature': `確定要將 ${selectedResources.length} 個資源設為精選嗎？`,
-      'unfeature': `確定要取消 ${selectedResources.length} 個資源的精選狀態嗎？`
+      'publish': `Are you sure you want to publish ${selectedResources.length} resources?`,
+      'archive': `Are you sure you want to archive ${selectedResources.length} resources?`,
+      'delete': `Are you sure you want to delete ${selectedResources.length} resources? This operation cannot be undone.`,
+      'feature': `Are you sure you want to set ${selectedResources.length} resources as featured?`,
+      'unfeature': `Are you sure you want to remove featured status from ${selectedResources.length} resources?`
     }
 
     const message = confirmationMessages[action as keyof typeof confirmationMessages]
@@ -284,18 +284,18 @@ export default function ResourceList({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="w-5 h-5" />
-            篩選條件
+            Filter Criteria
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Search */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">搜尋</label>
+              <label className="text-sm font-medium">Search</label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
-                  placeholder="搜尋資源標題或描述..."
+                  placeholder="Search resource title or description..."
                   value={localFilters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
                   className="pl-10"
@@ -305,16 +305,16 @@ export default function ResourceList({
 
             {/* Category */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">分類</label>
+              <label className="text-sm font-medium">Category</label>
               <Select
                 value={localFilters.categoryId?.toString() || ''}
                 onValueChange={(value) => handleFilterChange('categoryId', value ? parseInt(value) : undefined)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="選擇分類" />
+                  <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">全部分類</SelectItem>
+                  <SelectItem value="">All Categories</SelectItem>
                   {categories.map(category => (
                     <SelectItem key={category.id} value={category.id.toString()}>
                       {category.displayName}
@@ -326,16 +326,16 @@ export default function ResourceList({
 
             {/* Grade Level */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">年級</label>
+              <label className="text-sm font-medium">Grade</label>
               <Select
                 value={localFilters.gradeLevelId?.toString() || ''}
                 onValueChange={(value) => handleFilterChange('gradeLevelId', value ? parseInt(value) : undefined)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="選擇年級" />
+                  <SelectValue placeholder="Select Grade" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">全部年級</SelectItem>
+                  <SelectItem value="">All Grades</SelectItem>
                   {gradeLevels.map(gradeLevel => (
                     <SelectItem key={gradeLevel.id} value={gradeLevel.id.toString()}>
                       {gradeLevel.displayName}
@@ -347,19 +347,19 @@ export default function ResourceList({
 
             {/* Resource Type */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">資源類型</label>
+              <label className="text-sm font-medium">Resource Type</label>
               <Select
                 value={localFilters.resourceType || ''}
                 onValueChange={(value) => handleFilterChange('resourceType', value || undefined)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="選擇類型" />
+                  <SelectValue placeholder="Select Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">全部類型</SelectItem>
+                  <SelectItem value="">All Types</SelectItem>
                   <SelectItem value="PDF">PDF</SelectItem>
-                  <SelectItem value="Video">影片</SelectItem>
-                  <SelectItem value="Interactive">互動</SelectItem>
+                  <SelectItem value="Video">Video</SelectItem>
+                  <SelectItem value="Interactive">Interactive</SelectItem>
                   <SelectItem value="External Platform">外部平台</SelectItem>
                   <SelectItem value="Image">圖片</SelectItem>
                   <SelectItem value="Document">文件</SelectItem>

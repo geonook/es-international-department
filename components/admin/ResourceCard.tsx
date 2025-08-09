@@ -2,7 +2,7 @@
 
 /**
  * Resource Card Component - KCISLK ESID Info Hub
- * 資源卡片組件 - KCISLK ESID Info Hub
+ * Resource Card Component - KCISLK ESID Info Hub
  */
 
 import { motion } from 'framer-motion'
@@ -179,8 +179,8 @@ export default function ResourceCard({
                       )}
                     </div>
                     <Badge className={getStatusColor(resource.status)}>
-                      {resource.status === 'published' ? '已發佈' : 
-                       resource.status === 'draft' ? '草稿' : '已封存'}
+                      {resource.status === 'published' ? 'Published' : 
+                       resource.status === 'draft' ? 'Draft' : 'Archived'}
                     </Badge>
                   </div>
 
@@ -214,8 +214,8 @@ export default function ResourceCard({
                   </div>
 
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span>👁️ {resource.viewCount} 次檢視</span>
-                    <span>⬇️ {resource.downloadCount} 次下載</span>
+                    <span>👁️ {resource.viewCount} views</span>
+                    <span>⬇️ {resource.downloadCount} downloads</span>
                     {resource.fileSize && (
                       <span>📁 {formatFileSize(resource.fileSize)}</span>
                     )}
@@ -230,7 +230,7 @@ export default function ResourceCard({
                         </Badge>
                       ))}
                       {resource.tags.length > 3 && (
-                        <span className="text-xs text-gray-500">+{resource.tags.length - 3} 更多</span>
+                        <span className="text-xs text-gray-500">+{resource.tags.length - 3} more</span>
                       )}
                     </div>
                   )}
@@ -266,7 +266,7 @@ export default function ResourceCard({
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => onEdit(resource)}>
                       <Edit className="w-4 h-4 mr-2" />
-                      編輯
+                      Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
@@ -274,7 +274,7 @@ export default function ResourceCard({
                       className="text-red-600"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
-                      刪除
+                      Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -451,7 +451,7 @@ export default function ResourceCard({
 
             {/* Date */}
             <div className="text-xs text-gray-400 border-t pt-2">
-              建立於 {formatDate(resource.createdAt)}
+              Created on {formatDate(resource.createdAt)}
             </div>
           </div>
         </CardContent>

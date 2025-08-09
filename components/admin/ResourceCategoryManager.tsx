@@ -2,7 +2,7 @@
 
 /**
  * Resource Category Manager Component - KCISLK ESID Info Hub
- * 資源分類管理組件 - KCISLK ESID Info Hub
+ * Resource Category Manager Component - KCISLK ESID Info Hub
  */
 
 import { useState, useEffect, useCallback } from 'react'
@@ -81,32 +81,32 @@ interface ResourceCategoryManagerProps {
 
 // Predefined icons for categories
 const CATEGORY_ICONS = [
-  { value: 'BookOpen', label: '書本', icon: BookOpen },
-  { value: 'FileText', label: '文件', icon: FileText },
-  { value: 'Monitor', label: '數位', icon: Monitor },
-  { value: 'Calculator', label: '數學', icon: Calculator },
-  { value: 'Globe', label: '社會', icon: Globe },
-  { value: 'Scissors', label: '藝術', icon: Scissors },
-  { value: 'Music', label: '音樂', icon: Music },
-  { value: 'Brush', label: '美術', icon: Brush },
-  { value: 'Heart', label: '品格', icon: Heart },
-  { value: 'Zap', label: '科學', icon: Zap },
-  { value: 'Users', label: '團體', icon: Users },
-  { value: 'Folder', label: '資料夾', icon: Folder }
+  { value: 'BookOpen', label: 'Book', icon: BookOpen },
+  { value: 'FileText', label: 'Document', icon: FileText },
+  { value: 'Monitor', label: 'Digital', icon: Monitor },
+  { value: 'Calculator', label: 'Math', icon: Calculator },
+  { value: 'Globe', label: 'Social', icon: Globe },
+  { value: 'Scissors', label: 'Arts', icon: Scissors },
+  { value: 'Music', label: 'Music', icon: Music },
+  { value: 'Brush', label: 'Art', icon: Brush },
+  { value: 'Heart', label: 'Character', icon: Heart },
+  { value: 'Zap', label: 'Science', icon: Zap },
+  { value: 'Users', label: 'Group', icon: Users },
+  { value: 'Folder', label: 'Folder', icon: Folder }
 ]
 
 // Predefined colors for categories
 const CATEGORY_COLORS = [
-  { value: 'blue', label: '藍色', class: 'bg-blue-500' },
-  { value: 'green', label: '綠色', class: 'bg-green-500' },
-  { value: 'purple', label: '紫色', class: 'bg-purple-500' },
-  { value: 'red', label: '紅色', class: 'bg-red-500' },
-  { value: 'yellow', label: '黃色', class: 'bg-yellow-500' },
-  { value: 'indigo', label: '靛色', class: 'bg-indigo-500' },
-  { value: 'pink', label: '粉色', class: 'bg-pink-500' },
-  { value: 'teal', label: '青色', class: 'bg-teal-500' },
-  { value: 'orange', label: '橙色', class: 'bg-orange-500' },
-  { value: 'gray', label: '灰色', class: 'bg-gray-500' }
+  { value: 'blue', label: 'Blue', class: 'bg-blue-500' },
+  { value: 'green', label: 'Green', class: 'bg-green-500' },
+  { value: 'purple', label: 'Purple', class: 'bg-purple-500' },
+  { value: 'red', label: 'Red', class: 'bg-red-500' },
+  { value: 'yellow', label: 'Yellow', class: 'bg-yellow-500' },
+  { value: 'indigo', label: 'Indigo', class: 'bg-indigo-500' },
+  { value: 'pink', label: 'Pink', class: 'bg-pink-500' },
+  { value: 'teal', label: 'Teal', class: 'bg-teal-500' },
+  { value: 'orange', label: 'Orange', class: 'bg-orange-500' },
+  { value: 'gray', label: 'Gray', class: 'bg-gray-500' }
 ]
 
 export default function ResourceCategoryManager({ categories = [], gradeLevels = [], onUpdate }: ResourceCategoryManagerProps) {
@@ -184,7 +184,7 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
   }
 
   const handleDeleteCategory = async (categoryId: number, categoryName: string) => {
-    if (!confirm(`確定要刪除「${categoryName}」分類嗎？此操作無法復原。`)) {
+    if (!confirm(`Are you sure you want to delete "${categoryName}" category? This operation cannot be undone.`)) {
       return
     }
 
@@ -218,7 +218,7 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
     e.preventDefault()
     
     if (!formData.displayName.trim()) {
-      setFormError('顯示名稱為必填欄位')
+      setFormError('Display name is a required field')
       return
     }
 
@@ -316,7 +316,7 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {editingCategory ? '編輯分類' : '新增分類'}
+              {editingCategory ? 'Edit Category' : 'Add Category'}
             </DialogTitle>
           </DialogHeader>
           
@@ -330,40 +330,40 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="displayName">顯示名稱 *</Label>
+                <Label htmlFor="displayName">Display Name *</Label>
                 <Input
                   id="displayName"
                   value={formData.displayName}
                   onChange={(e) => setFormData(prev => ({ ...prev, displayName: e.target.value }))}
-                  placeholder="如：數學教材"
+                  placeholder="e.g.: Math Materials"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">系統名稱</Label>
+                <Label htmlFor="name">System Name</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="如：math_materials（可留空自動生成）"
+                  placeholder="e.g.: math_materials (leave empty for auto-generation)"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">描述</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="分類描述"
+                placeholder="Category description"
                 rows={3}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>圖示</Label>
+                <Label>Icon</Label>
                 <Select
                   value={formData.icon}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, icon: value }))}
@@ -385,7 +385,7 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
               </div>
 
               <div className="space-y-2">
-                <Label>顏色</Label>
+                <Label>Color</Label>
                 <Select
                   value={formData.color}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, color: value }))}
@@ -409,8 +409,8 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>啟用狀態</Label>
-                <p className="text-sm text-gray-600">停用的分類將不會在前端顯示</p>
+                <Label>Active Status</Label>
+                <p className="text-sm text-gray-600">Disabled categories will not be shown in the frontend</p>
               </div>
               <input
                 type="checkbox"
@@ -422,7 +422,7 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
 
             {/* Preview */}
             <div className="space-y-2">
-              <Label>預覽</Label>
+              <Label>Preview</Label>
               <div className="border rounded-lg p-4 bg-gray-50">
                 <div className="flex items-center gap-3">
                   <div className={cn(
@@ -435,11 +435,11 @@ export default function ResourceCategoryManager({ categories = [], gradeLevels =
                     })()}
                   </div>
                   <div>
-                    <h4 className="font-medium">{formData.displayName || '未命名分類'}</h4>
-                    <p className="text-sm text-gray-600">{formData.description || '無描述'}</p>
+                    <h4 className="font-medium">{formData.displayName || 'Unnamed Category'}</h4>
+                    <p className="text-sm text-gray-600">{formData.description || 'No description'}</p>
                   </div>
                   {!formData.isActive && (
-                    <Badge variant="secondary">停用</Badge>
+                    <Badge variant="secondary">Disabled</Badge>
                   )}
                 </div>
               </div>
