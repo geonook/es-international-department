@@ -342,7 +342,7 @@ export default function NotificationCenter({
     return date.toLocaleDateString('zh-TW')
   }
 
-  // 動畫變體
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.95 },
     visible: { 
@@ -362,7 +362,7 @@ export default function NotificationCenter({
 
   return (
     <div className={cn("bg-white rounded-lg shadow-lg border", className)}>
-      {/* 標題欄 */}
+      {/* Header bar */}
       {showHeader && (
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -398,7 +398,7 @@ export default function NotificationCenter({
       )}
 
       <CardContent className="p-0">
-        {/* 展開狀態的搜尋和篩選 */}
+        {/* Expanded search and filter */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
@@ -408,64 +408,64 @@ export default function NotificationCenter({
               className="border-b p-4"
             >
               <div className="space-y-4">
-                {/* 搜尋欄 */}
+                {/* Search bar */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="搜尋通知..."
+                    placeholder="Search notifications..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>
 
-                {/* 篩選選項 */}
+                {/* Filter options */}
                 <div className="grid grid-cols-3 gap-3">
                   <Select value={typeFilter} onValueChange={setTypeFilter}>
                     <SelectTrigger className="h-8">
-                      <SelectValue placeholder="類型" />
+                      <SelectValue placeholder="Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">所有類型</SelectItem>
-                      <SelectItem value="announcement">公告</SelectItem>
-                      <SelectItem value="event">活動</SelectItem>
-                      <SelectItem value="registration">報名</SelectItem>
-                      <SelectItem value="resource">資源</SelectItem>
-                      <SelectItem value="reminder">提醒</SelectItem>
-                      <SelectItem value="system">系統</SelectItem>
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="announcement">Announcement</SelectItem>
+                      <SelectItem value="event">Event</SelectItem>
+                      <SelectItem value="registration">Registration</SelectItem>
+                      <SelectItem value="resource">Resource</SelectItem>
+                      <SelectItem value="reminder">Reminder</SelectItem>
+                      <SelectItem value="system">System</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                     <SelectTrigger className="h-8">
-                      <SelectValue placeholder="優先級" />
+                      <SelectValue placeholder="Priority" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">所有優先級</SelectItem>
-                      <SelectItem value="urgent">緊急</SelectItem>
-                      <SelectItem value="high">高</SelectItem>
-                      <SelectItem value="medium">中</SelectItem>
-                      <SelectItem value="low">低</SelectItem>
+                      <SelectItem value="all">All Priorities</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <Select value={readFilter} onValueChange={setReadFilter}>
                     <SelectTrigger className="h-8">
-                      <SelectValue placeholder="狀態" />
+                      <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">所有狀態</SelectItem>
-                      <SelectItem value="unread">未讀</SelectItem>
-                      <SelectItem value="read">已讀</SelectItem>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="unread">Unread</SelectItem>
+                      <SelectItem value="read">Read</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* 批量操作 */}
+                {/* Batch operations */}
                 {selectedIds.length > 0 && (
                   <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
                     <span className="text-sm text-blue-700">
-                      已選中 {selectedIds.length} 個通知
+                      Selected {selectedIds.length} notifications
                     </span>
                     <div className="flex items-center gap-1 ml-auto">
                       <Button
@@ -475,7 +475,7 @@ export default function NotificationCenter({
                         className="h-7 px-2 text-xs"
                       >
                         <Check className="w-3 h-3 mr-1" />
-                        標記已讀
+                        Mark as Read
                       </Button>
                       <Button
                         size="sm"
@@ -484,7 +484,7 @@ export default function NotificationCenter({
                         className="h-7 px-2 text-xs"
                       >
                         <Circle className="w-3 h-3 mr-1" />
-                        標記未讀
+                        Mark as Unread
                       </Button>
                       <Button
                         size="sm"
@@ -493,20 +493,20 @@ export default function NotificationCenter({
                         className="h-7 px-2 text-xs text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="w-3 h-3 mr-1" />
-                        刪除
+                        Delete
                       </Button>
                     </div>
                   </div>
                 )}
 
-                {/* 快速操作 */}
+                {/* Quick actions */}
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <Checkbox
                       checked={selectedIds.length === filteredNotifications.length && filteredNotifications.length > 0}
                       onCheckedChange={toggleSelectAll}
                     />
-                    <span className="text-gray-600">全選</span>
+                    <span className="text-gray-600">Select All</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -516,7 +516,7 @@ export default function NotificationCenter({
                     className="h-7 px-2 text-xs"
                   >
                     <CheckCheck className="w-3 h-3 mr-1" />
-                    全部標記已讀
+                    Mark All as Read
                   </Button>
                 </div>
               </div>
@@ -524,7 +524,7 @@ export default function NotificationCenter({
           )}
         </AnimatePresence>
 
-        {/* 通知列表 */}
+        {/* Notification list */}
         <div className={cn("overflow-y-auto", maxHeight)}>
           {error && (
             <div className="p-4">
@@ -538,15 +538,15 @@ export default function NotificationCenter({
           {isLoading ? (
             <div className="p-8 text-center">
               <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-              <p className="text-sm text-gray-500">載入中...</p>
+              <p className="text-sm text-gray-500">Loading...</p>
             </div>
           ) : filteredNotifications.length === 0 ? (
             <div className="p-8 text-center">
               <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500">
                 {searchQuery || typeFilter !== 'all' || priorityFilter !== 'all' || readFilter !== 'all'
-                  ? '沒有符合條件的通知'
-                  : '暫無通知'}
+                  ? 'No notifications match the criteria'
+                  : 'No notifications'}
               </p>
             </div>
           ) : (
@@ -576,7 +576,7 @@ export default function NotificationCenter({
                     }}
                   >
                     <div className="flex items-start gap-3">
-                      {/* 選擇框 */}
+                      {/* Checkbox */}
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={(checked) => {
@@ -589,7 +589,7 @@ export default function NotificationCenter({
                         onClick={(e) => e.stopPropagation()}
                       />
 
-                      {/* 通知圖標 */}
+                      {/* Notification icon */}
                       <div className={cn(
                         "p-2 rounded-full",
                         getPriorityColor(notification.priority)
@@ -597,7 +597,7 @@ export default function NotificationCenter({
                         <IconComponent className="w-4 h-4" />
                       </div>
 
-                      {/* 通知內容 */}
+                      {/* Notification content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
                           <h4 className={cn(
@@ -637,14 +637,14 @@ export default function NotificationCenter({
                                 variant={notification.priority === 'urgent' ? 'destructive' : 'secondary'}
                                 className="text-xs"
                               >
-                                {notification.priority === 'urgent' ? '緊急' 
-                                  : notification.priority === 'high' ? '高優先級' 
-                                  : '中優先級'}
+                                {notification.priority === 'urgent' ? 'Urgent' 
+                                  : notification.priority === 'high' ? 'High Priority' 
+                                  : 'Medium Priority'}
                               </Badge>
                             )}
                           </div>
 
-                          {/* 操作按鈕 */}
+                          {/* Action buttons */}
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             {notification.relatedId && (
                               <Button
@@ -653,7 +653,7 @@ export default function NotificationCenter({
                                 className="h-6 w-6 p-0"
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  // 處理跳轉邏輯
+                                  // Handle navigation logic
                                 }}
                               >
                                 <ExternalLink className="w-3 h-3" />

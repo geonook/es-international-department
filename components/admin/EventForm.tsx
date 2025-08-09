@@ -2,10 +2,10 @@
 
 /**
  * Event Form Component
- * 活動表單組件
+ * Event Form Component
  * 
- * @description 活動建立和編輯表單，支援所有活動欄位和驗證
- * @features 表單驗證、日期時間選擇、富文本編輯、圖片上傳
+ * @description Event creation and editing form with support for all event fields and validation
+ * @features Form validation, date and time selection, rich text editing, image upload
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -72,7 +72,7 @@ export default function EventForm({
   defaultStartDate,
   className
 }: EventFormProps) {
-  // 表單狀態
+  // Form state
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
     description: '',
@@ -89,11 +89,11 @@ export default function EventForm({
     status: 'draft'
   })
 
-  // 驗證錯誤
+  // Validation errors
   const [errors, setErrors] = useState<FormValidationErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // 初始化表單資料
+  // Initialize form data
   useEffect(() => {
     if (event && mode === 'edit') {
       setFormData({
@@ -114,16 +114,16 @@ export default function EventForm({
     }
   }, [event, mode])
 
-  // 表單欄位更新
+  // Form field updates
   const updateField = (field: keyof EventFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-    // 清除該欄位的錯誤
+    // Clear error for this field
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }))
     }
   }
 
-  // 處理年級選擇
+  // Handle grade selection
   const handleGradeToggle = (gradeValue: string, checked: boolean) => {
     if (checked) {
       updateField('targetGrades', [...(formData.targetGrades || []), gradeValue])
@@ -132,62 +132,62 @@ export default function EventForm({
     }
   }
 
-  // 表單驗證
+  // Form validation
   const validateForm = (): boolean => {
     const newErrors: FormValidationErrors = {}
 
-    // 必填欄位驗證
+    // Required field validation
     if (!formData.title.trim()) {
-      newErrors.title = '活動標題為必填'
+      newErrors.title = 'Event title is required'
     }
 
     if (!formData.eventType) {
-      newErrors.eventType = '請選擇活動類型'
+      newErrors.eventType = 'Please select event type'
     }
 
     if (!formData.startDate) {
-      newErrors.startDate = '請選擇開始日期'
+      newErrors.startDate = 'Please select start date'
     }
 
     if (!formData.status) {
-      newErrors.status = '請選擇活動狀態'
+      newErrors.status = 'Please select event status'
     }
 
-    // 日期邏輯驗證
+    // Date logic validation
     if (formData.startDate && formData.endDate) {
       const startDate = new Date(formData.startDate)
       const endDate = new Date(formData.endDate)
       if (endDate < startDate) {
-        newErrors.endDate = '結束日期不能早於開始日期'
+        newErrors.endDate = 'End date cannot be earlier than start date'
       }
     }
 
-    // 時間邏輯驗證
+    // Time logic validation
     if (formData.startTime && formData.endTime && formData.startDate === formData.endDate) {
       if (formData.endTime <= formData.startTime) {
-        newErrors.endTime = '結束時間必須晚於開始時間'
+        newErrors.endTime = 'End time must be after start time'
       }
     }
 
-    // 報名截止日期驗證
+    // Registration deadline validation
     if (formData.registrationRequired && formData.registrationDeadline) {
       const regDeadline = new Date(formData.registrationDeadline)
       const eventStart = new Date(formData.startDate)
       if (regDeadline > eventStart) {
-        newErrors.registrationDeadline = '報名截止日期不能晚於活動開始日期'
+        newErrors.registrationDeadline = 'Registration deadline cannot be after event start date'
       }
     }
 
-    // 參與人數驗證
+    // Participant count validation
     if (formData.maxParticipants !== undefined && formData.maxParticipants < 1) {
-      newErrors.maxParticipants = '參與人數上限必須大於0'
+      newErrors.maxParticipants = 'Maximum participants must be greater than 0'
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  // 處理表單提交
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -199,13 +199,13 @@ export default function EventForm({
     try {
       await onSubmit(formData)
     } catch (error) {
-      // 錯誤處理由父組件處理
+      // Error handling is handled by parent component
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  // 重設表單
+  // Reset form
   const resetForm = () => {
     setFormData({
       title: '',
@@ -231,12 +231,12 @@ export default function EventForm({
         <CardHeader>
           <CardTitle className="flex items-center">
             <Calendar className="w-5 h-5 mr-2 text-purple-600" />
-            {mode === 'edit' ? '編輯活動' : '新增活動'}
+            {mode === 'edit' ? 'Edit Event' : 'Add Event'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* 錯誤訊息 */}
+            {/* Error message */}
             {error && (
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
@@ -244,10 +244,10 @@ export default function EventForm({
               </Alert>
             )}
 
-            {/* 基本資訊 */}
+            {/* Basic information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <Label htmlFor="title">活動標題 *</Label>
+                <Label htmlFor="title">Event Title *</Label>
                 <Input
                   id="title"
                   value={formData.title}
@@ -259,10 +259,10 @@ export default function EventForm({
               </div>
 
               <div>
-                <Label htmlFor="eventType">活動類型 *</Label>
+                <Label htmlFor="eventType">Event Type *</Label>
                 <Select value={formData.eventType} onValueChange={(value) => updateField('eventType', value)}>
                   <SelectTrigger className={errors.eventType ? 'border-red-300' : ''}>
-                    <SelectValue placeholder="選擇活動類型" />
+                    <SelectValue placeholder="Select Event Type" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(EVENT_TYPE_LABELS).map(([key, label]) => (
@@ -274,10 +274,10 @@ export default function EventForm({
               </div>
 
               <div>
-                <Label htmlFor="status">活動狀態 *</Label>
+                <Label htmlFor="status">Event Status *</Label>
                 <Select value={formData.status} onValueChange={(value) => updateField('status', value)}>
                   <SelectTrigger className={errors.status ? 'border-red-300' : ''}>
-                    <SelectValue placeholder="選擇活動狀態" />
+                    <SelectValue placeholder="Select Event Status" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(EVENT_STATUS_LABELS).map(([key, label]) => (
@@ -291,7 +291,7 @@ export default function EventForm({
 
             {/* 活動描述 */}
             <div>
-              <Label htmlFor="description">活動描述</Label>
+              <Label htmlFor="description">Event Description</Label>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -306,7 +306,7 @@ export default function EventForm({
             {/* 日期和時間 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="startDate">開始日期 *</Label>
+                <Label htmlFor="startDate">Start Date *</Label>
                 <Input
                   id="startDate"
                   type="date"
@@ -318,7 +318,7 @@ export default function EventForm({
               </div>
 
               <div>
-                <Label htmlFor="endDate">結束日期</Label>
+                <Label htmlFor="endDate">End Date</Label>
                 <Input
                   id="endDate"
                   type="date"
@@ -330,7 +330,7 @@ export default function EventForm({
               </div>
 
               <div>
-                <Label htmlFor="startTime">開始時間</Label>
+                <Label htmlFor="startTime">Start Time</Label>
                 <Input
                   id="startTime"
                   type="time"
@@ -342,7 +342,7 @@ export default function EventForm({
               </div>
 
               <div>
-                <Label htmlFor="endTime">結束時間</Label>
+                <Label htmlFor="endTime">End Time</Label>
                 <Input
                   id="endTime"
                   type="time"
@@ -357,7 +357,7 @@ export default function EventForm({
             {/* 地點和參與者 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="location">活動地點</Label>
+                <Label htmlFor="location">Event Location</Label>
                 <Input
                   id="location"
                   value={formData.location}
@@ -369,7 +369,7 @@ export default function EventForm({
               </div>
 
               <div>
-                <Label htmlFor="maxParticipants">參與人數上限</Label>
+                <Label htmlFor="maxParticipants">Maximum Participants</Label>
                 <Input
                   id="maxParticipants"
                   type="number"
@@ -391,12 +391,12 @@ export default function EventForm({
                   checked={formData.registrationRequired}
                   onCheckedChange={(checked) => updateField('registrationRequired', checked)}
                 />
-                <Label htmlFor="registrationRequired">需要報名</Label>
+                <Label htmlFor="registrationRequired">Registration Required</Label>
               </div>
 
               {formData.registrationRequired && (
                 <div>
-                  <Label htmlFor="registrationDeadline">報名截止日期</Label>
+                  <Label htmlFor="registrationDeadline">Registration Deadline</Label>
                   <Input
                     id="registrationDeadline"
                     type="date"
@@ -411,7 +411,7 @@ export default function EventForm({
 
             {/* 目標年級 */}
             <div>
-              <Label>目標年級</Label>
+              <Label>Target Grades</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-2">
                 {GRADE_OPTIONS.map((grade) => (
                   <div key={grade.value} className="flex items-center space-x-2">

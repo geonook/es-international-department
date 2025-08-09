@@ -212,13 +212,13 @@ export default function NotificationSystemMonitor() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Notification System Monitor</h2>
-          <p className="text-gray-600">即時監控通知系統狀態和性能</p>
+          <p className="text-gray-600">Real-time monitoring of notification system status and performance</p>
         </div>
         
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Clock className="w-4 h-4" />
-            {lastUpdate ? `最後更新: ${lastUpdate.toLocaleTimeString()}` : '尚未更新'}
+            {lastUpdate ? `Last Update: ${lastUpdate.toLocaleTimeString()}` : 'Not updated yet'}
           </div>
           
           <Button
@@ -228,7 +228,7 @@ export default function NotificationSystemMonitor() {
             disabled={isLoading}
           >
             <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
-            刷新
+            Refresh
           </Button>
           
           <Button
@@ -237,12 +237,12 @@ export default function NotificationSystemMonitor() {
             onClick={() => setAutoRefresh(!autoRefresh)}
           >
             <Activity className="w-4 h-4 mr-2" />
-            {autoRefresh ? '自動刷新中' : '開始自動刷新'}
+            {autoRefresh ? 'Auto Refresh On' : 'Start Auto Refresh'}
           </Button>
         </div>
       </div>
 
-      {/* 錯誤提示 */}
+      {/* Error notification */}
       {error && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
@@ -250,7 +250,7 @@ export default function NotificationSystemMonitor() {
         </Alert>
       )}
 
-      {/* 系統健康狀況 */}
+      {/* System health status */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -258,38 +258,38 @@ export default function NotificationSystemMonitor() {
             {systemHealth === 'warning' && <AlertTriangle className="w-5 h-5 text-yellow-500" />}
             {systemHealth === 'critical' && <XCircle className="w-5 h-5 text-red-500" />}
             {systemHealth === 'unknown' && <Activity className="w-5 h-5 text-gray-500" />}
-            系統健康狀況
+            System Health Status
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold">
-                {systemHealth === 'healthy' && <span className="text-green-600">良好</span>}
-                {systemHealth === 'warning' && <span className="text-yellow-600">警告</span>}
-                {systemHealth === 'critical' && <span className="text-red-600">嚴重</span>}
-                {systemHealth === 'unknown' && <span className="text-gray-600">未知</span>}
+                {systemHealth === 'healthy' && <span className="text-green-600">Healthy</span>}
+                {systemHealth === 'warning' && <span className="text-yellow-600">Warning</span>}
+                {systemHealth === 'critical' && <span className="text-red-600">Critical</span>}
+                {systemHealth === 'unknown' && <span className="text-gray-600">Unknown</span>}
               </div>
-              <div className="text-sm text-gray-600">整體狀況</div>
+              <div className="text-sm text-gray-600">Overall Status</div>
             </div>
             
             {performance && (
               <>
                 <div className="text-center">
                   <div className="text-2xl font-bold">{performance.responseTime}ms</div>
-                  <div className="text-sm text-gray-600">響應時間</div>
+                  <div className="text-sm text-gray-600">Response Time</div>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-2xl font-bold">{formatUptime(performance.uptime)}</div>
-                  <div className="text-sm text-gray-600">運行時間</div>
+                  <div className="text-sm text-gray-600">Uptime</div>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-2xl font-bold">
                     {(performance.errorRate * 100).toFixed(1)}%
                   </div>
-                  <div className="text-sm text-gray-600">錯誤率</div>
+                  <div className="text-sm text-gray-600">Error Rate</div>
                 </div>
               </>
             )}
@@ -297,16 +297,16 @@ export default function NotificationSystemMonitor() {
         </CardContent>
       </Card>
 
-      {/* 詳細監控 */}
+      {/* Detailed monitoring */}
       <Tabs defaultValue="connections" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="connections">連接狀況</TabsTrigger>
-          <TabsTrigger value="notifications">通知統計</TabsTrigger>
-          <TabsTrigger value="performance">性能指標</TabsTrigger>
-          <TabsTrigger value="system">系統資訊</TabsTrigger>
+          <TabsTrigger value="connections">Connection Status</TabsTrigger>
+          <TabsTrigger value="notifications">Notification Statistics</TabsTrigger>
+          <TabsTrigger value="performance">Performance Metrics</TabsTrigger>
+          <TabsTrigger value="system">System Information</TabsTrigger>
         </TabsList>
 
-        {/* 連接狀況 */}
+        {/* Connection status */}
         <TabsContent value="connections" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
@@ -314,7 +314,7 @@ export default function NotificationSystemMonitor() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold">{stats?.connections.active || 0}</p>
-                    <p className="text-sm text-gray-600">活躍連接</p>
+                    <p className="text-sm text-gray-600">Active Connections</p>
                   </div>
                   <Wifi className="w-8 h-8 text-green-500" />
                 </div>
@@ -326,7 +326,7 @@ export default function NotificationSystemMonitor() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold">{stats?.connections.total || 0}</p>
-                    <p className="text-sm text-gray-600">總連接數</p>
+                    <p className="text-sm text-gray-600">Total Connections</p>
                   </div>
                   <Server className="w-8 h-8 text-blue-500" />
                 </div>
@@ -338,7 +338,7 @@ export default function NotificationSystemMonitor() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold">{stats?.connections.userConnections || 0}</p>
-                    <p className="text-sm text-gray-600">用戶連接</p>
+                    <p className="text-sm text-gray-600">User Connections</p>
                   </div>
                   <Users className="w-8 h-8 text-purple-500" />
                 </div>
@@ -350,7 +350,7 @@ export default function NotificationSystemMonitor() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold">{stats?.connections.errors || 0}</p>
-                    <p className="text-sm text-gray-600">連接錯誤</p>
+                    <p className="text-sm text-gray-600">Connection Errors</p>
                   </div>
                   <WifiOff className="w-8 h-8 text-red-500" />
                 </div>
@@ -358,11 +358,11 @@ export default function NotificationSystemMonitor() {
             </Card>
           </div>
 
-          {/* 連接詳情 */}
+          {/* Connection details */}
           {stats?.connections.details && stats.connections.details.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>活躍連接詳情</CardTitle>
+                <CardTitle>Active Connection Details</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -371,7 +371,7 @@ export default function NotificationSystemMonitor() {
                       <div>
                         <div className="font-medium">{conn.userId}</div>
                         <div className="text-sm text-gray-600">
-                          {conn.ipAddress} • 運行時間: {formatDuration(conn.uptime)}
+                          {conn.ipAddress} • Uptime: {formatDuration(conn.uptime)}
                         </div>
                       </div>
                       <Badge variant="outline">
@@ -385,7 +385,7 @@ export default function NotificationSystemMonitor() {
           )}
         </TabsContent>
 
-        {/* 通知統計 */}
+        {/* Notification statistics */}
         <TabsContent value="notifications" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
@@ -393,7 +393,7 @@ export default function NotificationSystemMonitor() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold">{stats?.system.totalNotifications || 0}</p>
-                    <p className="text-sm text-gray-600">總通知數</p>
+                    <p className="text-sm text-gray-600">Total Notifications</p>
                   </div>
                   <Bell className="w-8 h-8 text-blue-500" />
                 </div>
@@ -405,7 +405,7 @@ export default function NotificationSystemMonitor() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold">{stats?.system.unreadNotifications || 0}</p>
-                    <p className="text-sm text-gray-600">未讀通知</p>
+                    <p className="text-sm text-gray-600">Unread Notifications</p>
                   </div>
                   <AlertTriangle className="w-8 h-8 text-red-500" />
                 </div>
@@ -417,7 +417,7 @@ export default function NotificationSystemMonitor() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold">{stats?.system.totalUsers || 0}</p>
-                    <p className="text-sm text-gray-600">總用戶數</p>
+                    <p className="text-sm text-gray-600">Total Users</p>
                   </div>
                   <Users className="w-8 h-8 text-green-500" />
                 </div>
@@ -431,7 +431,7 @@ export default function NotificationSystemMonitor() {
                     <p className="text-2xl font-bold">
                       {stats?.system.averageNotificationsPerUser.toFixed(1) || 0}
                     </p>
-                    <p className="text-sm text-gray-600">平均通知數</p>
+                    <p className="text-sm text-gray-600">Average Notifications</p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-purple-500" />
                 </div>
@@ -439,11 +439,11 @@ export default function NotificationSystemMonitor() {
             </Card>
           </div>
 
-          {/* 通知類型分布 */}
+          {/* Notification type distribution */}
           {stats?.user.byType && Object.keys(stats.user.byType).length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>通知類型分布</CardTitle>
+                <CardTitle>Notification Type Distribution</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -465,7 +465,7 @@ export default function NotificationSystemMonitor() {
           )}
         </TabsContent>
 
-        {/* 性能指標 */}
+        {/* Performance metrics */}
         <TabsContent value="performance" className="space-y-4">
           {performance && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -474,7 +474,7 @@ export default function NotificationSystemMonitor() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-2xl font-bold">{performance.responseTime}ms</p>
-                      <p className="text-sm text-gray-600">平均響應時間</p>
+                      <p className="text-sm text-gray-600">Average Response Time</p>
                     </div>
                     <Zap className="w-8 h-8 text-yellow-500" />
                   </div>
@@ -490,7 +490,7 @@ export default function NotificationSystemMonitor() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-2xl font-bold">{formatUptime(performance.uptime)}</p>
-                      <p className="text-sm text-gray-600">系統運行時間</p>
+                      <p className="text-sm text-gray-600">System Uptime</p>
                     </div>
                     <Clock className="w-8 h-8 text-green-500" />
                   </div>
@@ -504,7 +504,7 @@ export default function NotificationSystemMonitor() {
                       <p className="text-2xl font-bold">
                         {(performance.errorRate * 100).toFixed(2)}%
                       </p>
-                      <p className="text-sm text-gray-600">錯誤率</p>
+                      <p className="text-sm text-gray-600">Error Rate</p>
                     </div>
                     <TrendingDown className="w-8 h-8 text-red-500" />
                   </div>
@@ -518,46 +518,46 @@ export default function NotificationSystemMonitor() {
           )}
         </TabsContent>
 
-        {/* 系統資訊 */}
+        {/* System information */}
         <TabsContent value="system" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>系統配置</CardTitle>
+              <CardTitle>System Configuration</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium mb-3">連接限制</h4>
+                  <h4 className="font-medium mb-3">Connection Limits</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>每用戶最大連接數:</span>
+                      <span>Max connections per user:</span>
                       <span>3</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>最大總連接數:</span>
+                      <span>Max total connections:</span>
                       <span>1000</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>每分鐘最大連接數:</span>
+                      <span>Max connections per minute:</span>
                       <span>10</span>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-3">通知設置</h4>
+                  <h4 className="font-medium mb-3">Notification Settings</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>心跳間隔:</span>
-                      <span>30秒</span>
+                      <span>Heartbeat interval:</span>
+                      <span>30 seconds</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>連接超時:</span>
-                      <span>5分鐘</span>
+                      <span>Connection timeout:</span>
+                      <span>5 minutes</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>自動刷新間隔:</span>
-                      <span>{refreshInterval / 1000}秒</span>
+                      <span>Auto refresh interval:</span>
+                      <span>{refreshInterval / 1000} seconds</span>
                     </div>
                   </div>
                 </div>

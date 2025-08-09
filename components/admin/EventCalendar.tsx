@@ -2,10 +2,10 @@
 
 /**
  * Event Calendar Component
- * 活動日曆組件
+ * Event Calendar Component
  * 
- * @description 基於 FullCalendar 的活動管理日曆組件
- * @features 多檢視模式、拖拽編輯、快速建立、事件顏色編碼、衝突檢測
+ * @description FullCalendar-based event management calendar component
+ * @features Multiple view modes, drag-and-drop editing, quick creation, event color coding, conflict detection
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -93,7 +93,7 @@ import {
   EVENT_STATUS_COLORS
 } from '@/lib/types'
 
-// 默認日曆配置
+// Default calendar configuration
 const DEFAULT_CALENDAR_CONFIG: CalendarConfig = {
   initialView: 'dayGridMonth',
   headerToolbar: {
@@ -142,7 +142,7 @@ export default function EventCalendar({
   selectedEvent = null,
   className
 }: EventCalendarProps) {
-  // 組件狀態
+  // Component state
   const [currentView, setCurrentView] = useState<CalendarView>(view)
   const [currentFilters, setCurrentFilters] = useState<CalendarFilters>(filters || {})
   const [showEventForm, setShowEventForm] = useState(false)
@@ -151,23 +151,23 @@ export default function EventCalendar({
   const [formError, setFormError] = useState<string>('')
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [showFilters, setShowFilters] = useState(false)
-  const [calendarKey, setCalendarKey] = useState(0) // 用於強制重新渲染
+  const [calendarKey, setCalendarKey] = useState(0) // Used to force re-rendering
 
   // Calendar ref
   const calendarRef = useRef<FullCalendar>(null)
 
-  // 合併配置
+  // Merge configurations
   const calendarConfig = useMemo(() => ({
     ...DEFAULT_CALENDAR_CONFIG,
     ...config
   }), [config])
 
-  // 轉換事件為 FullCalendar 格式
+  // Convert events to FullCalendar format
   const calendarEvents = useMemo((): CalendarEvent[] => {
     return convertEventsToCalendarEvents(events)
   }, [events])
 
-  // 篩選事件
+  // Filter events
   const filteredEvents = useMemo(() => {
     if (!currentFilters) return calendarEvents
 
@@ -175,17 +175,17 @@ export default function EventCalendar({
       const event = calEvent.extendedProps?.event
       if (!event) return true
 
-      // 活動類型篩選
+      // Activity type filtering
       if (currentFilters.eventTypes && currentFilters.eventTypes.length > 0) {
         if (!currentFilters.eventTypes.includes(event.eventType)) return false
       }
 
-      // 狀態篩選
+      // Status filtering
       if (currentFilters.statuses && currentFilters.statuses.length > 0) {
         if (!currentFilters.statuses.includes(event.status)) return false
       }
 
-      // 搜索篩選
+      // Search filtering
       if (currentFilters.search) {
         const searchTerm = currentFilters.search.toLowerCase()
         const titleMatch = event.title.toLowerCase().includes(searchTerm)
@@ -199,7 +199,7 @@ export default function EventCalendar({
     })
   }, [calendarEvents, currentFilters])
 
-  // 處理事件點擊
+  // Handle event click
   const handleEventClick = useCallback((info: any) => {
     const event = info.event.extendedProps?.event
     if (event) {
@@ -209,7 +209,7 @@ export default function EventCalendar({
     actions.onEventClick?.(info)
   }, [actions])
 
-  // 處理事件拖拽
+  // Handle event drag
   const handleEventDrop = useCallback(async (info: any) => {
     const event = info.event.extendedProps?.event
     if (!event || !onEventUpdate) {
@@ -235,7 +235,7 @@ export default function EventCalendar({
     actions.onEventDrop?.(info)
   }, [onEventUpdate, actions])
 
-  // 處理事件調整大小
+  // Handle event resize
   const handleEventResize = useCallback(async (info: any) => {
     const event = info.event.extendedProps?.event
     if (!event || !onEventUpdate) {
@@ -258,7 +258,7 @@ export default function EventCalendar({
     actions.onEventResize?.(info)
   }, [onEventUpdate, actions])
 
-  // 處理日期選擇
+  // Handle date selection
   const handleDateSelect = useCallback((info: any) => {
     setSelectedDate(info.start)
     setEditingEvent(null)
@@ -266,10 +266,10 @@ export default function EventCalendar({
     actions.onSelect?.(info)
   }, [actions])
 
-  // 處理日期點擊
+  // Handle date click
   const handleDateClick = useCallback((info: any) => {
     if (currentView === 'dayGridMonth') {
-      // 在月檢視中點擊日期切換到日檢視
+      // In month view, clicking date switches to day view
       const calendarApi = calendarRef.current?.getApi()
       if (calendarApi) {
         calendarApi.changeView('timeGridDay', info.date)
@@ -280,7 +280,7 @@ export default function EventCalendar({
     actions.onDateClick?.(info)
   }, [currentView, onViewChange, actions])
 
-  // 處理檢視變更
+  // Handle view change
   const handleViewChange = useCallback((newView: CalendarView) => {
     const calendarApi = calendarRef.current?.getApi()
     if (calendarApi) {
@@ -290,7 +290,7 @@ export default function EventCalendar({
     }
   }, [onViewChange])
 
-  // 處理今天按鈕
+  // Handle today button
   const handleTodayClick = useCallback(() => {
     const calendarApi = calendarRef.current?.getApi()
     if (calendarApi) {
@@ -298,7 +298,7 @@ export default function EventCalendar({
     }
   }, [])
 
-  // 處理導航
+  // Handle navigation
   const handlePrevClick = useCallback(() => {
     const calendarApi = calendarRef.current?.getApi()
     if (calendarApi) {
@@ -313,21 +313,21 @@ export default function EventCalendar({
     }
   }, [])
 
-  // 處理表單提交
+  // Handle form submission
   const handleFormSubmit = useCallback(async (data: EventFormData) => {
     setFormLoading(true)
     setFormError('')
 
     try {
       if (selectedDate && !editingEvent) {
-        // 創建新事件，使用選擇的日期
+        // Create new event using selected date
         const eventData = {
           ...data,
           startDate: format(selectedDate, 'yyyy-MM-dd')
         }
         await onEventCreate?.(eventData)
       } else if (editingEvent) {
-        // 更新現有事件
+        // Update existing event
         await onEventUpdate?.(editingEvent.id, data)
       }
       
@@ -336,13 +336,13 @@ export default function EventCalendar({
       setSelectedDate(null)
     } catch (error) {
       console.error('Form submit error:', error)
-      setFormError(error instanceof Error ? error.message : '操作失敗')
+      setFormError(error instanceof Error ? error.message : 'Operation failed')
     } finally {
       setFormLoading(false)
     }
   }, [selectedDate, editingEvent, onEventCreate, onEventUpdate])
 
-  // 處理表單取消
+  // Handle form cancellation
   const handleFormCancel = useCallback(() => {
     setShowEventForm(false)
     setEditingEvent(null)
@@ -350,13 +350,13 @@ export default function EventCalendar({
     setFormError('')
   }, [])
 
-  // 處理篩選變更
+  // Handle filter changes
   const handleFiltersChange = useCallback((newFilters: CalendarFilters) => {
     setCurrentFilters(newFilters)
     onFiltersChange?.(newFilters)
   }, [onFiltersChange])
 
-  // 強制重新渲染日曆
+  // Force calendar re-render
   const refreshCalendar = useCallback(() => {
     setCalendarKey(prev => prev + 1)
   }, [])
@@ -364,18 +364,18 @@ export default function EventCalendar({
   return (
     <TooltipProvider>
       <div className={cn("space-y-6", className)}>
-        {/* 事件表單模態 */}
+        {/* Event form modal */}
         <Dialog open={showEventForm} onOpenChange={setShowEventForm}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingEvent ? '編輯活動' : '建立新活動'}
+                {editingEvent ? 'Edit Event' : 'Create New Event'}
               </DialogTitle>
               <DialogDescription>
-                {editingEvent ? '修改活動資訊' : '建立新的活動'}
+                {editingEvent ? 'Modify event information' : 'Create a new event'}
                 {selectedDate && !editingEvent && (
                   <span className="text-blue-600 ml-2">
-                    - {format(selectedDate, 'yyyy年MM月dd日', { locale: zhTW })}
+                    - {format(selectedDate, 'MMM dd, yyyy')}
                   </span>
                 )}
               </DialogDescription>
@@ -392,13 +392,13 @@ export default function EventCalendar({
           </DialogContent>
         </Dialog>
 
-        {/* 日曆控制工具列 */}
+        {/* Calendar control toolbar */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center">
                 <CalendarIcon className="w-5 h-5 mr-2 text-blue-600" />
-                活動日曆
+                Event Calendar
               </CardTitle>
               <div className="flex items-center gap-2">
                 <Tooltip>
@@ -411,7 +411,7 @@ export default function EventCalendar({
                       <Filter className="w-4 h-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>篩選器</TooltipContent>
+                  <TooltipContent>Filter</TooltipContent>
                 </Tooltip>
                 
                 <Tooltip>
@@ -428,13 +428,13 @@ export default function EventCalendar({
                       )} />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>重新載入</TooltipContent>
+                  <TooltipContent>Reload</TooltipContent>
                 </Tooltip>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            {/* 檢視切換和導航 */}
+            {/* View switching and navigation */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Button
@@ -449,7 +449,7 @@ export default function EventCalendar({
                   size="sm"
                   onClick={handleTodayClick}
                 >
-                  今天
+                  Today
                 </Button>
                 <Button
                   variant="outline"
@@ -466,16 +466,16 @@ export default function EventCalendar({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="dayGridMonth">月檢視</SelectItem>
-                    <SelectItem value="timeGridWeek">週檢視</SelectItem>
-                    <SelectItem value="timeGridDay">日檢視</SelectItem>
-                    <SelectItem value="listWeek">列表檢視</SelectItem>
+                    <SelectItem value="dayGridMonth">Month View</SelectItem>
+                    <SelectItem value="timeGridWeek">Week View</SelectItem>
+                    <SelectItem value="timeGridDay">Day View</SelectItem>
+                    <SelectItem value="listWeek">List View</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            {/* 篩選器 */}
+            {/* Filters */}
             <AnimatePresence>
               {showFilters && (
                 <motion.div
@@ -486,7 +486,7 @@ export default function EventCalendar({
                 >
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="text-sm font-medium mb-2 block">活動類型</label>
+                      <label className="text-sm font-medium mb-2 block">Event Type</label>
                       <Select
                         value={currentFilters.eventType || 'all'}
                         onValueChange={(value) => handleFiltersChange({
@@ -495,10 +495,10 @@ export default function EventCalendar({
                         })}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="選擇類型" />
+                          <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">所有類型</SelectItem>
+                          <SelectItem value="all">All Types</SelectItem>
                           {Object.entries(EVENT_TYPE_LABELS).map(([key, label]) => (
                             <SelectItem key={key} value={key}>{label}</SelectItem>
                           ))}
@@ -507,7 +507,7 @@ export default function EventCalendar({
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-2 block">活動狀態</label>
+                      <label className="text-sm font-medium mb-2 block">Event Status</label>
                       <Select
                         value={currentFilters.status || 'all'}
                         onValueChange={(value) => handleFiltersChange({
@@ -516,10 +516,10 @@ export default function EventCalendar({
                         })}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="選擇狀態" />
+                          <SelectValue placeholder="Select Status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">所有狀態</SelectItem>
+                          <SelectItem value="all">All Status</SelectItem>
                           {Object.entries(EVENT_STATUS_LABELS).map(([key, label]) => (
                             <SelectItem key={key} value={key}>{label}</SelectItem>
                           ))}
@@ -528,7 +528,7 @@ export default function EventCalendar({
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-2 block">週末顯示</label>
+                      <label className="text-sm font-medium mb-2 block">Weekend Display</label>
                       <Select
                         value={currentFilters.showWeekends ? 'true' : 'false'}
                         onValueChange={(value) => handleFiltersChange({
@@ -540,8 +540,8 @@ export default function EventCalendar({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="true">顯示週末</SelectItem>
-                          <SelectItem value="false">隱藏週末</SelectItem>
+                          <SelectItem value="true">Show Weekends</SelectItem>
+                          <SelectItem value="false">Hide Weekends</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -552,12 +552,12 @@ export default function EventCalendar({
           </CardContent>
         </Card>
 
-        {/* 圖例 */}
+        {/* Legend */}
         <Card>
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">活動類型:</span>
+                <span className="text-sm font-medium">Event Types:</span>
                 {Object.entries(EVENT_TYPE_LABELS).map(([type, label]) => {
                   const color = DEFAULT_CALENDAR_THEME.eventColors[type as EventType]
                   return (
@@ -575,7 +575,7 @@ export default function EventCalendar({
           </CardContent>
         </Card>
 
-        {/* 錯誤訊息 */}
+        {/* Error message */}
         {error && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
@@ -583,11 +583,11 @@ export default function EventCalendar({
           </Alert>
         )}
 
-        {/* 載入狀態 */}
+        {/* Loading state */}
         {loading && (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 animate-spin mr-2" />
-            <span>載入活動中...</span>
+            <span>Loading events...</span>
           </div>
         )}
 
@@ -606,7 +606,7 @@ export default function EventCalendar({
                   multiMonthPlugin
                 ]}
                 initialView={calendarConfig.initialView}
-                headerToolbar={false} // 我們使用自定義工具列
+                headerToolbar={false} // We use custom toolbar
                 height={calendarConfig.height}
                 locale={calendarConfig.locale}
                 firstDay={calendarConfig.firstDay}
