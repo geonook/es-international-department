@@ -1,6 +1,6 @@
 /**
  * Authentication Login API
- * 使用者登入認證 API 端點
+ * User Login Authentication API Endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -14,19 +14,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, password } = body
 
-    // 驗證必要欄位
+    // Validate required fields
     if (!email || !password) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Email and password are required',
-          message: '電子郵件和密碼為必填欄位' 
+          message: 'Email and password are required fields' 
         },
         { status: 400 }
       )
     }
 
-    // 從資料庫查找使用者
+    // Find user from database
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       include: {
@@ -43,41 +43,41 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: AUTH_ERRORS.INVALID_CREDENTIALS,
-          message: '無效的登入資訊' 
+          message: 'Invalid login credentials' 
         },
         { status: 401 }
       )
     }
 
-    // 驗證密碼
+    // Verify password
     const isValidPassword = await verifyPassword(password, user.passwordHash || '')
     if (!isValidPassword) {
       return NextResponse.json(
         { 
           success: false, 
           error: AUTH_ERRORS.INVALID_CREDENTIALS,
-          message: '無效的登入資訊' 
+          message: 'Invalid login credentials' 
         },
         { status: 401 }
       )
     }
 
-    // 檢查帳戶狀態
+    // Check account status
     if (!user.isActive) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Account is deactivated',
-          message: '帳戶已停用，請聯繫管理員' 
+          message: 'Account has been deactivated, please contact administrator' 
         },
         { status: 403 }
       )
     }
 
-    // 準備使用者角色資料
+    // Prepare user role data
     const userRoles = user.userRoles.map(userRole => userRole.role.name)
 
-    // 建立 JWT Token
+    // Create JWT Token
     const token = await generateJWT({
       id: user.id,
       email: user.email,
@@ -87,19 +87,19 @@ export async function POST(request: NextRequest) {
       roles: userRoles
     })
 
-    // 設定認證 Cookie
+    // Set authentication cookie
     setAuthCookie(token)
 
-    // 更新最後登入時間
+    // Update last login time
     await prisma.user.update({
       where: { id: user.id },
       data: { lastLoginAt: new Date() }
     })
 
-    // 回傳成功回應（不包含敏感資訊）
+    // Return success response (excluding sensitive information)
     return NextResponse.json({
       success: true,
-      message: '登入成功',
+      message: 'Login successful',
       user: {
         id: user.id,
         email: user.email,
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       { 
         success: false, 
         error: 'Internal server error',
-        message: '伺服器內部錯誤，請稍後再試' 
+        message: 'Internal server error, please try again later' 
       },
       { status: 500 }
     )
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 只允許 POST 方法
+// Only allow POST method
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed' },

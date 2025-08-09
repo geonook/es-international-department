@@ -1,6 +1,6 @@
 /**
  * Current User Information API
- * 當前使用者資訊 API 端點
+ * Current User Information API Endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -11,7 +11,7 @@ const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
-    // 獲取當前認證使用者
+    // Get current authenticated user
     const currentUser = await getCurrentUser()
     
     if (!currentUser) {
@@ -19,13 +19,13 @@ export async function GET(request: NextRequest) {
         { 
           success: false, 
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '請先登入' 
+          message: 'Please log in first' 
         },
         { status: 401 }
       )
     }
 
-    // 從資料庫獲取完整使用者資訊
+    // Get complete user information from database
     const user = await prisma.user.findUnique({
       where: { id: currentUser.id },
       include: {
@@ -42,28 +42,28 @@ export async function GET(request: NextRequest) {
         { 
           success: false, 
           error: 'User not found',
-          message: '使用者不存在' 
+          message: 'User does not exist' 
         },
         { status: 404 }
       )
     }
 
-    // 檢查帳戶狀態
+    // Check account status
     if (!user.isActive) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Account is deactivated',
-          message: '帳戶已停用' 
+          message: 'Account has been deactivated' 
         },
         { status: 403 }
       )
     }
 
-    // 準備使用者角色資料
+    // Prepare user role data
     const userRoles = user.userRoles.map(userRole => userRole.role.name)
 
-    // 回傳使用者資訊（不包含敏感資訊）
+    // Return user information (excluding sensitive information)
     return NextResponse.json({
       success: true,
       user: {
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
       { 
         success: false, 
         error: 'Internal server error',
-        message: '伺服器內部錯誤' 
+        message: 'Internal server error' 
       },
       { status: 500 }
     )
@@ -98,10 +98,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// 更新使用者資訊
+// Update user information
 export async function PUT(request: NextRequest) {
   try {
-    // 獲取當前認證使用者
+    // Get current authenticated user
     const currentUser = await getCurrentUser()
     
     if (!currentUser) {
@@ -109,7 +109,7 @@ export async function PUT(request: NextRequest) {
         { 
           success: false, 
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '請先登入' 
+          message: 'Please log in first' 
         },
         { status: 401 }
       )
@@ -123,7 +123,7 @@ export async function PUT(request: NextRequest) {
       phone
     } = body
 
-    // 更新使用者資訊
+    // Update user information
     const updatedUser = await prisma.user.update({
       where: { id: currentUser.id },
       data: {
@@ -142,12 +142,12 @@ export async function PUT(request: NextRequest) {
       }
     })
 
-    // 準備使用者角色資料
+    // Prepare user role data
     const userRoles = updatedUser.userRoles.map(userRole => userRole.role.name)
 
     return NextResponse.json({
       success: true,
-      message: '個人資訊更新成功',
+      message: 'Personal information updated successfully',
       user: {
         id: updatedUser.id,
         email: updatedUser.email,
@@ -171,7 +171,7 @@ export async function PUT(request: NextRequest) {
       { 
         success: false, 
         error: 'Internal server error',
-        message: '更新失敗，請稍後再試' 
+        message: 'Update failed, please try again later' 
       },
       { status: 500 }
     )
@@ -180,7 +180,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// 不允許的方法
+// Disallowed methods
 export async function POST() {
   return NextResponse.json(
     { error: 'Method not allowed' },

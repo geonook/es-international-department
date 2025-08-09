@@ -701,7 +701,7 @@ export default function AdminDashboard() {
                   exit="hidden"
                   className="space-y-6"
                 >
-                  {/* 公告表單模態 */}
+                  {/* Announcement Form Modal */}
                   {showAnnouncementForm && (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -729,8 +729,8 @@ export default function AdminDashboard() {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">公告管理</h2>
-                      <p className="text-gray-600 mt-1">管理所有公告與通知</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Announcement Management</h2>
+                      <p className="text-gray-600 mt-1">Manage all announcements and notifications</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -743,26 +743,26 @@ export default function AdminDashboard() {
                           "w-4 h-4",
                           announcementsLoading && "animate-spin"
                         )} />
-                        重新載入
+                        Reload
                       </Button>
                       <Button 
                         onClick={handleCreateAnnouncement}
                         className="bg-gradient-to-r from-blue-600 to-purple-600"
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        新增公告
+                        New Announcement
                       </Button>
                     </div>
                   </div>
 
-                  {/* 公告統計卡片 */}
+                  {/* Announcement Statistics Cards */}
                   {announcementStats && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-blue-600 text-sm font-medium">總公告數</p>
+                              <p className="text-blue-600 text-sm font-medium">Total Announcements</p>
                               <p className="text-xl font-bold text-blue-800">{announcementStats.total}</p>
                             </div>
                             <MessageSquare className="w-6 h-6 text-blue-600" />
@@ -774,7 +774,7 @@ export default function AdminDashboard() {
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-green-600 text-sm font-medium">已發佈</p>
+                              <p className="text-green-600 text-sm font-medium">Published</p>
                               <p className="text-xl font-bold text-green-800">{announcementStats.published}</p>
                             </div>
                             <Send className="w-6 h-6 text-green-600" />
@@ -808,7 +808,7 @@ export default function AdminDashboard() {
                     </div>
                   )}
 
-                  {/* 公告列表 */}
+                  {/* Announcement List */}
                   <AnnouncementList
                     announcements={announcements}
                     loading={announcementsLoading}
@@ -835,26 +835,26 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">活動管理</h2>
-                      <p className="text-gray-600 mt-1">管理所有學校活動與事件</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Event Management</h2>
+                      <p className="text-gray-600 mt-1">Manage all school activities and events</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Link href="/admin/events">
                         <Button className="bg-gradient-to-r from-purple-600 to-purple-700">
                           <Calendar className="w-4 h-4 mr-2" />
-                          進入活動管理
+                          Enter Event Management
                         </Button>
                       </Link>
                     </div>
                   </div>
 
-                  {/* 活動概覽統計 */}
+                  {/* Event Overview Statistics */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200">
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-indigo-600 text-sm font-medium">總活動數</p>
+                            <p className="text-indigo-600 text-sm font-medium">Total Events</p>
                             <p className="text-2xl font-bold text-indigo-800">28</p>
                           </div>
                           <Calendar className="w-8 h-8 text-indigo-600" />
@@ -866,7 +866,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-emerald-600 text-sm font-medium">已發佈</p>
+                            <p className="text-emerald-600 text-sm font-medium">Published</p>
                             <p className="text-2xl font-bold text-emerald-800">23</p>
                           </div>
                           <CheckCircle className="w-8 h-8 text-emerald-600" />
@@ -878,7 +878,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-amber-600 text-sm font-medium">進行中</p>
+                            <p className="text-amber-600 text-sm font-medium">In Progress</p>
                             <p className="text-2xl font-bold text-amber-800">3</p>
                           </div>
                           <Play className="w-8 h-8 text-amber-600" />
@@ -890,7 +890,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-violet-600 text-sm font-medium">總報名數</p>
+                            <p className="text-violet-600 text-sm font-medium">Total Registrations</p>
                             <p className="text-2xl font-bold text-violet-800">156</p>
                           </div>
                           <Users className="w-8 h-8 text-violet-600" />
@@ -899,7 +899,7 @@ export default function AdminDashboard() {
                     </Card>
                   </div>
 
-                  {/* 最近活動 */}
+                  {/* Recent Events */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center">
@@ -912,83 +912,83 @@ export default function AdminDashboard() {
                         <div className="flex items-start justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-blue-800">校長有約 - 1-2 年級</h4>
-                              <Badge variant="outline" className="text-xs">會議</Badge>
+                              <h4 className="font-medium text-blue-800">Coffee with Principal - Grades 1-2</h4>
+                              <Badge variant="outline" className="text-xs">Meeting</Badge>
                             </div>
-                            <p className="text-sm text-blue-600 mb-2">與家長面對面交流，探討學生學習進度</p>
+                            <p className="text-sm text-blue-600 mb-2">Face-to-face communication with parents to discuss student learning progress</p>
                             <div className="flex items-center text-xs text-blue-500 gap-4">
                               <span>📅 2025-02-15</span>
                               <span>🕰️ 14:00-15:30</span>
-                              <span>📍 會議室 A</span>
-                              <span>👥 12/20 人報名</span>
+                              <span>📍 Conference Room A</span>
+                              <span>👥 12/20 registered</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge className="bg-green-100 text-green-700">已發佈</Badge>
+                            <Badge className="bg-green-100 text-green-700">Published</Badge>
                           </div>
                         </div>
 
                         <div className="flex items-start justify-between p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-purple-800">國際文化日</h4>
-                              <Badge variant="outline" className="text-xs">文化活動</Badge>
+                              <h4 className="font-medium text-purple-800">International Culture Day</h4>
+                              <Badge variant="outline" className="text-xs">Cultural Event</Badge>
                             </div>
-                            <p className="text-sm text-purple-600 mb-2">庆祝多元文化，了解不同國家的特色與傳統</p>
+                            <p className="text-sm text-purple-600 mb-2">Celebrate multiculturalism and learn about the characteristics and traditions of different countries</p>
                             <div className="flex items-center text-xs text-purple-500 gap-4">
                               <span>📅 2025-02-28</span>
                               <span>🕰️ 09:00-15:00</span>
-                              <span>📍 校園大堂</span>
-                              <span>👥 全校參加</span>
+                              <span>📍 School Main Hall</span>
+                              <span>👥 Whole school participation</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge className="bg-blue-100 text-blue-700">策劃中</Badge>
+                            <Badge className="bg-blue-100 text-blue-700">Planning</Badge>
                           </div>
                         </div>
 
                         <div className="flex items-start justify-between p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-green-800">春季運動會</h4>
-                              <Badge variant="outline" className="text-xs">體育活動</Badge>
+                              <h4 className="font-medium text-green-800">Spring Sports Day</h4>
+                              <Badge variant="outline" className="text-xs">Sports Event</Badge>
                             </div>
-                            <p className="text-sm text-green-600 mb-2">全校師生同歡，展現運動精神與團隊合作</p>
+                            <p className="text-sm text-green-600 mb-2">Whole school celebration, showcasing sportsmanship and teamwork</p>
                             <div className="flex items-center text-xs text-green-500 gap-4">
                               <span>📅 2025-04-20</span>
                               <span>🕰️ 08:00-12:00</span>
-                              <span>📍 校園運動場</span>
-                              <span>👥 全校參加</span>
+                              <span>📍 School Sports Field</span>
+                              <span>👥 Whole school participation</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge className="bg-gray-100 text-gray-700">草稿</Badge>
+                            <Badge className="bg-gray-100 text-gray-700">Draft</Badge>
                           </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  {/* 快速操作 */}
+                  {/* Quick Actions */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>快速操作</CardTitle>
+                      <CardTitle>Quick Actions</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Link href="/admin/events">
                           <Button variant="outline" className="h-20 w-full flex flex-col hover:bg-purple-50">
                             <Plus className="w-6 h-6 mb-2 text-purple-600" />
-                            新增活動
+                            New Event
                           </Button>
                         </Link>
                         <Button variant="outline" className="h-20 flex flex-col hover:bg-blue-50">
                           <Users className="w-6 h-6 mb-2 text-blue-600" />
-                          管理報名
+                          Manage Registrations
                         </Button>
                         <Button variant="outline" className="h-20 flex flex-col hover:bg-green-50">
                           <Download className="w-6 h-6 mb-2 text-green-600" />
-                          導出報告
+                          Export Reports
                         </Button>
                       </div>
                     </CardContent>
@@ -1007,26 +1007,26 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">資源管理</h2>
-                      <p className="text-gray-600 mt-1">管理學習資源、檔案上傳和分類</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Resource Management</h2>
+                      <p className="text-gray-600 mt-1">Manage learning resources, file uploads and categories</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Link href="/admin/resources">
                         <Button className="bg-gradient-to-r from-green-600 to-green-700">
                           <FileText className="w-4 h-4 mr-2" />
-                          進入資源管理
+                          Enter Resource Management
                         </Button>
                       </Link>
                     </div>
                   </div>
 
-                  {/* 資源概覽統計 */}
+                  {/* Resource Overview Statistics */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-emerald-600 text-sm font-medium">總資源數</p>
+                            <p className="text-emerald-600 text-sm font-medium">Total Resources</p>
                             <p className="text-2xl font-bold text-emerald-800">156</p>
                           </div>
                           <FileText className="w-8 h-8 text-emerald-600" />
@@ -1038,7 +1038,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-blue-600 text-sm font-medium">PDF 檔案</p>
+                            <p className="text-blue-600 text-sm font-medium">PDF Files</p>
                             <p className="text-2xl font-bold text-blue-800">89</p>
                           </div>
                           <Download className="w-8 h-8 text-blue-600" />
@@ -1050,7 +1050,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-purple-600 text-sm font-medium">影片資源</p>
+                            <p className="text-purple-600 text-sm font-medium">Video Resources</p>
                             <p className="text-2xl font-bold text-purple-800">34</p>
                           </div>
                           <Play className="w-8 h-8 text-purple-600" />
@@ -1062,7 +1062,7 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-amber-600 text-sm font-medium">互動內容</p>
+                            <p className="text-amber-600 text-sm font-medium">Interactive Content</p>
                             <p className="text-2xl font-bold text-amber-800">33</p>
                           </div>
                           <BookOpen className="w-8 h-8 text-amber-600" />
@@ -1076,7 +1076,7 @@ export default function AdminDashboard() {
                     <CardHeader>
                       <CardTitle className="flex items-center">
                         <Sparkles className="w-5 h-5 mr-2 text-green-600" />
-                        按年級分類統計
+                        Grade-wise Statistics
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1085,7 +1085,7 @@ export default function AdminDashboard() {
                           <div className="text-center">
                             <h4 className="font-semibold text-blue-800 mb-2">Grades 1-2</h4>
                             <p className="text-2xl font-bold text-blue-600">52</p>
-                            <p className="text-sm text-blue-500">項資源</p>
+                            <p className="text-sm text-blue-500">resources</p>
                           </div>
                         </div>
                         <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
@@ -1111,7 +1111,7 @@ export default function AdminDashboard() {
                     <CardHeader>
                       <CardTitle className="flex items-center">
                         <Sparkles className="w-5 h-5 mr-2 text-green-600" />
-                        最近資源活動
+                        Recent Resource Activities
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1119,32 +1119,32 @@ export default function AdminDashboard() {
                         <div className="flex items-start justify-between p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-emerald-800">數學練習本 - Grade 3</h4>
+                              <h4 className="font-medium text-emerald-800">Math Practice Book - Grade 3</h4>
                               <Badge variant="outline" className="text-xs">PDF</Badge>
                             </div>
-                            <p className="text-sm text-emerald-600 mb-2">新增了三年級數學練習教材</p>
+                            <p className="text-sm text-emerald-600 mb-2">Added new third-grade math practice materials</p>
                             <div className="flex items-center text-xs text-emerald-500 gap-4">
-                              <span>📁 學習資料</span>
+                              <span>📁 Learning Materials</span>
                               <span>👤 Teacher Wang</span>
-                              <span>⏰ 2 小時前</span>
+                              <span>⏰ 2 hours ago</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge className="bg-green-100 text-green-700">已發佈</Badge>
+                            <Badge className="bg-green-100 text-green-700">Published</Badge>
                           </div>
                         </div>
 
                         <div className="flex items-start justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-blue-800">英語朗讀影片系列</h4>
-                              <Badge variant="outline" className="text-xs">影片</Badge>
+                              <h4 className="font-medium text-blue-800">English Reading Video Series</h4>
+                              <Badge variant="outline" className="text-xs">Video</Badge>
                             </div>
-                            <p className="text-sm text-blue-600 mb-2">上傳了新的英語朗讀示範影片</p>
+                            <p className="text-sm text-blue-600 mb-2">Uploaded new English reading demonstration videos</p>
                             <div className="flex items-center text-xs text-blue-500 gap-4">
-                              <span>📁 語言學習</span>
+                              <span>📁 Language Learning</span>
                               <span>👤 Teacher Lin</span>
-                              <span>⏰ 5 小時前</span>
+                              <span>⏰ 5 hours ago</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -1166,17 +1166,17 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge className="bg-green-100 text-green-700">已發佈</Badge>
+                            <Badge className="bg-green-100 text-green-700">Published</Badge>
                           </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  {/* 快速操作 */}
+                  {/* Quick Actions */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>快速操作</CardTitle>
+                      <CardTitle>Quick Actions</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -1215,12 +1215,12 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">家長資訊管理</h2>
-                      <p className="text-gray-600 mt-1">管理家長通訊與活動資訊</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Parent Information Management</h2>
+                      <p className="text-gray-600 mt-1">Manage parent communications and activity information</p>
                     </div>
                     <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
                       <Plus className="w-4 h-4 mr-2" />
-                      新增內容
+                      New Content
                     </Button>
                   </div>
 
@@ -1229,7 +1229,7 @@ export default function AdminDashboard() {
                     <CardHeader>
                       <CardTitle className="flex items-center">
                         <FileText className="w-5 h-5 mr-2 text-green-600" />
-                        家長通訊
+                        Parent Newsletters
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1243,7 +1243,7 @@ export default function AdminDashboard() {
                                   <Badge 
                                     variant={newsletter.status === 'published' ? 'default' : 'secondary'}
                                   >
-                                    {newsletter.status === 'published' ? '已發佈' : '草稿'}
+                                    {newsletter.status === 'published' ? 'Published' : 'Draft'}
                                   </Badge>
                                 </div>
                                 <p className="text-gray-600 mb-2">{newsletter.content}</p>
@@ -1272,7 +1272,7 @@ export default function AdminDashboard() {
                     <CardHeader>
                       <CardTitle className="flex items-center">
                         <Calendar className="w-5 h-5 mr-2 text-purple-600" />
-                        家長活動
+                        Parent Events
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1284,7 +1284,7 @@ export default function AdminDashboard() {
                                 <div className="flex items-center space-x-2 mb-2">
                                   <h3 className="font-semibold">{event.title}</h3>
                                   <Badge variant="outline">
-                                    {event.type === 'meeting' ? '會議' : '活動'}
+                                    {event.type === 'meeting' ? 'Meeting' : 'Event'}
                                   </Badge>
                                 </div>
                                 <p className="text-gray-600 mb-2">{event.content}</p>
@@ -1317,27 +1317,27 @@ export default function AdminDashboard() {
                   className="space-y-6"
                 >
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900">系統設定</h2>
-                    <p className="text-gray-600 mt-1">系統配置與帳戶管理</p>
+                    <h2 className="text-3xl font-bold text-gray-900">System Settings</h2>
+                    <p className="text-gray-600 mt-1">System configuration and account management</p>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* User Profile Settings */}
                     <Card>
                       <CardHeader>
-                        <CardTitle>個人資訊</CardTitle>
+                        <CardTitle>Personal Information</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div>
-                          <Label htmlFor="displayName">顯示名稱</Label>
+                          <Label htmlFor="displayName">Display Name</Label>
                           <Input 
                             id="displayName" 
                             defaultValue={user?.displayName || ''} 
-                            placeholder="請輸入顯示名稱"
+                            placeholder="Enter display name"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="email">電子郵件</Label>
+                          <Label htmlFor="email">Email</Label>
                           <Input 
                             id="email" 
                             type="email" 
@@ -1348,7 +1348,7 @@ export default function AdminDashboard() {
                         </div>
                         <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
                           <Save className="w-4 h-4 mr-2" />
-                          儲存變更
+                          Save Changes
                         </Button>
                       </CardContent>
                     </Card>
@@ -1356,27 +1356,27 @@ export default function AdminDashboard() {
                     {/* System Settings */}
                     <Card>
                       <CardHeader>
-                        <CardTitle>系統配置</CardTitle>
+                        <CardTitle>System Configuration</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div>
-                          <Label htmlFor="siteName">網站名稱</Label>
+                          <Label htmlFor="siteName">Website Name</Label>
                           <Input 
                             id="siteName" 
                             defaultValue="KCISLK ESID Info Hub" 
-                            placeholder="請輸入網站名稱"
+                            placeholder="Enter website name"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="maintenanceMode">維護模式</Label>
+                          <Label htmlFor="maintenanceMode">Maintenance Mode</Label>
                           <div className="flex items-center space-x-2">
                             <input type="checkbox" id="maintenanceMode" />
-                            <Label htmlFor="maintenanceMode">啟用維護模式</Label>
+                            <Label htmlFor="maintenanceMode">Enable maintenance mode</Label>
                           </div>
                         </div>
                         <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
                           <Save className="w-4 h-4 mr-2" />
-                          更新設定
+                          Update Settings
                         </Button>
                       </CardContent>
                     </Card>
@@ -1385,21 +1385,21 @@ export default function AdminDashboard() {
                   {/* Quick Actions */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>快速操作</CardTitle>
+                      <CardTitle>Quick Actions</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Button variant="outline" className="h-20 flex flex-col">
                           <Users className="w-6 h-6 mb-2" />
-                          用戶管理
+                          User Management
                         </Button>
                         <Button variant="outline" className="h-20 flex flex-col">
                           <Download className="w-6 h-6 mb-2" />
-                          資料匯出
+                          Data Export
                         </Button>
                         <Button variant="outline" className="h-20 flex flex-col">
                           <RefreshCw className="w-6 h-6 mb-2" />
-                          清除快取
+                          Clear Cache
                         </Button>
                       </div>
                     </CardContent>
