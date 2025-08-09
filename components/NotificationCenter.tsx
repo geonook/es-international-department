@@ -2,10 +2,10 @@
 
 /**
  * Notification Center Component
- * 通知中心組件
+ * Notification Center Component
  * 
- * @description 完整的通知中心 UI 組件，提供通知列表、實時更新、分類篩選等功能
- * @features 通知展示、實時更新、分類篩選、批量操作、讀取狀態管理
+ * @description Complete notification center UI component, providing notification list, real-time updates, category filtering and other functions
+ * @features Notification display, real-time updates, category filtering, bulk operations, read status management
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -49,7 +49,7 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import useRealTimeNotifications from '@/hooks/useRealTimeNotifications'
 
-// 通知數據接口
+// Notification data interface
 interface Notification {
   id: number
   title: string
@@ -82,7 +82,7 @@ export default function NotificationCenter({
   autoRefresh = true,
   refreshInterval = 30000
 }: NotificationCenterProps) {
-  // 狀態管理
+  // State management
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -95,7 +95,7 @@ export default function NotificationCenter({
   const [isExpanded, setIsExpanded] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
-  // 獲取通知資料
+  // Fetch notification data
   const fetchNotifications = useCallback(async () => {
     try {
       setError('')
@@ -113,24 +113,24 @@ export default function NotificationCenter({
           setNotifications(data.data || [])
           setUnreadCount(data.stats?.unread || 0)
         } else {
-          setError(data.message || '載入通知失敗')
+          setError(data.message || 'Failed to load notifications')
         }
       } else if (response.status === 401) {
-        setError('請先登入')
+        setError('Please login first')
         setNotifications([])
         setUnreadCount(0)
       } else {
-        setError('載入通知失敗')
+        setError('Failed to load notifications')
       }
     } catch (error) {
       console.error('Fetch notifications error:', error)
-      setError('網路錯誤，請稍後再試')
+      setError('Network error, please try again later')
     } finally {
       setIsLoading(false)
     }
   }, [])
 
-  // 初始載入和自動刷新
+  // Initial loading and auto refresh
   useEffect(() => {
     fetchNotifications()
     
@@ -140,11 +140,11 @@ export default function NotificationCenter({
     }
   }, [fetchNotifications, autoRefresh, refreshInterval])
 
-  // 篩選通知
+  // Filter notifications
   useEffect(() => {
     let filtered = [...notifications]
 
-    // 搜尋篩選
+    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(n => 
@@ -153,24 +153,24 @@ export default function NotificationCenter({
       )
     }
 
-    // 類型篩選
+    // Type filter
     if (typeFilter !== 'all') {
       filtered = filtered.filter(n => n.type === typeFilter)
     }
 
-    // 優先級篩選
+    // Priority filter
     if (priorityFilter !== 'all') {
       filtered = filtered.filter(n => n.priority === priorityFilter)
     }
 
-    // 讀取狀態篩選
+    // Read status filter
     if (readFilter === 'unread') {
       filtered = filtered.filter(n => !n.isRead)
     } else if (readFilter === 'read') {
       filtered = filtered.filter(n => n.isRead)
     }
 
-    // 按時間排序（未讀在前，然後按建立時間倒序）
+    // Sort by time (unread first, then by creation time descending)
     filtered.sort((a, b) => {
       if (a.isRead !== b.isRead) {
         return a.isRead ? 1 : -1
@@ -181,7 +181,7 @@ export default function NotificationCenter({
     setFilteredNotifications(filtered)
   }, [notifications, searchQuery, typeFilter, priorityFilter, readFilter])
 
-  // 標記為已讀
+  // Mark as read
   const markAsRead = async (notificationIds: number[]) => {
     try {
       const response = await fetch('/api/notifications/mark-read', {
@@ -211,7 +211,7 @@ export default function NotificationCenter({
     }
   }
 
-  // 標記為未讀
+  // Mark as unread
   const markAsUnread = async (notificationIds: number[]) => {
     try {
       const response = await fetch('/api/notifications/mark-unread', {
@@ -241,9 +241,9 @@ export default function NotificationCenter({
     }
   }
 
-  // 刪除通知
+  // Delete notifications
   const deleteNotifications = async (notificationIds: number[]) => {
-    if (!confirm('確定要刪除選中的通知嗎？此操作無法復原。')) {
+    if (!confirm('Are you sure you want to delete the selected notifications? This operation cannot be undone.')) {
       return
     }
 
@@ -271,7 +271,7 @@ export default function NotificationCenter({
     }
   }
 
-  // 全選/取消全選
+  // Select all/deselect all
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredNotifications.length) {
       setSelectedIds([])
@@ -280,7 +280,7 @@ export default function NotificationCenter({
     }
   }
 
-  // 全部標記為已讀
+  // Mark all as read
   const markAllAsRead = () => {
     const unreadIds = filteredNotifications.filter(n => !n.isRead).map(n => n.id)
     if (unreadIds.length > 0) {
@@ -288,7 +288,7 @@ export default function NotificationCenter({
     }
   }
 
-  // 獲取通知圖標
+  // Get notification icon
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'announcement': return MessageSquare
@@ -303,7 +303,7 @@ export default function NotificationCenter({
     }
   }
 
-  // 獲取優先級顏色
+  // Get priority color
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent': return 'text-red-600 bg-red-50 border-red-200'
@@ -314,31 +314,31 @@ export default function NotificationCenter({
     }
   }
 
-  // 獲取類型名稱
+  // Get type name
   const getTypeName = (type: string) => {
     switch (type) {
-      case 'announcement': return '公告'
-      case 'event': return '活動'
-      case 'registration': return '報名'
-      case 'resource': return '資源'
-      case 'maintenance': return '維護'
-      case 'newsletter': return '電子報'
-      case 'reminder': return '提醒'
-      case 'system': return '系統'
+      case 'announcement': return 'Announcement'
+      case 'event': return 'Event'
+      case 'registration': return 'Registration'
+      case 'resource': return 'Resource'
+      case 'maintenance': return 'Maintenance'
+      case 'newsletter': return 'Newsletter'
+      case 'reminder': return 'Reminder'
+      case 'system': return 'System'
       default: return type
     }
   }
 
-  // 格式化時間
+  // Format time
   const formatTime = (dateString: string) => {
     const date = new Date(dateString)
     const now = new Date()
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
 
-    if (diffInMinutes < 1) return '剛剛'
-    if (diffInMinutes < 60) return `${diffInMinutes} 分鐘前`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} 小時前`
-    if (diffInMinutes < 10080) return `${Math.floor(diffInMinutes / 1440)} 天前`
+    if (diffInMinutes < 1) return 'Just now'
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`
+    if (diffInMinutes < 10080) return `${Math.floor(diffInMinutes / 1440)} days ago`
     return date.toLocaleDateString('zh-TW')
   }
 
@@ -368,7 +368,7 @@ export default function NotificationCenter({
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Bell className="w-5 h-5" />
-              通知中心
+              Notification Center
               {unreadCount > 0 && (
                 <Badge className="bg-red-500 text-white">
                   {unreadCount > 99 ? '99+' : unreadCount}

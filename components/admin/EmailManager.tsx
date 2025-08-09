@@ -1,8 +1,8 @@
 /**
  * Email Management Component
- * 電子郵件管理組件
+ * Email Management Component
  * 
- * @description 管理員電子郵件管理界面
+ * @description Administrator email management interface
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -71,7 +71,7 @@ export default function EmailManager() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
 
-  // 發送郵件狀態
+  // Send email state
   const [sendForm, setSendForm] = useState({
     type: 'single',
     template: '',
@@ -82,7 +82,7 @@ export default function EmailManager() {
   })
   const [sending, setSending] = useState(false)
 
-  // 測試狀態
+  // Test state
   const [testResults, setTestResults] = useState<any>(null)
   const [testing, setTesting] = useState(false)
 
@@ -91,7 +91,7 @@ export default function EmailManager() {
   }, [])
 
   /**
-   * 獲取郵件服務統計
+   * Fetch email service statistics
    */
   const fetchEmailStats = async () => {
     try {
@@ -113,14 +113,14 @@ export default function EmailManager() {
         setTemplates(data.templates || [])
       }
     } catch (error) {
-      console.error('獲取郵件統計失敗:', error)
+      console.error('Failed to fetch email statistics:', error)
     } finally {
       setLoading(false)
     }
   }
 
   /**
-   * 發送郵件
+   * Send email
    */
   const handleSendEmail = async () => {
     setSending(true)
@@ -151,7 +151,7 @@ export default function EmailManager() {
 
       const result = await response.json()
       if (result.success) {
-        alert('郵件發送成功！')
+        alert('Email sent successfully!')
         setSendForm({
           type: 'single',
           template: '',
@@ -160,20 +160,20 @@ export default function EmailManager() {
           content: '',
           priority: 'normal'
         })
-        fetchEmailStats() // 刷新統計
+        fetchEmailStats() // Refresh statistics
       } else {
-        alert(`郵件發送失敗: ${result.error}`)
+        alert(`Failed to send email: ${result.error}`)
       }
     } catch (error) {
-      console.error('發送郵件失敗:', error)
-      alert('郵件發送失敗')
+      console.error('Failed to send email:', error)
+      alert('Failed to send email')
     } finally {
       setSending(false)
     }
   }
 
   /**
-   * 運行測試
+   * Run test
    */
   const runEmailTest = async (testType: string) => {
     setTesting(true)
@@ -197,10 +197,10 @@ export default function EmailManager() {
       const result = await response.json()
       setTestResults(result)
     } catch (error) {
-      console.error('測試失敗:', error)
+      console.error('Test failed:', error)
       setTestResults({
         success: false,
-        error: '測試執行失敗'
+        error: 'Test execution failed'
       })
     } finally {
       setTesting(false)
@@ -219,9 +219,9 @@ export default function EmailManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">電子郵件管理</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Email Management</h1>
           <p className="text-muted-foreground">
-            管理電子郵件服務、發送郵件和查看統計
+            Manage email services, send emails and view statistics
           </p>
         </div>
         <Button 
@@ -230,15 +230,15 @@ export default function EmailManager() {
           disabled={loading}
         >
           <RefreshCw className="h-4 w-4 mr-2" />
-          刷新
+          Refresh
         </Button>
       </div>
 
-      {/* 服務狀態概覽 */}
+      {/* Service Status Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">服務狀態</CardTitle>
+            <CardTitle className="text-sm font-medium">Service Status</CardTitle>
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -249,7 +249,7 @@ export default function EmailManager() {
                 <AlertCircle className="h-4 w-4 text-red-500" />
               )}
               <span className="text-sm">
-                {stats?.connection ? '連接正常' : '連接失敗'}
+                {stats?.connection ? 'Connected' : 'Connection Failed'}
               </span>
             </div>
           </CardContent>
@@ -257,39 +257,39 @@ export default function EmailManager() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">佇列狀態</CardTitle>
+            <CardTitle className="text-sm font-medium">Queue Status</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.queue.total || 0}</div>
             <p className="text-xs text-muted-foreground">
-              總計 ({stats?.queue.pending || 0} 待處理)
+              Total ({stats?.queue.pending || 0} pending)
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">發送統計</CardTitle>
+            <CardTitle className="text-sm font-medium">Send Statistics</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.queue.sent || 0}</div>
             <p className="text-xs text-muted-foreground">
-              已發送 ({stats?.queue.failed || 0} 失敗)
+              Sent ({stats?.queue.failed || 0} failed)
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">速率限制</CardTitle>
+            <CardTitle className="text-sm font-medium">Rate Limits</CardTitle>
             <Settings className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span>每分鐘</span>
+                <span>Per Minute</span>
                 <span>{stats?.sentCounts.minute || 0}/{stats?.rateLimits.perMinute || 60}</span>
               </div>
               <Progress 
@@ -303,37 +303,37 @@ export default function EmailManager() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="overview">概覽</TabsTrigger>
-          <TabsTrigger value="send">發送郵件</TabsTrigger>
-          <TabsTrigger value="templates">模板管理</TabsTrigger>
-          <TabsTrigger value="test">系統測試</TabsTrigger>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="send">Send Email</TabsTrigger>
+          <TabsTrigger value="templates">Template Management</TabsTrigger>
+          <TabsTrigger value="test">System Testing</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>佇列詳情</CardTitle>
+                <CardTitle>Queue Details</CardTitle>
                 <CardDescription>
-                  當前郵件佇列狀態
+                  Current email queue status
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span>待處理</span>
+                    <span>Pending</span>
                     <Badge variant="secondary">{stats?.queue.pending || 0}</Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span>處理中</span>
+                    <span>Processing</span>
                     <Badge variant="default">{stats?.queue.processing || 0}</Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span>已發送</span>
+                    <span>Sent</span>
                     <Badge variant="success">{stats?.queue.sent || 0}</Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span>失敗</span>
+                    <span>Failed</span>
                     <Badge variant="destructive">{stats?.queue.failed || 0}</Badge>
                   </div>
                 </div>
@@ -342,29 +342,29 @@ export default function EmailManager() {
 
             <Card>
               <CardHeader>
-                <CardTitle>系統配置</CardTitle>
+                <CardTitle>System Configuration</CardTitle>
                 <CardDescription>
-                  當前郵件服務配置
+                  Current email service configuration
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span>提供商</span>
+                    <span>Provider</span>
                     <span className="font-mono text-sm">
                       {process.env.EMAIL_PROVIDER || 'smtp'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>佇列啟用</span>
+                    <span>Queue Enabled</span>
                     <Badge variant={process.env.EMAIL_QUEUE_ENABLED === 'true' ? 'success' : 'secondary'}>
-                      {process.env.EMAIL_QUEUE_ENABLED === 'true' ? '啟用' : '停用'}
+                      {process.env.EMAIL_QUEUE_ENABLED === 'true' ? 'Enabled' : 'Disabled'}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span>測試模式</span>
+                    <span>Test Mode</span>
                     <Badge variant={process.env.EMAIL_TEST_MODE === 'true' ? 'warning' : 'secondary'}>
-                      {process.env.EMAIL_TEST_MODE === 'true' ? '啟用' : '停用'}
+                      {process.env.EMAIL_TEST_MODE === 'true' ? 'Enabled' : 'Disabled'}
                     </Badge>
                   </div>
                 </div>
@@ -376,39 +376,39 @@ export default function EmailManager() {
         <TabsContent value="send">
           <Card>
             <CardHeader>
-              <CardTitle>發送郵件</CardTitle>
+              <CardTitle>Send Email</CardTitle>
               <CardDescription>
-                發送單一或批量郵件
+                Send single or bulk emails
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="send-type">發送類型</Label>
+                  <Label htmlFor="send-type">Send Type</Label>
                   <Select
                     value={sendForm.type}
                     onValueChange={(value) => setSendForm(prev => ({ ...prev, type: value }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="選擇發送類型" />
+                      <SelectValue placeholder="Select Send Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="single">單一郵件</SelectItem>
-                      <SelectItem value="bulk">批量郵件</SelectItem>
-                      <SelectItem value="announcement">公告郵件</SelectItem>
-                      <SelectItem value="newsletter">電子報</SelectItem>
+                      <SelectItem value="single">Single Email</SelectItem>
+                      <SelectItem value="bulk">Bulk Email</SelectItem>
+                      <SelectItem value="announcement">Announcement Email</SelectItem>
+                      <SelectItem value="newsletter">Newsletter</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="template">郵件模板</Label>
+                  <Label htmlFor="template">Email Template</Label>
                   <Select
                     value={sendForm.template}
                     onValueChange={(value) => setSendForm(prev => ({ ...prev, template: value }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="選擇模板" />
+                      <SelectValue placeholder="Select Template" />
                     </SelectTrigger>
                     <SelectContent>
                       {templates.map((template) => (
@@ -422,30 +422,30 @@ export default function EmailManager() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="recipients">收件人</Label>
+                <Label htmlFor="recipients">Recipients</Label>
                 <Input
                   id="recipients"
-                  placeholder="輸入郵件地址，多個地址用逗號分隔"
+                  placeholder="Enter email addresses, separate multiple addresses with commas"
                   value={sendForm.recipients}
                   onChange={(e) => setSendForm(prev => ({ ...prev, recipients: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="subject">主題</Label>
+                <Label htmlFor="subject">Subject</Label>
                 <Input
                   id="subject"
-                  placeholder="郵件主題"
+                  placeholder="Email subject"
                   value={sendForm.subject}
                   onChange={(e) => setSendForm(prev => ({ ...prev, subject: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content">內容</Label>
+                <Label htmlFor="content">Content</Label>
                 <Textarea
                   id="content"
-                  placeholder="郵件內容"
+                  placeholder="Email content"
                   rows={8}
                   value={sendForm.content}
                   onChange={(e) => setSendForm(prev => ({ ...prev, content: e.target.value }))}
@@ -454,7 +454,7 @@ export default function EmailManager() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="priority">優先級</Label>
+                  <Label htmlFor="priority">Priority</Label>
                   <Select
                     value={sendForm.priority}
                     onValueChange={(value) => setSendForm(prev => ({ ...prev, priority: value }))}
@@ -463,9 +463,9 @@ export default function EmailManager() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="low">低優先級</SelectItem>
-                      <SelectItem value="normal">普通</SelectItem>
-                      <SelectItem value="high">高優先級</SelectItem>
+                      <SelectItem value="low">Low Priority</SelectItem>
+                      <SelectItem value="normal">Normal</SelectItem>
+                      <SelectItem value="high">High Priority</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -483,7 +483,7 @@ export default function EmailManager() {
                     priority: 'normal'
                   })}
                 >
-                  清空
+                  Clear
                 </Button>
                 <Button
                   onClick={handleSendEmail}
@@ -492,12 +492,12 @@ export default function EmailManager() {
                   {sending ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      發送中...
+                      Sending...
                     </>
                   ) : (
                     <>
                       <Send className="h-4 w-4 mr-2" />
-                      發送郵件
+                      Send Email
                     </>
                   )}
                 </Button>
@@ -509,9 +509,9 @@ export default function EmailManager() {
         <TabsContent value="templates">
           <Card>
             <CardHeader>
-              <CardTitle>郵件模板</CardTitle>
+              <CardTitle>Email Templates</CardTitle>
               <CardDescription>
-                查看和管理可用的郵件模板
+                View and manage available email templates
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -536,13 +536,13 @@ export default function EmailManager() {
                       <CardContent>
                         <div className="space-y-2">
                           <div>
-                            <span className="text-sm font-medium">主題模板: </span>
+                            <span className="text-sm font-medium">Subject Template: </span>
                             <span className="text-sm font-mono bg-muted px-2 py-1 rounded">
                               {template.subject}
                             </span>
                           </div>
                           <div>
-                            <span className="text-sm font-medium">可用變量: </span>
+                            <span className="text-sm font-medium">Available Variables: </span>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {template.variables.map((variable) => (
                                 <Badge
@@ -570,9 +570,9 @@ export default function EmailManager() {
           <div className="grid gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>系統測試</CardTitle>
+                <CardTitle>System Testing</CardTitle>
                 <CardDescription>
-                  測試郵件服務的各項功能
+                  Test various email service functions
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -583,7 +583,7 @@ export default function EmailManager() {
                     variant="outline"
                   >
                     <Settings className="h-4 w-4 mr-2" />
-                    連接測試
+                    Connection Test
                   </Button>
                   <Button
                     onClick={() => runEmailTest('template')}
@@ -591,7 +591,7 @@ export default function EmailManager() {
                     variant="outline"
                   >
                     <Eye className="h-4 w-4 mr-2" />
-                    模板測試
+                    Template Test
                   </Button>
                   <Button
                     onClick={() => runEmailTest('send')}
@@ -599,7 +599,7 @@ export default function EmailManager() {
                     variant="outline"
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    發送測試
+                    Send Test
                   </Button>
                   <Button
                     onClick={() => runEmailTest('queue')}
@@ -607,14 +607,14 @@ export default function EmailManager() {
                     variant="outline"
                   >
                     <Clock className="h-4 w-4 mr-2" />
-                    佇列測試
+                    Queue Test
                   </Button>
                 </div>
 
                 {testing && (
                   <div className="mt-4 flex items-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="text-sm">測試進行中...</span>
+                    <span className="text-sm">Testing in progress...</span>
                   </div>
                 )}
 
@@ -625,16 +625,16 @@ export default function EmailManager() {
                       <AlertDescription>
                         <div className="space-y-2">
                           <div className="font-medium">
-                            {testResults.message || (testResults.success ? '測試成功' : '測試失敗')}
+                            {testResults.message || (testResults.success ? 'Test Successful' : 'Test Failed')}
                           </div>
                           {testResults.error && (
                             <div className="text-sm text-muted-foreground">
-                              錯誤: {testResults.error}
+                              Error: {testResults.error}
                             </div>
                           )}
                           {testResults.results && (
                             <details className="text-sm">
-                              <summary className="cursor-pointer font-medium">詳細結果</summary>
+                              <summary className="cursor-pointer font-medium">Detailed Results</summary>
                               <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
                                 {JSON.stringify(testResults.results, null, 2)}
                               </pre>

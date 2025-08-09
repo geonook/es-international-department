@@ -2,7 +2,7 @@
 
 /**
  * Resource Analytics Component - KCISLK ESID Info Hub
- * 資源分析組件 - KCISLK ESID Info Hub
+ * Resource Analytics Component - KCISLK ESID Info Hub
  */
 
 import { useState, useEffect } from 'react'
@@ -204,11 +204,11 @@ export default function ResourceAnalytics({
     return (
       <div className="text-center py-12">
         <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">無分析資料</h3>
-        <p className="text-gray-600 mb-4">目前沒有可用的分析資料</p>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">No Analytics Data</h3>
+        <p className="text-gray-600 mb-4">No analytics data is currently available</p>
         <Button onClick={onRefresh} className="bg-purple-600 hover:bg-purple-700">
           <RefreshCw className="w-4 h-4 mr-2" />
-          重新載入
+          Reload
         </Button>
       </div>
     )
@@ -223,8 +223,8 @@ export default function ResourceAnalytics({
         className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
       >
         <div>
-          <h2 className="text-xl font-bold text-gray-900">資源分析報告</h2>
-          <p className="text-gray-600 mt-1">查看資源使用統計和趨勢分析</p>
+          <h2 className="text-xl font-bold text-gray-900">Resource Analytics Report</h2>
+          <p className="text-gray-600 mt-1">View resource usage statistics and trend analysis</p>
         </div>
         
         <div className="flex flex-wrap gap-2">
@@ -233,19 +233,19 @@ export default function ResourceAnalytics({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="7">過去 7 天</SelectItem>
-              <SelectItem value="30">過去 30 天</SelectItem>
-              <SelectItem value="90">過去 90 天</SelectItem>
-              <SelectItem value="365">過去一年</SelectItem>
+              <SelectItem value="7">Past 7 Days</SelectItem>
+              <SelectItem value="30">Past 30 Days</SelectItem>
+              <SelectItem value="90">Past 90 Days</SelectItem>
+              <SelectItem value="365">Past Year</SelectItem>
             </SelectContent>
           </Select>
           
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-36">
-              <SelectValue placeholder="選擇分類" />
+              <SelectValue placeholder="Select Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全部分類</SelectItem>
+              <SelectItem value="">All Categories</SelectItem>
               {categories.map(category => (
                 <SelectItem key={category.id} value={category.id.toString()}>
                   {category.displayName}
@@ -256,17 +256,17 @@ export default function ResourceAnalytics({
           
           <Button variant="outline" onClick={handleFilterChange} disabled={loading}>
             <Filter className="w-4 h-4 mr-2" />
-            套用篩選
+            Apply Filters
           </Button>
           
           <Button variant="outline" onClick={handleExport}>
             <FileDown className="w-4 h-4 mr-2" />
-            匯出
+            Export
           </Button>
           
           <Button variant="outline" onClick={onRefresh} disabled={loading}>
             <RefreshCw className={cn("w-4 h-4 mr-2", loading && "animate-spin")} />
-            重新整理
+            Refresh
           </Button>
         </div>
       </motion.div>
@@ -284,7 +284,7 @@ export default function ResourceAnalytics({
         <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-xl">
             <Loader2 className="w-8 h-8 animate-spin mx-auto text-purple-600" />
-            <p className="text-gray-600 mt-2">載入分析資料中...</p>
+            <p className="text-gray-600 mt-2">Loading analytics data...</p>
           </div>
         </div>
       )}
@@ -301,10 +301,10 @@ export default function ResourceAnalytics({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-600 text-sm font-medium">總下載次數</p>
+                  <p className="text-blue-600 text-sm font-medium">Total Downloads</p>
                   <p className="text-2xl font-bold text-blue-800">{stats.totalDownloads.toLocaleString()}</p>
                   <p className="text-blue-600 text-xs mt-1">
-                    平均每資源 {stats.avgDownloadsPerResource.toFixed(1)} 次
+                    Average {stats.avgDownloadsPerResource.toFixed(1)} per resource
                   </p>
                 </div>
                 <Download className="w-8 h-8 text-blue-600" />
@@ -316,10 +316,10 @@ export default function ResourceAnalytics({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-600 text-sm font-medium">總觀看次數</p>
+                  <p className="text-green-600 text-sm font-medium">Total Views</p>
                   <p className="text-2xl font-bold text-green-800">{stats.totalViews.toLocaleString()}</p>
                   <p className="text-green-600 text-xs mt-1">
-                    平均每資源 {stats.avgViewsPerResource.toFixed(1)} 次
+                    Average {stats.avgViewsPerResource.toFixed(1)} per resource
                   </p>
                 </div>
                 <Eye className="w-8 h-8 text-green-600" />
@@ -331,10 +331,10 @@ export default function ResourceAnalytics({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-600 text-sm font-medium">已發佈資源</p>
+                  <p className="text-purple-600 text-sm font-medium">Published Resources</p>
                   <p className="text-2xl font-bold text-purple-800">{stats.published}</p>
                   <p className="text-purple-600 text-xs mt-1">
-                    佔總資源 {((stats.published / stats.total) * 100).toFixed(1)}%
+                    {((stats.published / stats.total) * 100).toFixed(1)}% of total resources
                   </p>
                 </div>
                 <FileText className="w-8 h-8 text-purple-600" />
@@ -346,10 +346,10 @@ export default function ResourceAnalytics({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-yellow-600 text-sm font-medium">精選資源</p>
+                  <p className="text-yellow-600 text-sm font-medium">Featured Resources</p>
                   <p className="text-2xl font-bold text-yellow-800">{stats.featured}</p>
                   <p className="text-yellow-600 text-xs mt-1">
-                    精選率 {((stats.featured / stats.total) * 100).toFixed(1)}%
+                    Featured rate {((stats.featured / stats.total) * 100).toFixed(1)}%
                   </p>
                 </div>
                 <Star className="w-8 h-8 text-yellow-600" />
@@ -366,7 +366,7 @@ export default function ResourceAnalytics({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="w-5 h-5" />
-                  資源類型分佈
+                  Resource Type Distribution
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -396,7 +396,7 @@ export default function ResourceAnalytics({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Folder className="w-5 h-5" />
-                  分類表現
+                  Category Performance
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -408,9 +408,9 @@ export default function ResourceAnalytics({
                         <span className="font-medium">{category.categoryName}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <span>{category.resourceCount} 資源</span>
+                        <span>{category.resourceCount} resources</span>
                         <span>•</span>
-                        <span>{category.totalDownloads} 下載</span>
+                        <span>{category.totalDownloads} downloads</span>
                       </div>
                     </div>
                   ))}
@@ -426,7 +426,7 @@ export default function ResourceAnalytics({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5" />
-                熱門資源
+                Popular Resources
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -451,10 +451,10 @@ export default function ResourceAnalytics({
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-medium text-gray-900">
-                        {resource.downloadCount} 下載
+                        {resource.downloadCount} downloads
                       </div>
                       <div className="text-xs text-gray-600">
-                        {resource.viewCount} 觀看
+                        {resource.viewCount} views
                       </div>
                     </div>
                   </div>

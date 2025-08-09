@@ -2,10 +2,10 @@
 
 /**
  * Notification System Monitor - Admin Dashboard Component
- * 通知系統監控 - 管理員儀表板組件
+ * Notification System Monitor - Administrator Dashboard Component
  * 
- * @description 為管理員提供通知系統狀態監控，包括 SSE 連接狀態、性能指標、錯誤監控等
- * @features 即時連接監控、性能指標、通知統計、系統健康狀況
+ * @description Provides notification system status monitoring for administrators, including SSE connection status, performance metrics, error monitoring, etc.
+ * @features Real-time connection monitoring, performance metrics, notification statistics, system health status
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -80,7 +80,7 @@ interface PerformanceMetrics {
 }
 
 export default function NotificationSystemMonitor() {
-  // 狀態管理
+  // State management
   const [stats, setStats] = useState<SystemStats | null>(null)
   const [performance, setPerformance] = useState<PerformanceMetrics | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -89,7 +89,7 @@ export default function NotificationSystemMonitor() {
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [refreshInterval, setRefreshInterval] = useState(10000) // 10 seconds
 
-  // 獲取系統統計
+  // Get system statistics
   const fetchSystemStats = useCallback(async () => {
     try {
       setError(null)
@@ -131,7 +131,7 @@ export default function NotificationSystemMonitor() {
             }
           })
 
-          // 更新性能指標
+          // Update performance metrics
           setPerformance(prev => ({
             responseTime,
             throughput: prev?.throughput || 0,
@@ -141,22 +141,22 @@ export default function NotificationSystemMonitor() {
           
           setLastUpdate(new Date())
         } else {
-          throw new Error(data.message || '獲取統計失敗')
+          throw new Error(data.message || 'Failed to get statistics')
         }
       } else if (response.status === 403) {
-        throw new Error('需要管理員權限才能查看系統監控')
+        throw new Error('Administrator privileges required to view system monitoring')
       } else {
-        throw new Error(`請求失敗: ${response.status}`)
+        throw new Error(`Request failed: ${response.status}`)
       }
     } catch (error) {
       console.error('Failed to fetch system stats:', error)
-      setError(error instanceof Error ? error.message : '未知錯誤')
+      setError(error instanceof Error ? error.message : 'Unknown error')
     } finally {
       setIsLoading(false)
     }
   }, [refreshInterval])
 
-  // 自動刷新
+  // Auto refresh
   useEffect(() => {
     fetchSystemStats()
     
@@ -166,13 +166,13 @@ export default function NotificationSystemMonitor() {
     }
   }, [fetchSystemStats, autoRefresh, refreshInterval])
 
-  // 手動刷新
+  // Manual refresh
   const handleManualRefresh = () => {
     setIsLoading(true)
     fetchSystemStats()
   }
 
-  // 計算系統健康狀況
+  // Calculate system health status
   const getSystemHealthStatus = () => {
     if (!stats || !performance) return 'unknown'
     
@@ -186,17 +186,17 @@ export default function NotificationSystemMonitor() {
 
   const systemHealth = getSystemHealthStatus()
 
-  // 格式化時間
+  // Format time
   const formatDuration = (ms: number) => {
     const seconds = Math.floor(ms / 1000)
     const minutes = Math.floor(seconds / 60)
     const hours = Math.floor(minutes / 60)
     const days = Math.floor(hours / 24)
     
-    if (days > 0) return `${days}天 ${hours % 24}小時`
-    if (hours > 0) return `${hours}小時 ${minutes % 60}分`
-    if (minutes > 0) return `${minutes}分 ${seconds % 60}秒`
-    return `${seconds}秒`
+    if (days > 0) return `${days}d ${hours % 24}h`
+    if (hours > 0) return `${hours}h ${minutes % 60}m`
+    if (minutes > 0) return `${minutes}m ${seconds % 60}s`
+    return `${seconds}s`
   }
 
   const formatUptime = (uptime: number) => {
@@ -208,10 +208,10 @@ export default function NotificationSystemMonitor() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* 標題和控制 */}
+      {/* Title and controls */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">通知系統監控</h2>
+          <h2 className="text-2xl font-bold">Notification System Monitor</h2>
           <p className="text-gray-600">即時監控通知系統狀態和性能</p>
         </div>
         

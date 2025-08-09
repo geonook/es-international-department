@@ -2,10 +2,10 @@
 
 /**
  * Notification Bell Component
- * 通知鈴鐺組件
+ * Notification Bell Component
  * 
- * @description 用於導航欄的通知鈴鐺圖標，顯示未讀通知數量，點擊展開通知中心
- * @features 實時通知數量、動畫效果、彈出式通知中心、響應式設計
+ * @description Notification bell icon for the navigation bar, displays unread notification count, click to expand notification center
+ * @features Real-time notification count, animated effects, popup notification center, responsive design
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -43,7 +43,7 @@ export default function NotificationBell({
   const bellRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   
-  // 使用即時通知 Hook
+  // Use real-time notification Hook
   const {
     unreadCount,
     notifications,
@@ -62,7 +62,7 @@ export default function NotificationBell({
     heartbeatTimeout: 90000
   })
 
-  // 監聽新通知事件
+  // Listen for new notification events
   useEffect(() => {
     const handleNewNotification = (event: CustomEvent) => {
       setHasNewNotifications(true)
@@ -83,12 +83,12 @@ export default function NotificationBell({
     }
   }, [])
 
-  // 初始化瀏覽器通知權限
+  // Initialize browser notification permissions
   useEffect(() => {
     requestNotificationPermission()
   }, [])
   
-  // 連接狀態變化處理
+  // Handle connection status changes
   useEffect(() => {
     if (hasError && !isConnecting) {
       setShowConnectionStatus(true)
@@ -96,7 +96,7 @@ export default function NotificationBell({
     }
   }, [hasError, isConnecting])
 
-  // 點擊外部關閉面板
+  // Click outside to close panel
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -118,7 +118,7 @@ export default function NotificationBell({
     }
   }, [isOpen])
 
-  // 格式化連接時間
+  // Format connection time
   const formatUptime = (uptime: number) => {
     const seconds = Math.floor(uptime / 1000)
     const minutes = Math.floor(seconds / 60)
@@ -133,18 +133,18 @@ export default function NotificationBell({
     }
   }
   
-  // 獲取連接狀態顯示
+  // Get connection status display
   const getConnectionStatusDisplay = () => {
     if (isConnecting) {
-      return { icon: Wifi, color: 'text-yellow-500', text: '連接中...' }
+      return { icon: Wifi, color: 'text-yellow-500', text: 'Connecting...' }
     } else if (isConnected) {
-      return { icon: Wifi, color: 'text-green-500', text: '已連接' }
+      return { icon: Wifi, color: 'text-green-500', text: 'Connected' }
     } else {
-      return { icon: WifiOff, color: 'text-red-500', text: '連接中斷' }
+      return { icon: WifiOff, color: 'text-red-500', text: 'Connection Lost' }
     }
   }
 
-  // 獲取按鈕大小
+  // Get button size
   const getButtonSize = () => {
     switch (size) {
       case 'sm': return 'h-8 w-8'
@@ -154,7 +154,7 @@ export default function NotificationBell({
     }
   }
 
-  // 獲取圖標大小
+  // Get icon size
   const getIconSize = () => {
     switch (size) {
       case 'sm': return 'w-4 h-4'
@@ -164,7 +164,7 @@ export default function NotificationBell({
     }
   }
 
-  // 獲取面板位置類別
+  // Get panel position class
   const getPanelPosition = () => {
     switch (position) {
       case 'top-left': return 'bottom-full left-0 mb-2'
@@ -175,7 +175,7 @@ export default function NotificationBell({
     }
   }
 
-  // 鈴鐺動畫效果
+  // Bell animation effects
   const bellVariants = {
     idle: { rotate: 0 },
     ring: { 
@@ -184,7 +184,7 @@ export default function NotificationBell({
     }
   }
 
-  // 徽章彈跳動畫
+  // Badge bounce animation
   const badgeVariants = {
     hidden: { scale: 0, opacity: 0 },
     visible: { 
@@ -200,7 +200,7 @@ export default function NotificationBell({
 
   return (
     <div className={cn("relative", className)}>
-      {/* 通知鈴鐺按鈕 */}
+      {/* Notification bell button */}
       <Button
         ref={bellRef}
         variant={variant}
@@ -228,7 +228,7 @@ export default function NotificationBell({
           )} />
         </motion.div>
 
-        {/* 未讀通知徽章 */}
+        {/* Unread notification badge */}
         <AnimatePresence>
           {showBadge && unreadCount > 0 && (
             <motion.div
@@ -245,7 +245,7 @@ export default function NotificationBell({
           )}
         </AnimatePresence>
 
-        {/* 新通知指示點 */}
+        {/* New notification indicator */}
         <AnimatePresence>
           {hasNewNotifications && (
             <motion.div
@@ -258,7 +258,7 @@ export default function NotificationBell({
         </AnimatePresence>
       </Button>
 
-      {/* 通知中心面板 */}
+      {/* Notification center panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -274,12 +274,12 @@ export default function NotificationBell({
             )}
           >
             <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
-              {/* 面板標題欄 */}
+              {/* Panel header */}
               <div className="flex items-center justify-between p-4 border-b bg-gray-50">
                 <div className="flex items-center gap-2">
                   <h3 className="font-medium text-gray-900 flex items-center gap-2">
                     <Bell className="w-4 h-4" />
-                    通知中心
+                    Notification Center
                     {unreadCount > 0 && (
                       <Badge className="bg-blue-500 text-white">
                         {unreadCount}
@@ -287,13 +287,13 @@ export default function NotificationBell({
                     )}
                   </h3>
                   
-                  {/* 連接狀態指示器 */}
+                  {/* Connection status indicator */}
                   {(() => {
                     const status = getConnectionStatusDisplay()
                     return (
                       <div 
                         className="flex items-center gap-1 text-xs"
-                        title={`狀態: ${status.text}${connectionUptime > 0 ? ` | 運行時間: ${formatUptime(connectionUptime)}` : ''}${lastPing ? ` | 最後心跳: ${new Date(lastPing).toLocaleTimeString()}` : ''}`}
+                        title={`Status: ${status.text}${connectionUptime > 0 ? ` | Uptime: ${formatUptime(connectionUptime)}` : ''}${lastPing ? ` | Last ping: ${new Date(lastPing).toLocaleTimeString()}` : ''}`}
                       >
                         <status.icon className={cn('w-3 h-3', status.color)} />
                         {(showConnectionStatus || hasError) && (
@@ -305,14 +305,14 @@ export default function NotificationBell({
                 </div>
                 
                 <div className="flex items-center gap-1">
-                  {/* 重連按鈕 */}
+                  {/* Reconnect button */}
                   {hasError && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={reconnect}
                       className="h-6 w-6 p-0 text-blue-600 hover:text-blue-700"
-                      title="重新連接"
+                      title="Reconnect"
                     >
                       <Wifi className="w-3 h-3" />
                     </Button>
@@ -329,7 +329,7 @@ export default function NotificationBell({
                 </div>
               </div>
 
-              {/* 通知中心內容 */}
+              {/* Notification center content */}
               <div className="w-80 max-h-96">
                 <NotificationCenter
                   showHeader={false}
@@ -339,7 +339,7 @@ export default function NotificationBell({
                 />
               </div>
 
-              {/* 底部操作 */}
+              {/* Bottom actions */}
               <div className="p-3 border-t bg-gray-50 text-center">
                 <Button
                   variant="ghost"
@@ -347,11 +347,11 @@ export default function NotificationBell({
                   className="text-xs text-blue-600 hover:text-blue-700"
                   onClick={() => {
                     setIsOpen(false)
-                    // 可以跳轉到完整的通知頁面
+                    // Can jump to full notification page
                     window.location.href = '/notifications'
                   }}
                 >
-                  查看所有通知
+                  View All Notifications
                 </Button>
               </div>
             </div>
@@ -362,7 +362,7 @@ export default function NotificationBell({
   )
 }
 
-// 導出一個簡化版本用於不同場景
+// Export a simplified version for different scenarios
 export function SimpleNotificationBell({ className, size = 'md' }: { className?: string; size?: 'sm' | 'md' | 'lg' }) {
   return (
     <NotificationBell 
