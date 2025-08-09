@@ -1,6 +1,6 @@
 /**
  * Announcements API - List and Create
- * 公告 API - 列表查詢與建立端點
+ * Announcements API - List Query and Create Endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -9,23 +9,23 @@ import { getCurrentUser, isAdmin, isTeacher, AUTH_ERRORS } from '@/lib/auth'
 
 const prisma = new PrismaClient()
 
-// GET /api/announcements - 取得公告列表
+// GET /api/announcements - Get announcements list
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     
-    // 分頁參數
+    // Pagination parameters
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const offset = (page - 1) * limit
 
-    // 篩選參數
+    // Filter parameters
     const targetAudience = searchParams.get('targetAudience')
     const priority = searchParams.get('priority') 
-    const status = searchParams.get('status') || 'published' // 預設只顯示已發布的公告
+    const status = searchParams.get('status') || 'published' // Default to show only published announcements
     const search = searchParams.get('search')
 
-    // 建立查詢條件
+    // Build query conditions
     const where: any = {}
     
     if (targetAudience && targetAudience !== 'all') {
@@ -40,21 +40,21 @@ export async function GET(request: NextRequest) {
       where.status = status
     }
     
-    // 預設過濾掉過期的公告
+    // Filter out expired announcements by default
     const includeExpired = searchParams.get('includeExpired') === 'true'
     if (!includeExpired) {
       where.OR = [
-        { expiresAt: null }, // 沒有過期時間的公告
-        { expiresAt: { gt: new Date() } } // 還沒過期的公告
+        { expiresAt: null }, // Announcements without expiry
+        { expiresAt: { gt: new Date() } } // Non-expired announcements
       ]
     }
     
     if (search) {
-      // 如果有搜尋條件，需要調整 OR 邏輯
+      // If there are search conditions, need to adjust OR logic
       if (where.OR && !includeExpired) {
         where.AND = [
           {
-            OR: where.OR // 過期條件
+            OR: where.OR // Expiry conditions
           },
           {
             OR: [
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 執行查詢
+    // Execute query
     const [rawAnnouncements, totalCount] = await Promise.all([
       prisma.announcement.findMany({
         where,
@@ -100,28 +100,28 @@ export async function GET(request: NextRequest) {
       prisma.announcement.count({ where })
     ])
 
-    // 智能排序：計算每個公告的權重分數
+    // Intelligent sorting: Calculate weight score for each announcement
     const announcements = rawAnnouncements.map(announcement => {
       const now = new Date()
       const publishedAt = announcement.publishedAt || announcement.createdAt
       const daysSincePublished = Math.floor((now.getTime() - publishedAt.getTime()) / (1000 * 60 * 60 * 24))
       
-      // 優先級權重 (high > medium > low)
+      // Priority weight (high > medium > low)
       const priorityWeight = {
         'high': 100,
         'medium': 50,
         'low': 20
       }[announcement.priority] || 20
       
-      // 新鮮度權重（越新權重越高）
+      // Freshness weight (newer items have higher weight)
       const freshnessWeight = Math.max(0, 30 - daysSincePublished)
       
-      // 即將過期權重（快過期的權重更高）
+      // Urgency weight (items about to expire have higher weight)
       let urgencyWeight = 0
       if (announcement.expiresAt) {
         const hoursUntilExpiry = Math.floor((announcement.expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60))
         if (hoursUntilExpiry > 0 && hoursUntilExpiry <= 48) {
-          urgencyWeight = 50 - hoursUntilExpiry // 48小時內過期的加權
+          urgencyWeight = 50 - hoursUntilExpiry // Weight for items expiring within 48 hours
         }
       }
       
@@ -133,13 +133,13 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // 根據計算分數重新排序
+    // Resort based on calculated scores
     announcements.sort((a, b) => b._sortScore - a._sortScore)
 
-    // 移除排序分數（不返回給客戶端）
+    // Remove sort scores (don't return to client)
     const finalAnnouncements = announcements.map(({ _sortScore, ...announcement }) => announcement)
 
-    // 計算分頁資訊
+    // Calculate pagination information
     const totalPages = Math.ceil(totalCount / limit)
     const hasNextPage = page < totalPages
     const hasPrevPage = page > 1
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
       { 
         success: false, 
         error: 'Internal server error',
-        message: '伺服器內部錯誤' 
+        message: 'Internal server error' 
       },
       { status: 500 }
     )
@@ -180,10 +180,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/announcements - 建立新公告
+// POST /api/announcements - Create new announcement
 export async function POST(request: NextRequest) {
   try {
-    // 檢查使用者認證
+    // Check user authentication
     const currentUser = await getCurrentUser()
     
     if (!currentUser) {
@@ -191,19 +191,19 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '請先登入' 
+          message: 'Please log in first' 
         },
         { status: 401 }
       )
     }
 
-    // 檢查權限：需要 admin 或 teacher 角色
+    // Check permissions: requires admin or teacher role
     if (!isAdmin(currentUser) && !isTeacher(currentUser)) {
       return NextResponse.json(
         { 
           success: false, 
           error: AUTH_ERRORS.ACCESS_DENIED,
-          message: '權限不足：需要管理員或教師權限' 
+          message: 'Insufficient permissions: admin or teacher role required' 
         },
         { status: 403 }
       )
@@ -221,58 +221,58 @@ export async function POST(request: NextRequest) {
       expiresAt 
     } = body
 
-    // 驗證必要欄位
+    // Validate required fields
     if (!title || !content) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Title and content are required',
-          message: '標題和內容為必填欄位' 
+          message: 'Title and content are required fields' 
         },
         { status: 400 }
       )
     }
 
-    // 驗證 targetAudience 值
+    // Validate targetAudience value
     const validAudiences = ['teachers', 'parents', 'all']
     if (!validAudiences.includes(targetAudience)) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Invalid target audience',
-          message: '無效的目標對象' 
+          message: 'Invalid target audience' 
         },
         { status: 400 }
       )
     }
 
-    // 驗證 priority 值
+    // Validate priority value
     const validPriorities = ['low', 'medium', 'high']
     if (!validPriorities.includes(priority)) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Invalid priority',
-          message: '無效的優先等級' 
+          message: 'Invalid priority level' 
         },
         { status: 400 }
       )
     }
 
-    // 驗證 status 值
+    // Validate status value
     const validStatuses = ['draft', 'published', 'archived']
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Invalid status',
-          message: '無效的狀態' 
+          message: 'Invalid status' 
         },
         { status: 400 }
       )
     }
 
-    // 建立公告資料
+    // Create announcement data
     const announcementData: any = {
       title,
       content,
@@ -283,19 +283,19 @@ export async function POST(request: NextRequest) {
       status
     }
 
-    // 處理發布時間
+    // Handle publish time
     if (status === 'published' && !publishedAt) {
       announcementData.publishedAt = new Date()
     } else if (publishedAt) {
       announcementData.publishedAt = new Date(publishedAt)
     }
 
-    // 處理到期時間
+    // Handle expiry time
     if (expiresAt) {
       announcementData.expiresAt = new Date(expiresAt)
     }
 
-    // 建立公告
+    // Create announcement
     const announcement = await prisma.announcement.create({
       data: announcementData,
       include: {
@@ -313,7 +313,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '公告建立成功',
+      message: 'Announcement created successfully',
       data: announcement
     }, { status: 201 })
 
@@ -324,7 +324,7 @@ export async function POST(request: NextRequest) {
       { 
         success: false, 
         error: 'Internal server error',
-        message: '建立公告失敗，請稍後再試' 
+        message: 'Failed to create announcement, please try again later' 
       },
       { status: 500 }
     )
@@ -333,7 +333,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 不支援的 HTTP 方法
+// Unsupported HTTP methods
 export async function PUT() {
   return NextResponse.json(
     { error: 'Method not allowed' },

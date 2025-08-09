@@ -1,6 +1,6 @@
 /**
  * Enhanced Health Check API Endpoint with Performance Metrics
- * KCISLK ESID Info Hub - 健康檢查 API 端點
+ * KCISLK ESID Info Hub - Health Check API Endpoint
  * 
  * This endpoint is used by Docker health checks and monitoring systems
  * to verify that the application is running correctly.
