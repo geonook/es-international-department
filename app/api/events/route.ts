@@ -4,22 +4,22 @@ import { requireApiAuth, getSearchParams, parsePaginationParams, createApiErrorR
 
 /**
  * Public Events API - GET /api/events
- * 公開活動 API - 獲取已發布活動列表
+ * Public Events API - Get published events list
  * 
- * @description 獲取已發布的活動列表，支援篩選、搜尋和分頁
- * @features 分頁、篩選、搜尋、僅顯示已發布活動
+ * @description Get list of published events with filtering, search and pagination
+ * @features Pagination, filtering, search, published events only
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證用戶身份（需要登入才能查看活動）
+    // Verify user authentication (login required to view events)
     const authResult = await requireApiAuth(request)
     if (!authResult.success) {
       return authResult.response!
     }
     const currentUser = authResult.user!
 
-    // 解析查詢參數
+    // Parse query parameters
     const searchParams = getSearchParams(request)
     const { page, limit } = parsePaginationParams(searchParams)
     const eventType = searchParams.get('eventType')
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const upcoming = searchParams.get('upcoming') === 'true'
     const featured = searchParams.get('featured') === 'true'
 
-    // 構建篩選條件 - 僅顯示已發布的活動
+    // Build filter conditions - only show published events
     const where: any = {
       status: 'published'
     }
@@ -53,12 +53,12 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    // 日期範圍篩選
+    // Date range filtering
     if (startDate || endDate || upcoming) {
       where.startDate = {}
       
       if (upcoming) {
-        // 只顯示未來的活動
+        // Only show future events
         where.startDate.gte = new Date()
       } else {
         if (startDate) {
@@ -70,17 +70,17 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 精選活動篩選
+    // Featured events filtering
     if (featured) {
       where.isFeatured = true
     }
 
-    // 計算總數
+    // Calculate total count
     const totalCount = await prisma.event.count({ where })
     const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // 獲取活動列表
+    // Get events list
     const events = await prisma.event.findMany({
       where,
       include: {
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
       take: limit
     })
 
-    // 處理活動資料，添加註冊統計
+    // Process event data, add registration statistics
     const processedEvents = events.map(event => ({
       ...event,
       registrationCount: event._count.registrations,
@@ -141,12 +141,12 @@ export async function GET(request: NextRequest) {
       ),
       spotsRemaining: event.maxParticipants ? 
         event.maxParticipants - event._count.registrations : null,
-      // 移除內部計數欄位
+      // Remove internal count fields
       _count: undefined,
       registrations: undefined
     }))
 
-    // 構建分頁資訊
+    // Build pagination info
     const pagination = {
       page,
       limit,
@@ -156,7 +156,7 @@ export async function GET(request: NextRequest) {
       hasPrevPage: page > 1
     }
 
-    // 構建篩選器資訊
+    // Build filter info
     const filters = {
       eventType: eventType || 'all',
       targetGrade: targetGrade || 'all',
@@ -174,6 +174,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Get public events error:', error)
-    return createApiErrorResponse('獲取活動列表失敗', 500)
+    return createApiErrorResponse('Failed to get events list', 500)
   }
 }

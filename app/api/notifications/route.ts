@@ -12,27 +12,27 @@ import {
 
 /**
  * Notifications API - /api/notifications
- * 通知系統 API
+ * Notification System API
  * 
- * @description 處理用戶通知的獲取、創建和管理
- * @features 通知列表、分頁、篩選、統計、發送通知
+ * @description Handle user notification retrieval, creation and management
+ * @features Notification list, pagination, filtering, statistics, send notifications
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**
  * GET /api/notifications
- * 獲取用戶通知列表
+ * Get user notification list
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
         { 
           success: false, 
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '未授權訪問' 
+          message: 'Unauthorized access' 
         }, 
         { status: 401 }
       )
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     const userId = currentUser.id
     const { searchParams } = new URL(request.url)
 
-    // 解析查詢參數
+    // Parse query parameters
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
     const type = searchParams.get('type') as NotificationType | 'all' | null
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     const dateStart = searchParams.get('dateStart')
     const dateEnd = searchParams.get('dateEnd')
 
-    // 構建篩選條件
+    // Build filter conditions
     const where: any = {
       recipientId: userId
     }
@@ -85,18 +85,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 排除過期通知
+    // Exclude expired notifications
     where.OR = [
       { expiresAt: null },
       { expiresAt: { gt: new Date() } }
     ]
 
-    // 計算總數和分頁
+    // Calculate total count and pagination
     const totalCount = await prisma.notification.count({ where })
     const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // 獲取通知列表
+    // Get notification list
     const notifications = await prisma.notification.findMany({
       where,
       include: {
@@ -111,18 +111,18 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
-        { isRead: 'asc' },  // 未讀優先
-        { priority: 'desc' }, // 高優先級優先
+        { isRead: 'asc' },  // Unread first
+        { priority: 'desc' }, // High priority first
         { createdAt: 'desc' }
       ],
       skip,
       take: limit
     })
 
-    // 計算統計資訊
+    // Calculate statistics
     const stats: NotificationStats = await calculateStats(userId)
 
-    // 構建篩選資訊
+    // Build filter info
     const filters: NotificationFilters = {
       type: type || 'all',
       priority: priority || 'all',
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 構建分頁資訊
+    // Build pagination info
     const pagination = {
       page,
       limit,
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get notifications error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取通知列表失敗' },
+      { success: false, message: 'Failed to get notification list' },
       { status: 500 }
     )
   }
@@ -163,59 +163,59 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/notifications
- * 發送新通知（管理員功能）
+ * Send new notification (admin function)
  */
 export async function POST(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
         { 
           success: false, 
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '未授權訪問' 
+          message: 'Unauthorized access' 
         }, 
         { status: 401 }
       )
     }
 
-    // 檢查管理員權限
+    // Check admin permissions
     if (!isAdmin(currentUser)) {
       return NextResponse.json(
         { 
           success: false, 
           error: AUTH_ERRORS.ACCESS_DENIED,
-          message: '權限不足' 
+          message: 'Insufficient permissions' 
         },
         { status: 403 }
       )
     }
 
-    // 解析請求資料
+    // Parse request data
     const data: NotificationFormData = await request.json()
 
-    // 驗證必填欄位
+    // Validate required fields
     if (!data.title || !data.message || !data.type || !data.priority) {
       return NextResponse.json(
-        { success: false, message: '缺少必填欄位' },
+        { success: false, message: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // 發送通知
+    // Send notification
     const result = await NotificationService.sendNotification(data)
 
     if (result.success) {
       return NextResponse.json({
         success: true,
-        message: `通知已發送給 ${result.totalSent} 位用戶`,
+        message: `Notification sent to ${result.totalSent} users`,
         data: result
       })
     } else {
       return NextResponse.json({
         success: false,
-        message: '發送通知失敗',
+        message: 'Failed to send notification',
         data: result
       }, { status: 400 })
     }
@@ -223,14 +223,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Send notification error:', error)
     return NextResponse.json(
-      { success: false, message: '發送通知失敗' },
+      { success: false, message: 'Failed to send notification' },
       { status: 500 }
     )
   }
 }
 
 /**
- * 計算用戶通知統計
+ * Calculate user notification statistics
  */
 async function calculateStats(userId: string): Promise<NotificationStats> {
   const now = new Date()
@@ -238,7 +238,7 @@ async function calculateStats(userId: string): Promise<NotificationStats> {
   const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
   const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-  // 基本統計
+  // Basic statistics
   const [
     total,
     unread,
@@ -308,7 +308,7 @@ async function calculateStats(userId: string): Promise<NotificationStats> {
     })
   ])
 
-  // 按類型統計
+  // Statistics by type
   const byTypeResults = await prisma.notification.groupBy({
     by: ['type'],
     where: {
@@ -336,7 +336,7 @@ async function calculateStats(userId: string): Promise<NotificationStats> {
     byType[result.type as NotificationType] = result._count
   })
 
-  // 按優先級統計
+  // Statistics by priority
   const byPriorityResults = await prisma.notification.groupBy({
     by: ['priority'],
     where: {
@@ -364,7 +364,7 @@ async function calculateStats(userId: string): Promise<NotificationStats> {
     total,
     unread,
     read,
-    archived: 0, // 暫時為0，需要schema支援archived狀態
+    archived: 0, // Temporarily 0, needs schema support for archived status
     byType,
     byPriority,
     recent,

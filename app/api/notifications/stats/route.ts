@@ -5,16 +5,16 @@ import { getConnectionStats } from '../stream/route'
 
 /**
  * Notification Statistics API - /api/notifications/stats
- * 通知統計 API
+ * Notification Statistics API
  * 
- * @description 提供通知系統統計資訊，包括未讀數量、SSE連接狀態等
- * @features 通知統計、連接監控、性能指標
+ * @description Provide notification system statistics, including unread counts, SSE connection status, etc.
+ * @features Notification statistics, connection monitoring, performance metrics
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**
  * GET /api/notifications/stats
- * 獲取通知統計資訊
+ * Get notification statistics
  */
 export async function GET(request: NextRequest) {
   try {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
         { 
           success: false, 
           error: 'UNAUTHORIZED',
-          message: '未授權訪問' 
+          message: 'Unauthorized access' 
         }, 
         { status: 401 }
       )
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     const includeConnectionStats = searchParams.get('includeConnectionStats') === 'true'
     const isUserAdmin = isAdmin(currentUser)
 
-    // 獲取用戶通知統計
+    // Get user notification statistics
     const now = new Date()
     const [
       totalNotifications,
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       readNotifications,
       recentNotifications
     ] = await Promise.all([
-      // 總通知數
+      // Total notifications
       prisma.notification.count({
         where: { 
           recipientId: currentUser.id,
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // 未讀通知數
+      // Unread notifications
       prisma.notification.count({
         where: { 
           recipientId: currentUser.id,
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // 已讀通知數
+      // Read notifications
       prisma.notification.count({
         where: { 
           recipientId: currentUser.id,
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // 最近24小時通知數
+      // Recent 24 hours notifications
       prisma.notification.count({
         where: { 
           recipientId: currentUser.id,
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       })
     ])
 
-    // 按類型統計（僅限用戶自己的通知）
+    // Statistics by type (user's own notifications only)
     const notificationsByType = await prisma.notification.groupBy({
       by: ['type'],
       where: {
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // 按優先級統計（僅限用戶自己的通知）
+    // Statistics by priority (user's own notifications only)
     const notificationsByPriority = await prisma.notification.groupBy({
       by: ['priority'],
       where: {
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 管理員可以看到系統統計
+    // Admins can view system statistics
     let systemStats = null
     if (isUserAdmin) {
       const [
@@ -181,12 +181,12 @@ export async function GET(request: NextRequest) {
       timestamp: now.toISOString()
     }
 
-    // 添加系統統計（僅管理員）
+    // Add system statistics (admin only)
     if (systemStats) {
       response.system = systemStats
     }
 
-    // 添加連接統計（如果請求）
+    // Add connection statistics (if requested)
     if (includeConnectionStats && (isUserAdmin || process.env.NODE_ENV === 'development')) {
       try {
         const connectionStats = getConnectionStats()
@@ -214,7 +214,7 @@ export async function GET(request: NextRequest) {
       { 
         success: false, 
         error: 'INTERNAL_ERROR',
-        message: '獲取通知統計失敗' 
+        message: 'Failed to get notification statistics' 
       },
       { status: 500 }
     )
@@ -223,12 +223,12 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/notifications/stats
- * 記錄通知統計事件（內部使用）
+ * Record notification statistics events (internal use)
  */
 export async function POST(request: NextRequest) {
   try {
-    // 這個端點可以用於記錄各種通知統計事件
-    // 例如：通知開啟率、點擊率等
+    // This endpoint can be used to record various notification statistics events
+    // For example: notification open rate, click rate, etc.
     
     const currentUser = await getCurrentUser()
     if (!currentUser || !isAdmin(currentUser)) {
@@ -236,7 +236,7 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: 'UNAUTHORIZED',
-          message: '權限不足' 
+          message: 'Insufficient permissions' 
         },
         { status: 403 }
       )
@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { eventType, data } = body
 
-    // 這裡可以擴展不同類型的統計事件記錄
+    // Here we can expand different types of statistics event recording
     console.log('Notification stats event:', { eventType, data, userId: currentUser.id })
 
     return NextResponse.json({
@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
       { 
         success: false, 
         error: 'INTERNAL_ERROR',
-        message: '記錄統計事件失敗' 
+        message: 'Failed to record statistics event' 
       },
       { status: 500 }
     )

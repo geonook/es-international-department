@@ -4,27 +4,27 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
 /**
  * Individual Notification API - /api/notifications/[id]
- * 個別通知 API
+ * Individual Notification API
  * 
- * @description 處理單一通知的獲取、標記已讀、刪除等操作
- * @features 通知詳情、標記已讀、刪除通知
+ * @description Handle single notification retrieval, mark as read, delete operations
+ * @features Notification details, mark as read, delete notification
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**
  * GET /api/notifications/[id]
- * 獲取單一通知詳情
+ * Get single notification details
  */
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
@@ -32,12 +32,12 @@ export async function GET(
     const notificationId = parseInt(params.id)
     if (isNaN(notificationId)) {
       return NextResponse.json(
-        { success: false, message: '無效的通知ID' },
+        { success: false, message: 'Invalid notification ID' },
         { status: 400 }
       )
     }
 
-    // 獲取通知詳情
+    // Get notification details
     const notification = await prisma.notification.findFirst({
       where: {
         id: notificationId,
@@ -58,16 +58,16 @@ export async function GET(
 
     if (!notification) {
       return NextResponse.json(
-        { success: false, message: '通知不存在' },
+        { success: false, message: 'Notification does not exist' },
         { status: 404 }
       )
     }
 
-    // 檢查是否過期
+    // Check if expired
     const isExpired = notification.expiresAt && notification.expiresAt < new Date()
     if (isExpired) {
       return NextResponse.json(
-        { success: false, message: '通知已過期' },
+        { success: false, message: 'Notification has expired' },
         { status: 410 }
       )
     }
@@ -80,7 +80,7 @@ export async function GET(
   } catch (error) {
     console.error('Get notification error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取通知失敗' },
+      { success: false, message: 'Failed to get notification' },
       { status: 500 }
     )
   }
@@ -88,18 +88,18 @@ export async function GET(
 
 /**
  * PATCH /api/notifications/[id]
- * 更新通知狀態（標記已讀/未讀）
+ * Update notification status (mark as read/unread)
  */
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
@@ -107,23 +107,23 @@ export async function PATCH(
     const notificationId = parseInt(params.id)
     if (isNaN(notificationId)) {
       return NextResponse.json(
-        { success: false, message: '無效的通知ID' },
+        { success: false, message: 'Invalid notification ID' },
         { status: 400 }
       )
     }
 
-    // 解析請求資料
+    // Parse request data
     const body = await request.json()
     const { action } = body
 
     if (!action || !['mark_read', 'mark_unread'].includes(action)) {
       return NextResponse.json(
-        { success: false, message: '無效的操作' },
+        { success: false, message: 'Invalid operation' },
         { status: 400 }
       )
     }
 
-    // 檢查通知是否存在且屬於當前用戶
+    // Check if notification exists and belongs to current user
     const existingNotification = await prisma.notification.findFirst({
       where: {
         id: notificationId,
@@ -133,12 +133,12 @@ export async function PATCH(
 
     if (!existingNotification) {
       return NextResponse.json(
-        { success: false, message: '通知不存在' },
+        { success: false, message: 'Notification does not exist' },
         { status: 404 }
       )
     }
 
-    // 更新通知狀態
+    // Update notification status
     const updateData: any = {}
     
     if (action === 'mark_read') {
@@ -167,14 +167,14 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      message: action === 'mark_read' ? '已標記為已讀' : '已標記為未讀',
+      message: action === 'mark_read' ? 'Marked as read' : 'Marked as unread',
       data: updatedNotification
     })
 
   } catch (error) {
     console.error('Update notification error:', error)
     return NextResponse.json(
-      { success: false, message: '更新通知失敗' },
+      { success: false, message: 'Failed to update notification' },
       { status: 500 }
     )
   }
@@ -182,18 +182,18 @@ export async function PATCH(
 
 /**
  * DELETE /api/notifications/[id]
- * 刪除通知
+ * Delete notification
  */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
@@ -201,12 +201,12 @@ export async function DELETE(
     const notificationId = parseInt(params.id)
     if (isNaN(notificationId)) {
       return NextResponse.json(
-        { success: false, message: '無效的通知ID' },
+        { success: false, message: 'Invalid notification ID' },
         { status: 400 }
       )
     }
 
-    // 檢查通知是否存在且屬於當前用戶
+    // Check if notification exists and belongs to current user
     const existingNotification = await prisma.notification.findFirst({
       where: {
         id: notificationId,
@@ -216,25 +216,25 @@ export async function DELETE(
 
     if (!existingNotification) {
       return NextResponse.json(
-        { success: false, message: '通知不存在' },
+        { success: false, message: 'Notification does not exist' },
         { status: 404 }
       )
     }
 
-    // 刪除通知
+    // Delete notification
     await prisma.notification.delete({
       where: { id: notificationId }
     })
 
     return NextResponse.json({
       success: true,
-      message: '通知已刪除'
+      message: 'Notification deleted'
     })
 
   } catch (error) {
     console.error('Delete notification error:', error)
     return NextResponse.json(
-      { success: false, message: '刪除通知失敗' },
+      { success: false, message: 'Failed to delete notification' },
       { status: 500 }
     )
   }

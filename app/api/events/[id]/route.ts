@@ -4,9 +4,9 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
 /**
  * Public Event API - GET /api/events/[id]
- * 公開活動 API - 獲取單一活動詳情
+ * Public Event API - Get single event details
  * 
- * @description 獲取單一已發布活動的詳細資訊
+ * @description Get detailed information for a single published event
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(
@@ -14,29 +14,29 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 獲取活動詳情 - 僅顯示已發布的活動
+    // Get event details - only show published events
     const event = await prisma.event.findFirst({
       where: { 
         id: eventId,
-        status: 'published' // 只有已發布的活動才能被公開查看
+        status: 'published' // Only published events can be publicly viewed
       },
       include: {
         creator: {
@@ -89,12 +89,12 @@ export async function GET(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, message: '活動不存在或尚未發布' },
+        { success: false, message: 'Event does not exist or not yet published' },
         { status: 404 }
       )
     }
 
-    // 檢查當前用戶是否已報名
+    // Check if current user is registered
     const userRegistration = await prisma.eventRegistration.findUnique({
       where: {
         eventId_userId: {
@@ -104,7 +104,7 @@ export async function GET(
       }
     })
 
-    // 處理活動資料
+    // Process event data
     const processedEvent = {
       ...event,
       registrationCount: event._count.registrations,
@@ -130,7 +130,7 @@ export async function GET(
       canCancelRegistration: !!userRegistration && 
         userRegistration.status !== 'cancelled' &&
         (!event.registrationDeadline || new Date(event.registrationDeadline) > new Date()),
-      // 移除敏感資訊和內部欄位
+      // Remove sensitive information and internal fields
       _count: undefined,
       registrations: event.registrations.map(reg => ({
         id: reg.id,
@@ -149,7 +149,7 @@ export async function GET(
   } catch (error) {
     console.error('Get event error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取活動失敗' },
+      { success: false, message: 'Failed to get event' },
       { status: 500 }
     )
   }

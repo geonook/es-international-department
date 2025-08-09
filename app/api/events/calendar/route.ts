@@ -4,44 +4,44 @@ import { requireApiAuth, getSearchParams, parsePaginationParams, createApiErrorR
 
 /**
  * Events Calendar API - GET /api/events/calendar
- * 活動日曆 API - 獲取日曆格式的活動資料
+ * Events Calendar API - Get calendar formatted event data
  * 
- * @description 提供適合日曆組件使用的活動資料格式
- * @features 月份檢視、年度檢視、活動摘要、快速篩選
+ * @description Provides event data format suitable for calendar components
+ * @features Monthly view, yearly view, event summary, quick filtering
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const authResult = await requireApiAuth(request)
     if (!authResult.success) {
       return authResult.response!
     }
     const currentUser = authResult.user!
 
-    // 解析查詢參數
+    // Parse query parameters
     const searchParams = getSearchParams(request)
     const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString())
     const month = searchParams.get('month') ? parseInt(searchParams.get('month')!) : null
     const eventType = searchParams.get('eventType')
     const targetGrade = searchParams.get('targetGrade')
-    const userOnly = searchParams.get('userOnly') === 'true' // 僅顯示用戶報名的活動
+    const userOnly = searchParams.get('userOnly') === 'true' // Show only user registered events
 
-    // 構建日期範圍
+    // Build date range
     let startDate: Date
     let endDate: Date
 
     if (month !== null) {
-      // 月份檢視
+      // Monthly view
       startDate = new Date(year, month - 1, 1)
       endDate = new Date(year, month, 0, 23, 59, 59)
     } else {
-      // 年度檢視
+      // Yearly view
       startDate = new Date(year, 0, 1)
       endDate = new Date(year, 11, 31, 23, 59, 59)
     }
 
-    // 構建篩選條件
+    // Build filter conditions
     const where: any = {
       status: 'published',
       startDate: {
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 如果只要用戶報名的活動
+    // If only user registered events
     if (userOnly) {
       where.registrations = {
         some: {
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 獲取活動資料
+    // Get event data
     const events = await prisma.event.findMany({
       where,
       include: {
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // 轉換為日曆格式
+    // Convert to calendar format
     const calendarEvents = events.map(event => {
       const userRegistration = userOnly ? event.registrations[0] : null
       
@@ -151,14 +151,14 @@ export async function GET(request: NextRequest) {
         className: getEventClassName(event.eventType, userRegistration?.status),
         color: getEventColor(event.eventType),
         allDay: !event.startTime && !event.endTime,
-        url: `/events/${event.id}` // 前端路由
+        url: `/events/${event.id}` // Frontend route
       }
     })
 
-    // 按月份分組（如果是年度檢視）
+    // Group by month (if yearly view)
     const groupedByMonth = month === null ? groupEventsByMonth(calendarEvents) : null
 
-    // 計算統計資訊
+    // Calculate statistics
     const stats = {
       totalEvents: events.length,
       byType: {} as Record<string, number>,
@@ -180,12 +180,12 @@ export async function GET(request: NextRequest) {
         })
     }
 
-    // 統計各類型活動數量
+    // Count events by type
     for (const event of events) {
       stats.byType[event.eventType] = (stats.byType[event.eventType] || 0) + 1
     }
 
-    // 統計各月份活動數量（年度檢視時）
+    // Count events by month (yearly view)
     if (month === null) {
       for (const event of events) {
         const monthKey = new Date(event.startDate).toLocaleDateString('zh-TW', { 
@@ -210,12 +210,12 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Get calendar events error:', error)
-    return createApiErrorResponse('獲取日曆資料失敗', 500)
+    return createApiErrorResponse('Failed to get calendar data', 500)
   }
 }
 
 /**
- * 根據活動類型和用戶報名狀態生成 CSS 類名
+ * Generate CSS class name based on event type and user registration status
  */
 function getEventClassName(eventType: string, userRegistrationStatus?: string): string {
   const baseClass = `event-${eventType.toLowerCase().replace(/\s+/g, '-')}`
@@ -230,27 +230,27 @@ function getEventClassName(eventType: string, userRegistrationStatus?: string): 
 }
 
 /**
- * 根據活動類型獲取顏色
+ * Get color based on event type
  */
 function getEventColor(eventType: string): string {
   const colorMap: Record<string, string> = {
-    'academic': '#3B82F6', // 學術活動 - 藍色
-    'sports': '#10B981', // 體育活動 - 綠色
-    'cultural': '#8B5CF6', // 文化活動 - 紫色
-    'parent_meeting': '#F59E0B', // 家長會 - 橙色
-    'field_trip': '#EF4444', // 戶外教學 - 紅色
-    'workshop': '#6366F1', // 工作坊 - 靛色
-    'celebration': '#EC4899', // 慶祝活動 - 粉色
-    'meeting': '#6B7280', // 會議 - 灰色
-    'conference': '#059669', // 會議 - 綠色
-    'other': '#9CA3AF' // 其他 - 淺灰色
+    'academic': '#3B82F6', // Academic activities - Blue
+    'sports': '#10B981', // Sports activities - Green
+    'cultural': '#8B5CF6', // Cultural activities - Purple
+    'parent_meeting': '#F59E0B', // Parent meetings - Orange
+    'field_trip': '#EF4444', // Field trips - Red
+    'workshop': '#6366F1', // Workshops - Indigo
+    'celebration': '#EC4899', // Celebrations - Pink
+    'meeting': '#6B7280', // Meetings - Gray
+    'conference': '#059669', // Conferences - Green
+    'other': '#9CA3AF' // Other - Light gray
   }
   
   return colorMap[eventType] || colorMap['other']
 }
 
 /**
- * 將活動按月份分組
+ * Group events by month
  */
 function groupEventsByMonth(events: any[]): Record<string, any[]> {
   const grouped: Record<string, any[]> = {}
