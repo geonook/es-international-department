@@ -1,8 +1,8 @@
 /**
  * Authentication Utilities for API Routes
- * API 路由專用認證工具函式
+ * Authentication utilities for API routes
  * 
- * @description 優化的認證檢查工具，減少重複邏輯並提升效能
+ * @description Optimized authentication check tools to reduce duplicate logic and improve performance
  * @version 1.0.0
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser, AUTH_ERRORS, User } from '@/lib/auth'
 
 /**
- * API 認證結果介面
+ * API authentication result interface
  */
 export interface AuthResult {
   success: boolean
@@ -20,11 +20,11 @@ export interface AuthResult {
 }
 
 /**
- * 快速 API 認證檢查（用於需要認證的 API 路由）
+ * Quick API authentication check (for API routes requiring authentication)
  * 
- * @description 統一的認證檢查邏輯，避免在每個 API 路由中重複代碼
- * @param request - Next.js 請求物件（可選，用於額外的請求資訊）
- * @returns 認證結果和錯誤回應（如果認證失敗）
+ * @description Unified authentication check logic to avoid repetitive code in each API route
+ * @param request - Next.js request object (optional, for additional request info)
+ * @returns Authentication result and error response (if authentication fails)
  */
 export async function requireApiAuth(request?: NextRequest): Promise<AuthResult> {
   try {
@@ -38,7 +38,7 @@ export async function requireApiAuth(request?: NextRequest): Promise<AuthResult>
           { 
             success: false, 
             error: AUTH_ERRORS.TOKEN_REQUIRED,
-            message: '需要登入才能存取此資源' 
+            message: 'Login required to access this resource' 
           },
           { status: 401 }
         )
@@ -59,7 +59,7 @@ export async function requireApiAuth(request?: NextRequest): Promise<AuthResult>
         { 
           success: false, 
           error: 'AUTH_ERROR',
-          message: '認證過程發生錯誤' 
+          message: 'Authentication process error occurred' 
         },
         { status: 500 }
       )
@@ -68,9 +68,9 @@ export async function requireApiAuth(request?: NextRequest): Promise<AuthResult>
 }
 
 /**
- * 管理員權限檢查（用於需要管理員權限的 API 路由）
+ * Admin permission check (for API routes requiring admin permissions)
  * 
- * @description 檢查用戶是否具有管理員權限
+ * @description Check if user has admin permissions
  * @param request - Next.js 請求物件（可選）
  * @returns 認證結果和錯誤回應（如果權限不足）
  */
@@ -92,7 +92,7 @@ export async function requireAdminAuth(request?: NextRequest): Promise<AuthResul
         { 
           success: false, 
           error: AUTH_ERRORS.ACCESS_DENIED,
-          message: '需要管理員權限才能存取此資源' 
+          message: 'Admin permissions required to access this resource' 
         },
         { status: 403 }
       )
@@ -107,9 +107,9 @@ export async function requireAdminAuth(request?: NextRequest): Promise<AuthResul
 }
 
 /**
- * 教師權限檢查（用於需要教師權限的 API 路由）
+ * Teacher permission check (for API routes requiring teacher permissions)
  * 
- * @description 檢查用戶是否具有教師或管理員權限
+ * @description Check if user has teacher or admin permissions
  * @param request - Next.js 請求物件（可選）
  * @returns 認證結果和錯誤回應（如果權限不足）
  */
@@ -131,7 +131,7 @@ export async function requireTeacherAuth(request?: NextRequest): Promise<AuthRes
         { 
           success: false, 
           error: AUTH_ERRORS.ACCESS_DENIED,
-          message: '需要教師權限才能存取此資源' 
+          message: 'Teacher permissions required to access this resource' 
         },
         { status: 403 }
       )
@@ -268,7 +268,7 @@ export function withApiHandler(
     } catch (error) {
       console.error(`API Error [${request.method} ${request.nextUrl.pathname}]:`, error)
       return createApiErrorResponse(
-        error instanceof Error ? error.message : '伺服器內部錯誤',
+        error instanceof Error ? error.message : 'Internal server error',
         500,
         'INTERNAL_SERVER_ERROR'
       )

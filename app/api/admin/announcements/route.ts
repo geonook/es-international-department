@@ -1,6 +1,6 @@
 /**
  * Admin Announcements Management API
- * 管理員公告管理 API - 需要管理員權限
+ * Admin Announcements Management API - Requires admin permissions
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -12,10 +12,10 @@ import { performance } from 'perf_hooks'
 
 /**
  * GET /api/admin/announcements
- * 獲取所有公告 (包含草稿) - 管理員專用
+ * Get all announcements (including drafts) - Admin only
  */
 export async function GET(request: NextRequest) {
-  // 檢查管理員權限
+  // Check admin permissions
   const authResult = await requireAdminAuth(request)
   if (!authResult.success) {
     return authResult.response!
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit
 
-    // 建構查詢條件
+    // Build query conditions
     const whereClause: any = {}
 
     if (status) {
@@ -119,16 +119,16 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Admin announcements list error:', error)
-    return createApiErrorResponse('獲取公告列表失敗', 500, 'FETCH_ANNOUNCEMENTS_ERROR')
+    return createApiErrorResponse('Failed to fetch announcements list', 500, 'FETCH_ANNOUNCEMENTS_ERROR')
   }
 }
 
 /**
  * POST /api/admin/announcements
- * 創建新公告 - 管理員專用
+ * Create new announcement - Admin only
  */
 export async function POST(request: NextRequest) {
-  // 檢查管理員權限
+  // Check admin permissions
   const adminUser = await requireAdmin(request)
   if (adminUser instanceof NextResponse) {
     return adminUser
@@ -147,58 +147,58 @@ export async function POST(request: NextRequest) {
       expiresAt
     } = body
 
-    // 基本驗證
+    // Basic validation
     if (!title || !content) {
       return NextResponse.json(
         {
           success: false,
           error: 'Missing required fields',
-          message: '標題和內容為必填欄位'
+          message: 'Title and content are required fields'
         },
         { status: 400 }
       )
     }
 
-    // 驗證 targetAudience
+    // Validate targetAudience
     const validAudiences = ['teachers', 'parents', 'all']
     if (!validAudiences.includes(targetAudience)) {
       return NextResponse.json(
         {
           success: false,
           error: 'Invalid target audience',
-          message: '目標對象必須是 teachers、parents 或 all'
+          message: 'Target audience must be teachers, parents or all'
         },
         { status: 400 }
       )
     }
 
-    // 驗證 priority
+    // Validate priority
     const validPriorities = ['low', 'medium', 'high']
     if (!validPriorities.includes(priority)) {
       return NextResponse.json(
         {
           success: false,
           error: 'Invalid priority',
-          message: '優先級必須是 low、medium 或 high'
+          message: 'Priority must be low, medium or high'
         },
         { status: 400 }
       )
     }
 
-    // 驗證 status
+    // Validate status
     const validStatuses = ['draft', 'published', 'archived']
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         {
           success: false,
           error: 'Invalid status',
-          message: '狀態必須是 draft、published 或 archived'
+          message: 'Status must be draft, published or archived'
         },
         { status: 400 }
       )
     }
 
-    // 創建公告
+    // Create announcement
     const startTime = performance.now()
     
     const newAnnouncement = await prisma.announcement.create({
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: { announcement: newAnnouncement },
-      message: '公告創建成功',
+      message: 'Announcement created successfully',
       performance: {
         createTime: createTime.toFixed(2) + 'ms'
       }
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Failed to create announcement',
-        message: '創建公告失敗'
+        message: 'Failed to create announcement'
       },
       { status: 500 }
     )

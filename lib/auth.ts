@@ -1,6 +1,6 @@
 /**
  * Authentication Utilities for KCISLK ESID Info Hub
- * JWT Token 管理和密碼認證工具函式
+ * JWT Token Management and Password Authentication Utilities
  */
 
 import { SignJWT, jwtVerify } from 'jose'
@@ -8,12 +8,12 @@ import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 import { env } from './env-validation'
 
-// JWT 設定 - 使用類型安全的環境變數
+// JWT settings - using type-safe environment variables
 const JWT_SECRET = new TextEncoder().encode(env.JWT_SECRET)
 const JWT_ALGORITHM = 'HS256'
 const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN || '7d'
 
-// 使用者介面定義
+// User interface definitions
 export interface User {
   id: string
   email: string
@@ -32,7 +32,7 @@ export interface JWTPayload {
 }
 
 /**
- * 生成 JWT Token
+ * Generate JWT Token
  */
 export async function generateJWT(user: User): Promise<string> {
   try {
@@ -56,7 +56,7 @@ export async function generateJWT(user: User): Promise<string> {
 }
 
 /**
- * 驗證 JWT Token
+ * Verify JWT Token
  */
 export async function verifyJWT(token: string): Promise<JWTPayload | null> {
   try {
@@ -72,7 +72,7 @@ export async function verifyJWT(token: string): Promise<JWTPayload | null> {
 }
 
 /**
- * 從請求中獲取 JWT Token
+ * Get JWT Token from request
  */
 export function getTokenFromRequest(): string | null {
   try {
@@ -91,7 +91,7 @@ export function getTokenFromRequest(): string | null {
 }
 
 /**
- * 獲取當前認證使用者
+ * Get current authenticated user
  */
 export async function getCurrentUser(): Promise<User | null> {
   try {
@@ -105,8 +105,8 @@ export async function getCurrentUser(): Promise<User | null> {
       return null
     }
 
-    // 這裡可以從資料庫獲取完整使用者資訊
-    // 目前先返回 JWT 中的基本資訊
+    // Can get complete user info from database here
+    // Currently return basic info from JWT
     return {
       id: payload.userId,
       email: payload.email,
@@ -119,7 +119,7 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 /**
- * 密碼 Hash 處理
+ * Password hash processing
  */
 export async function hashPassword(password: string): Promise<string> {
   try {
@@ -132,7 +132,7 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 /**
- * 密碼驗證
+ * Password verification
  */
 export async function verifyPassword(
   password: string,
@@ -147,7 +147,7 @@ export async function verifyPassword(
 }
 
 /**
- * 檢查使用者是否有特定角色
+ * Check if user has specific role
  */
 export function hasRole(user: User | null, role: string): boolean {
   if (!user || !user.roles) {
@@ -157,14 +157,14 @@ export function hasRole(user: User | null, role: string): boolean {
 }
 
 /**
- * 檢查使用者是否為管理員
+ * Check if user is admin
  */
 export function isAdmin(user: User | null): boolean {
   return hasRole(user, 'admin')
 }
 
 /**
- * 檢查使用者是否為教師
+ * Check if user is teacher
  */
 export function isTeacher(user: User | null): boolean {
   return hasRole(user, 'teacher')
@@ -179,7 +179,7 @@ export function setAuthCookie(token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 7 天
+    maxAge: 60 * 60 * 24 * 7, // 7 days
     path: '/',
   })
 }
@@ -193,7 +193,7 @@ export function clearAuthCookie() {
 }
 
 /**
- * 驗證 API 請求的認證狀態
+ * Verify authentication status of API requests
  */
 export async function verifyAuth(request?: Request): Promise<{ user: User | null, authenticated: boolean }> {
   try {
@@ -212,7 +212,7 @@ export async function verifyAuth(request?: Request): Promise<{ user: User | null
 }
 
 /**
- * API 認證錯誤回應
+ * API authentication error responses
  */
 export const AUTH_ERRORS = {
   INVALID_CREDENTIALS: 'Invalid username or password',
@@ -222,9 +222,9 @@ export const AUTH_ERRORS = {
   INVALID_REFRESH_TOKEN: 'Invalid or expired refresh token',
 } as const
 
-// Refresh Token 設定
-const REFRESH_TOKEN_EXPIRES_IN = '30d' // 30 天過期
-const ACCESS_TOKEN_EXPIRES_IN = '15m' // 15 分鐘過期
+// Refresh Token settings
+const REFRESH_TOKEN_EXPIRES_IN = '30d' // 30 days expiry
+const ACCESS_TOKEN_EXPIRES_IN = '15m' // 15 minutes expiry
 
 export interface RefreshTokenPayload {
   userId: string

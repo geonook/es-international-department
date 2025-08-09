@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     // Generate secure state parameter
     const state = generateSecureState()
 
-    // 將狀態和重定向 URL 存儲在 cookie 中
+    // Store state and redirect URL in cookies
     const response = NextResponse.redirect(generateGoogleAuthUrl(state))
     
     // Set state cookie (for CSRF protection)

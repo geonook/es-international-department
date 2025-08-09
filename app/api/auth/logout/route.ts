@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 只允許 POST 方法
+// Only allow POST method
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed' },

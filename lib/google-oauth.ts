@@ -1,12 +1,12 @@
 /**
  * Google OAuth Configuration and Utilities
- * Google OAuth 配置與工具函式
+ * Google OAuth Configuration and Utilities
  */
 
 import { OAuth2Client } from 'google-auth-library'
 import { env } from './env-validation'
 
-// Google OAuth 設定 - 使用類型安全的環境變數
+// Google OAuth settings - using type-safe environment variables
 export const GOOGLE_OAUTH_CONFIG = {
   clientId: env.GOOGLE_CLIENT_ID,
   clientSecret: env.GOOGLE_CLIENT_SECRET,
@@ -19,7 +19,7 @@ export const GOOGLE_OAUTH_CONFIG = {
   ]
 }
 
-// 初始化 OAuth2 客戶端
+// Initialize OAuth2 client
 export function createGoogleOAuthClient(): OAuth2Client {
   return new OAuth2Client(
     GOOGLE_OAUTH_CONFIG.clientId,
@@ -28,7 +28,7 @@ export function createGoogleOAuthClient(): OAuth2Client {
   )
 }
 
-// Google 用戶資訊介面
+// Google user info interface
 export interface GoogleUserInfo {
   id: string
   email: string
@@ -41,7 +41,7 @@ export interface GoogleUserInfo {
 }
 
 /**
- * 生成 Google OAuth 授權 URL
+ * Generate Google OAuth authorization URL
  */
 export function generateGoogleAuthUrl(state?: string): string {
   const oauth2Client = createGoogleOAuthClient()
@@ -50,12 +50,12 @@ export function generateGoogleAuthUrl(state?: string): string {
     access_type: 'offline',
     scope: GOOGLE_OAUTH_CONFIG.scopes,
     state: state || crypto.randomUUID(),
-    prompt: 'consent' // 強制顯示同意畫面
+    prompt: 'consent' // Force display consent screen
   })
 }
 
 /**
- * 使用授權碼交換訪問令牌
+ * Exchange authorization code for access tokens
  */
 export async function exchangeCodeForTokens(code: string) {
   const oauth2Client = createGoogleOAuthClient()
@@ -77,7 +77,7 @@ export async function exchangeCodeForTokens(code: string) {
 }
 
 /**
- * 驗證 Google ID Token 並獲取用戶資訊
+ * Verify Google ID Token and get user info
  */
 export async function verifyGoogleToken(idToken: string): Promise<GoogleUserInfo | null> {
   const oauth2Client = createGoogleOAuthClient()
@@ -111,7 +111,7 @@ export async function verifyGoogleToken(idToken: string): Promise<GoogleUserInfo
 }
 
 /**
- * 使用訪問令牌獲取用戶資訊
+ * Get user info using access token
  */
 export async function getGoogleUserInfo(accessToken: string): Promise<GoogleUserInfo | null> {
   try {
@@ -130,31 +130,31 @@ export async function getGoogleUserInfo(accessToken: string): Promise<GoogleUser
 }
 
 /**
- * 根據 email 域名分配角色
+ * Assign roles based on email domain
  */
 export function assignRoleByEmailDomain(email: string): string {
   const domain = email.split('@')[1]?.toLowerCase()
   
-  // 角色分配邏輯
+  // Role assignment logic
   const roleMapping: Record<string, string> = {
-    // 教育機構域名 -> 教師角色
+    // Educational institution domains -> teacher role
     'school.edu': 'teacher',
     'university.edu': 'teacher',
     
-    // 常見家長 email 域名 -> 家長角色
+    // Common parent email domains -> parent role
     'gmail.com': 'parent',
     'yahoo.com': 'parent',
     'hotmail.com': 'parent',
     'outlook.com': 'parent',
     
-    // 可以根據實際需求添加更多映射
+    // Can add more mappings based on actual needs
   }
   
-  return roleMapping[domain] || 'parent' // 預設為家長角色
+  return roleMapping[domain] || 'parent' // Default to parent role
 }
 
 /**
- * 驗證環境變數設定
+ * Validate environment variable configuration
  */
 export function validateGoogleOAuthConfig(): boolean {
   const requiredVars = [
@@ -173,14 +173,14 @@ export function validateGoogleOAuthConfig(): boolean {
 }
 
 /**
- * 生成安全的狀態參數 (防 CSRF)
+ * Generate secure state parameter (CSRF protection)
  */
 export function generateSecureState(): string {
   return crypto.randomUUID()
 }
 
 /**
- * 撤銷 Google 訪問令牌
+ * Revoke Google access token
  */
 export async function revokeGoogleToken(token: string): Promise<boolean> {
   try {

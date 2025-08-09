@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * PUT /api/notifications/preferences
- * 更新用戶通知偏好設定
+ * Update user notification preferences
  */
 export async function PUT(request: NextRequest) {
   try {
@@ -63,18 +63,18 @@ export async function PUT(request: NextRequest) {
 
     const userId = currentUser.id
 
-    // 解析請求資料
+    // Parse request data
     const preferences: Partial<NotificationPreferences> = await request.json()
 
-    // 驗證偏好設定資料
+    // Validate preference data
     if (!preferences || typeof preferences !== 'object') {
       return NextResponse.json(
-        { success: false, message: '無效的偏好設定資料' },
+        { success: false, message: 'Invalid preference data' },
         { status: 400 }
       )
     }
 
-    // 更新用戶通知偏好
+    // Update user notification preferences
     const updatedPreferences = await NotificationService.updateUserPreferences(
       userId, 
       preferences
@@ -82,14 +82,14 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '通知偏好已更新',
+      message: 'Notification preferences updated',
       data: updatedPreferences
     })
 
   } catch (error) {
     console.error('Update notification preferences error:', error)
     return NextResponse.json(
-      { success: false, message: '更新通知偏好失敗' },
+      { success: false, message: 'Failed to update notification preferences' },
       { status: 500 }
     )
   }
@@ -97,7 +97,7 @@ export async function PUT(request: NextRequest) {
 
 /**
  * DELETE /api/notifications/preferences
- * 重置通知偏好為預設值
+ * Reset notification preferences to defaults
  */
 export async function DELETE(request: NextRequest) {
   try {
@@ -112,19 +112,19 @@ export async function DELETE(request: NextRequest) {
 
     const userId = currentUser.id
 
-    // 重置為預設偏好設定
+    // Reset to default preference settings
     const defaultPreferences = await NotificationService.getUserPreferences(userId)
 
     return NextResponse.json({
       success: true,
-      message: '通知偏好已重置為預設值',
+      message: 'Notification preferences reset to defaults',
       data: defaultPreferences
     })
 
   } catch (error) {
     console.error('Reset notification preferences error:', error)
     return NextResponse.json(
-      { success: false, message: '重置通知偏好失敗' },
+      { success: false, message: 'Failed to reset notification preferences' },
       { status: 500 }
     )
   }

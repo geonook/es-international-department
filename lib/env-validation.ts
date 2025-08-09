@@ -1,22 +1,22 @@
 /**
  * Environment Variable Validation System
- * 環境變數驗證系統 - 統一的配置驗證機制
+ * Environment Variable Validation System - Unified configuration validation mechanism
  * 
- * @description 使用 Zod 統一驗證所有環境變數，提供類型安全和運行時驗證
- * @features 類型安全、運行時驗證、預設值、開發模式支援、錯誤報告
+ * @description Uses Zod to uniformly validate all environment variables, providing type safety and runtime validation
+ * @features Type safety, runtime validation, defaults, development mode support, error reporting
  * @version 1.0.0
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 import { z } from 'zod'
 
-// 環境變數驗證架構
+// Environment variable validation schema
 const envSchema = z.object({
-  // Node 環境配置
+  // Node environment configuration
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().min(1).max(65535)).optional(),
   
-  // Next.js 配置
+  // Next.js configuration
   NEXTAUTH_URL: z.string().url().optional(),
   NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters').optional(),
   
@@ -28,66 +28,66 @@ const envSchema = z.object({
   STAGING_DATABASE_URL: z.string().url().optional(),
   PRODUCTION_DATABASE_URL: z.string().url().optional(),
   
-  // JWT 配置
+  // JWT configuration
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   JWT_EXPIRES_IN: z.string().default('7d'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
   
-  // Google OAuth 配置
+  // Google OAuth configuration
   GOOGLE_CLIENT_ID: z.string().min(1, 'GOOGLE_CLIENT_ID is required for OAuth authentication'),
   GOOGLE_CLIENT_SECRET: z.string().min(1, 'GOOGLE_CLIENT_SECRET is required for OAuth authentication'),
   
-  // Email Service 配置 (任選其一)
+  // Email Service configuration (choose one)
   EMAIL_PROVIDER: z.enum(['smtp', 'gmail', 'sendgrid', 'aws-ses']).default('smtp'),
   
-  // SMTP 配置 (EMAIL_PROVIDER = 'smtp' 時必需)
+  // SMTP configuration (required when EMAIL_PROVIDER = 'smtp')
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().min(1).max(65535)).optional(),
   SMTP_SECURE: z.string().transform((val) => val === 'true').optional(),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   
-  // Gmail OAuth 配置 (EMAIL_PROVIDER = 'gmail' 時必需)
+  // Gmail OAuth configuration (required when EMAIL_PROVIDER = 'gmail')
   GMAIL_CLIENT_ID: z.string().optional(),
   GMAIL_CLIENT_SECRET: z.string().optional(),
   GMAIL_REFRESH_TOKEN: z.string().optional(),
   
-  // SendGrid 配置 (EMAIL_PROVIDER = 'sendgrid' 時必需)
+  // SendGrid configuration (required when EMAIL_PROVIDER = 'sendgrid')
   SENDGRID_API_KEY: z.string().optional(),
   SENDGRID_FROM_EMAIL: z.string().email().optional(),
   
-  // AWS SES 配置 (EMAIL_PROVIDER = 'aws-ses' 時必需)
+  // AWS SES configuration (required when EMAIL_PROVIDER = 'aws-ses')
   AWS_SES_REGION: z.string().optional(),
   AWS_SES_ACCESS_KEY_ID: z.string().optional(),
   AWS_SES_SECRET_ACCESS_KEY: z.string().optional(),
   
-  // 系統配置
+  // System configuration
   SYSTEM_EMAIL: z.string().email('SYSTEM_EMAIL must be a valid email address').default('system@kcislk.edu.hk'),
   ADMIN_EMAIL: z.string().email('ADMIN_EMAIL must be a valid email address').default('admin@kcislk.edu.hk'),
   
-  // 檔案上傳配置
+  // File upload configuration
   UPLOAD_PATH: z.string().default('./uploads'),
   MAX_FILE_SIZE: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().positive()).default('10485760'), // 10MB
   
-  // 速率限制配置
+  // Rate limiting configuration
   RATE_LIMIT_MAX: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().positive()).default('100'),
   RATE_LIMIT_WINDOW_MS: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().positive()).default('900000'), // 15 minutes
   
-  // 開發模式配置
+  // Development mode configuration
   ENABLE_DEBUG_LOGS: z.string().transform((val) => val === 'true').default('false'),
   DISABLE_AUTH_IN_DEV: z.string().transform((val) => val === 'true').default('false'),
   
-  // 快取配置
+  // Cache configuration
   CACHE_TTL_SHORT: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().positive()).default('60'), // 1 minute
   CACHE_TTL_MEDIUM: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().positive()).default('300'), // 5 minutes
   CACHE_TTL_LONG: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().positive()).default('3600'), // 1 hour
   
-  // 效能監控
+  // Performance monitoring
   ENABLE_PERFORMANCE_MONITORING: z.string().transform((val) => val === 'true').default('true'),
   SLOW_QUERY_THRESHOLD: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().positive()).default('100'), // 100ms
 })
 
-// 自定義驗證規則
+// Custom validation rules
 const validateEmailProvider = (data: any) => {
   const provider = data.EMAIL_PROVIDER
   
@@ -117,13 +117,13 @@ const validateEmailProvider = (data: any) => {
   return true
 }
 
-// 驗證環境變數
+// Validate environment variables
 export function validateEnv() {
   try {
-    // 基本驗證
+    // Basic validation
     const parsed = envSchema.parse(process.env)
     
-    // 自定義驗證
+    // Custom validation
     validateEmailProvider(parsed)
     
     console.log('✅ Environment variables validation passed')
@@ -138,7 +138,7 @@ export function validateEnv() {
       console.error('❌ Environment validation failed:', error.message)
     }
     
-    // 在開發模式下提供友善的錯誤訊息
+    // Provide friendly error messages in development mode
     if (process.env.NODE_ENV === 'development') {
       console.log('\n📝 Please check your .env file and ensure all required variables are set.')
       console.log('💡 See .env.example for reference configuration.')
@@ -148,7 +148,7 @@ export function validateEnv() {
   }
 }
 
-// 類型安全的環境變數存取
+// Type-safe environment variable access
 let validatedEnv: z.infer<typeof envSchema>
 
 export function getEnv() {
@@ -158,9 +158,9 @@ export function getEnv() {
   return validatedEnv
 }
 
-// 簡化的環境變數存取函式
+// Simplified environment variable access functions
 export const env = {
-  // 快速存取常用變數
+  // Quick access to common variables
   get NODE_ENV() { return getEnv().NODE_ENV },
   get DATABASE_URL() { return getEnv().DATABASE_URL },
   get JWT_SECRET() { return getEnv().JWT_SECRET },
@@ -170,7 +170,7 @@ export const env = {
   get SYSTEM_EMAIL() { return getEnv().SYSTEM_EMAIL },
   get ADMIN_EMAIL() { return getEnv().ADMIN_EMAIL },
   
-  // 條件式存取（僅在配置存在時返回）
+  // Conditional access (returns only when configuration exists)
   smtp: {
     get host() { return getEnv().SMTP_HOST },
     get port() { return getEnv().SMTP_PORT },
@@ -196,7 +196,7 @@ export const env = {
     get secretAccessKey() { return getEnv().AWS_SES_SECRET_ACCESS_KEY },
   },
   
-  // 效能和快取設定
+  // Performance and cache settings
   performance: {
     get enableMonitoring() { return getEnv().ENABLE_PERFORMANCE_MONITORING },
     get slowQueryThreshold() { return getEnv().SLOW_QUERY_THRESHOLD },
@@ -208,28 +208,28 @@ export const env = {
     get ttlLong() { return getEnv().CACHE_TTL_LONG },
   },
   
-  // 開發設定
+  // Development settings
   dev: {
     get enableDebugLogs() { return getEnv().ENABLE_DEBUG_LOGS },
     get disableAuthInDev() { return getEnv().DISABLE_AUTH_IN_DEV },
   },
   
-  // 檢查環境
+  // Check environment
   get isDevelopment() { return this.NODE_ENV === 'development' },
   get isProduction() { return this.NODE_ENV === 'production' },
   get isTest() { return this.NODE_ENV === 'test' },
 }
 
-// 環境變數類型匯出
+// Environment variable type export
 export type ValidatedEnv = z.infer<typeof envSchema>
 
-// 在應用啟動時自動驗證（跳過建置過程和測試環境）
-// 暫時停用自動驗證以進行建置測試
+// Automatically validate on application startup (skip build process and test environment)
+// Temporarily disable automatic validation for build testing
 // if (process.env.NODE_ENV !== 'test' && !process.env.NEXT_PHASE) {
 //   try {
 //     validateEnv()
 //   } catch (error) {
-//     // 在建置過程中不強制終止，但記錄警告
+//     // Don't force termination during build process, but log warnings
 //     if (process.env.NODE_ENV === 'production') {
 //       console.warn('⚠️ Environment validation failed during build - ensure proper env vars are set for runtime')
 //     } else {

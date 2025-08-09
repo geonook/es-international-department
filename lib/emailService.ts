@@ -1,9 +1,9 @@
 /**
  * Enhanced Email Service for KCISLK ESID Info Hub
- * 改進型電子郵件服務模組
+ * Enhanced Email Service Module
  * 
- * @description 處理電子郵件發送、模板渲染、佇列管理和通知服務
- * @features Email 發送、模板系統、批量發送、佇列管理、多 SMTP 支援、錯誤處理
+ * @description Handles email sending, template rendering, queue management and notification services
+ * @features Email sending, template system, bulk sending, queue management, multi-SMTP support, error handling
  * @version 2.0.0
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
@@ -12,7 +12,7 @@ import nodemailer, { Transporter } from 'nodemailer'
 import { prisma } from './prisma'
 import { env } from './env-validation'
 
-// Email 配置介面
+// Email configuration interface
 interface EmailConfig {
   host: string
   port: number
@@ -23,7 +23,7 @@ interface EmailConfig {
   }
 }
 
-// Email 內容介面
+// Email content interface
 interface EmailContent {
   to: string | string[]
   subject: string
@@ -33,7 +33,7 @@ interface EmailContent {
   bcc?: string[]
 }
 
-// Email 模板類型
+// Email template types
 export type EmailTemplateType = 
   | 'welcome'
   | 'announcement' 
@@ -45,12 +45,12 @@ export type EmailTemplateType =
   | 'system_notification'
   | 'digest'
 
-// 模板資料介面
+// Template data interface
 export interface TemplateData {
   [key: string]: any
 }
 
-// 批量發送結果
+// Bulk email results
 export interface BulkEmailResult {
   success: boolean
   totalSent: number
@@ -60,7 +60,7 @@ export interface BulkEmailResult {
   queueId?: string
 }
 
-// Email 佇列項目
+// Email queue item
 export interface EmailQueueItem {
   id: string
   to: string | string[]
@@ -79,13 +79,13 @@ export interface EmailQueueItem {
   errorMessage?: string
 }
 
-// Email 提供商配置
+// Email provider configuration
 export interface EmailProviderConfig {
   provider: 'smtp' | 'sendgrid' | 'aws-ses' | 'gmail'
   config: any
 }
 
-// 通知偏好設定
+// Notification preferences
 export interface NotificationPreferences {
   email: boolean
   emailDigest: boolean
@@ -115,12 +115,12 @@ class EmailService {
     this.fromName = 'KCISLK ESID Info Hub'
     this.provider = env.EMAIL_PROVIDER
     
-    // 延遲初始化 - 不在構造函數中立即執行
-    // 將在第一次使用時初始化
+    // Delayed initialization - don't execute immediately in constructor
+    // Will be initialized on first use
   }
 
   /**
-   * 確保郵件傳輸器已初始化（延遲初始化模式）
+   * Ensure email transporter is initialized (lazy initialization mode)
    */
   private async ensureInitialized(): Promise<void> {
     if (this.initialized) {
@@ -136,7 +136,7 @@ class EmailService {
   }
 
   /**
-   * 初始化郵件傳輸器（支援多種提供商）
+   * Initialize email transporter (supports multiple providers)
    */
   private async initializeTransporter(): Promise<void> {
     try {
@@ -249,7 +249,7 @@ class EmailService {
 
   /**
    * Dynamically load AWS SDK with proper error handling
-   * 動態載入 AWS SDK，避免建置警告
+   * Dynamically load AWS SDK, avoid build warnings
    */
   private async loadAWSSDK(): Promise<any> {
     try {
@@ -265,19 +265,19 @@ class EmailService {
   }
 
   /**
-   * 發送單一郵件（支援速率限制和測試模式）
+   * Send single email (supports rate limiting and test mode)
    */
   async sendEmail(emailContent: EmailContent): Promise<boolean> {
-    // 確保服務已初始化
+    // Ensure service is initialized
     await this.ensureInitialized()
 
-    // 檢查測試模式
+    // Check test mode
     if (process.env.EMAIL_TEST_MODE === 'true') {
       console.log('⚠️ Email test mode enabled - email not sent:', emailContent.subject)
       return true
     }
 
-    // 檢查速率限制
+    // Check rate limits
     if (!this.checkRateLimit()) {
       console.warn('⚠️ Email rate limit exceeded, queuing email:', emailContent.subject)
       await this.addToQueue({
@@ -314,12 +314,12 @@ class EmailService {
   }
 
   /**
-   * 檢查速率限制
+   * Check rate limits
    */
   private checkRateLimit(): boolean {
     const now = Date.now()
     
-    // 重設計數器
+    // Reset counters
     if (now - this.sentCounts.lastReset.minute > 60000) { // 1 minute
       this.sentCounts.minute = 0
       this.sentCounts.lastReset.minute = now
@@ -334,7 +334,7 @@ class EmailService {
   }
 
   /**
-   * 更新發送計數
+   * Update sent counts
    */
   private updateSentCounts() {
     this.sentCounts.minute++

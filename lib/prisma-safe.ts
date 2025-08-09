@@ -1,15 +1,15 @@
 /**
  * Build-Safe Prisma Client Wrapper
- * 構建安全的 Prisma Client 包裝器
+ * Build-Safe Prisma Client Wrapper
  * 
- * 在構建時期提供安全的佔位符，避免資料庫連接錯誤
+ * Provides safe placeholders during build time to avoid database connection errors
  * Provides safe placeholders during build time to avoid database connection errors
  */
 
 import type { PrismaClient } from '@prisma/client'
 
 /**
- * 檢查是否為構建時期
+ * Check if it's build time
  * Check if it's build time
  */
 function isBuildTime(): boolean {
@@ -22,11 +22,11 @@ function isBuildTime(): boolean {
 }
 
 /**
- * 構建時的安全 Prisma 佔位符
+ * Build-time safe Prisma placeholder
  * Build-time safe Prisma placeholder
  */
 const buildTimePrisma = {
-  // 所有常用的資料表查詢方法
+  // Common database table query methods
   user: {
     findUnique: () => Promise.resolve(null),
     findFirst: () => Promise.resolve(null),
@@ -72,7 +72,7 @@ const buildTimePrisma = {
     update: () => Promise.reject(new Error('Database operations not available during build')),
     delete: () => Promise.reject(new Error('Database operations not available during build')),
   },
-  // 其他常用方法
+  // Other common methods
   $connect: () => Promise.resolve(),
   $disconnect: () => Promise.resolve(),
   $transaction: () => Promise.reject(new Error('Transactions not available during build')),
@@ -81,7 +81,7 @@ const buildTimePrisma = {
 } as any
 
 /**
- * 獲取安全的 Prisma 實例
+ * Get safe Prisma instance
  * Get safe Prisma instance
  */
 export function getSafePrisma(): PrismaClient {
@@ -90,13 +90,13 @@ export function getSafePrisma(): PrismaClient {
     return buildTimePrisma
   }
   
-  // 動態導入實際的 Prisma 實例（僅在運行時）
+  // Dynamically import actual Prisma instance (runtime only)
   const { prisma } = require('@/lib/prisma')
   return prisma
 }
 
 /**
- * 用於 API 路由的 Prisma 實例
+ * Prisma instance for API routes
  * Prisma instance for API routes
  */
 export const prisma = getSafePrisma()

@@ -1,12 +1,12 @@
 /**
  * Environment Configuration Validation for Zeabur Multi-Environment Deployment
- * KCISLK ESID Info Hub - Zeabur 多環境配置驗證
+ * KCISLK ESID Info Hub - Zeabur Multi-Environment Configuration Validation
  */
 
 import { z } from 'zod'
 
 /**
- * 環境變數驗證 Schema
+ * Environment variables validation schema
  * Environment variables validation schema
  */
 const envSchema = z.object({
@@ -60,17 +60,17 @@ const envSchema = z.object({
 })
 
 /**
- * 環境配置類型定義
+ * Environment configuration type definition
  * Environment configuration type definition
  */
 export type EnvConfig = z.infer<typeof envSchema>
 
 /**
- * 驗證並解析環境變數
+ * Validate and parse environment variables
  * Validate and parse environment variables
  */
 function validateEnv(): EnvConfig {
-  // 在構建時期，如果環境變數不完整，提供預設值避免構建失敗
+  // During build time, provide defaults for incomplete environment variables to avoid build failure
   const isBuildTime = process.env.NODE_ENV !== 'test' && (
     process.env.NEXT_PHASE === 'phase-production-build' ||
     process.env.npm_lifecycle_event === 'build' ||
@@ -81,7 +81,7 @@ function validateEnv(): EnvConfig {
   if (isBuildTime) {
     console.log('🔧 Build time detected - using fallback environment configuration')
     
-    // 為構建提供最小化的環境配置
+    // Provide minimal environment configuration for build
     return {
       NODE_ENV: (process.env.NODE_ENV as any) || 'production',
       DATABASE_URL: process.env.DATABASE_URL || 'postgresql://placeholder:placeholder@localhost:5432/placeholder',
@@ -122,7 +122,7 @@ function validateEnv(): EnvConfig {
     console.error('\n💡 Please check your environment variables configuration.')
     console.error('📋 Refer to .env.example for the required format.')
     
-    // 在開發模式下不要終止程序，允許繼續運行並在實際使用時報錯
+    // In development mode, don't terminate process, allow continued operation with errors on actual usage
     if (process.env.NODE_ENV === 'development') {
       console.warn('⚠️ Continuing in development mode with incomplete environment configuration')
       return {} as EnvConfig
@@ -133,7 +133,7 @@ function validateEnv(): EnvConfig {
 }
 
 /**
- * 獲取驗證的環境配置
+ * Get validated environment configuration
  * Get validated environment configuration
  */
 export function getValidatedEnv(): EnvConfig {
@@ -141,10 +141,10 @@ export function getValidatedEnv(): EnvConfig {
 }
 
 /**
- * 驗證的環境配置 (為了向後相容性，但建議使用 getValidatedEnv())
+ * Validated environment configuration (for backward compatibility, but recommend using getValidatedEnv())
  * Validated environment configuration (for backward compatibility, but recommend using getValidatedEnv())
  * 
- * 注意：在構建時期，環境變數可能尚未完全可用，因此我們延遲驗證到實際使用時
+ * Note: During build time, environment variables may not be fully available, so we defer validation to actual usage
  * Note: During build time, environment variables may not be fully available, so we defer validation to actual usage
  */
 let _env: EnvConfig | null = null
@@ -159,7 +159,7 @@ export const env = new Proxy({} as EnvConfig, {
 })
 
 /**
- * 獲取當前環境資訊
+ * Get current environment information
  * Get current environment information
  */
 export function getEnvironmentInfo() {
@@ -187,14 +187,14 @@ export function getEnvironmentInfo() {
 }
 
 /**
- * 檢查環境配置完整性
+ * Check environment configuration completeness
  * Check environment configuration completeness
  */
 export function checkEnvironmentHealth() {
   const info = getEnvironmentInfo()
   const issues: string[] = []
   
-  // 檢查必要配置
+  // Check necessary configurations
   if (!info.database.isZeabur && env.NODE_ENV !== 'development') {
     issues.push('Database URL does not appear to be from Zeabur')
   }
@@ -207,7 +207,7 @@ export function checkEnvironmentHealth() {
     issues.push('Sentry monitoring not configured for production')
   }
   
-  // 檢查 OAuth 配置
+  // Check OAuth configuration
   if (env.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com') {
     issues.push('Google OAuth Client ID not configured - still using placeholder value')
   }
@@ -216,7 +216,7 @@ export function checkEnvironmentHealth() {
     issues.push('Google OAuth Client Secret not configured - still using placeholder value')
   }
   
-  // 檢查生產環境 HTTPS
+  // Check production environment HTTPS
   if (env.NODE_ENV === 'production' && !env.NEXTAUTH_URL.startsWith('https://')) {
     issues.push('Production environment must use HTTPS for NEXTAUTH_URL')
   }
@@ -229,14 +229,14 @@ export function checkEnvironmentHealth() {
 }
 
 /**
- * 開發模式下顯示環境資訊
+ * Display environment information in development mode
  * Display environment information in development mode
  * 
- * 注意：延遲執行以避免構建時期的問題
+ * Note: Deferred execution to avoid build-time issues
  * Note: Deferred execution to avoid build-time issues
  */
 if (typeof window === 'undefined' && process.env.NODE_ENV === 'development' && !process.env.SKIP_ENV_VALIDATION) {
-  // 使用 setTimeout 延遲執行，確保在環境完全初始化後才顯示資訊
+  // Use setTimeout for delayed execution, ensuring environment info is displayed after full initialization
   setTimeout(() => {
     try {
       const health = checkEnvironmentHealth()
