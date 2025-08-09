@@ -5,31 +5,31 @@ import { NotificationPreferences } from '@/lib/types'
 
 /**
  * Notification Preferences API - /api/notifications/preferences
- * 通知偏好設定 API
+ * Notification Preferences API
  * 
- * @description 處理用戶通知偏好設定的獲取和更新
- * @features 通知偏好獲取、更新、重置為預設值
+ * @description Handle user notification preference retrieval and updates
+ * @features Notification preference retrieval, updates, reset to defaults
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**
  * GET /api/notifications/preferences
- * 獲取用戶通知偏好設定
+ * Get user notification preferences
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
 
     const userId = currentUser.id
 
-    // 獲取用戶通知偏好
+    // Get user notification preferences
     const preferences = await NotificationService.getUserPreferences(userId)
 
     return NextResponse.json({
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get notification preferences error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取通知偏好失敗' },
+      { success: false, message: 'Failed to get notification preferences' },
       { status: 500 }
     )
   }
@@ -52,11 +52,11 @@ export async function GET(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
@@ -101,11 +101,11 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user authentication
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }

@@ -1,6 +1,6 @@
 /**
  * Google OAuth Callback API
- * Google OAuth 回調處理 API
+ * Google OAuth Callback Handler API
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -15,7 +15,7 @@ import { prisma } from '@/lib/prisma'
 
 /**
  * GET /api/auth/callback/google
- * 處理 Google OAuth 回調
+ * Handle Google OAuth callback
  */
 export async function GET(request: NextRequest) {
   try {
@@ -24,18 +24,18 @@ export async function GET(request: NextRequest) {
     const state = searchParams.get('state')
     const error = searchParams.get('error')
 
-    // 檢查是否有錯誤
+    // Check for errors
     if (error) {
       console.error('Google OAuth error:', error)
       return NextResponse.redirect(new URL('/login?error=oauth_error', request.url))
     }
 
-    // 檢查必要參數
+    // Check required parameters
     if (!code || !state) {
       return NextResponse.redirect(new URL('/login?error=missing_parameters', request.url))
     }
 
-    // 驗證 CSRF 狀態參數
+    // Verify CSRF state parameter
     const cookieStore = cookies()
     const storedState = cookieStore.get('oauth-state')?.value
     
@@ -44,21 +44,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/login?error=state_mismatch', request.url))
     }
 
-    // 交換授權碼獲取令牌
+    // Exchange authorization code for tokens
     const tokens = await exchangeCodeForTokens(code)
     
     if (!tokens.idToken) {
       return NextResponse.redirect(new URL('/login?error=no_id_token', request.url))
     }
 
-    // 驗證 ID Token 並獲取用戶資訊
+    // Verify ID Token and get user info
     const googleUser = await verifyGoogleToken(tokens.idToken)
     
     if (!googleUser || !googleUser.email || !googleUser.verified_email) {
       return NextResponse.redirect(new URL('/login?error=invalid_user_info', request.url))
     }
 
-    // 檢查用戶是否已存在
+    // Check if user already exists
     let user = await prisma.user.findUnique({
       where: { email: googleUser.email.toLowerCase() },
       include: {
@@ -74,13 +74,13 @@ export async function GET(request: NextRequest) {
     let isNewUser = false
 
     if (user) {
-      // 現有用戶 - 檢查是否已連結 Google 帳戶
+      // Existing user - check if Google account is already linked
       const existingGoogleAccount = user.accounts.find(
         account => account.provider === 'google'
       )
 
       if (!existingGoogleAccount) {
-        // 連結 Google 帳戶到現有用戶
+        // Link Google account to existing user
         await prisma.account.create({
           data: {
             userId: user.id,
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
           }
         })
 
-        // 更新用戶的 Google 資訊
+        // Update user's Google information
         user = await prisma.user.update({
           where: { id: user.id },
           data: {
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
           }
         })
       } else {
-        // 更新現有 Google 帳戶的 token
+        // Update existing Google account tokens
         await prisma.account.update({
           where: { id: existingGoogleAccount.id },
           data: {
@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
           }
         })
 
-        // 更新最後登入時間
+        // Update last login time
         user = await prisma.user.update({
           where: { id: user.id },
           data: {
@@ -143,27 +143,27 @@ export async function GET(request: NextRequest) {
         })
       }
     } else {
-      // 新用戶 - 創建帳戶
+      // New user - create account
       isNewUser = true
       
-      // 根據 email 域名分配角色
+      // Assign role based on email domain
       const defaultRole = assignRoleByEmailDomain(googleUser.email)
       
-      // 查找或創建角色
+      // Find or create role
       let role = await prisma.role.findUnique({
         where: { name: defaultRole }
       })
 
       if (!role) {
-        // 如果角色不存在，創建基本角色 (這裡假設至少有 parent 角色)
+        // If role doesn't exist, create basic role (assuming at least parent role exists)
         role = await prisma.role.findUnique({
           where: { name: 'parent' }
         })
       }
 
-      // 使用事務創建用戶和相關記錄
+      // Use transaction to create user and related records
       user = await prisma.$transaction(async (tx) => {
-        // 創建用戶
+        // Create user
         const newUser = await tx.user.create({
           data: {
             email: googleUser.email.toLowerCase(),
@@ -180,7 +180,7 @@ export async function GET(request: NextRequest) {
           }
         })
 
-        // 創建 OAuth 帳戶記錄
+        // Create OAuth account record
         await tx.account.create({
           data: {
             userId: newUser.id,
@@ -196,18 +196,18 @@ export async function GET(request: NextRequest) {
           }
         })
 
-        // 分配角色
+        // Assign role
         if (role) {
           await tx.userRole.create({
             data: {
               userId: newUser.id,
               roleId: role.id,
-              assignedBy: newUser.id // 自動分配
+              assignedBy: newUser.id // Auto-assigned
             }
           })
         }
 
-        // 重新查詢用戶包含角色資訊
+        // Re-query user with role information
         return await tx.user.findUnique({
           where: { id: newUser.id },
           include: {
@@ -225,7 +225,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/login?error=user_creation_failed', request.url))
     }
 
-    // 準備 JWT payload
+    // Prepare JWT payload
     const userForJWT = {
       id: user.id,
       email: user.email,
@@ -235,11 +235,11 @@ export async function GET(request: NextRequest) {
       roles: user.userRoles.map(ur => ur.role.name)
     }
 
-    // 生成 JWT token pair
+    // Generate JWT token pair
     const tokenPair = await generateTokenPair(userForJWT)
     setAuthCookies(tokenPair)
 
-    // 清除 OAuth 相關 cookies
+    // Clear OAuth-related cookies
     const response = NextResponse.redirect(
       new URL(
         isNewUser ? '/welcome' : (cookieStore.get('oauth-redirect')?.value || '/admin'),

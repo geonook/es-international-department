@@ -1,6 +1,6 @@
 /**
  * Authentication Logout API
- * 使用者登出認證 API 端點
+ * User Logout Authentication API Endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -8,7 +8,7 @@ import { clearAuthCookie, getCurrentUser } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    // 檢查使用者是否已登入
+    // Check if user is logged in
     const currentUser = await getCurrentUser()
     
     if (!currentUser) {
@@ -16,31 +16,31 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: 'Not authenticated',
-          message: '用戶未登入' 
+          message: 'User not logged in' 
         },
         { status: 401 }
       )
     }
 
-    // 清除認證 Cookie
+    // Clear authentication cookies
     clearAuthCookie()
 
     return NextResponse.json({
       success: true,
-      message: '成功登出'
+      message: 'Successfully logged out'
     })
 
   } catch (error) {
     console.error('Logout API Error:', error)
     
-    // 即使發生錯誤，也要清除 Cookie
+    // Clear cookies even if error occurs
     clearAuthCookie()
     
     return NextResponse.json(
       { 
         success: false, 
         error: 'Internal server error',
-        message: '伺服器內部錯誤' 
+        message: 'Internal server error' 
       },
       { status: 500 }
     )

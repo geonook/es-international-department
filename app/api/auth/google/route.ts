@@ -1,6 +1,6 @@
 /**
  * Google OAuth Authentication API
- * Google OAuth 認證 API 端點
+ * Google OAuth Authentication API Endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -8,47 +8,47 @@ import { generateGoogleAuthUrl, generateSecureState, validateGoogleOAuthConfig }
 
 /**
  * GET /api/auth/google
- * 初始化 Google OAuth 認證流程
+ * Initialize Google OAuth authentication flow
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證 Google OAuth 配置
+    // Verify Google OAuth configuration
     if (!validateGoogleOAuthConfig()) {
       return NextResponse.json(
         {
           success: false,
           error: 'OAuth configuration missing',
-          message: 'Google OAuth 配置不完整，請檢查環境變數'
+          message: 'Google OAuth configuration incomplete, please check environment variables'
         },
         { status: 500 }
       )
     }
 
-    // 從查詢參數獲取重定向 URL
+    // Get redirect URL from query parameters
     const { searchParams } = new URL(request.url)
     const redirectUrl = searchParams.get('redirect') || '/admin'
 
-    // 生成安全的狀態參數
+    // Generate secure state parameter
     const state = generateSecureState()
 
     // 將狀態和重定向 URL 存儲在 cookie 中
     const response = NextResponse.redirect(generateGoogleAuthUrl(state))
     
-    // 設定狀態 cookie (用於 CSRF 保護)
+    // Set state cookie (for CSRF protection)
     response.cookies.set('oauth-state', state, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 10 * 60, // 10 分鐘
+      maxAge: 10 * 60, // 10 minutes
       path: '/'
     })
 
-    // 設定重定向 URL cookie
+    // Set redirect URL cookie
     response.cookies.set('oauth-redirect', redirectUrl, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 10 * 60, // 10 分鐘
+      maxAge: 10 * 60, // 10 minutes
       path: '/'
     })
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'OAuth initialization failed',
-        message: 'OAuth 初始化失敗，請稍後重試'
+        message: 'OAuth initialization failed, please try again later'
       },
       { status: 500 }
     )
@@ -69,26 +69,26 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/auth/google
- * 處理前端發起的 Google OAuth 請求
+ * Handle frontend-initiated Google OAuth requests
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { redirect } = body
 
-    // 驗證配置
+    // Verify configuration
     if (!validateGoogleOAuthConfig()) {
       return NextResponse.json(
         {
           success: false,
           error: 'OAuth configuration missing',
-          message: 'Google OAuth 配置不完整'
+          message: 'Google OAuth configuration incomplete'
         },
         { status: 500 }
       )
     }
 
-    // 生成認證 URL
+    // Generate authentication URL
     const state = generateSecureState()
     const authUrl = generateGoogleAuthUrl(state)
 
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
         authUrl,
         state
       },
-      message: '請前往 Google 完成認證'
+      message: 'Please go to Google to complete authentication'
     })
 
   } catch (error) {
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'OAuth request failed',
-        message: 'OAuth 請求失敗'
+        message: 'OAuth request failed'
       },
       { status: 500 }
     )
