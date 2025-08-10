@@ -5,14 +5,14 @@ import { headers } from 'next/headers'
 
 /**
  * Real-time Notifications Stream API - /api/notifications/stream
- * 即時通知串流 API
+ * Real-time Notifications Stream API
  * 
- * @description 使用 Server-Sent Events (SSE) 提供即時通知推送
- * @features 即時通知推送、長連接、自動重連
+ * @description Provides real-time notification push using Server-Sent Events (SSE)
+ * @features Real-time notification push, persistent connection, auto-reconnect
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
-// 存儲活躍的 SSE 連接
+// Store active SSE connections
 const activeConnections = new Map<string, {
   controller: ReadableStreamDefaultController<any>
   userId: string
@@ -22,18 +22,18 @@ const activeConnections = new Map<string, {
   connectionTime: number
 }>()
 
-// 連接限制和監控
+// Connection limits and monitoring
 const connectionLimits = {
   maxConnectionsPerUser: 3,
   maxTotalConnections: 1000,
-  rateLimitWindow: 60 * 1000, // 1分鐘
+  rateLimitWindow: 60 * 1000, // 1 minute
   maxConnectionsPerMinute: 10
 }
 
-// 速率限制追蹤
+// Rate limit tracking
 const rateLimitMap = new Map<string, { count: number; windowStart: number }>()
 
-// 連接統計
+// Connection statistics
 const connectionStats = {
   totalConnections: 0,
   activeConnections: 0,
@@ -44,11 +44,11 @@ const connectionStats = {
 
 /**
  * GET /api/notifications/stream
- * 建立 SSE 連接用於即時通知推送
+ * Establish SSE connection for real-time notification push
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證用戶身份 - 更安全的 header 驗證
+    // Verify user identity - more secure header validation
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return new NextResponse(JSON.stringify({ 
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
                      headersList.get('x-real-ip') || 
                      'Unknown'
 
-    // 速率限制檢查
+    // Rate limit check
     const rateLimitKey = `${userId}_${ipAddress}`
     const now = Date.now()
     const rateLimit = rateLimitMap.get(rateLimitKey)
@@ -95,12 +95,12 @@ export async function GET(request: NextRequest) {
       rateLimitMap.set(rateLimitKey, { count: 1, windowStart: now })
     }
 
-    // 檢查用戶連接數限制
+    // Check user connection count limit
     const userConnections = Array.from(activeConnections.values())
       .filter(conn => conn.userId === userId)
     
     if (userConnections.length >= connectionLimits.maxConnectionsPerUser) {
-      // 關閉最舊的連接
+      // Close the oldest connection
       const oldestConnection = userConnections
         .sort((a, b) => a.connectionTime - b.connectionTime)[0]
       const oldestConnectionId = Array.from(activeConnections.entries())
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 檢查總連接數限制
+    // Check total connection count limit
     if (activeConnections.size >= connectionLimits.maxTotalConnections) {
       return new NextResponse(JSON.stringify({
         error: 'Server Overloaded',
@@ -131,10 +131,10 @@ export async function GET(request: NextRequest) {
 
     const connectionId = `${userId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 
-    // 創建 ReadableStream 用於 SSE
+    // Create ReadableStream for SSE
     const stream = new ReadableStream({
       start(controller) {
-        // 存儲連接
+        // Store connection
         activeConnections.set(connectionId, {
           controller,
           userId,
@@ -144,13 +144,13 @@ export async function GET(request: NextRequest) {
           connectionTime: Date.now()
         })
 
-        // 更新連接統計
+        // Update connection statistics
         connectionStats.totalConnections++
         connectionStats.activeConnections++
         const userConnCount = connectionStats.connectionsByUser.get(userId) || 0
         connectionStats.connectionsByUser.set(userId, userConnCount + 1)
 
-        // 發送初始連接確認
+        // Send initial connection confirmation
         controller.enqueue(
           `data: ${JSON.stringify({
             type: 'connected',
@@ -165,7 +165,7 @@ export async function GET(request: NextRequest) {
           })}\n\n`
         )
 
-        // 發送心跳包
+        // Send heartbeat
         const heartbeat = setInterval(() => {
           const connection = activeConnections.get(connectionId)
           if (connection) {
@@ -187,18 +187,18 @@ export async function GET(request: NextRequest) {
           } else {
             clearInterval(heartbeat)
           }
-        }, 30000) // 每30秒發送一次心跳
+        }, 30000) // Send heartbeat every 30 seconds
 
-        // 發送未讀通知統計
+        // Send unread notification statistics
         sendNotificationStats(userId, controller)
 
-        // 設置清理邏輯
+        // Set cleanup logic
         const cleanup = () => {
           clearInterval(heartbeat)
           cleanupConnection(connectionId)
         }
 
-        // 監聽連接關閉
+        // Listen for connection close
         request.signal.addEventListener('abort', cleanup)
       },
 
@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // 設置 SSE 響應頭
+    // Set SSE response headers
     return new NextResponse(stream, {
       status: 200,
       headers: {
@@ -241,21 +241,21 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/notifications/stream
- * 推送即時通知給特定用戶（內部 API）
+ * Push real-time notifications to specific users (internal API)
  */
 export async function POST(request: NextRequest) {
   try {
-    // 這個端點主要用於內部服務調用
-    // 可以添加內部 API 金鑰驗證
+    // This endpoint is mainly for internal service calls
+    // Internal API key authentication can be added
 
     const body = await request.json()
     const { userIds, notification, broadcast } = body
 
     if (broadcast) {
-      // 廣播給所有連接的用戶
+      // Broadcast to all connected users
       broadcastToAllUsers(notification)
     } else if (userIds && Array.isArray(userIds)) {
-      // 發送給特定用戶
+      // Send to specific users
       userIds.forEach(userId => {
         sendToUser(userId, notification)
       })
@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * 發送通知給特定用戶
+ * Send notification to specific user
  */
 function sendToUser(userId: string, notification: any) {
   const userConnections = Array.from(activeConnections.entries()).filter(
@@ -301,7 +301,7 @@ function sendToUser(userId: string, notification: any) {
 }
 
 /**
- * 廣播通知給所有用戶
+ * Broadcast notification to all users
  */
 function broadcastToAllUsers(notification: any) {
   activeConnections.forEach((connection, connectionId) => {
@@ -321,7 +321,7 @@ function broadcastToAllUsers(notification: any) {
 }
 
 /**
- * 發送通知統計
+ * Send notification statistics
  */
 async function sendNotificationStats(userId: string, controller: ReadableStreamDefaultController<any>) {
   try {
@@ -349,12 +349,12 @@ async function sendNotificationStats(userId: string, controller: ReadableStreamD
 }
 
 /**
- * 清理連接
+ * Cleanup connection
  */
 function cleanupConnection(connectionId: string) {
   const connection = activeConnections.get(connectionId)
   if (connection) {
-    // 更新統計
+    // Update statistics
     connectionStats.activeConnections--
     const userConnCount = connectionStats.connectionsByUser.get(connection.userId) || 1
     if (userConnCount <= 1) {
@@ -368,11 +368,11 @@ function cleanupConnection(connectionId: string) {
 }
 
 /**
- * 清理非活躍連接
+ * Cleanup inactive connections
  */
 function cleanupInactiveConnections() {
   const now = Date.now()
-  const timeout = 5 * 60 * 1000 // 5分鐘
+  const timeout = 5 * 60 * 1000 // 5 minutes
   let cleanedCount = 0
 
   activeConnections.forEach((connection, connectionId) => {
@@ -380,7 +380,7 @@ function cleanupInactiveConnections() {
       try {
         connection.controller.close()
       } catch (error) {
-        // 連接可能已經關閉
+        // Connection may already be closed
       }
       cleanupConnection(connectionId)
       cleanedCount++
@@ -393,7 +393,7 @@ function cleanupInactiveConnections() {
 }
 
 /**
- * 清理速率限制緩存
+ * Cleanup rate limit cache
  */
 function cleanupRateLimitCache() {
   const now = Date.now()
@@ -412,7 +412,7 @@ function cleanupRateLimitCache() {
 }
 
 /**
- * 獲取連接統計
+ * Get connection statistics
  */
 export function getConnectionStats() {
   return {
@@ -428,13 +428,13 @@ export function getConnectionStats() {
   }
 }
 
-// 定期清理
+// Periodic cleanup
 setInterval(() => {
   cleanupInactiveConnections()
   cleanupRateLimitCache()
-}, 60000) // 每分鐘清理一次
+}, 60000) // Cleanup every minute
 
-// 每5分鐘輸出連接統計
+// Output connection statistics every 5 minutes
 setInterval(() => {
   console.log('SSE Connection Stats:', {
     total: connectionStats.totalConnections,
@@ -446,6 +446,6 @@ setInterval(() => {
 }, 5 * 60 * 1000)
 
 /**
- * 導出工具函數供其他模組使用
+ * Export utility functions for other modules to use
  */
 export { sendToUser, broadcastToAllUsers }

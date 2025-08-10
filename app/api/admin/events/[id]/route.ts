@@ -5,20 +5,20 @@ import { EventFormData } from '@/lib/types'
 
 /**
  * Admin Event API - GET /api/admin/events/[id]
- * 管理員活動 API - 獲取單一活動詳情
+ * Admin Event API - Get single event details
  */
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證管理員權限
+    // Verify admin permissions
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -26,19 +26,19 @@ export async function GET(
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '權限不足' 
+        message: 'Insufficient permissions' 
       }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 獲取活動詳情
+    // Get event details
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       include: {
@@ -69,7 +69,7 @@ export async function GET(
   } catch (error) {
     console.error('Get event error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取活動失敗' },
+      { success: false, message: 'Failed to get event' },
       { status: 500 }
     )
   }
@@ -77,20 +77,20 @@ export async function GET(
 
 /**
  * Admin Event API - PUT /api/admin/events/[id]
- * 管理員活動 API - 更新活動
+ * Admin Event API - Update event
  */
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證管理員權限
+    // Verify admin permissions
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -98,19 +98,19 @@ export async function PUT(
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '權限不足' 
+        message: 'Insufficient permissions' 
       }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 檢查活動是否存在
+    // Check if event exists
     const existingEvent = await prisma.event.findUnique({
       where: { id: eventId }
     })
@@ -122,26 +122,26 @@ export async function PUT(
       )
     }
 
-    // 解析請求資料
+    // Parse request data
     const data: EventFormData = await request.json()
 
-    // 驗證必填欄位
+    // Validate required fields
     if (!data.title || !data.eventType || !data.startDate || !data.status) {
       return NextResponse.json(
-        { success: false, message: '缺少必填欄位' },
+        { success: false, message: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // 驗證日期邏輯
+    // Validate date logic
     if (data.endDate && new Date(data.endDate) < new Date(data.startDate)) {
       return NextResponse.json(
-        { success: false, message: '結束日期不能早於開始日期' },
+        { success: false, message: 'End date cannot be earlier than start date' },
         { status: 400 }
       )
     }
 
-    // 準備更新資料
+    // Prepare update data
     const updateData: any = {
       title: data.title,
       description: data.description,
@@ -159,7 +159,7 @@ export async function PUT(
       updatedAt: new Date()
     }
 
-    // 更新活動
+    // Update event
     const updatedEvent = await prisma.event.update({
       where: { id: eventId },
       data: updateData,
@@ -178,14 +178,14 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: '活動更新成功',
+      message: 'Event updated successfully',
       data: updatedEvent
     })
 
   } catch (error) {
     console.error('Update event error:', error)
     return NextResponse.json(
-      { success: false, message: '更新活動失敗' },
+      { success: false, message: 'Failed to update event' },
       { status: 500 }
     )
   }
@@ -193,20 +193,20 @@ export async function PUT(
 
 /**
  * Admin Event API - DELETE /api/admin/events/[id]
- * 管理員活動 API - 刪除活動
+ * Admin Event API - Delete event
  */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證管理員權限
+    // Verify admin permissions
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -214,19 +214,19 @@ export async function DELETE(
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '權限不足' 
+        message: 'Insufficient permissions' 
       }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 檢查活動是否存在
+    // Check if event exists
     const existingEvent = await prisma.event.findUnique({
       where: { id: eventId }
     })
@@ -238,32 +238,32 @@ export async function DELETE(
       )
     }
 
-    // 檢查是否有相關的報名記錄（如果有報名系統的話）
-    // 這裡可以添加檢查邏輯，例如：
+    // Check for related registration records (if registration system exists)
+    // Additional check logic can be added here, for example:
     // const registrations = await prisma.eventRegistration.count({
     //   where: { eventId }
     // })
     // if (registrations > 0) {
     //   return NextResponse.json(
-    //     { success: false, message: '無法刪除已有報名記錄的活動' },
+    //     { success: false, message: 'Cannot delete event with existing registrations' },
     //     { status: 400 }
     //   )
     // }
 
-    // 刪除活動
+    // Delete event
     await prisma.event.delete({
       where: { id: eventId }
     })
 
     return NextResponse.json({
       success: true,
-      message: '活動刪除成功'
+      message: 'Event deleted successfully'
     })
 
   } catch (error) {
     console.error('Delete event error:', error)
     return NextResponse.json(
-      { success: false, message: '刪除活動失敗' },
+      { success: false, message: 'Failed to delete event' },
       { status: 500 }
     )
   }
