@@ -1,6 +1,6 @@
 /**
  * Individual Announcement API - Get, Update, Delete
- * 單一公告 API - 查詢、更新、刪除端點
+ * Single announcement API - query, update, delete endpoints
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -9,7 +9,7 @@ import { getCurrentUser, isAdmin, isTeacher, AUTH_ERRORS } from '@/lib/auth'
 
 const prisma = new PrismaClient()
 
-// GET /api/announcements/[id] - 取得單一公告詳情
+// GET /api/announcements/[id] - Get single announcement details
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -22,13 +22,13 @@ export async function GET(
         { 
           success: false, 
           error: 'Invalid announcement ID',
-          message: '無效的公告 ID' 
+          message: 'Invalid announcement ID' 
         },
         { status: 400 }
       )
     }
 
-    // 查詢公告
+    // Query announcement
     const announcement = await prisma.announcement.findUnique({
       where: { id: announcementId },
       include: {
@@ -49,24 +49,24 @@ export async function GET(
         { 
           success: false, 
           error: 'Announcement not found',
-          message: '公告不存在' 
+          message: 'Announcement not found' 
         },
         { status: 404 }
       )
     }
 
-    // 檢查公告是否已過期或未發布（對於一般使用者）
+    // Check if announcement has expired or is unpublished (for general users)
     const currentUser = await getCurrentUser()
     const isAuthorizedUser = currentUser && (isAdmin(currentUser) || isTeacher(currentUser))
     
     if (!isAuthorizedUser) {
-      // 一般使用者只能看到已發布且未過期的公告
+      // General users can only view published and unexpired announcements
       if (announcement.status !== 'published') {
         return NextResponse.json(
           { 
             success: false, 
             error: 'Announcement not found',
-            message: '公告不存在' 
+            message: 'Announcement not found' 
           },
           { status: 404 }
         )
@@ -77,7 +77,7 @@ export async function GET(
           { 
             success: false, 
             error: 'Announcement has expired',
-            message: '公告已過期' 
+            message: 'Announcement has expired' 
           },
           { status: 410 }
         )
@@ -96,7 +96,7 @@ export async function GET(
       { 
         success: false, 
         error: 'Internal server error',
-        message: '伺服器內部錯誤' 
+        message: 'Internal server error' 
       },
       { status: 500 }
     )
@@ -105,13 +105,13 @@ export async function GET(
   }
 }
 
-// PUT /api/announcements/[id] - 更新公告
+// PUT /api/announcements/[id] - Update announcement
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 檢查使用者認證
+    // Check user authentication
     const currentUser = await getCurrentUser()
     
     if (!currentUser) {
@@ -119,7 +119,7 @@ export async function PUT(
         { 
           success: false, 
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '請先登入' 
+          message: 'Please log in first' 
         },
         { status: 401 }
       )
@@ -132,13 +132,13 @@ export async function PUT(
         { 
           success: false, 
           error: 'Invalid announcement ID',
-          message: '無效的公告 ID' 
+          message: 'Invalid announcement ID' 
         },
         { status: 400 }
       )
     }
 
-    // 查詢現有公告
+    // Query existing announcement
     const existingAnnouncement = await prisma.announcement.findUnique({
       where: { id: announcementId }
     })
@@ -148,20 +148,20 @@ export async function PUT(
         { 
           success: false, 
           error: 'Announcement not found',
-          message: '公告不存在' 
+          message: 'Announcement not found' 
         },
         { status: 404 }
       )
     }
 
-    // 檢查權限：需要是管理員或公告作者
+    // Check permissions: must be admin or announcement author
     const isAuthor = existingAnnouncement.authorId === currentUser.id
     if (!isAdmin(currentUser) && !isAuthor) {
       return NextResponse.json(
         { 
           success: false, 
           error: AUTH_ERRORS.ACCESS_DENIED,
-          message: '權限不足：只能修改自己的公告或需要管理員權限' 
+          message: 'Insufficient permissions: can only modify your own announcements or need admin privileges' 
         },
         { status: 403 }
       )
@@ -179,21 +179,21 @@ export async function PUT(
       expiresAt 
     } = body
 
-    // 建立更新資料物件
+    // Create update data object
     const updateData: any = {}
 
     if (title !== undefined) updateData.title = title
     if (content !== undefined) updateData.content = content
     if (summary !== undefined) updateData.summary = summary
     if (targetAudience !== undefined) {
-      // 驗證 targetAudience 值
+      // Validate targetAudience value
       const validAudiences = ['teachers', 'parents', 'all']
       if (!validAudiences.includes(targetAudience)) {
         return NextResponse.json(
           { 
             success: false, 
             error: 'Invalid target audience',
-            message: '無效的目標對象' 
+            message: 'Invalid target audience' 
           },
           { status: 400 }
         )
@@ -202,14 +202,14 @@ export async function PUT(
     }
     
     if (priority !== undefined) {
-      // 驗證 priority 值
+      // Validate priority value
       const validPriorities = ['low', 'medium', 'high']
       if (!validPriorities.includes(priority)) {
         return NextResponse.json(
           { 
             success: false, 
             error: 'Invalid priority',
-            message: '無效的優先等級' 
+            message: 'Invalid priority level' 
           },
           { status: 400 }
         )
@@ -218,21 +218,21 @@ export async function PUT(
     }
     
     if (status !== undefined) {
-      // 驗證 status 值
+      // Validate status value
       const validStatuses = ['draft', 'published', 'archived']
       if (!validStatuses.includes(status)) {
         return NextResponse.json(
           { 
             success: false, 
             error: 'Invalid status',
-            message: '無效的狀態' 
+            message: 'Invalid status' 
           },
           { status: 400 }
         )
       }
       updateData.status = status
       
-      // 如果狀態改為已發布且沒有發布時間，設定為現在
+      // If status changed to published and no publish time, set to now
       if (status === 'published' && !existingAnnouncement.publishedAt && !publishedAt) {
         updateData.publishedAt = new Date()
       }
@@ -246,7 +246,7 @@ export async function PUT(
       updateData.expiresAt = expiresAt ? new Date(expiresAt) : null
     }
 
-    // 更新公告
+    // Update announcement
     const updatedAnnouncement = await prisma.announcement.update({
       where: { id: announcementId },
       data: updateData,
@@ -265,7 +265,7 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: '公告更新成功',
+      message: 'Announcement updated successfully',
       data: updatedAnnouncement
     })
 
@@ -276,7 +276,7 @@ export async function PUT(
       { 
         success: false, 
         error: 'Internal server error',
-        message: '更新公告失敗，請稍後再試' 
+        message: 'Failed to update announcement, please try again later' 
       },
       { status: 500 }
     )
@@ -285,13 +285,13 @@ export async function PUT(
   }
 }
 
-// DELETE /api/announcements/[id] - 刪除公告
+// DELETE /api/announcements/[id] - Delete announcement
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 檢查使用者認證
+    // Check user authentication
     const currentUser = await getCurrentUser()
     
     if (!currentUser) {
@@ -299,7 +299,7 @@ export async function DELETE(
         { 
           success: false, 
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '請先登入' 
+          message: 'Please log in first' 
         },
         { status: 401 }
       )
@@ -312,13 +312,13 @@ export async function DELETE(
         { 
           success: false, 
           error: 'Invalid announcement ID',
-          message: '無效的公告 ID' 
+          message: 'Invalid announcement ID' 
         },
         { status: 400 }
       )
     }
 
-    // 查詢現有公告
+    // Query existing announcement
     const existingAnnouncement = await prisma.announcement.findUnique({
       where: { id: announcementId }
     })
@@ -328,33 +328,33 @@ export async function DELETE(
         { 
           success: false, 
           error: 'Announcement not found',
-          message: '公告不存在' 
+          message: 'Announcement not found' 
         },
         { status: 404 }
       )
     }
 
-    // 檢查權限：需要是管理員或公告作者
+    // Check permissions: must be admin or announcement author
     const isAuthor = existingAnnouncement.authorId === currentUser.id
     if (!isAdmin(currentUser) && !isAuthor) {
       return NextResponse.json(
         { 
           success: false, 
           error: AUTH_ERRORS.ACCESS_DENIED,
-          message: '權限不足：只能刪除自己的公告或需要管理員權限' 
+          message: 'Insufficient permissions: can only delete your own announcements or need admin privileges' 
         },
         { status: 403 }
       )
     }
 
-    // 刪除公告
+    // Delete announcement
     await prisma.announcement.delete({
       where: { id: announcementId }
     })
 
     return NextResponse.json({
       success: true,
-      message: '公告刪除成功'
+      message: 'Announcement deleted successfully'
     })
 
   } catch (error) {
@@ -364,7 +364,7 @@ export async function DELETE(
       { 
         success: false, 
         error: 'Internal server error',
-        message: '刪除公告失敗，請稍後再試' 
+        message: 'Failed to delete announcement, please try again later' 
       },
       { status: 500 }
     )
@@ -373,7 +373,7 @@ export async function DELETE(
   }
 }
 
-// 不支援的 HTTP 方法
+// Unsupported HTTP method
 export async function POST() {
   return NextResponse.json(
     { error: 'Method not allowed' },
