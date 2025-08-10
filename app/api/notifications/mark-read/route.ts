@@ -6,10 +6,10 @@ import { BulkNotificationOperation } from '@/lib/types'
 
 /**
  * Bulk Notification Operations API - /api/notifications/mark-read
- * 批量通知操作 API
+ * Bulk Notification Operations API
  * 
- * @description 處理批量通知操作，如全部標記已讀、批量刪除等
- * @features 全部標記已讀、批量操作、清理過期通知
+ * @description Handles bulk notification operations such as mark all read, bulk delete, etc.
+ * @features Mark all read, bulk operations, cleanup expired notifications
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 

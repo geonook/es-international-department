@@ -1,8 +1,8 @@
 /**
  * Email Testing API Endpoint
- * 電子郵件測試 API 端點
+ * Email Testing API Endpoint
  * 
- * @description 測試電子郵件服務功能，包括連接測試和模板測試
+ * @description Tests email service functionality including connection and template testing
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 

@@ -1,8 +1,8 @@
 /**
  * Email Sending API Endpoint
- * 電子郵件發送 API 端點
+ * Email Sending API Endpoint
  * 
- * @description 處理電子郵件發送請求，支持單發和批量發送
+ * @description Handles email sending requests, supports single and bulk sending
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 

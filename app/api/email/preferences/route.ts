@@ -1,8 +1,8 @@
 /**
  * Email Preferences API Endpoint
- * 電子郵件偏好設定 API 端點
+ * Email Preferences API Endpoint
  * 
- * @description 管理用戶的電子郵件通知偏好設定
+ * @description Manages user email notification preferences
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -12,23 +12,23 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   try {
-    // 驗證身份
+    // Verify authentication
     const token = request.headers.get('authorization')?.replace('Bearer ', '')
     if (!token) {
-      return NextResponse.json({ error: '未授權訪問' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 })
     }
 
     const user = await verifyAuth(token)
     if (!user) {
-      return NextResponse.json({ error: '無效的身份驗證' }, { status: 401 })
+      return NextResponse.json({ error: 'Invalid authentication' }, { status: 401 })
     }
 
-    // 獲取用戶的通知偏好
+    // Get user's notification preferences
     const preferences = await prisma.notificationPreference.findUnique({
       where: { userId: user.id }
     })
 
-    // 如果沒有偏好設定，返回默認值
+    // If no preferences exist, return default values
     if (!preferences) {
       const defaultPreferences = {
         userId: user.id,
