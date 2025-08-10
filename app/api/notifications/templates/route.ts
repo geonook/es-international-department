@@ -6,10 +6,10 @@ import { NotificationTemplate } from '@/lib/types'
 
 /**
  * Notification Templates API - /api/notifications/templates
- * 通知模板 API
+ * Notification Templates API
  * 
- * @description 處理通知模板的獲取和管理（管理員功能）
- * @features 模板列表、模板詳情、模板變數
+ * @description Handles notification template retrieval and management (admin function)
+ * @features Template list, template details, template variables
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
