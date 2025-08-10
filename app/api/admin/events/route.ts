@@ -5,21 +5,21 @@ import { EventFormData, EventStats } from '@/lib/types'
 
 /**
  * Admin Events API - GET /api/admin/events
- * 管理員活動 API - 獲取活動列表
+ * Administrator event API - Get event list
  * 
- * @description 獲取活動列表，支援篩選、搜尋和分頁
- * @features 分頁、篩選、搜尋、統計資訊
+ * @description Get event list with filtering, search and pagination support
+ * @features Pagination, filtering, search, statistics
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證管理員權限
+    // Verify administrator permissions
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -27,11 +27,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '權限不足' 
+        message: 'Insufficient permissions' 
       }, { status: 403 })
     }
 
-    // 解析查詢參數
+    // Parse query parameters
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
 
-    // 構建篩選條件
+    // Build filter conditions
     const where: any = {}
 
     if (eventType && eventType !== 'all') {
@@ -77,12 +77,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 計算總數
+    // Calculate total count
     const totalCount = await prisma.event.count({ where })
     const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // 獲取活動列表
+    // Get event list
     const events = await prisma.event.findMany({
       where,
       include: {
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
       take: limit
     })
 
-    // 計算統計資訊
+    // Calculate statistics
     const stats: EventStats = {
       total: totalCount,
       published: await prisma.event.count({ where: { status: 'published' } }),
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       averageParticipants: 0
     }
 
-    // 按類型統計
+    // Statistics by type
     const typeStats = await prisma.event.groupBy({
       by: ['eventType'],
       _count: true
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
       stats.byType[stat.eventType] = stat._count
     }
 
-    // 按月份統計（當年）
+    // Monthly statistics (current year)
     const currentYear = new Date().getFullYear()
     const monthlyStats = await prisma.event.groupBy({
       by: ['startDate'],
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
       stats.byMonth[month] = (stats.byMonth[month] || 0) + stat._count
     }
 
-    // 構建分頁資訊
+    // Build pagination info
     const pagination = {
       page,
       limit,
@@ -156,7 +156,7 @@ export async function GET(request: NextRequest) {
       hasPrevPage: page > 1
     }
 
-    // 構建篩選器資訊
+    // Build filter info
     const filters = {
       eventType: eventType || 'all',
       status: status || 'all',
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get events error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取活動列表失敗' },
+      { success: false, message: 'Failed to get event list' },
       { status: 500 }
     )
   }
@@ -184,17 +184,17 @@ export async function GET(request: NextRequest) {
 
 /**
  * Admin Events API - POST /api/admin/events
- * 管理員活動 API - 建立新活動
+ * Administrator event API - Create new event
  */
 export async function POST(request: NextRequest) {
   try {
-    // 驗證管理員權限
+    // Verify administrator permissions
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -202,30 +202,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '權限不足' 
+        message: 'Insufficient permissions' 
       }, { status: 403 })
     }
 
-    // 解析請求資料
+    // Parse request data
     const data: EventFormData = await request.json()
 
-    // 驗證必填欄位
+    // Validate required fields
     if (!data.title || !data.eventType || !data.startDate || !data.status) {
       return NextResponse.json(
-        { success: false, message: '缺少必填欄位' },
+        { success: false, message: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // 驗證日期邏輯
+    // Validate date logic
     if (data.endDate && new Date(data.endDate) < new Date(data.startDate)) {
       return NextResponse.json(
-        { success: false, message: '結束日期不能早於開始日期' },
+        { success: false, message: 'End date cannot be earlier than start date' },
         { status: 400 }
       )
     }
 
-    // 建立活動資料
+    // Create event data
     const eventData: any = {
       title: data.title,
       description: data.description,
@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
       createdBy: currentUser.id
     }
 
-    // 建立活動
+    // Create event
     const event = await prisma.event.create({
       data: eventData,
       include: {
@@ -261,14 +261,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '活動建立成功',
+      message: 'Event created successfully',
       data: event
     })
 
   } catch (error) {
     console.error('Create event error:', error)
     return NextResponse.json(
-      { success: false, message: '建立活動失敗' },
+      { success: false, message: 'Failed to create event' },
       { status: 500 }
     )
   }

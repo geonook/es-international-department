@@ -4,41 +4,41 @@ import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
 /**
  * Event Registration API - /api/events/[id]/registration
- * 活動報名 API
+ * Event registration API
  * 
- * @description 處理活動報名相關操作
- * @features 新增報名、取消報名、查詢報名狀態、候補名單管理
+ * @description Handle event registration related operations
+ * @features Add registration, cancel registration, check registration status, waiting list management
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**
  * GET /api/events/[id]/registration
- * 獲取用戶的報名狀態
+ * Get user's registration status
  */
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證用戶身份
+    // Verify user identity
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 檢查活動是否存在且已發布
+    // Check if event exists and is published
     const event = await prisma.event.findFirst({
       where: { 
         id: eventId,
@@ -64,19 +64,19 @@ export async function GET(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, message: '活動不存在或尚未發布' },
+        { success: false, message: 'Event does not exist or is not published' },
         { status: 404 }
       )
     }
 
     if (!event.registrationRequired) {
       return NextResponse.json(
-        { success: false, message: '此活動無需報名' },
+        { success: false, message: 'This event does not require registration' },
         { status: 400 }
       )
     }
 
-    // 查詢用戶報名狀態
+    // Query user registration status
     const registration = await prisma.eventRegistration.findUnique({
       where: {
         eventId_userId: {
@@ -98,7 +98,7 @@ export async function GET(
       }
     })
 
-    // 計算報名狀態
+    // Calculate registration status
     const registrationCount = event._count.registrations
     const spotsAvailable = event.maxParticipants ? event.maxParticipants - registrationCount : null
     const isRegistrationOpen = !event.registrationDeadline || new Date(event.registrationDeadline) > new Date()
@@ -129,7 +129,7 @@ export async function GET(
   } catch (error) {
     console.error('Get registration status error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取報名狀態失敗' },
+      { success: false, message: 'Failed to get registration status' },
       { status: 500 }
     )
   }
@@ -137,32 +137,32 @@ export async function GET(
 
 /**
  * POST /api/events/[id]/registration
- * 新增活動報名
+ * Add event registration
  */
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證用戶身份
+    // Verify user identity
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 解析請求資料
+    // Parse request data
     const data = await request.json()
     const {
       participantName,
@@ -172,7 +172,7 @@ export async function POST(
       specialRequests
     } = data
 
-    // 檢查活動是否存在且需要報名
+    // Check if event exists and requires registration
     const event = await prisma.event.findFirst({
       where: { 
         id: eventId,
@@ -198,20 +198,20 @@ export async function POST(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, message: '活動不存在、尚未發布或無需報名' },
+        { success: false, message: 'Event does not exist, is not published, or does not require registration' },
         { status: 404 }
       )
     }
 
-    // 檢查報名期限
+    // Check registration deadline
     if (event.registrationDeadline && new Date(event.registrationDeadline) <= new Date()) {
       return NextResponse.json(
-        { success: false, message: '報名期限已過' },
+        { success: false, message: 'Registration deadline has passed' },
         { status: 400 }
       )
     }
 
-    // 檢查是否已報名
+    // Check if already registered
     const existingRegistration = await prisma.eventRegistration.findUnique({
       where: {
         eventId_userId: {
@@ -312,20 +312,20 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證用戶身份
+    // Verify user identity
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
@@ -345,12 +345,12 @@ export async function DELETE(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, message: '活動不存在或尚未發布' },
+        { success: false, message: 'Event does not exist or is not published' },
         { status: 404 }
       )
     }
 
-    // 檢查報名期限（通常取消也要在期限內）
+    // Check registration deadline（通常取消也要在期限內）
     if (event.registrationDeadline && new Date(event.registrationDeadline) <= new Date()) {
       return NextResponse.json(
         { success: false, message: '已超過取消報名期限' },

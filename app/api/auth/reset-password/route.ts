@@ -1,6 +1,6 @@
 /**
  * Reset Password API
- * 密碼重設 API
+ * Password reset API endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -9,26 +9,26 @@ import { hashPassword } from '@/lib/auth'
 
 /**
  * POST /api/auth/reset-password
- * 重設密碼
+ * Reset user password with token
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { email, resetToken, newPassword } = body
 
-    // 基本驗證
+    // Basic validation
     if (!email || !resetToken || !newPassword) {
       return NextResponse.json(
         {
           success: false,
           error: 'Missing required fields',
-          message: 'Email、重設碼和新密碼為必填欄位'
+          message: 'Email, reset token and new password are required fields'
         },
         { status: 400 }
       )
     }
 
-    // 驗證密碼強度
+    // Validate password strength
     const passwordError = validatePassword(newPassword)
     if (passwordError) {
       return NextResponse.json(
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 查找使用者
+    // Find user
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() }
     })
@@ -51,13 +51,13 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Invalid reset request',
-          message: '重設申請無效'
+          message: 'Invalid reset request'
         },
         { status: 400 }
       )
     }
 
-    // 驗證重設 token
+    // Verify reset token
     const resetSession = await prisma.userSession.findFirst({
       where: {
         userId: user.id,
@@ -72,13 +72,13 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Invalid or expired token',
-          message: '重設碼無效或已過期'
+          message: 'Reset token is invalid or expired'
         },
         { status: 400 }
       )
     }
 
-    // 檢查新密碼是否與當前密碼相同
+    // Check if new password is same as current password
     if (user.passwordHash) {
       const { verifyPassword } = await import('@/lib/auth')
       const isSamePassword = await verifyPassword(newPassword, user.passwordHash)
@@ -88,14 +88,14 @@ export async function POST(request: NextRequest) {
           {
             success: false,
             error: 'Same password',
-            message: '新密碼不能與當前密碼相同'
+            message: 'New password cannot be the same as current password'
           },
           { status: 400 }
         )
       }
     }
 
-    // 更新密碼
+    // Update password
     const newPasswordHash = await hashPassword(newPassword)
     
     await prisma.user.update({
@@ -106,16 +106,16 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // 清除所有重設 token 和活躍會話 (強制重新登入)
+    // Clear all reset tokens and active sessions (force re-login)
     await Promise.all([
-      // 清除密碼重設 token
+      // Clear password reset tokens
       prisma.userSession.deleteMany({
         where: {
           userId: user.id,
           userAgent: 'password-reset'
         }
       }),
-      // 清除所有使用者會話 (可選，增加安全性)
+      // Clear all user sessions (optional, increases security)
       prisma.userSession.deleteMany({
         where: {
           userId: user.id,
@@ -124,12 +124,12 @@ export async function POST(request: NextRequest) {
       })
     ])
 
-    // 記錄密碼變更日誌
+    // Log password change
     console.log(`Password reset completed for user: ${user.email} at ${new Date().toISOString()}`)
 
     return NextResponse.json({
       success: true,
-      message: '密碼重設成功，請使用新密碼登入',
+      message: 'Password reset successful, please log in with your new password',
       data: {
         email: user.email,
         resetAt: new Date().toISOString()
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Internal server error',
-        message: '服務發生錯誤，請稍後再試'
+        message: 'Service error occurred, please try again later'
       },
       { status: 500 }
     )
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/auth/reset-password
- * 驗證重設 token 是否有效
+ * Validate if reset token is valid
  */
 export async function GET(request: NextRequest) {
   try {
@@ -164,13 +164,13 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Missing parameters',
-          message: '缺少必要參數'
+          message: 'Missing required parameters'
         },
         { status: 400 }
       )
     }
 
-    // 查找使用者
+    // Find user
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() }
     })
@@ -180,13 +180,13 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Invalid request',
-          message: '無效的重設申請'
+          message: 'Invalid reset request'
         },
         { status: 400 }
       )
     }
 
-    // 驗證重設 token
+    // Verify reset token
     const resetSession = await prisma.userSession.findFirst({
       where: {
         userId: user.id,
@@ -201,16 +201,16 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Invalid or expired token',
-          message: '重設碼無效或已過期'
+          message: 'Reset token is invalid or expired'
         },
         { status: 400 }
       )
     }
 
-    // 返回 token 有效性資訊
+    // Return token validity information
     return NextResponse.json({
       success: true,
-      message: '重設碼有效',
+      message: 'Reset token is valid',
       data: {
         email: user.email,
         expiresAt: resetSession.expiresAt,
@@ -224,7 +224,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Internal server error',
-        message: '服務發生錯誤，請稍後再試'
+        message: 'Service error occurred, please try again later'
       },
       { status: 500 }
     )
@@ -232,37 +232,37 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * 密碼強度驗證
+ * Password strength validation
  */
 function validatePassword(password: string): string | null {
   if (!password) {
-    return '密碼不能為空'
+    return 'Password cannot be empty'
   }
 
   if (password.length < 8) {
-    return '密碼長度至少 8 個字元'
+    return 'Password must be at least 8 characters long'
   }
 
   if (password.length > 128) {
-    return '密碼長度不能超過 128 個字元'
+    return 'Password cannot exceed 128 characters'
   }
 
-  // 檢查是否包含至少一個字母和一個數字
+  // Check if contains at least one letter and one number
   const hasLetter = /[a-zA-Z]/.test(password)
   const hasNumber = /\d/.test(password)
 
   if (!hasLetter || !hasNumber) {
-    return '密碼必須包含至少一個字母和一個數字'
+    return 'Password must contain at least one letter and one number'
   }
 
-  // 檢查常見弱密碼
+  // Check common weak passwords
   const weakPasswords = [
     '12345678', 'password', 'password123', 'admin123',
     'qwerty123', '87654321', 'abc12345', '123456789'
   ]
 
   if (weakPasswords.includes(password.toLowerCase())) {
-    return '密碼過於簡單，請選擇更安全的密碼'
+    return 'Password is too simple, please choose a more secure password'
   }
 
   return null

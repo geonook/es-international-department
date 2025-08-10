@@ -1,6 +1,6 @@
 /**
  * Authentication Refresh Token API
- * JWT Token 刷新 API 端點
+ * JWT Token refresh API endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -13,11 +13,11 @@ import {
 
 /**
  * POST /api/auth/refresh
- * 使用 refresh token 獲取新的 access token
+ * Use refresh token to get new access token
  */
 export async function POST(request: NextRequest) {
   try {
-    // 從 cookies 獲取 refresh token
+    // Get refresh token from cookies
     const refreshToken = getRefreshTokenFromRequest()
     
     if (!refreshToken) {
@@ -25,13 +25,13 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '需要 refresh token'
+          message: 'Refresh token required'
         },
         { status: 401 }
       )
     }
 
-    // 刷新 access token
+    // Refresh access token
     const tokenPair = await refreshAccessToken(refreshToken)
     
     if (!tokenPair) {
@@ -39,21 +39,21 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: AUTH_ERRORS.INVALID_REFRESH_TOKEN,
-          message: 'Refresh token 無效或已過期'
+          message: 'Refresh token is invalid or expired'
         },
         { status: 401 }
       )
     }
 
-    // 設定新的認證 cookies
+    // Set new authentication cookies
     setAuthCookies(tokenPair)
 
     return NextResponse.json({
       success: true,
-      message: 'Token 刷新成功',
+      message: 'Token refresh successful',
       data: {
         accessToken: tokenPair.accessToken,
-        // 不返回 refresh token 給前端，保持安全性
+        // Don't return refresh token to frontend, maintain security
       }
     })
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Token refresh failed',
-        message: 'Token 刷新失敗'
+        message: 'Token refresh failed'
       },
       { status: 500 }
     )
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/auth/refresh
- * 檢查 refresh token 是否有效
+ * Check if refresh token is valid
  */
 export async function GET(request: NextRequest) {
   try {
@@ -83,13 +83,13 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: AUTH_ERRORS.TOKEN_REQUIRED,
-          message: '需要 refresh token'
+          message: 'Refresh token required'
         },
         { status: 401 }
       )
     }
 
-    // 驗證 refresh token (不生成新 token)
+    // Verify refresh token (don't generate new token)
     const { verifyRefreshToken } = await import('@/lib/auth')
     const payload = await verifyRefreshToken(refreshToken)
     
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: AUTH_ERRORS.INVALID_REFRESH_TOKEN,
-          message: 'Refresh token 無效或已過期'
+          message: 'Refresh token is invalid or expired'
         },
         { status: 401 }
       )
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Refresh token 有效',
+      message: 'Refresh token is valid',
       data: {
         userId: payload.userId,
         expiresAt: payload.exp
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Validation failed',
-        message: 'Token 驗證失敗'
+        message: 'Token validation failed'
       },
       { status: 500 }
     )
