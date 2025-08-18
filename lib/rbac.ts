@@ -52,15 +52,13 @@ export enum Permission {
   PARENT_FEEDBACK = 'parent:feedback'
 }
 
-// 角色定義
+// 角色定義 - 簡化為雙角色系統
 export enum Role {
   ADMIN = 'admin',
-  TEACHER = 'teacher',
-  PARENT = 'parent',
-  STUDENT = 'student'
+  TEACHER = 'teacher'
 }
 
-// 權限矩陣 - 定義每個角色擁有的權限
+// 權限矩陣 - 簡化為雙角色系統
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [Role.ADMIN]: [
     // 管理員擁有所有權限
@@ -68,12 +66,12 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   ],
 
   [Role.TEACHER]: [
-    // 公告權限 (創建和讀取，但不能刪除)
+    // 公告權限 (創建、讀取、更新)
     Permission.ANNOUNCEMENT_CREATE,
     Permission.ANNOUNCEMENT_READ,
     Permission.ANNOUNCEMENT_UPDATE,
 
-    // 活動權限 (創建和讀取，但需要審核)
+    // 活動權限 (創建、讀取、更新)
     Permission.EVENT_CREATE,
     Permission.EVENT_READ,
     Permission.EVENT_UPDATE,
@@ -85,32 +83,18 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.RESOURCE_DELETE,
     Permission.RESOURCE_UPLOAD,
 
-    // 教師專用
+    // 教師專用權限
     Permission.TEACHER_DASHBOARD,
     Permission.TEACHER_RESOURCES,
     Permission.TEACHER_COMMUNICATION,
 
     // 基本讀取權限
-    Permission.USER_READ
-  ],
-
-  [Role.PARENT]: [
-    // 只有讀取權限
-    Permission.ANNOUNCEMENT_READ,
-    Permission.EVENT_READ,
-    Permission.RESOURCE_READ,
+    Permission.USER_READ,
     
-    // 家長專用
+    // 家長功能權限 (教師也需要存取家長相關功能)
     Permission.PARENT_DASHBOARD,
     Permission.PARENT_RESOURCES,
     Permission.PARENT_FEEDBACK
-  ],
-
-  [Role.STUDENT]: [
-    // 學生基本權限
-    Permission.ANNOUNCEMENT_READ,
-    Permission.EVENT_READ,
-    Permission.RESOURCE_READ
   ]
 }
 
@@ -182,19 +166,6 @@ export class RBACService {
     return user?.roles.includes(Role.TEACHER) || false
   }
 
-  /**
-   * 檢查是否為家長
-   */
-  static isParent(user: User | null): boolean {
-    return user?.roles.includes(Role.PARENT) || false
-  }
-
-  /**
-   * 檢查是否為學生
-   */
-  static isStudent(user: User | null): boolean {
-    return user?.roles.includes(Role.STUDENT) || false
-  }
 
   /**
    * 檢查資源存取權限
@@ -256,14 +227,12 @@ export class RBACService {
   }
 
   /**
-   * 角色階層檢查 (管理員 > 教師 > 家長)
+   * 角色階層檢查 (管理員 > 教師)
    */
   static getRoleHierarchy(role: Role): number {
     const hierarchy = {
-      [Role.ADMIN]: 4,
-      [Role.TEACHER]: 3,
-      [Role.PARENT]: 2,  
-      [Role.STUDENT]: 1
+      [Role.ADMIN]: 2,
+      [Role.TEACHER]: 1
     }
     return hierarchy[role] || 0
   }
@@ -305,8 +274,6 @@ export const {
   getUserPermissions,
   isAdmin,
   isTeacher,
-  isParent,
-  isStudent,
   canAccessResource
 } = RBACService
 

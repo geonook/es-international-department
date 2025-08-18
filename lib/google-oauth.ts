@@ -147,27 +147,36 @@ export async function getGoogleUserInfo(accessToken: string): Promise<GoogleUser
 }
 
 /**
- * Assign roles based on email domain
+ * Assign roles based on email domain and specific admin accounts
  */
 export function assignRoleByEmailDomain(email: string): string {
   const domain = email.split('@')[1]?.toLowerCase()
+  const emailLower = email.toLowerCase()
   
-  // Role assignment logic
+  // 特定管理員 email 白名單
+  const adminEmails = [
+    'tsehungchen@kcislk.ntpc.edu.tw',
+    'admin@kcislk.ntpc.edu.tw'
+  ]
+  
+  // 如果是管理員白名單，直接分配管理員角色
+  if (adminEmails.includes(emailLower)) {
+    return 'admin'
+  }
+  
+  // 域名角色映射邏輯
   const roleMapping: Record<string, string> = {
-    // Educational institution domains -> teacher role
+    // KCISLK 教育機構域名 -> 教師角色
+    'kcislk.ntpc.edu.tw': 'teacher',
+    
+    // 其他教育機構域名 -> 教師角色  
     'school.edu': 'teacher',
     'university.edu': 'teacher',
     
-    // Common parent email domains -> parent role
-    'gmail.com': 'parent',
-    'yahoo.com': 'parent',
-    'hotmail.com': 'parent',
-    'outlook.com': 'parent',
-    
-    // Can add more mappings based on actual needs
+    // 其他域名預設為教師角色（簡化系統只有兩種角色）
   }
   
-  return roleMapping[domain] || 'parent' // Default to parent role
+  return roleMapping[domain] || 'teacher' // 預設為教師角色
 }
 
 /**

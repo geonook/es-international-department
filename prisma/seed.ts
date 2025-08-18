@@ -9,8 +9,8 @@ import { hash } from 'bcryptjs'
 const prisma = new PrismaClient()
 
 /**
- * 預設角色資料
- * Default roles data
+ * 預設角色資料 - 簡化為雙角色系統
+ * Default roles data - Simplified dual-role system
  */
 const defaultRoles = [
   {
@@ -22,7 +22,7 @@ const defaultRoles = [
   {
     name: 'teacher',
     displayName: 'Teacher',
-    description: 'Teaching staff with limited admin access',
+    description: 'Teaching staff with comprehensive access to educational features',
     permissions: [
       'announcements:create',
       'announcements:read',
@@ -33,23 +33,18 @@ const defaultRoles = [
       'resources:create',
       'resources:read',
       'resources:update',
-      'newsletters:read',
-      'message_board:read',
-      'message_board:reply'
-    ]
-  },
-  {
-    name: 'parent',
-    displayName: 'Parent',
-    description: 'Parent with access to student information',
-    permissions: [
-      'announcements:read',
-      'events:read',
-      'resources:read',
+      'resources:delete',
+      'resources:upload',
       'newsletters:read',
       'message_board:read',
       'message_board:reply',
-      'feedback:create'
+      'teacher:dashboard',
+      'teacher:resources',
+      'teacher:communication',
+      'parent:dashboard',
+      'parent:resources',
+      'parent:feedback',
+      'user:read'
     ]
   }
 ]

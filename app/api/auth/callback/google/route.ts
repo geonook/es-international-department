@@ -239,13 +239,32 @@ export async function GET(request: NextRequest) {
     const tokenPair = await generateTokenPair(userForJWT)
     setAuthCookies(tokenPair)
 
+    // Determine redirect URL based on user role
+    let redirectUrl = '/admin' // Default to admin
+    
+    if (isNewUser) {
+      redirectUrl = '/welcome'
+    } else {
+      // Redirect based on user role
+      const userRoles = user.userRoles.map(ur => ur.role.name)
+      if (userRoles.includes('admin')) {
+        redirectUrl = '/admin'
+      } else if (userRoles.includes('teacher')) {
+        redirectUrl = '/teachers'
+      } else {
+        // Fallback to admin if no recognized role
+        redirectUrl = '/admin'
+      }
+      
+      // Check for explicit redirect URL from login
+      const oauthRedirect = cookieStore.get('oauth-redirect')?.value
+      if (oauthRedirect) {
+        redirectUrl = oauthRedirect
+      }
+    }
+    
     // Clear OAuth-related cookies
-    const response = NextResponse.redirect(
-      new URL(
-        isNewUser ? '/welcome' : (cookieStore.get('oauth-redirect')?.value || '/admin'),
-        request.url
-      )
-    )
+    const response = NextResponse.redirect(new URL(redirectUrl, request.url))
     
     response.cookies.delete('oauth-state')
     response.cookies.delete('oauth-redirect')

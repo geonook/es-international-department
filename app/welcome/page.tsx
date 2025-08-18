@@ -31,7 +31,8 @@ export default function WelcomePage() {
     } else if (user?.roles.includes('teacher')) {
       router.push('/teachers')
     } else {
-      router.push('/')
+      // Default to teachers page for simplified dual-role system
+      router.push('/teachers')
     }
   }
 
