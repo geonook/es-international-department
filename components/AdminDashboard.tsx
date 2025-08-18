@@ -87,6 +87,40 @@ export default function AdminDashboard() {
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState<string>('')
+  const [parentsData, setParentsData] = useState({
+    newsletters: [
+      {
+        id: 1,
+        title: "January Newsletter",
+        content: "Monthly updates and events",
+        date: "2025-01-15",
+        status: "published",
+      },
+      { 
+        id: 2, 
+        title: "February Newsletter", 
+        content: "Upcoming activities", 
+        date: "2025-02-01", 
+        status: "draft" 
+      },
+    ],
+    events: [
+      { 
+        id: 1, 
+        title: "Coffee with Principal", 
+        content: "Monthly parent meeting", 
+        date: "2025-02-10", 
+        type: "meeting" 
+      },
+      {
+        id: 2,
+        title: "International Culture Day",
+        content: "Cultural celebration event",
+        date: "2025-02-28",
+        type: "event",
+      },
+    ],
+  })
 
   // Fetch announcement list
   const fetchAnnouncements = useCallback(async (newFilters?: AnnouncementFilters, page?: number) => {
@@ -314,47 +348,6 @@ export default function AdminDashboard() {
     fetchAnnouncements(filters, page)
   }
 
-  // Initial load announcements
-  useEffect(() => {
-    if (isAuthenticated && isAdmin() && activeTab === 'teachers') {
-      fetchAnnouncements()
-    }
-  }, [isAuthenticated, activeTab, fetchAnnouncements, isAdmin])
-
-  const [parentsData, setParentsData] = useState({
-    newsletters: [
-      {
-        id: 1,
-        title: "January Newsletter",
-        content: "Monthly updates and events",
-        date: "2025-01-15",
-        status: "published",
-      },
-      { 
-        id: 2, 
-        title: "February Newsletter", 
-        content: "Upcoming activities", 
-        date: "2025-02-01", 
-        status: "draft" 
-      },
-    ],
-    events: [
-      { 
-        id: 1, 
-        title: "Coffee with Principal", 
-        content: "Monthly parent meeting", 
-        date: "2025-02-10", 
-        type: "meeting" 
-      },
-      {
-        id: 2,
-        title: "International Culture Day",
-        content: "Cultural celebration event",
-        date: "2025-02-28",
-        type: "event",
-      },
-    ],
-  })
 
   // Handle logout
   const handleLogout = async () => {
@@ -368,6 +361,20 @@ export default function AdminDashboard() {
       setIsLoggingOut(false)
     }
   }
+
+  // Check authentication and permissions - Automatically redirect to login page
+  useEffect(() => {
+    if (!isLoading && (!isAuthenticated || !isAdmin())) {
+      redirectToLogin('/admin')
+    }
+  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
+
+  // Initial load announcements
+  useEffect(() => {
+    if (isAuthenticated && isAdmin() && activeTab === 'teachers') {
+      fetchAnnouncements()
+    }
+  }, [isAuthenticated, activeTab, fetchAnnouncements, isAdmin])
 
   // Loading state
   if (isLoading) {
@@ -384,13 +391,6 @@ export default function AdminDashboard() {
       </div>
     )
   }
-
-  // Check authentication and permissions - Automatically redirect to login page
-  useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !isAdmin())) {
-      redirectToLogin('/admin')
-    }
-  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
 
   // Not logged in or no administrator privileges - Show loading screen waiting for redirect
   if (!isAuthenticated || !isAdmin()) {
