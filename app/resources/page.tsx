@@ -20,7 +20,6 @@ import {
   ChevronDown,
   Filter,
   AlertCircle,
-  ArrowLeft,
   Folder,
   Eye
 } from "lucide-react"
@@ -362,7 +361,7 @@ export default function ResourcesPage() {
               {[
                 { name: "Home", href: "/" },
                 { name: "Events", href: "/events" },
-                { name: "Resources", href: "/resources", active: true },
+                { name: "Resources", href: "/resources", active: true, hasDropdown: true },
               ].map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -379,6 +378,7 @@ export default function ResourcesPage() {
                     }`}
                   >
                     {item.name}
+                    {item.hasDropdown && <ChevronDown className="w-3 h-3" />}
                     {item.active && (
                       <motion.div
                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full"
@@ -394,16 +394,6 @@ export default function ResourcesPage() {
       </motion.header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Navigation */}
-        <div className="mb-6">
-          <Link 
-            href="/" 
-            className="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </div>
         {/* Page Header */}
         <motion.div
           className="text-center mb-16"

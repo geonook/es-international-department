@@ -101,8 +101,13 @@ export default function HomePage() {
     })
   }
 
-  // KCFSID Squad list
-  const squads = ["Achievers", "Adventurers", "Discoverers", "Explorers", "Innovators", "Leaders"]
+  // KCFSID Squad list - Updated to 14 squads
+  const squads = [
+    "Trailblazers", "Discoverers", "Adventurers", "Innovators", 
+    "Explorers", "Navigators", "Inventors", "Voyagers", 
+    "Pioneers", "Guardians", "Pathfinders", "Seekers", 
+    "Visionaries", "Achievers"
+  ]
 
   // Container animation variants - staggered children
   const containerVariants = {
@@ -187,8 +192,7 @@ export default function HomePage() {
               {[
                 { name: "Home", href: "/", active: true },
                 { name: "Events", href: "/events" },
-                { name: "Resources", href: "/resources" },
-                { name: "Notifications", href: "/notifications" },
+                { name: "Resources", href: "/resources", hasDropdown: true },
               ].map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -205,6 +209,7 @@ export default function HomePage() {
                     }`}
                   >
                     {item.name}
+                    {item.hasDropdown && <ChevronDown className="w-3 h-3" />}
                     {item.active && (
                       <motion.div
                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full"
@@ -320,65 +325,77 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <motion.div className="lg:w-1/2" variants={itemVariants}>
-                <motion.div
-                  className="relative p-8 bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50"
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="absolute -top-6 -left-6 w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white text-2xl font-bold">"</span>
-                  </div>
-                  <blockquote className="text-xl leading-relaxed text-gray-700 mb-6 italic">
-                    "The international education environment at KCISLK ESID has opened up a whole new world for our child. The teachers are dedicated, and the learning atmosphere is vibrant and engaging."
-                  </blockquote>
-                  <footer className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                      A
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">Amy Chen</div>
-                      <div className="text-sm text-gray-600">Parent of Grade 3 Student</div>
-                    </div>
-                  </footer>
+                <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                  <Image
+                    src="/placeholder.svg?height=400&width=600"
+                    alt="Mother and child reading together"
+                    width={600}
+                    height={400}
+                    className="relative rounded-3xl shadow-2xl"
+                  />
+                  <motion.div
+                    className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 180, 360],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
+                  />
                 </motion.div>
               </motion.div>
 
-              <motion.div className="lg:w-1/2 space-y-8" variants={itemVariants}>
-                <motion.h2 className="text-4xl font-bold text-gray-900 mb-8" variants={itemVariants}>
-                  What Parents Say About Us
-                </motion.h2>
+              <motion.div className="lg:w-1/2 relative" variants={itemVariants}>
+                <motion.div
+                  className="absolute -top-8 -left-8 text-8xl text-purple-200 font-serif"
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  "
+                </motion.div>
+                <blockquote className="text-3xl md:text-4xl text-gray-700 font-light leading-relaxed relative z-10">
+                  <motion.span
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 0.8, duration: 1 }}
+                  >
+                    Parents are the cornerstone
+                  </motion.span>{" "}
+                  of a child's education; their support and collaboration with teachers create a powerful partnership
+                  that inspires and nurtures lifelong learners.
+                </blockquote>
 
-                <motion.div className="grid gap-6" variants={containerVariants}>
-                  {[
-                    {
-                      icon: "🌟",
-                      title: "Excellent Teaching Quality",
-                      description: "Professional international teachers provide high-quality bilingual education"
-                    },
-                    {
-                      icon: "🎯",
-                      title: "Personalized Learning",
-                      description: "Tailored learning plans to meet each child's unique development needs"
-                    },
-                    {
-                      icon: "🤝",
-                      title: "Strong Parent Partnership",
-                      description: "Open communication and active parent participation in education"
-                    }
-                  ].map((feature, index) => (
-                    <motion.div
-                      key={index}
-                      variants={itemVariants}
-                      className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl hover:bg-white/80 transition-all duration-300"
-                      whileHover={{ x: 5, scale: 1.02 }}
-                    >
-                      <div className="text-3xl flex-shrink-0">{feature.icon}</div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">{feature.title}</h3>
-                        <p className="text-gray-600 text-sm">{feature.description}</p>
-                      </div>
-                    </motion.div>
-                  ))}
+                <motion.div
+                  className="mt-12"
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1 }}
+                >
+                  <svg className="w-40 h-24 text-purple-300" viewBox="0 0 200 100" fill="none">
+                    <motion.path
+                      d="M20 50 Q100 20 180 50"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeDasharray="5,5"
+                      fill="none"
+                      initial={{ pathLength: 0 }}
+                      whileInView={{ pathLength: 1 }}
+                      transition={{ delay: 1.2, duration: 2 }}
+                    />
+                    <motion.polygon
+                      points="175,45 185,50 175,55 180,50"
+                      fill="currentColor"
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      transition={{ delay: 2 }}
+                    />
+                  </svg>
                 </motion.div>
               </motion.div>
             </div>
@@ -821,10 +838,10 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { number: "300+", label: "Students" },
-                { number: "25+", label: "International Teachers" },
-                { number: "15+", label: "Countries Represented" },
-                { number: "10", label: "Years of Excellence" },
+                { number: "6", label: "Grade Levels", icon: BookOpen },
+                { number: "500+", label: "Students", icon: Users },
+                { number: "50+", label: "Resources", icon: ExternalLink },
+                { number: "12", label: "Monthly Updates", icon: Calendar },
               ].map((stat, index) => (
                 <motion.div
                   key={index}
@@ -834,10 +851,16 @@ export default function HomePage() {
                   transition={{ duration: 0.3 }}
                 >
                   <motion.div
-                    className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2"
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    transition={{ delay: index * 0.1, type: "spring", stiffness: 200 }}
+                    className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl transition-all duration-300"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                  >
+                    <stat.icon className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <motion.div
+                    className="text-3xl font-bold text-gray-900 mb-2"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.1 + 0.3, duration: 0.6 }}
                   >
                     {stat.number}
                   </motion.div>
@@ -865,7 +888,7 @@ export default function HomePage() {
             </motion.div>
 
             <motion.div
-              className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
               variants={containerVariants}
             >
               {squads.map((squad, index) => (
