@@ -186,12 +186,12 @@ export default function AdminPage() {
       fetchAnnouncements()
       fetchEvents()
     }
-  }, [isAuthenticated, isAdmin, fetchAnnouncements, fetchEvents])
+  }, [isAuthenticated, isAdmin])
 
   // Update stats when data changes
   useEffect(() => {
     fetchDashboardStats()
-  }, [fetchDashboardStats])
+  }, [announcements.length, events.length])
 
   // Format date helper
   const formatDate = (dateString: string) => {

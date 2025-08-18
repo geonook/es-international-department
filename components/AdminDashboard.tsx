@@ -94,12 +94,17 @@ export default function AdminDashboard() {
     setAnnouncementsError('')
     
     try {
-      const currentFilters = newFilters || filters
-      const currentPage = page || pagination.page
+      const currentFilters = newFilters || {
+        targetAudience: 'all',
+        priority: undefined,
+        status: undefined,
+        search: ''
+      }
+      const currentPage = page || 1
       
       const searchParams = new URLSearchParams({
         page: currentPage.toString(),
-        limit: pagination.limit.toString(),
+        limit: '10',
         status: 'all' // Administrators can see announcements in all statuses
       })
       
@@ -145,7 +150,7 @@ export default function AdminDashboard() {
     } finally {
       setAnnouncementsLoading(false)
     }
-  }, [filters, pagination.page, pagination.limit])
+  }, [])
 
   // Calculate statistics
   const calculateStats = (announcementList: Announcement[]) => {
@@ -319,7 +324,7 @@ export default function AdminDashboard() {
     if (isAuthenticated && isAdmin() && activeTab === 'teachers') {
       fetchAnnouncements()
     }
-  }, [isAuthenticated, activeTab, fetchAnnouncements, isAdmin])
+  }, [isAuthenticated, activeTab, isAdmin])
 
   const [parentsData, setParentsData] = useState({
     newsletters: [
