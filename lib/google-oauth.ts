@@ -4,15 +4,32 @@
  */
 
 import { OAuth2Client } from 'google-auth-library'
-import { env } from './env-validation'
+import dotenv from 'dotenv'
 
-// Google OAuth settings - using type-safe environment variables
+// Force load environment variables to bypass Next.js caching issues
+dotenv.config()
+
+// Direct access to prevent env-validation caching issues
+const getEnvVar = (name: string): string => {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`)
+  }
+  return value
+}
+
+// Google OAuth settings - direct environment variable access to bypass caching
 export const GOOGLE_OAUTH_CONFIG = {
-  clientId: env.GOOGLE_CLIENT_ID,
-  clientSecret: env.GOOGLE_CLIENT_SECRET,
-  redirectUri: process.env.NEXTAUTH_URL ? 
-    `${process.env.NEXTAUTH_URL}/api/auth/callback/google` : 
-    'http://localhost:3001/api/auth/callback/google',
+  get clientId() { 
+    return getEnvVar('GOOGLE_CLIENT_ID')
+  },
+  get clientSecret() { 
+    return getEnvVar('GOOGLE_CLIENT_SECRET')
+  },
+  get redirectUri() {
+    const nextAuthUrl = process.env.NEXTAUTH_URL || 'http://localhost:3001'
+    return `${nextAuthUrl}/api/auth/callback/google`
+  },
   scopes: [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile'
@@ -169,9 +186,17 @@ export function validateGoogleOAuthConfig(): boolean {
     return false
   }
   
-  // Enhanced validation with detailed logging
-  const clientId = process.env.GOOGLE_CLIENT_ID
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+  // Enhanced validation with detailed logging - direct access
+  let clientId: string
+  let clientSecret: string
+  
+  try {
+    clientId = GOOGLE_OAUTH_CONFIG.clientId
+    clientSecret = GOOGLE_OAUTH_CONFIG.clientSecret
+  } catch (error) {
+    console.error('❌ Failed to load OAuth credentials:', error)
+    return false
+  }
   
   console.log('🔍 Google OAuth Configuration Validation:')
   console.log('  - Client ID:', clientId ? `${clientId.substring(0, 20)}...` : 'MISSING')
