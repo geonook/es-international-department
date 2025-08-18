@@ -12,7 +12,7 @@ export const GOOGLE_OAUTH_CONFIG = {
   clientSecret: env.GOOGLE_CLIENT_SECRET,
   redirectUri: process.env.NEXTAUTH_URL ? 
     `${process.env.NEXTAUTH_URL}/api/auth/callback/google` : 
-    'http://localhost:3000/api/auth/callback/google',
+    'http://localhost:3001/api/auth/callback/google',
   scopes: [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile'
@@ -165,10 +165,33 @@ export function validateGoogleOAuthConfig(): boolean {
   const missingVars = requiredVars.filter(varName => !process.env[varName])
   
   if (missingVars.length > 0) {
-    console.error('Missing Google OAuth environment variables:', missingVars)
+    console.error('❌ Missing Google OAuth environment variables:', missingVars)
     return false
   }
   
+  // Enhanced validation with detailed logging
+  const clientId = process.env.GOOGLE_CLIENT_ID
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+  
+  console.log('🔍 Google OAuth Configuration Validation:')
+  console.log('  - Client ID:', clientId ? `${clientId.substring(0, 20)}...` : 'MISSING')
+  console.log('  - Client Secret:', clientSecret ? `${clientSecret.substring(0, 10)}...` : 'MISSING')
+  console.log('  - Redirect URI:', GOOGLE_OAUTH_CONFIG.redirectUri)
+  console.log('  - NextAuth URL:', process.env.NEXTAUTH_URL)
+  
+  // Validate Client ID format
+  if (clientId && !clientId.endsWith('.apps.googleusercontent.com')) {
+    console.error('❌ Invalid Google Client ID format')
+    return false
+  }
+  
+  // Validate Client Secret format (Google secrets start with GOCSPX-)
+  if (clientSecret && !clientSecret.startsWith('GOCSPX-')) {
+    console.error('❌ Invalid Google Client Secret format')
+    return false
+  }
+  
+  console.log('✅ Google OAuth configuration validation passed')
   return true
 }
 

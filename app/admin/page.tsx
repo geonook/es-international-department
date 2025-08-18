@@ -41,39 +41,60 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 
-interface TeacherAnnouncement {
-  id: number
+interface Announcement {
+  id: string
   title: string
   content: string
-  date: string
+  summary?: string
+  targetAudience: 'teachers' | 'parents' | 'all'
   priority: 'high' | 'medium' | 'low'
+  status: 'draft' | 'published' | 'archived'
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  expiresAt?: string
+  author: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
 }
 
-interface TeacherReminder {
-  id: number
+interface Event {
+  id: string
   title: string
-  content: string
-  date: string
-  status: 'active' | 'pending' | 'completed'
+  description?: string
+  eventType: string
+  startDate: string
+  endDate?: string
+  startTime?: string
+  endTime?: string
+  location?: string
+  maxParticipants?: number
+  registrationRequired: boolean
+  registrationDeadline?: string
+  targetGrades?: string[]
+  status: 'draft' | 'published' | 'in_progress' | 'completed' | 'cancelled'
+  createdAt: string
+  creator: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
 }
 
-interface ParentNewsletter {
-  id: number
-  title: string
-  content: string
-  date: string
-  status: 'published' | 'draft'
-}
-
-interface ParentEvent {
-  id: number
-  title: string
-  content: string
-  date: string
-  type: 'meeting' | 'event' | 'activity'
+interface DashboardStats {
+  totalTeachers: number
+  totalParents: number
+  activePosts: number
+  systemHealth: string
 }
 
 export default function AdminPage() {
@@ -83,6 +104,16 @@ export default function AdminPage() {
   const [dataLoading, setDataLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Real data states
+  const [announcements, setAnnouncements] = useState<Announcement[]>([])
+  const [events, setEvents] = useState<Event[]>([])
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
+    totalTeachers: 0,
+    totalParents: 0,
+    activePosts: 0,
+    systemHealth: '98%'
+  })
+
   // Check authentication and permissions - Automatically redirect to login page
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !isAdmin())) {
@@ -90,57 +121,114 @@ export default function AdminPage() {
     }
   }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
 
-  // Mock data for demonstration - In production, this would come from APIs
-  const [teachersData, setTeachersData] = useState({
-    announcements: [
-      {
-        id: 1,
-        title: 'Staff Meeting Tomorrow',
-        content: 'Please attend the staff meeting at 3 PM in the conference room',
-        date: '2025-01-31',
-        priority: 'high' as const,
-      },
-      {
-        id: 2,
-        title: 'New Curriculum Guidelines',
-        content: 'Updated guidelines are now available in the teacher portal',
-        date: '2025-01-30',
-        priority: 'medium' as const,
-      },
-      {
-        id: 3,
-        title: 'Professional Development Workshop',
-        content: 'Register for the upcoming PD workshop on digital teaching tools',
-        date: '2025-01-29',
-        priority: 'low' as const,
-      },
-    ],
-    reminders: [
-      {
-        id: 1,
-        title: 'Grade Submission Deadline',
-        content: 'Submit all semester grades by Friday 5 PM',
-        date: '2025-02-01',
-        status: 'active' as const,
-      },
-      {
-        id: 2,
-        title: 'Parent Conference Week',
-        content: 'Schedule your parent conferences for next week',
-        date: '2025-02-05',
-        status: 'pending' as const,
-      },
-      {
-        id: 3,
-        title: 'Curriculum Planning Meeting',
-        content: 'Department heads meeting completed',
-        date: '2025-01-28',
-        status: 'completed' as const,
-      },
-    ],
-  })
+  // Fetch announcements from API
+  const fetchAnnouncements = useCallback(async () => {
+    try {
+      setDataLoading(true)
+      const response = await fetch('/api/admin/announcements?limit=10', {
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setAnnouncements(data.announcements || [])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch announcements:', error)
+      setError('Failed to load announcements')
+    } finally {
+      setDataLoading(false)
+    }
+  }, [])
 
-  const [parentsData, setParentsData] = useState({
+  // Fetch events from API
+  const fetchEvents = useCallback(async () => {
+    try {
+      setDataLoading(true)
+      const response = await fetch('/api/admin/events?limit=10', {
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setEvents(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch events:', error)
+      setError('Failed to load events')
+    } finally {
+      setDataLoading(false)
+    }
+  }, [])
+
+  // Fetch dashboard stats
+  const fetchDashboardStats = useCallback(async () => {
+    try {
+      // Mock stats for now - can be enhanced with real API
+      setDashboardStats({
+        totalTeachers: 45,
+        totalParents: 320,
+        activePosts: announcements.length + events.length,
+        systemHealth: '98%'
+      })
+    } catch (error) {
+      console.error('Failed to fetch dashboard stats:', error)
+    }
+  }, [announcements.length, events.length])
+
+  // Load data when authenticated
+  useEffect(() => {
+    if (isAuthenticated && isAdmin()) {
+      fetchAnnouncements()
+      fetchEvents()
+    }
+  }, [isAuthenticated, isAdmin, fetchAnnouncements, fetchEvents])
+
+  // Update stats when data changes
+  useEffect(() => {
+    fetchDashboardStats()
+  }, [fetchDashboardStats])
+
+  // Format date helper
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
+
+  // Mock data for Teachers reminders (temporary - to be replaced with real API)
+  const teachersReminders = [
+    {
+      id: 1,
+      title: 'Grade Submission Deadline',
+      content: 'Submit all semester grades by Friday 5 PM',
+      date: '2025-02-01',
+      status: 'active' as const,
+    },
+    {
+      id: 2,
+      title: 'Parent Conference Week',
+      content: 'Schedule your parent conferences for next week',
+      date: '2025-02-05',
+      status: 'pending' as const,
+    },
+    {
+      id: 3,
+      title: 'Curriculum Planning Meeting',
+      content: 'Department heads meeting completed',
+      date: '2025-01-28',
+      status: 'completed' as const,
+    },
+  ]
+
+  // Legacy mock data for newsletters (can be replaced with real API later)
+  const [parentsData] = useState({
     newsletters: [
       {
         id: 1,
@@ -386,10 +474,10 @@ export default function AdminPage() {
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                   {[
-                    { title: 'Total Teachers', value: '45', icon: GraduationCap, color: 'blue' },
-                    { title: 'Total Parents', value: '320', icon: Users, color: 'purple' },
-                    { title: 'Active Posts', value: '28', icon: MessageSquare, color: 'green' },
-                    { title: 'System Health', value: '98%', icon: BarChart3, color: 'orange' },
+                    { title: 'Total Teachers', value: dashboardStats.totalTeachers.toString(), icon: GraduationCap, color: 'blue' },
+                    { title: 'Total Parents', value: dashboardStats.totalParents.toString(), icon: Users, color: 'purple' },
+                    { title: 'Active Posts', value: dashboardStats.activePosts.toString(), icon: MessageSquare, color: 'green' },
+                    { title: 'System Health', value: dashboardStats.systemHealth, icon: BarChart3, color: 'orange' },
                   ].map((stat, index) => (
                     <motion.div
                       key={index}
@@ -548,39 +636,64 @@ export default function AdminPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {teachersData.announcements.map((announcement) => (
-                          <div
-                            key={announcement.id}
-                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                          >
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900">{announcement.title}</h4>
-                              <p className="text-sm text-gray-600">{announcement.content}</p>
-                              <div className="flex items-center gap-2 mt-2">
-                                <Badge
-                                  variant={
-                                    announcement.priority === 'high'
-                                      ? 'destructive'
-                                      : announcement.priority === 'medium'
-                                      ? 'default'
-                                      : 'secondary'
-                                  }
-                                >
-                                  {announcement.priority}
-                                </Badge>
-                                <span className="text-xs text-gray-500">{announcement.date}</span>
+                        {dataLoading ? (
+                          Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                            </div>
+                          ))
+                        ) : announcements.filter(a => a.targetAudience === 'teachers' || a.targetAudience === 'all').length > 0 ? (
+                          announcements
+                            .filter(a => a.targetAudience === 'teachers' || a.targetAudience === 'all')
+                            .slice(0, 5)
+                            .map((announcement) => (
+                              <div
+                                key={announcement.id}
+                                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                              >
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-gray-900">{announcement.title}</h4>
+                                  <p className="text-sm text-gray-600">{announcement.summary || announcement.content.substring(0, 100) + '...'}</p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <Badge
+                                      variant={
+                                        announcement.priority === 'high'
+                                          ? 'destructive'
+                                          : announcement.priority === 'medium'
+                                          ? 'default'
+                                          : 'secondary'
+                                      }
+                                    >
+                                      {announcement.priority}
+                                    </Badge>
+                                    <Badge variant="outline">
+                                      {announcement.status}
+                                    </Badge>
+                                    <span className="text-xs text-gray-500">{formatDate(announcement.createdAt)}</span>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button size="sm" variant="outline">
+                                    <Eye className="w-4 h-4" />
+                                  </Button>
+                                  <Button size="sm" variant="outline">
+                                    <Edit className="w-4 h-4" />
+                                  </Button>
+                                  <Button size="sm" variant="outline">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
+                            ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No teacher announcements found</p>
+                            <p className="text-sm">Create your first announcement to get started</p>
                           </div>
-                        ))}
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -599,7 +712,7 @@ export default function AdminPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {teachersData.reminders.map((reminder) => (
+                        {teachersReminders.map((reminder) => (
                           <div
                             key={reminder.id}
                             className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
@@ -713,26 +826,55 @@ export default function AdminPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {parentsData.events.map((event) => (
-                          <div key={event.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900">{event.title}</h4>
-                              <p className="text-sm text-gray-600">{event.content}</p>
-                              <div className="flex items-center gap-2 mt-2">
-                                <Badge variant="outline">{event.type}</Badge>
-                                <span className="text-xs text-gray-500">{event.date}</span>
+                        {dataLoading ? (
+                          Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                            </div>
+                          ))
+                        ) : events.length > 0 ? (
+                          events.slice(0, 5).map((event) => (
+                            <div key={event.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-900">{event.title}</h4>
+                                <p className="text-sm text-gray-600">{event.description?.substring(0, 100) + '...' || 'No description'}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge variant="outline">{event.eventType}</Badge>
+                                  <Badge variant={
+                                    event.status === 'published' ? 'default' :
+                                    event.status === 'completed' ? 'secondary' :
+                                    event.status === 'cancelled' ? 'destructive' : 'outline'
+                                  }>
+                                    {event.status}
+                                  </Badge>
+                                  <span className="text-xs text-gray-500">{formatDate(event.startDate)}</span>
+                                  {event.location && (
+                                    <span className="text-xs text-gray-500">📍 {event.location}</span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline">
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button size="sm" variant="outline">
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button size="sm" variant="outline">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
                               </div>
                             </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No events found</p>
+                            <p className="text-sm">Create your first event to get started</p>
                           </div>
-                        ))}
+                        )}
                       </div>
                     </CardContent>
                   </Card>
