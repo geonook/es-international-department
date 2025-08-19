@@ -5,7 +5,7 @@
  * 新增/編輯公告的表單組件
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -25,14 +25,15 @@ import {
   GraduationCap,
   Globe,
   Loader2,
-  X
+  X,
+  Image
 } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { RichTextEditor } from '@/components/ui/rich-text-editor'
+// import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -53,7 +54,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
-import { sanitizeHtml, extractTextFromHtml, validateHtmlContent } from '@/lib/html-sanitizer'
+// import { sanitizeHtml, extractTextFromHtml, validateHtmlContent } from '@/lib/html-sanitizer'
 import {
   AnnouncementFormProps,
   AnnouncementFormData,
@@ -61,6 +62,20 @@ import {
   PRIORITY_LABELS,
   STATUS_LABELS
 } from '@/lib/types'
+
+// 簡化的 HTML 清理函數
+const sanitizeHtml = (html: string) => {
+  // 基本的 HTML 清理，移除危險標籤
+  return html.replace(/<script[^>]*>.*?<\/script>/gi, '')
+             .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
+             .replace(/javascript:/gi, '')
+             .replace(/on\w+=/gi, '')
+}
+
+const extractTextFromHtml = (html: string) => {
+  // 提取 HTML 中的純文字
+  return html.replace(/<[^>]*>/g, '').trim()
+}
 
 // 表單驗證 Schema
 const announcementSchema = z.object({
@@ -71,16 +86,7 @@ const announcementSchema = z.object({
   content: z
     .string()
     .min(1, '內容為必填項目')
-    .refine((content) => {
-      const validation = validateHtmlContent(content, {
-        maxLength: 50000,
-        maxWordCount: 10000,
-        required: true
-      })
-      return validation.isValid
-    }, {
-      message: '內容格式無效或超出限制'
-    }),
+    .max(50000, '內容不能超過 50000 個字元'),
   summary: z
     .string()
     .max(500, '摘要不能超過 500 個字元')
@@ -118,6 +124,15 @@ const announcementSchema = z.object({
 
 type FormData = z.infer<typeof announcementSchema>
 
+// 圖片上傳類型定義
+interface UploadedImage {
+  fileId: string
+  originalName: string
+  publicUrl: string
+  thumbnailUrl?: string
+  fileSize: number
+}
+
 export default function AnnouncementForm({
   announcement,
   onSubmit,
@@ -130,8 +145,6 @@ export default function AnnouncementForm({
   const [isDirty, setIsDirty] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
-  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
-  const [imageUploadError, setImageUploadError] = useState<string>()
   
   const isEditMode = mode === 'edit' && announcement
 
@@ -217,18 +230,6 @@ export default function AnnouncementForm({
     onCancel?.()
   }
 
-  // 處理圖片上傳
-  const handleImageUpload = useCallback((images: UploadedImage[]) => {
-    setUploadedImages(prev => [...prev, ...images])
-    setImageUploadError(undefined)
-    console.log('Images uploaded successfully:', images)
-  }, [])
-
-  // 處理圖片上傳錯誤
-  const handleImageUploadError = useCallback((error: string) => {
-    setImageUploadError(error)
-    console.error('Image upload error:', error)
-  }, [])
 
   // 取得目標對象圖示
   const getTargetAudienceIcon = (audience: string) => {
@@ -330,24 +331,6 @@ export default function AnnouncementForm({
             </Alert>
           )}
 
-          {/* 圖片上傳錯誤 */}
-          {imageUploadError && (
-            <Alert variant="destructive">
-              <Image className="h-4 w-4" />
-              <AlertDescription>
-                圖片上傳失敗: {imageUploadError}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="ml-2 h-6 text-xs"
-                  onClick={() => setImageUploadError(undefined)}
-                >
-                  <X className="w-3 h-3 mr-1" />
-                  關閉
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
         </CardHeader>
 
         <CardContent>
@@ -451,61 +434,23 @@ export default function AnnouncementForm({
                       )}
                     />
 
-                    {/* 內容 - 富文本編輯器 */}
+                    {/* 內容 */}
                     <FormField
                       control={form.control}
                       name="content"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center justify-between">
-                            <span>內容 *</span>
-                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                              <label className="flex items-center gap-1 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={autoSaveEnabled}
-                                  onChange={(e) => setAutoSaveEnabled(e.target.checked)}
-                                  className="w-3 h-3 rounded"
-                                />
-                                自動儲存
-                              </label>
-                            </div>
-                          </FormLabel>
+                          <FormLabel>內容 *</FormLabel>
                           <FormControl>
-                            <RichTextEditor
-                              value={field.value}
-                              onChange={field.onChange}
-                              onBlur={() => field.onBlur()}
-                              placeholder="請輸入公告詳細內容，支援富文本格式..."
-                              minHeight={250}
-                              maxHeight={500}
-                              maxLength={50000}
-                              showWordCount={true}
-                              showCharCount={true}
-                              autoSave={autoSaveEnabled}
-                              autoSaveInterval={5000}
-                              onAutoSave={(content) => {
-                                // 自動儲存草稿邏輯
-                                const currentData = form.getValues()
-                                if (currentData.status !== 'published') {
-                                  currentData.content = content
-                                  currentData.status = 'draft'
-                                  // 可以在這裡調用 API 進行自動儲存
-                                  console.log('Auto-saving draft...', { title: currentData.title, contentLength: content.length })
-                                }
-                              }}
-                              error={errors.content?.message || imageUploadError}
-                              disabled={loading || isSubmitting}
-                              // 圖片上傳相關
-                              enableImageUpload={true}
-                              onImageUpload={handleImageUpload}
-                              uploadEndpoint="/api/upload/images"
-                              maxImageSize={5 * 1024 * 1024} // 5MB
-                              maxImages={10}
-                              relatedType="announcement"
-                              relatedId={announcement?.id}
+                            <Textarea
+                              placeholder="請輸入公告詳細內容..."
+                              className="min-h-[250px]"
+                              {...field}
                             />
                           </FormControl>
+                          <FormDescription>
+                            支援純文字和基本格式，字數限制：50000 字元
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -514,53 +459,6 @@ export default function AnnouncementForm({
 
                   {/* 設定面板 */}
                   <div className="space-y-4">
-                    {/* 圖片管理區域 */}
-                    {uploadedImages.length > 0 && (
-                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-3 flex items-center gap-2">
-                          <Image className="w-4 h-4" />
-                          已上傳的圖片 ({uploadedImages.length})
-                        </h4>
-                        <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
-                          {uploadedImages.map((image, index) => (
-                            <div
-                              key={image.fileId}
-                              className="flex items-center gap-3 p-2 bg-white dark:bg-gray-800 rounded border"
-                            >
-                              <img
-                                src={image.thumbnailUrl || image.publicUrl}
-                                alt={image.originalName}
-                                className="w-8 h-8 object-cover rounded"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium truncate">{image.originalName}</p>
-                                <p className="text-xs text-gray-500">
-                                  {(image.fileSize / 1024).toFixed(1)} KB
-                                </p>
-                              </div>
-                              <Badge variant="outline" className="text-xs">
-                                已插入
-                              </Badge>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 圖片上傳說明 */}
-                    <div className="text-xs text-gray-500 bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
-                      <div className="flex items-center gap-1 mb-2">
-                        <Image className="w-3 h-3" />
-                        <span className="font-medium">圖片上傳說明：</span>
-                      </div>
-                      <ul className="list-disc list-inside space-y-1 ml-4">
-                        <li>支援 JPG、PNG、GIF、WebP 格式</li>
-                        <li>單張圖片最大 5MB，一次最多 10 張</li>
-                        <li>圖片會自動壓縮最佳化</li>
-                        <li>可直接拖拽或複製貼上圖片</li>
-                        <li>Image upload tips: 支援拖放上傳和複製貼上</li>
-                      </ul>
-                    </div>
                     {/* 目標對象 */}
                     <FormField
                       control={form.control}
