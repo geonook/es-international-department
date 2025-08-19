@@ -43,6 +43,7 @@ import {
   Folder,
   Upload,
   BookOpen,
+  MapPin,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
@@ -319,12 +320,48 @@ export default function AdminDashboard() {
     fetchAnnouncements(filters, page)
   }
 
-  // Initial load announcements
-  useEffect(() => {
-    if (isAuthenticated && isAdmin() && activeTab === 'teachers') {
-      fetchAnnouncements()
+  // Events management state
+  const [events, setEvents] = useState([])
+  const [eventsLoading, setEventsLoading] = useState(false)
+  const [eventsError, setEventsError] = useState('')
+
+  // Fetch events data
+  const fetchEvents = useCallback(async () => {
+    setEventsLoading(true)
+    setEventsError('')
+    
+    try {
+      const response = await fetch('/api/admin/events')
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        setEvents(result.data || [])
+      } else {
+        throw new Error(result.message || 'Failed to fetch events')
+      }
+    } catch (error) {
+      console.error('Fetch events error:', error)
+      setEventsError(error instanceof Error ? error.message : 'An error occurred while loading events')
+    } finally {
+      setEventsLoading(false)
     }
-  }, [isAuthenticated, activeTab, isAdmin])
+  }, [])
+
+  // Initial load announcements and events
+  useEffect(() => {
+    if (isAuthenticated && isAdmin()) {
+      if (activeTab === 'teachers') {
+        fetchAnnouncements()
+      } else if (activeTab === 'events') {
+        fetchEvents()
+      }
+    }
+  }, [isAuthenticated, activeTab, isAdmin, fetchAnnouncements, fetchEvents])
 
   const [parentsData, setParentsData] = useState({
     newsletters: [
@@ -342,23 +379,7 @@ export default function AdminDashboard() {
         date: "2025-02-01", 
         status: "draft" 
       },
-    ],
-    events: [
-      { 
-        id: 1, 
-        title: "Coffee with Principal", 
-        content: "Monthly parent meeting", 
-        date: "2025-02-10", 
-        type: "meeting" 
-      },
-      {
-        id: 2,
-        title: "International Culture Day",
-        content: "Cultural celebration event",
-        date: "2025-02-28",
-        type: "event",
-      },
-    ],
+    ]
   })
 
   // Handle logout
@@ -1281,31 +1302,85 @@ export default function AdminDashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
-                        {parentsData.events.map((event) => (
-                          <div key={event.id} className="border rounded-lg p-4 bg-white">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <h3 className="font-semibold">{event.title}</h3>
-                                  <Badge variant="outline">
-                                    {event.type === 'meeting' ? 'Meeting' : 'Event'}
-                                  </Badge>
+                      {/* Events loading state */}
+                      {eventsLoading && (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                          <span className="ml-2 text-gray-600">Loading events...</span>
+                        </div>
+                      )}
+
+                      {/* Events error state */}
+                      {eventsError && (
+                        <Alert variant="destructive">
+                          <AlertTriangle className="h-4 w-4" />
+                          <AlertDescription>{eventsError}</AlertDescription>
+                        </Alert>
+                      )}
+
+                      {/* Events list */}
+                      {!eventsLoading && !eventsError && (
+                        <div className="space-y-4">
+                          {events.length > 0 ? (
+                            events.map((event) => (
+                              <div key={event.id} className="border rounded-lg p-4 bg-white">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-2">
+                                      <h3 className="font-semibold">{event.title}</h3>
+                                      <Badge variant="outline">
+                                        {event.eventType?.replace('_', ' ') || 'Event'}
+                                      </Badge>
+                                      <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
+                                        {event.status}
+                                      </Badge>
+                                      {event.isFeatured && (
+                                        <Badge variant="destructive">Featured</Badge>
+                                      )}
+                                    </div>
+                                    <p className="text-gray-600 mb-2">{event.description || 'No description available'}</p>
+                                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                                      <span className="flex items-center">
+                                        <Calendar className="w-4 h-4 mr-1" />
+                                        {new Date(event.startDate).toLocaleDateString()}
+                                      </span>
+                                      {event.location && (
+                                        <span className="flex items-center">
+                                          <MapPin className="w-4 h-4 mr-1" />
+                                          {event.location}
+                                        </span>
+                                      )}
+                                      {event.registrationRequired && (
+                                        <span className="flex items-center">
+                                          <Users className="w-4 h-4 mr-1" />
+                                          Registration Required
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="flex space-x-2">
+                                    <Button variant="outline" size="sm" title="Edit Event">
+                                      <Edit className="w-4 h-4" />
+                                    </Button>
+                                    <Button variant="outline" size="sm" title="Delete Event">
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </div>
                                 </div>
-                                <p className="text-gray-600 mb-2">{event.content}</p>
-                                <p className="text-sm text-gray-500">{event.date}</p>
                               </div>
-                              <div className="flex space-x-2">
-                                <Button variant="outline" size="sm">
-                                  <Edit className="w-4 h-4" />
-                                </Button>
-                                <Button variant="outline" size="sm">
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center py-8 text-gray-500">
+                              <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                              <p>No events found</p>
+                              <Button variant="outline" className="mt-4">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Create First Event
+                              </Button>
                             </div>
-                          </div>
-                        ))}
+                          )}
+                        </div>
+                      )}
                       </div>
                     </CardContent>
                   </Card>
