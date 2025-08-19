@@ -202,19 +202,19 @@ export function useAuth() {
   }
 
   // 檢查是否有特定角色
-  const hasRole = (role: string): boolean => {
+  const hasRole = useCallback((role: string): boolean => {
     return authState.user?.roles.includes(role) || false
-  }
+  }, [authState.user?.roles])
 
   // 檢查是否為管理員
-  const isAdmin = (): boolean => {
+  const isAdmin = useCallback((): boolean => {
     return hasRole('admin')
-  }
+  }, [hasRole])
 
   // 檢查是否為教師
-  const isTeacher = (): boolean => {
+  const isTeacher = useCallback((): boolean => {
     return hasRole('teacher')
-  }
+  }, [hasRole])
 
   // 組件掛載時檢查認證狀態
   useEffect(() => {

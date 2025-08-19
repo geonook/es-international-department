@@ -43,6 +43,9 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import UserList from '@/components/admin/UserList'
+import UserForm from '@/components/admin/UserForm'
+import { UserData } from '@/components/admin/UserCard'
 
 interface Announcement {
   id: string
@@ -107,11 +110,24 @@ export default function AdminPage() {
   // Real data states
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [events, setEvents] = useState<Event[]>([])
+  const [users, setUsers] = useState<UserData[]>([])
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalTeachers: 0,
     totalParents: 0,
     activePosts: 0,
     systemHealth: '98%'
+  })
+
+  // User management states
+  const [showUserForm, setShowUserForm] = useState(false)
+  const [editingUser, setEditingUser] = useState<UserData | null>(null)
+  const [userSearchQuery, setUserSearchQuery] = useState('')
+  const [userRoleFilter, setUserRoleFilter] = useState('')
+  const [userPagination, setUserPagination] = useState({
+    page: 1,
+    limit: 10,
+    totalCount: 0,
+    totalPages: 0
   })
 
   // Check authentication and permissions - Automatically redirect to login page
@@ -121,9 +137,17 @@ export default function AdminPage() {
     }
   }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
 
+  // Prevent duplicate requests with separate flags
+  const [isAnnouncementLoading, setIsAnnouncementLoading] = useState(false)
+  const [isEventLoading, setIsEventLoading] = useState(false)
+  const [isUserLoading, setIsUserLoading] = useState(false)
+
   // Fetch announcements from API
   const fetchAnnouncements = useCallback(async () => {
+    if (isAnnouncementLoading) return
+    
     try {
+      setIsAnnouncementLoading(true)
       setDataLoading(true)
       const response = await fetch('/api/admin/announcements?limit=10', {
         credentials: 'include'
@@ -140,12 +164,16 @@ export default function AdminPage() {
       setError('Failed to load announcements')
     } finally {
       setDataLoading(false)
+      setIsAnnouncementLoading(false)
     }
-  }, [])
+  }, [isAnnouncementLoading])
 
   // Fetch events from API
   const fetchEvents = useCallback(async () => {
+    if (isEventLoading) return
+    
     try {
+      setIsEventLoading(true)
       setDataLoading(true)
       const response = await fetch('/api/admin/events?limit=10', {
         credentials: 'include'
@@ -162,8 +190,9 @@ export default function AdminPage() {
       setError('Failed to load events')
     } finally {
       setDataLoading(false)
+      setIsEventLoading(false)
     }
-  }, [])
+  }, [isEventLoading])
 
   // Fetch dashboard stats
   const fetchDashboardStats = useCallback(async () => {
@@ -180,18 +209,184 @@ export default function AdminPage() {
     }
   }, [announcements.length, events.length])
 
-  // Load data when authenticated
+  // Fetch users from API
+  const fetchUsers = useCallback(async () => {
+    if (isUserLoading) return
+    
+    try {
+      setIsUserLoading(true)
+      setDataLoading(true)
+      
+      const queryParams = new URLSearchParams({
+        page: userPagination.page.toString(),
+        limit: userPagination.limit.toString(),
+        ...(userSearchQuery && { search: userSearchQuery }),
+        ...(userRoleFilter && { role: userRoleFilter })
+      })
+      
+      const response = await fetch(`/api/admin/users?${queryParams}`, {
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setUsers(data.data.users || [])
+          setUserPagination(data.data.pagination)
+        }
+      } else {
+        setError('Failed to load users')
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+      setError('Failed to load users')
+    } finally {
+      setDataLoading(false)
+      setIsUserLoading(false)
+    }
+  }, [isUserLoading, userPagination.page, userPagination.limit, userSearchQuery, userRoleFilter])
+
+  // User management functions
+  const handleAddUser = () => {
+    setEditingUser(null)
+    setShowUserForm(true)
+  }
+
+  const handleEditUser = (user: UserData) => {
+    setEditingUser(user)
+    setShowUserForm(true)
+  }
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        await fetchUsers() // Refresh users list
+      } else {
+        setError('Failed to delete user')
+      }
+    } catch (error) {
+      console.error('Failed to delete user:', error)
+      setError('Failed to delete user')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleToggleUserStatus = async (userId: string, isActive: boolean) => {
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          action: 'toggle_status',
+          value: isActive
+        })
+      })
+
+      if (response.ok) {
+        await fetchUsers() // Refresh users list
+      } else {
+        setError('Failed to update user status')
+      }
+    } catch (error) {
+      console.error('Failed to update user status:', error)
+      setError('Failed to update user status')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleManageUserRoles = (user: UserData) => {
+    // For now, redirect to edit form
+    handleEditUser(user)
+  }
+
+  const handleUserFormSubmit = async (formData: any) => {
+    try {
+      setDataLoading(true)
+      
+      const url = editingUser 
+        ? `/api/admin/users/${editingUser.id}` 
+        : '/api/admin/users'
+      
+      const method = editingUser ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        setShowUserForm(false)
+        setEditingUser(null)
+        await fetchUsers() // Refresh users list
+      } else {
+        const errorData = await response.json()
+        setError(errorData.message || 'Failed to save user')
+      }
+    } catch (error) {
+      console.error('Failed to save user:', error)
+      setError('Failed to save user')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleUserSearch = (query: string) => {
+    setUserSearchQuery(query)
+    setUserPagination(prev => ({ ...prev, page: 1 })) // Reset to first page
+  }
+
+  const handleUserRoleFilter = (role: string) => {
+    setUserRoleFilter(role)
+    setUserPagination(prev => ({ ...prev, page: 1 })) // Reset to first page
+  }
+
+  const handleUserPageChange = (page: number) => {
+    setUserPagination(prev => ({ ...prev, page }))
+  }
+
+  // Check if user is admin (computed value to avoid function calls in useEffect)
+  const userIsAdmin = user?.roles.includes('admin') || false
+
+  // Load data when authenticated - only run once when authentication state changes
   useEffect(() => {
-    if (isAuthenticated && isAdmin()) {
+    if (isAuthenticated && userIsAdmin) {
       fetchAnnouncements()
       fetchEvents()
+      fetchUsers()
     }
-  }, [isAuthenticated, isAdmin])
+  }, [isAuthenticated, userIsAdmin, fetchAnnouncements, fetchEvents, fetchUsers]) // Use computed value instead of function call
+
+  // Refetch users when search/filter parameters change
+  useEffect(() => {
+    if (isAuthenticated && userIsAdmin && (userSearchQuery || userRoleFilter || userPagination.page > 1)) {
+      fetchUsers()
+    }
+  }, [userSearchQuery, userRoleFilter, userPagination.page, fetchUsers, isAuthenticated, userIsAdmin])
 
   // Update stats when data changes
   useEffect(() => {
     fetchDashboardStats()
-  }, [announcements.length, events.length])
+  }, [announcements.length, events.length, fetchDashboardStats])
 
   // Format date helper
   const formatDate = (dateString: string) => {
@@ -895,41 +1090,56 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage user accounts and permissions</p>
                 </div>
 
-                <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2">
-                        <Users className="w-5 h-5 text-indigo-600" />
-                        System Users
-                      </CardTitle>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Search className="w-4 h-4 mr-2" />
-                          Search
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Filter className="w-4 h-4 mr-2" />
-                          Filter
-                        </Button>
-                        <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">
-                          <Plus className="w-4 h-4 mr-2" />
-                          Add User
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12 text-gray-500">
-                      <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p className="mb-2">User management interface</p>
-                      <p className="text-sm">Connect to the real user management API to display and manage users</p>
-                      <Button variant="outline" className="mt-4" size="sm">
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Load Users
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* User Form Modal/Dialog */}
+                {showUserForm && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+                    onClick={() => setShowUserForm(false)}
+                  >
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+                    >
+                      <UserForm
+                        user={editingUser}
+                        onSubmit={handleUserFormSubmit}
+                        onCancel={() => {
+                          setShowUserForm(false)
+                          setEditingUser(null)
+                        }}
+                        loading={dataLoading}
+                        error={error}
+                        mode={editingUser ? 'edit' : 'create'}
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* User List */}
+                <UserList
+                  users={users}
+                  loading={isUserLoading}
+                  error={error}
+                  onEdit={handleEditUser}
+                  onDelete={handleDeleteUser}
+                  onToggleStatus={handleToggleUserStatus}
+                  onManageRoles={handleManageUserRoles}
+                  onAddUser={handleAddUser}
+                  onSearch={handleUserSearch}
+                  onFilterRole={handleUserRoleFilter}
+                  onPageChange={handleUserPageChange}
+                  onRefresh={fetchUsers}
+                  pagination={userPagination}
+                  searchQuery={userSearchQuery}
+                  roleFilter={userRoleFilter}
+                  showActions={true}
+                />
               </motion.div>
             )}
 
