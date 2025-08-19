@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
 
       // Use transaction to create user and related records
       user = await prisma.$transaction(async (tx) => {
-        // Create user
+        // Create user with pending approval status
         const newUser = await tx.user.create({
           data: {
             email: googleUser.email.toLowerCase(),
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
             provider: 'google',
             providerAccountId: googleUser.id,
             emailVerified: true,
-            isActive: true,
+            isActive: false, // 新用戶預設為待審核狀態
             lastLoginAt: new Date()
           }
         })
@@ -196,16 +196,8 @@ export async function GET(request: NextRequest) {
           }
         })
 
-        // Assign role
-        if (role) {
-          await tx.userRole.create({
-            data: {
-              userId: newUser.id,
-              roleId: role.id,
-              assignedBy: newUser.id // Auto-assigned
-            }
-          })
-        }
+        // 不自動分配角色，等待管理員審核
+        // 新用戶需要管理員手動分配角色
 
         // Re-query user with role information
         return await tx.user.findUnique({
@@ -239,11 +231,12 @@ export async function GET(request: NextRequest) {
     const tokenPair = await generateTokenPair(userForJWT)
     setAuthCookies(tokenPair)
 
-    // Determine redirect URL based on user role
+    // Determine redirect URL based on user status and role
     let redirectUrl = '/admin' // Default to admin
     
-    if (isNewUser) {
-      redirectUrl = '/welcome'
+    if (isNewUser || !user.isActive) {
+      // 新用戶或未啟用用戶重定向到待審核頁面
+      redirectUrl = '/pending-approval'
     } else {
       // Redirect based on user role
       const userRoles = user.userRoles.map(ur => ur.role.name)

@@ -53,6 +53,8 @@ interface UserListProps {
   onDelete?: (userId: string) => void
   onToggleStatus?: (userId: string, isActive: boolean) => void
   onManageRoles?: (user: UserData) => void
+  onApproveUser?: (userId: string) => void
+  onRejectUser?: (userId: string) => void
   onAddUser?: () => void
   onSearch?: (query: string) => void
   onFilterRole?: (role: string) => void
@@ -73,6 +75,8 @@ export default function UserList({
   onDelete,
   onToggleStatus,
   onManageRoles,
+  onApproveUser,
+  onRejectUser,
   onAddUser,
   onSearch,
   onFilterRole,
@@ -275,6 +279,7 @@ export default function UserList({
               <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
               <SelectItem value="office_member">Office Member</SelectItem>
+              <SelectItem value="pending">待審核用戶</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -389,6 +394,8 @@ export default function UserList({
                   onDelete={onDelete}
                   onToggleStatus={onToggleStatus}
                   onManageRoles={onManageRoles}
+                  onApproveUser={onApproveUser}
+                  onRejectUser={onRejectUser}
                   showActions={showActions}
                 />
               </motion.div>

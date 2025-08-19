@@ -64,6 +64,8 @@ interface UserCardProps {
   onDelete?: (userId: string) => void
   onToggleStatus?: (userId: string, isActive: boolean) => void
   onManageRoles?: (user: UserData) => void
+  onApproveUser?: (userId: string) => void
+  onRejectUser?: (userId: string) => void
   showActions?: boolean
   className?: string
 }
@@ -74,6 +76,8 @@ export default function UserCard({
   onDelete,
   onToggleStatus,
   onManageRoles,
+  onApproveUser,
+  onRejectUser,
   showActions = false,
   className
 }: UserCardProps) {
@@ -205,9 +209,18 @@ export default function UserCard({
                     </Badge>
                   ))}
                   {user.roles.length === 0 && (
-                    <Badge variant="outline" className="text-xs text-gray-500">
-                      No roles assigned
-                    </Badge>
+                    <>
+                      {!user.isActive ? (
+                        <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                          <Clock className="w-3 h-3 mr-1" />
+                          待審核
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs text-gray-500">
+                          No roles assigned
+                        </Badge>
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -231,23 +244,48 @@ export default function UserCard({
             {/* Action buttons */}
             {showActions && (
               <div className="flex items-center gap-2 ml-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onEdit?.(user)}
-                  className="text-blue-600 hover:text-blue-700"
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onManageRoles?.(user)}
-                  className="text-purple-600 hover:text-purple-700"
-                >
-                  <Shield className="w-4 h-4" />
-                </Button>
+                {/* 待審核用戶的特殊操作 */}
+                {!user.isActive && user.roles.length === 0 ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onApproveUser?.(user.id)}
+                      className="text-green-600 hover:text-green-700 border-green-200 hover:border-green-300"
+                    >
+                      <UserCheck className="w-4 h-4" />
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onRejectUser?.(user.id)}
+                      className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                    >
+                      <UserX className="w-4 h-4" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onEdit?.(user)}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onManageRoles?.(user)}
+                      className="text-purple-600 hover:text-purple-700"
+                    >
+                      <Shield className="w-4 h-4" />
+                    </Button>
+                  </>
+                )}
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

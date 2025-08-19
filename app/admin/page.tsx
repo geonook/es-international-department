@@ -315,6 +315,70 @@ export default function AdminPage() {
     handleEditUser(user)
   }
 
+  const handleApproveUser = async (userId: string) => {
+    if (!confirm('確定要批准這個用戶嗎？將會為其分配 Office Member 角色。')) {
+      return
+    }
+
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/users/${userId}/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          role: 'office_member' // 預設分配 office_member 角色
+        })
+      })
+
+      const data = await response.json()
+      if (response.ok && data.success) {
+        // 刷新用戶列表
+        await fetchUsers()
+        // 顯示成功訊息（可選）
+        console.log('User approved successfully:', data.message)
+      } else {
+        setError(data.message || 'Failed to approve user')
+      }
+    } catch (error) {
+      console.error('Failed to approve user:', error)
+      setError('Failed to approve user')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleRejectUser = async (userId: string) => {
+    if (!confirm('確定要拒絕這個用戶嗎？用戶資料將被永久刪除。')) {
+      return
+    }
+
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/users/${userId}/reject`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+      if (response.ok && data.success) {
+        // 刷新用戶列表
+        await fetchUsers()
+        // 顯示成功訊息（可選）
+        console.log('User rejected successfully:', data.message)
+      } else {
+        setError(data.message || 'Failed to reject user')
+      }
+    } catch (error) {
+      console.error('Failed to reject user:', error)
+      setError('Failed to reject user')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
   const handleUserFormSubmit = async (formData: any) => {
     try {
       setDataLoading(true)
@@ -1130,6 +1194,8 @@ export default function AdminPage() {
                   onDelete={handleDeleteUser}
                   onToggleStatus={handleToggleUserStatus}
                   onManageRoles={handleManageUserRoles}
+                  onApproveUser={handleApproveUser}
+                  onRejectUser={handleRejectUser}
                   onAddUser={handleAddUser}
                   onSearch={handleUserSearch}
                   onFilterRole={handleUserRoleFilter}
