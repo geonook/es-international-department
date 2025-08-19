@@ -28,8 +28,28 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit
 
     // 建構查詢條件
-    const whereClause: any = {
-      isActive: true
+    const whereClause: any = {}
+
+    // 根據角色篩選處理 isActive 狀態
+    if (role === 'pending') {
+      // 待審核用戶：未啟用且沒有角色
+      whereClause.isActive = false
+      whereClause.userRoles = {
+        none: {}
+      }
+    } else if (role && role !== 'all') {
+      // 特定角色篩選：只顯示已啟用的用戶
+      whereClause.isActive = true
+      whereClause.userRoles = {
+        some: {
+          role: {
+            name: role
+          }
+        }
+      }
+    } else {
+      // 顯示所有用戶（包括待審核）
+      // 不設置 isActive 條件
     }
 
     if (search) {
