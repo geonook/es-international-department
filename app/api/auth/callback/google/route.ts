@@ -249,8 +249,9 @@ export async function GET(request: NextRequest) {
       const userRoles = user.userRoles.map(ur => ur.role.name)
       if (userRoles.includes('admin')) {
         redirectUrl = '/admin'
-      } else if (userRoles.includes('teacher')) {
-        redirectUrl = '/teachers'
+      } else if (userRoles.includes('office_member') || userRoles.includes('teacher')) {
+        // Office members and teachers (backward compatibility) can access admin
+        redirectUrl = '/admin'
       } else {
         // Fallback to admin if no recognized role
         redirectUrl = '/admin'

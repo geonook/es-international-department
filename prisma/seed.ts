@@ -20,16 +20,20 @@ const defaultRoles = [
     permissions: ['*'] // Full permissions
   },
   {
-    name: 'teacher',
-    displayName: 'Teacher',
-    description: 'Teaching staff with comprehensive access to educational features',
+    name: 'office_member',
+    displayName: 'Office Member',
+    description: 'Office staff with comprehensive access to administrative and educational features',
     permissions: [
       'announcements:create',
       'announcements:read',
       'announcements:update',
+      'announcements:delete',
+      'announcements:publish',
       'events:create',
       'events:read',
       'events:update',
+      'events:delete',
+      'events:manage',
       'resources:create',
       'resources:read',
       'resources:update',
@@ -38,13 +42,18 @@ const defaultRoles = [
       'newsletters:read',
       'message_board:read',
       'message_board:reply',
-      'teacher:dashboard',
-      'teacher:resources',
-      'teacher:communication',
+      'office:dashboard',
+      'office:resources',
+      'office:communication',
+      'office:admin_access',
       'parent:dashboard',
       'parent:resources',
       'parent:feedback',
-      'user:read'
+      'user:read',
+      'user:update',
+      'user:manage_roles',
+      'system:settings',
+      'system:logs'
     ]
   }
 ]
@@ -317,11 +326,11 @@ async function main() {
             publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 day ago
           },
           {
-            title: 'Teacher Resources Available',
-            content: 'Teachers can now access the resource center with educational materials, teaching tools, and administrative forms. Please explore the Teachers section for more information.',
-            summary: 'Teacher resources announcement',
+            title: 'Office Member Resources Available',
+            content: 'Office members can now access the resource center with educational materials, administrative tools, and forms. Please explore the admin section for more information.',
+            summary: 'Office member resources announcement',
             authorId: adminUser.id,
-            targetAudience: 'teachers',
+            targetAudience: 'all',
             priority: 'medium',
             status: 'published',
             publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // 2 days ago

@@ -164,10 +164,17 @@ export function isAdmin(user: User | null): boolean {
 }
 
 /**
- * Check if user is teacher
+ * Check if user is office member
+ */
+export function isOfficeMember(user: User | null): boolean {
+  return hasRole(user, 'office_member')
+}
+
+/**
+ * Check if user is teacher (backward compatibility - now checks office_member)
  */
 export function isTeacher(user: User | null): boolean {
-  return hasRole(user, 'teacher')
+  return hasRole(user, 'office_member') || hasRole(user, 'teacher')
 }
 
 /**

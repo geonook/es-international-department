@@ -25,7 +25,7 @@ import {
   UserCheck,
   UserX,
   Crown,
-  GraduationCap,
+  Building2,
   Calendar,
 } from 'lucide-react'
 import {
@@ -103,8 +103,9 @@ export default function UserCard({
     switch (roleName.toLowerCase()) {
       case 'admin':
         return <Crown className="w-3 h-3" />
-      case 'teacher':
-        return <GraduationCap className="w-3 h-3" />
+      case 'office_member':
+      case 'teacher': // Backward compatibility
+        return <Building2 className="w-3 h-3" />
       default:
         return <User className="w-3 h-3" />
     }
@@ -115,7 +116,8 @@ export default function UserCard({
     switch (roleName.toLowerCase()) {
       case 'admin':
         return 'bg-red-100 text-red-700 border-red-200'
-      case 'teacher':
+      case 'office_member':
+      case 'teacher': // Backward compatibility
         return 'bg-blue-100 text-blue-700 border-blue-200'
       default:
         return 'bg-gray-100 text-gray-700 border-gray-200'

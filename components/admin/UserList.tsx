@@ -274,7 +274,7 @@ export default function UserList({
             <SelectContent>
               <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="teacher">Teacher</SelectItem>
+              <SelectItem value="office_member">Office Member</SelectItem>
             </SelectContent>
           </Select>
         </div>

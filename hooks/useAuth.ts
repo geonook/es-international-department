@@ -211,9 +211,14 @@ export function useAuth() {
     return hasRole('admin')
   }, [hasRole])
 
-  // 檢查是否為教師
+  // 檢查是否為辦公室成員
+  const isOfficeMember = useCallback((): boolean => {
+    return hasRole('office_member')
+  }, [hasRole])
+
+  // 檢查是否為教師 (向後兼容 - 現在檢查 office_member)
   const isTeacher = useCallback((): boolean => {
-    return hasRole('teacher')
+    return hasRole('office_member') || hasRole('teacher')
   }, [hasRole])
 
   // 組件掛載時檢查認證狀態
@@ -238,5 +243,6 @@ export function useAuth() {
     hasRole,
     isAdmin,
     isTeacher,
+    isOfficeMember,
   }
 }

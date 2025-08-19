@@ -35,7 +35,7 @@ import {
   EyeOff,
   Shield,
   Crown,
-  GraduationCap,
+  Building2,
 } from 'lucide-react'
 import { UserData } from '@/components/admin/UserCard'
 import { cn } from '@/lib/utils'
@@ -73,7 +73,7 @@ interface UserFormProps {
 
 const AVAILABLE_ROLES = [
   { id: 1, name: 'admin', displayName: 'Administrator', icon: Crown, color: 'text-red-600' },
-  { id: 2, name: 'teacher', displayName: 'Teacher', icon: GraduationCap, color: 'text-blue-600' },
+  { id: 2, name: 'office_member', displayName: 'Office Member', icon: Building2, color: 'text-blue-600' },
 ]
 
 export default function UserForm({
@@ -367,7 +367,7 @@ export default function UserForm({
                           </Label>
                           <p className="text-sm text-gray-500">
                             {role.name === 'admin' ? 'Full system access and user management' : 
-                             role.name === 'teacher' ? 'Access to teaching resources and student information' : 
+                             role.name === 'office_member' ? 'Office management access including admin portal' : 
                              'Basic user access'}
                           </p>
                         </div>

@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser, isAdmin, isTeacher, AUTH_ERRORS } from '@/lib/auth'
+import { getCurrentUser, isAdmin, isTeacher, isOfficeMember, AUTH_ERRORS } from '@/lib/auth'
 
 // 需要認證的路由清單
 const PROTECTED_ROUTES = [
@@ -98,14 +98,14 @@ export async function authMiddleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
-    // 檢查管理員權限
-    if (isAdminOnlyRoute(pathname) && !isAdmin(currentUser)) {
+    // 檢查管理員權限 (管理員或辦公室成員都可存取)
+    if (isAdminOnlyRoute(pathname) && !isAdmin(currentUser) && !isOfficeMember(currentUser)) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json(
           { 
             success: false, 
             error: AUTH_ERRORS.ACCESS_DENIED,
-            message: '需要管理員權限才能存取此資源' 
+            message: '需要管理員或辦公室成員權限才能存取此資源' 
           },
           { status: 403 }
         )
@@ -182,7 +182,7 @@ export async function requireAuth(request: NextRequest) {
 }
 
 /**
- * 管理員權限檢查函式
+ * 管理員權限檢查函式 (管理員或辦公室成員都可存取)
  */
 export async function requireAdmin(request: NextRequest) {
   const currentUser = await getCurrentUser()
@@ -198,12 +198,12 @@ export async function requireAdmin(request: NextRequest) {
     )
   }
 
-  if (!isAdmin(currentUser)) {
+  if (!isAdmin(currentUser) && !isOfficeMember(currentUser)) {
     return NextResponse.json(
       { 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '需要管理員權限才能存取此資源' 
+        message: '需要管理員或辦公室成員權限才能存取此資源' 
       },
       { status: 403 }
     )

@@ -270,7 +270,7 @@ export default function AdminPage() {
       })
 
       if (response.ok) {
-        await fetchUsers() // Refresh users list
+        fetchUsers() // Refresh users list
       } else {
         setError('Failed to delete user')
       }
@@ -298,7 +298,7 @@ export default function AdminPage() {
       })
 
       if (response.ok) {
-        await fetchUsers() // Refresh users list
+        fetchUsers() // Refresh users list
       } else {
         setError('Failed to update user status')
       }
@@ -337,7 +337,7 @@ export default function AdminPage() {
       if (response.ok) {
         setShowUserForm(false)
         setEditingUser(null)
-        await fetchUsers() // Refresh users list
+        fetchUsers() // Refresh users list
       } else {
         const errorData = await response.json()
         setError(errorData.message || 'Failed to save user')
@@ -367,21 +367,21 @@ export default function AdminPage() {
   // Check if user is admin (computed value to avoid function calls in useEffect)
   const userIsAdmin = user?.roles.includes('admin') || false
 
-  // Load data when authenticated - only run once when authentication state changes
+  // Load initial data when authenticated - only run once when authentication state changes
   useEffect(() => {
     if (isAuthenticated && userIsAdmin) {
       fetchAnnouncements()
       fetchEvents()
       fetchUsers()
     }
-  }, [isAuthenticated, userIsAdmin, fetchAnnouncements, fetchEvents, fetchUsers]) // Use computed value instead of function call
+  }, [isAuthenticated, userIsAdmin]) // Remove function dependencies to prevent infinite loops
 
   // Refetch users when search/filter parameters change
   useEffect(() => {
     if (isAuthenticated && userIsAdmin && (userSearchQuery || userRoleFilter || userPagination.page > 1)) {
       fetchUsers()
     }
-  }, [userSearchQuery, userRoleFilter, userPagination.page, fetchUsers, isAuthenticated, userIsAdmin])
+  }, [userSearchQuery, userRoleFilter, userPagination.page, isAuthenticated, userIsAdmin]) // Remove fetchUsers dependency
 
   // Update stats when data changes
   useEffect(() => {

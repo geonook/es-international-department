@@ -41,10 +41,11 @@ export enum Permission {
   SYSTEM_BACKUP = 'system:backup',
   SYSTEM_MAINTENANCE = 'system:maintenance',
 
-  // 教師專用權限
-  TEACHER_DASHBOARD = 'teacher:dashboard',
-  TEACHER_RESOURCES = 'teacher:resources',
-  TEACHER_COMMUNICATION = 'teacher:communication',
+  // 辦公室成員專用權限
+  OFFICE_DASHBOARD = 'office:dashboard',
+  OFFICE_RESOURCES = 'office:resources',
+  OFFICE_COMMUNICATION = 'office:communication',
+  OFFICE_ADMIN_ACCESS = 'office:admin_access',
 
   // 家長權限
   PARENT_DASHBOARD = 'parent:dashboard',
@@ -55,7 +56,7 @@ export enum Permission {
 // 角色定義 - 簡化為雙角色系統
 export enum Role {
   ADMIN = 'admin',
-  TEACHER = 'teacher'
+  OFFICE_MEMBER = 'office_member'
 }
 
 // 權限矩陣 - 簡化為雙角色系統
@@ -65,16 +66,20 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     ...Object.values(Permission)
   ],
 
-  [Role.TEACHER]: [
-    // 公告權限 (創建、讀取、更新)
+  [Role.OFFICE_MEMBER]: [
+    // 公告權限 (完整管理權限)
     Permission.ANNOUNCEMENT_CREATE,
     Permission.ANNOUNCEMENT_READ,
     Permission.ANNOUNCEMENT_UPDATE,
+    Permission.ANNOUNCEMENT_DELETE,
+    Permission.ANNOUNCEMENT_PUBLISH,
 
-    // 活動權限 (創建、讀取、更新)
+    // 活動權限 (完整管理權限)
     Permission.EVENT_CREATE,
     Permission.EVENT_READ,
     Permission.EVENT_UPDATE,
+    Permission.EVENT_DELETE,
+    Permission.EVENT_MANAGE,
 
     // 資源權限 (完整 CRUD)
     Permission.RESOURCE_CREATE,
@@ -83,15 +88,22 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.RESOURCE_DELETE,
     Permission.RESOURCE_UPLOAD,
 
-    // 教師專用權限
-    Permission.TEACHER_DASHBOARD,
-    Permission.TEACHER_RESOURCES,
-    Permission.TEACHER_COMMUNICATION,
-
-    // 基本讀取權限
+    // 用戶權限 (讀取和基本管理)
     Permission.USER_READ,
+    Permission.USER_UPDATE,
+    Permission.USER_MANAGE_ROLES,
+
+    // 辦公室成員專用權限
+    Permission.OFFICE_DASHBOARD,
+    Permission.OFFICE_RESOURCES,
+    Permission.OFFICE_COMMUNICATION,
+    Permission.OFFICE_ADMIN_ACCESS,
+
+    // 系統權限 (基本權限)
+    Permission.SYSTEM_SETTINGS,
+    Permission.SYSTEM_LOGS,
     
-    // 家長功能權限 (教師也需要存取家長相關功能)
+    // 家長功能權限 (辦公室成員也需要存取家長相關功能)
     Permission.PARENT_DASHBOARD,
     Permission.PARENT_RESOURCES,
     Permission.PARENT_FEEDBACK
@@ -160,10 +172,17 @@ export class RBACService {
   }
 
   /**
-   * 檢查是否為教師
+   * 檢查是否為辦公室成員
+   */
+  static isOfficeMember(user: User | null): boolean {
+    return user?.roles.includes(Role.OFFICE_MEMBER) || false
+  }
+
+  /**
+   * 檢查是否為教師 (向後兼容)
    */
   static isTeacher(user: User | null): boolean {
-    return user?.roles.includes(Role.TEACHER) || false
+    return user?.roles.includes(Role.OFFICE_MEMBER) || false
   }
 
 
@@ -227,12 +246,12 @@ export class RBACService {
   }
 
   /**
-   * 角色階層檢查 (管理員 > 教師)
+   * 角色階層檢查 (管理員 > 辦公室成員)
    */
   static getRoleHierarchy(role: Role): number {
     const hierarchy = {
       [Role.ADMIN]: 2,
-      [Role.TEACHER]: 1
+      [Role.OFFICE_MEMBER]: 1
     }
     return hierarchy[role] || 0
   }
@@ -274,6 +293,7 @@ export const {
   getUserPermissions,
   isAdmin,
   isTeacher,
+  isOfficeMember,
   canAccessResource
 } = RBACService
 
