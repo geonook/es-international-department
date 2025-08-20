@@ -132,10 +132,13 @@ export default function AdminPage() {
 
   // Check authentication and permissions - Automatically redirect to login page
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !isAdmin())) {
+    if (!isLoading && !isAuthenticated) {
       redirectToLogin('/admin')
+    } else if (!isLoading && isAuthenticated && !userIsAdmin) {
+      // User is authenticated but not admin, redirect to home
+      redirectToLogin('/')
     }
-  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
+  }, [isLoading, isAuthenticated, userIsAdmin, redirectToLogin])
 
   // Prevent duplicate requests with separate flags
   const [isAnnouncementLoading, setIsAnnouncementLoading] = useState(false)
@@ -445,12 +448,14 @@ export default function AdminPage() {
     if (isAuthenticated && userIsAdmin && (userSearchQuery || userRoleFilter || userPagination.page > 1)) {
       fetchUsers()
     }
-  }, [userSearchQuery, userRoleFilter, userPagination.page, isAuthenticated, userIsAdmin]) // Remove fetchUsers dependency
+  }, [userSearchQuery, userRoleFilter, userPagination.page, isAuthenticated, userIsAdmin, fetchUsers])
 
   // Update stats when data changes
   useEffect(() => {
-    fetchDashboardStats()
-  }, [announcements.length, events.length, fetchDashboardStats])
+    if (isAuthenticated && userIsAdmin) {
+      fetchDashboardStats()
+    }
+  }, [announcements.length, events.length, isAuthenticated, userIsAdmin])
 
   // Format date helper
   const formatDate = (dateString: string) => {
