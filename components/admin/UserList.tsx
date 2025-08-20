@@ -279,6 +279,7 @@ export default function UserList({
               <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
               <SelectItem value="office_member">Office Member</SelectItem>
+              <SelectItem value="viewer">Viewer</SelectItem>
               <SelectItem value="pending">待審核用戶</SelectItem>
             </SelectContent>
           </Select>

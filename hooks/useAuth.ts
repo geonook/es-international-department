@@ -221,6 +221,11 @@ export function useAuth() {
     return hasRole('office_member') || hasRole('teacher')
   }, [hasRole])
 
+  // 檢查是否為檢視者
+  const isViewer = useCallback((): boolean => {
+    return hasRole('viewer')
+  }, [hasRole])
+
   // 組件掛載時檢查認證狀態
   useEffect(() => {
     checkAuth()
@@ -244,5 +249,6 @@ export function useAuth() {
     isAdmin,
     isTeacher,
     isOfficeMember,
+    isViewer,
   }
 }
