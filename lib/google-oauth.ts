@@ -164,7 +164,7 @@ export function assignRoleByEmailDomain(email: string): string {
     return 'admin'
   }
   
-  // 域名角色映射邏輯
+  // 域名角色映射邏輯 - 三層權限系統
   const roleMapping: Record<string, string> = {
     // KCISLK 教育機構域名 -> 辦公室成員角色
     'kcislk.ntpc.edu.tw': 'office_member',
@@ -173,10 +173,10 @@ export function assignRoleByEmailDomain(email: string): string {
     'school.edu': 'office_member',
     'university.edu': 'office_member',
     
-    // 其他域名預設為辦公室成員角色（簡化系統只有兩種角色）
+    // 其他域名預設為 viewer 角色（新用戶低權限）
   }
   
-  return roleMapping[domain] || 'office_member' // 預設為辦公室成員角色
+  return roleMapping[domain] || 'viewer' // 預設為 viewer 角色，提供基礎觀看權限
 }
 
 /**

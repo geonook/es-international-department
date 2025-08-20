@@ -130,18 +130,25 @@ export default function AdminPage() {
     totalPages: 0
   })
 
-  // Check if user is admin (computed value to avoid function calls in useEffect)
-  const userIsAdmin = user?.roles.includes('admin') || false
+  // Check user permissions for different features
+  const userRoles = user?.roles || []
+  const userIsAdmin = userRoles.includes('admin')
+  const userIsOfficeMember = userRoles.includes('office_member')
+  const userIsViewer = userRoles.includes('viewer')
+  
+  // 權限級別：admin > office_member > viewer
+  const canManageUsers = userIsAdmin
+  const canManageSystem = userIsAdmin
+  const canEditContent = userIsAdmin || userIsOfficeMember
+  const canViewContent = userIsAdmin || userIsOfficeMember || userIsViewer
 
-  // Check authentication and permissions - Automatically redirect to login page
+  // Check authentication only - 所有已認證用戶都可進入 admin
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       redirectToLogin('/admin')
-    } else if (!isLoading && isAuthenticated && !userIsAdmin) {
-      // User is authenticated but not admin, redirect to home
-      redirectToLogin('/')
     }
-  }, [isLoading, isAuthenticated, userIsAdmin, redirectToLogin])
+    // 移除角色檢查 - 讓所有已認證用戶都能進入 admin
+  }, [isLoading, isAuthenticated, redirectToLogin])
 
   // Prevent duplicate requests with separate flags
   const [isAnnouncementLoading, setIsAnnouncementLoading] = useState(false)
@@ -434,28 +441,33 @@ export default function AdminPage() {
     setUserPagination(prev => ({ ...prev, page }))
   }
 
-  // Load initial data when authenticated - only run once when authentication state changes
+  // Load initial data when authenticated - 根據權限載入不同數據
   useEffect(() => {
-    if (isAuthenticated && userIsAdmin) {
+    if (isAuthenticated && canViewContent) {
+      // 所有用戶都可以查看公告和活動
       fetchAnnouncements()
       fetchEvents()
+      
+      // 只有管理員可以載入用戶管理數據
+      if (canManageUsers) {
+        fetchUsers()
+      }
+    }
+  }, [isAuthenticated, canViewContent, canManageUsers]) // 基於權限控制數據載入
+
+  // Refetch users when search/filter parameters change - 只有管理員可以搜尋用戶
+  useEffect(() => {
+    if (isAuthenticated && canManageUsers && (userSearchQuery || userRoleFilter || userPagination.page > 1)) {
       fetchUsers()
     }
-  }, [isAuthenticated, userIsAdmin]) // Remove function dependencies to prevent infinite loops
+  }, [userSearchQuery, userRoleFilter, userPagination.page, isAuthenticated, canManageUsers, fetchUsers])
 
-  // Refetch users when search/filter parameters change
+  // Update stats when data changes - 根據權限載入統計數據
   useEffect(() => {
-    if (isAuthenticated && userIsAdmin && (userSearchQuery || userRoleFilter || userPagination.page > 1)) {
-      fetchUsers()
-    }
-  }, [userSearchQuery, userRoleFilter, userPagination.page, isAuthenticated, userIsAdmin, fetchUsers])
-
-  // Update stats when data changes
-  useEffect(() => {
-    if (isAuthenticated && userIsAdmin) {
+    if (isAuthenticated && canViewContent) {
       fetchDashboardStats()
     }
-  }, [announcements.length, events.length, isAuthenticated, userIsAdmin])
+  }, [announcements.length, events.length, isAuthenticated, canViewContent])
 
   // Format date helper
   const formatDate = (dateString: string) => {
@@ -682,10 +694,19 @@ export default function AdminPage() {
             <div className="space-y-2">
               {[
                 { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
-                { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
-                { id: 'parents', name: "Parents' Corner", icon: Sparkles },
-                { id: 'users', name: 'User Management', icon: Users },
-                { id: 'settings', name: 'Settings', icon: Settings },
+                // 所有用戶都可以看到 Teachers' Corner 和 Parents' Corner
+                ...(canViewContent ? [
+                  { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
+                  { id: 'parents', name: "Parents' Corner", icon: Sparkles }
+                ] : []),
+                // 只有管理員可以看到用戶管理
+                ...(canManageUsers ? [
+                  { id: 'users', name: 'User Management', icon: Users }
+                ] : []),
+                // 只有管理員可以看到系統設置
+                ...(canManageSystem ? [
+                  { id: 'settings', name: 'Settings', icon: Settings }
+                ] : [])
               ].map((item) => (
                 <motion.button
                   key={item.id}
@@ -733,6 +754,35 @@ export default function AdminPage() {
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
                   <p className="text-gray-600">Monitor and manage both Teachers' and Parents' Corner systems</p>
+                  
+                  {/* 權限升級請求提示 - 只對 viewer 用戶顯示 */}
+                  {userIsViewer && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4"
+                    >
+                      <Alert className="bg-blue-50 border-blue-200">
+                        <Shield className="h-4 w-4 text-blue-600" />
+                        <AlertDescription className="text-blue-800">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <strong>Limited Access</strong> - You currently have viewer permissions.
+                              <br />
+                              Contact an administrator to request higher privileges for editing content.
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="ml-4 border-blue-300 text-blue-700 hover:bg-blue-100"
+                            >
+                              Request Upgrade
+                            </Button>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    </motion.div>
+                  )}
                 </div>
 
                 {/* Stats Cards */}

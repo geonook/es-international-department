@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
 
       // Use transaction to create user and related records
       user = await prisma.$transaction(async (tx) => {
-        // Create user with pending approval status
+        // Create user with active status and viewer role
         const newUser = await tx.user.create({
           data: {
             email: googleUser.email.toLowerCase(),
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
             provider: 'google',
             providerAccountId: googleUser.id,
             emailVerified: true,
-            isActive: false, // 新用戶預設為待審核狀態
+            isActive: true, // 新用戶直接啟用（不需待審核）
             lastLoginAt: new Date()
           }
         })
@@ -196,8 +196,16 @@ export async function GET(request: NextRequest) {
           }
         })
 
-        // 不自動分配角色，等待管理員審核
-        // 新用戶需要管理員手動分配角色
+        // 自動分配角色給新用戶 - 分配預設 viewer 角色或依據域名分配適當角色
+        if (role) {
+          await tx.userRole.create({
+            data: {
+              userId: newUser.id,
+              roleId: role.id,
+              assignedBy: newUser.id // 系統自動分配
+            }
+          })
+        }
 
         // Re-query user with role information
         return await tx.user.findUnique({
@@ -231,30 +239,16 @@ export async function GET(request: NextRequest) {
     const tokenPair = await generateTokenPair(userForJWT)
     setAuthCookies(tokenPair)
 
-    // Determine redirect URL based on user status and role
-    let redirectUrl = '/admin' // Default to admin
+    // Determine redirect URL - 所有已認證用戶都可進入 admin
+    let redirectUrl = '/admin' // 預設重定向到 admin
     
-    if (isNewUser || !user.isActive) {
-      // 新用戶或未啟用用戶重定向到待審核頁面
-      redirectUrl = '/pending-approval'
-    } else {
-      // Redirect based on user role
-      const userRoles = user.userRoles.map(ur => ur.role.name)
-      if (userRoles.includes('admin')) {
-        redirectUrl = '/admin'
-      } else if (userRoles.includes('office_member') || userRoles.includes('teacher')) {
-        // Office members and teachers (backward compatibility) can access admin
-        redirectUrl = '/admin'
-      } else {
-        // Fallback to admin if no recognized role
-        redirectUrl = '/admin'
-      }
-      
-      // Check for explicit redirect URL from login
-      const oauthRedirect = cookieStore.get('oauth-redirect')?.value
-      if (oauthRedirect) {
-        redirectUrl = oauthRedirect
-      }
+    // 所有用戶（包括新用戶和 viewer 角色）都直接重定向到 admin
+    // Admin 頁面內部會根據角色控制功能權限
+    
+    // Check for explicit redirect URL from login
+    const oauthRedirect = cookieStore.get('oauth-redirect')?.value
+    if (oauthRedirect) {
+      redirectUrl = oauthRedirect
     }
     
     // Clear OAuth-related cookies

@@ -9,8 +9,8 @@ import { hash } from 'bcryptjs'
 const prisma = new PrismaClient()
 
 /**
- * 預設角色資料 - 簡化為雙角色系統
- * Default roles data - Simplified dual-role system
+ * 預設角色資料 - 三層權限系統
+ * Default roles data - Three-tier permission system
  */
 const defaultRoles = [
   {
@@ -54,6 +54,19 @@ const defaultRoles = [
       'user:manage_roles',
       'system:settings',
       'system:logs'
+    ]
+  },
+  {
+    name: 'viewer',
+    displayName: 'Viewer',
+    description: 'Basic read-only access to view announcements and events - suitable for new users',
+    permissions: [
+      'announcements:read',
+      'events:read',
+      'parent:dashboard',
+      'office:dashboard',
+      'auth:profile_view',
+      'auth:profile_update'
     ]
   }
 ]
