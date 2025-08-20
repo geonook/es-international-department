@@ -130,6 +130,9 @@ export default function AdminPage() {
     totalPages: 0
   })
 
+  // Check if user is admin (computed value to avoid function calls in useEffect)
+  const userIsAdmin = user?.roles.includes('admin') || false
+
   // Check authentication and permissions - Automatically redirect to login page
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -430,9 +433,6 @@ export default function AdminPage() {
   const handleUserPageChange = (page: number) => {
     setUserPagination(prev => ({ ...prev, page }))
   }
-
-  // Check if user is admin (computed value to avoid function calls in useEffect)
-  const userIsAdmin = user?.roles.includes('admin') || false
 
   // Load initial data when authenticated - only run once when authentication state changes
   useEffect(() => {
