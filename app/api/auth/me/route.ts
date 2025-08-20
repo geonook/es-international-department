@@ -48,17 +48,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check account status
-    if (!user.isActive) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Account is deactivated',
-          message: 'Account has been deactivated' 
-        },
-        { status: 403 }
-      )
-    }
+    // Note: 不再檢查 isActive 狀態，讓前端根據狀態決定顯示內容
+    // 這樣待審核用戶也能通過認證檢查，避免無限循環
 
     // Prepare user role data
     const userRoles = user.userRoles.map(userRole => userRole.role.name)
@@ -75,10 +66,10 @@ export async function GET(request: NextRequest) {
         roles: userRoles,
         avatar: user.avatarUrl,
         phone: user.phone,
+        isActive: user.isActive, // 新增 isActive 欄位讓前端判斷狀態
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        lastLoginAt: user.lastLoginAt,
-        isActive: user.isActive
+        lastLoginAt: user.lastLoginAt
       }
     })
 
