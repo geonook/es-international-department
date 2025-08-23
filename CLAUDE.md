@@ -1,8 +1,8 @@
 # CLAUDE.md - KCISLK ESID Info Hub
 # KCISLK ESID Info Hub - Claude Code 開發指導文件
 
-> **Documentation Version**: 1.0 | **文件版本**: 1.0  
-> **Last Updated**: 2025-01-31 | **最後更新**: 2025-01-31  
+> **Documentation Version**: 1.1 | **文件版本**: 1.1  
+> **Last Updated**: 2025-08-23 | **最後更新**: 2025-08-23  
 > **Project**: KCISLK ESID Info Hub | **專案**: KCISLK ESID Info Hub  
 > **Description**: KCISLK ESID Info Hub - Information service website for parents and teachers of KCISLK Elementary School International Department, providing the latest educational resources, event information, and communication tools.  
 > **專案描述**: KCISLK ESID Info Hub - 為林口康橋國際學校的家長和老師提供最新教育資源、活動資訊和溝通工具的資訊服務網站。  
@@ -112,8 +112,12 @@ This file provides essential guidance to Claude Code (claude.ai/code) when worki
 ### 🎯 **DEVELOPMENT STATUS | 開發狀態**
 - **Setup**: ✅ Complete - Next.js 14 with TypeScript  
   **環境設定**: ✅ 完成 - Next.js 14 與 TypeScript
-- **Authentication**: ✅ Complete - Google OAuth 2.0 + JWT system  
-  **認證系統**: ✅ 完成 - Google OAuth 2.0 + JWT 系統
+- **Three-Tier Permission System**: ✅ Complete - Admin, Office Member, Viewer roles  
+  **三層權限系統**: ✅ 完成 - 管理員、辦公室成員、觀看者角色
+- **Permission Upgrade System**: ✅ Complete - Request/review/approve workflow  
+  **權限升級系統**: ✅ 完成 - 請求/審核/批准工作流程
+- **Authentication**: ✅ Complete - Google OAuth 2.0 + JWT + auto viewer assignment  
+  **認證系統**: ✅ 完成 - Google OAuth 2.0 + JWT + 自動 viewer 角色分配
 - **Core Features**: ✅ Complete - Home, Events, Resources pages  
   **核心功能**: ✅ 完成 - 首頁、活動、資源頁面
 - **UI Components**: ✅ Complete - shadcn/ui component library  
@@ -139,6 +143,10 @@ kcislk-esid-info-hub/
 │   │   │   ├── google/        # Google OAuth initialization | Google OAuth 初始化
 │   │   │   └── callback/      # OAuth callback handler | OAuth 回調處理
 │   │   ├── admin/             # Admin API endpoints | 管理員 API 端點
+│   │   │   ├── users/         # User management APIs | 用戶管理 API
+│   │   │   │   └── [id]/      # Individual user operations | 個別用戶操作
+│   │   │   │       └── upgrade-request/ # Permission upgrade requests | 權限升級請求
+│   │   │   └── upgrade-requests/ # Permission upgrade management | 權限升級管理
 │   │   └── health/            # Health check endpoint | 健康檢查端點
 │   ├── login/                 # Login page with OAuth | 包含 OAuth 的登入頁面
 │   ├── welcome/               # New user onboarding | 新用戶歡迎頁面
