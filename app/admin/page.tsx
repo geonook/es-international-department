@@ -48,6 +48,7 @@ import UserForm from '@/components/admin/UserForm'
 import { UserData } from '@/components/admin/UserCard'
 import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
+import FeedbackForm from '@/components/admin/FeedbackForm'
 
 interface Announcement {
   id: string
@@ -146,6 +147,36 @@ interface Newsletter {
   }
 }
 
+interface FeedbackFormData {
+  id: number
+  subject: string
+  message: string
+  category?: string
+  priority: 'low' | 'medium' | 'high'
+  status: 'new' | 'in_progress' | 'resolved' | 'closed'
+  isAnonymous: boolean
+  authorName?: string
+  authorEmail?: string
+  assignedTo?: string
+  response?: string
+  createdAt: string
+  updatedAt: string
+  author?: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+  assignee?: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+}
+
 export default function AdminPage() {
   const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin } = useAuth()
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -159,6 +190,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserData[]>([])
   const [teacherReminders, setTeacherReminders] = useState<TeacherReminder[]>([])
   const [newsletters, setNewsletters] = useState<Newsletter[]>([])
+  const [feedbackForms, setFeedbackForms] = useState<FeedbackFormData[]>([])
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalTeachers: 0,
     totalParents: 0,
@@ -187,6 +219,11 @@ export default function AdminPage() {
   const [showNewsletterForm, setShowNewsletterForm] = useState(false)
   const [editingNewsletter, setEditingNewsletter] = useState<Newsletter | null>(null)
   const [isNewsletterLoading, setIsNewsletterLoading] = useState(false)
+  
+  // Feedback management states
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false)
+  const [editingFeedback, setEditingFeedback] = useState<FeedbackFormData | null>(null)
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState(false)
 
   // Check user permissions for different features
   const userRoles = user?.roles || []
@@ -332,6 +369,32 @@ export default function AdminPage() {
       setIsNewsletterLoading(false)
     }
   }, [isNewsletterLoading])
+  
+  // Fetch feedback forms from API
+  const fetchFeedbackForms = useCallback(async () => {
+    if (isFeedbackLoading) return
+    
+    try {
+      setIsFeedbackLoading(true)
+      setDataLoading(true)
+      const response = await fetch('/api/admin/feedback?limit=20', {
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setFeedbackForms(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch feedback forms:', error)
+      setError('Failed to load feedback forms')
+    } finally {
+      setDataLoading(false)
+      setIsFeedbackLoading(false)
+    }
+  }, [isFeedbackLoading])
 
   const fetchUsers = useCallback(async () => {
     if (isUserLoading) return
@@ -693,6 +756,77 @@ export default function AdminPage() {
     }
   }
 
+  // Feedback management functions
+  const handleAddFeedback = () => {
+    setEditingFeedback(null)
+    setShowFeedbackForm(true)
+  }
+
+  const handleEditFeedback = (feedback: FeedbackFormData) => {
+    setEditingFeedback(feedback)
+    setShowFeedbackForm(true)
+  }
+
+  const handleDeleteFeedback = async (feedbackId: number) => {
+    if (!confirm('Are you sure you want to delete this feedback? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/feedback/${feedbackId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        fetchFeedbackForms() // Refresh feedback list
+      } else {
+        setError('Failed to delete feedback')
+      }
+    } catch (error) {
+      console.error('Failed to delete feedback:', error)
+      setError('Failed to delete feedback')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleFeedbackFormSubmit = async (formData: any) => {
+    try {
+      setDataLoading(true)
+      
+      const url = editingFeedback 
+        ? `/api/admin/feedback/${editingFeedback.id}` 
+        : '/api/admin/feedback'
+      
+      const method = editingFeedback ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        setShowFeedbackForm(false)
+        setEditingFeedback(null)
+        fetchFeedbackForms() // Refresh feedback list
+      } else {
+        const errorData = await response.json()
+        setError(errorData.message || 'Failed to save feedback')
+      }
+    } catch (error) {
+      console.error('Failed to save feedback:', error)
+      setError('Failed to save feedback')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
   // Load initial data when authenticated - 根據權限載入不同數據
   useEffect(() => {
     if (isAuthenticated && canViewContent) {
@@ -705,9 +839,10 @@ export default function AdminPage() {
         fetchUsers()
       }
       
-      // Load teacher reminders and newsletters for all authenticated users
+      // Load teacher reminders, newsletters, and feedback forms for all authenticated users
       fetchTeacherReminders()
       fetchNewsletters()
+      fetchFeedbackForms()
     }
   }, [isAuthenticated, canViewContent, canManageUsers]) // 基於權限控制數據載入
 
@@ -911,10 +1046,11 @@ export default function AdminPage() {
             <div className="space-y-2">
               {[
                 { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
-                // 所有用戶都可以看到 Teachers' Corner 和 Parents' Corner
+                // 所有用戶都可以看到 Teachers' Corner、Parents' Corner 和 Feedback
                 ...(canViewContent ? [
                   { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
-                  { id: 'parents', name: "Parents' Corner", icon: Sparkles }
+                  { id: 'parents', name: "Parents' Corner", icon: Sparkles },
+                  { id: 'feedback', name: 'Feedback Management', icon: MessageSquare }
                 ] : []),
                 // 只有管理員可以看到用戶管理
                 ...(canManageUsers ? [
@@ -1498,6 +1634,115 @@ export default function AdminPage() {
               </motion.div>
             )}
 
+            {activeTab === 'feedback' && (
+              <motion.div
+                key="feedback"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Feedback Management</h2>
+                  <p className="text-gray-600">Manage user feedback and support requests</p>
+                </div>
+
+                <div className="grid gap-8">
+                  {/* Feedback Forms Management */}
+                  <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5 text-purple-600" />
+                        Feedback Forms
+                      </CardTitle>
+                      <Button 
+                        size="sm" 
+                        className="bg-purple-600 hover:bg-purple-700"
+                        onClick={handleAddFeedback}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Feedback
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {isFeedbackLoading ? (
+                          Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                            </div>
+                          ))
+                        ) : feedbackForms.length > 0 ? (
+                          feedbackForms.map((feedback) => (
+                            <div
+                              key={feedback.id}
+                              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-900">{feedback.subject}</h4>
+                                <p className="text-sm text-gray-600">{feedback.message.substring(0, 100) + (feedback.message.length > 100 ? '...' : '')}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge variant={
+                                    feedback.priority === 'high' ? 'destructive' :
+                                    feedback.priority === 'medium' ? 'default' : 'secondary'
+                                  }>
+                                    {feedback.priority}
+                                  </Badge>
+                                  <Badge variant={
+                                    feedback.status === 'new' ? 'default' :
+                                    feedback.status === 'in_progress' ? 'secondary' :
+                                    feedback.status === 'resolved' ? 'outline' : 'destructive'
+                                  }>
+                                    {feedback.status}
+                                  </Badge>
+                                  {feedback.category && (
+                                    <Badge variant="outline">{feedback.category}</Badge>
+                                  )}
+                                  {feedback.isAnonymous && (
+                                    <Badge variant="outline">Anonymous</Badge>
+                                  )}
+                                  <span className="text-xs text-gray-500">
+                                    {formatDate(feedback.createdAt)}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline">
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleEditFeedback(feedback)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleDeleteFeedback(feedback.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No feedback forms found</p>
+                            <p className="text-sm">Create your first feedback entry to get started</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </motion.div>
+            )}
+
             {activeTab === 'users' && (
               <motion.div
                 key="users"
@@ -1599,6 +1844,38 @@ export default function AdminPage() {
                         loading={dataLoading}
                         error={error}
                         mode={editingNewsletter ? 'edit' : 'create'}
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* Feedback Form Modal/Dialog */}
+                {showFeedbackForm && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+                    onClick={() => setShowFeedbackForm(false)}
+                  >
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                    >
+                      <FeedbackForm
+                        feedback={editingFeedback}
+                        onSubmit={handleFeedbackFormSubmit}
+                        onCancel={() => {
+                          setShowFeedbackForm(false)
+                          setEditingFeedback(null)
+                        }}
+                        loading={dataLoading}
+                        error={error}
+                        mode={editingFeedback ? 'edit' : 'create'}
+                        availableAssignees={users.filter(user => user.roles.includes('admin') || user.roles.includes('office_member'))}
                       />
                     </motion.div>
                   </motion.div>
