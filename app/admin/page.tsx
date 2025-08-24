@@ -47,6 +47,7 @@ import UserList from '@/components/admin/UserList'
 import UserForm from '@/components/admin/UserForm'
 import { UserData } from '@/components/admin/UserCard'
 import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
+import NewsletterForm from '@/components/admin/NewsletterForm'
 
 interface Announcement {
   id: string
@@ -124,6 +125,27 @@ interface TeacherReminder {
   }
 }
 
+interface Newsletter {
+  id: number
+  title: string
+  content: string
+  htmlContent?: string
+  coverImageUrl?: string
+  status: 'draft' | 'published' | 'archived'
+  issueNumber?: number
+  publicationDate?: string
+  downloadCount: number
+  createdAt: string
+  updatedAt: string
+  author?: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+}
+
 export default function AdminPage() {
   const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin } = useAuth()
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -136,6 +158,7 @@ export default function AdminPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [users, setUsers] = useState<UserData[]>([])
   const [teacherReminders, setTeacherReminders] = useState<TeacherReminder[]>([])
+  const [newsletters, setNewsletters] = useState<Newsletter[]>([])
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalTeachers: 0,
     totalParents: 0,
@@ -159,6 +182,11 @@ export default function AdminPage() {
   const [showReminderForm, setShowReminderForm] = useState(false)
   const [editingReminder, setEditingReminder] = useState<TeacherReminder | null>(null)
   const [isReminderLoading, setIsReminderLoading] = useState(false)
+  
+  // Newsletter management states
+  const [showNewsletterForm, setShowNewsletterForm] = useState(false)
+  const [editingNewsletter, setEditingNewsletter] = useState<Newsletter | null>(null)
+  const [isNewsletterLoading, setIsNewsletterLoading] = useState(false)
 
   // Check user permissions for different features
   const userRoles = user?.roles || []
@@ -278,6 +306,32 @@ export default function AdminPage() {
       setIsReminderLoading(false)
     }
   }, [isReminderLoading])
+  
+  // Fetch newsletters from API
+  const fetchNewsletters = useCallback(async () => {
+    if (isNewsletterLoading) return
+    
+    try {
+      setIsNewsletterLoading(true)
+      setDataLoading(true)
+      const response = await fetch('/api/admin/newsletters?limit=20', {
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setNewsletters(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch newsletters:', error)
+      setError('Failed to load newsletters')
+    } finally {
+      setDataLoading(false)
+      setIsNewsletterLoading(false)
+    }
+  }, [isNewsletterLoading])
 
   const fetchUsers = useCallback(async () => {
     if (isUserLoading) return
@@ -568,6 +622,77 @@ export default function AdminPage() {
     }
   }
 
+  // Newsletter management functions
+  const handleAddNewsletter = () => {
+    setEditingNewsletter(null)
+    setShowNewsletterForm(true)
+  }
+
+  const handleEditNewsletter = (newsletter: Newsletter) => {
+    setEditingNewsletter(newsletter)
+    setShowNewsletterForm(true)
+  }
+
+  const handleDeleteNewsletter = async (newsletterId: number) => {
+    if (!confirm('Are you sure you want to delete this newsletter? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/newsletters/${newsletterId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        fetchNewsletters() // Refresh newsletters list
+      } else {
+        setError('Failed to delete newsletter')
+      }
+    } catch (error) {
+      console.error('Failed to delete newsletter:', error)
+      setError('Failed to delete newsletter')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleNewsletterFormSubmit = async (formData: any) => {
+    try {
+      setDataLoading(true)
+      
+      const url = editingNewsletter 
+        ? `/api/admin/newsletters/${editingNewsletter.id}` 
+        : '/api/admin/newsletters'
+      
+      const method = editingNewsletter ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        setShowNewsletterForm(false)
+        setEditingNewsletter(null)
+        fetchNewsletters() // Refresh newsletters list
+      } else {
+        const errorData = await response.json()
+        setError(errorData.message || 'Failed to save newsletter')
+      }
+    } catch (error) {
+      console.error('Failed to save newsletter:', error)
+      setError('Failed to save newsletter')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
   // Load initial data when authenticated - 根據權限載入不同數據
   useEffect(() => {
     if (isAuthenticated && canViewContent) {
@@ -580,8 +705,9 @@ export default function AdminPage() {
         fetchUsers()
       }
       
-      // Load teacher reminders for all authenticated users
+      // Load teacher reminders and newsletters for all authenticated users
       fetchTeacherReminders()
+      fetchNewsletters()
     }
   }, [isAuthenticated, canViewContent, canManageUsers]) // 基於權限控制數據載入
 
@@ -610,24 +736,8 @@ export default function AdminPage() {
 
   // Teacher reminders data is now fetched from API
 
-  // Legacy mock data for newsletters (can be replaced with real API later)
+  // Legacy mock data for events (can be replaced with real API later)
   const [parentsData] = useState({
-    newsletters: [
-      {
-        id: 1,
-        title: 'February Newsletter',
-        content: 'Monthly updates, upcoming events, and important announcements',
-        date: '2025-02-01',
-        status: 'published' as const,
-      },
-      {
-        id: 2,
-        title: 'March Newsletter',
-        content: 'Spring activities, academic updates, and community news',
-        date: '2025-03-01',
-        status: 'draft' as const,
-      },
-    ],
     events: [
       {
         id: 1,
@@ -1250,34 +1360,70 @@ export default function AdminPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {parentsData.newsletters.map((newsletter) => (
-                          <div
-                            key={newsletter.id}
-                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                          >
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900">{newsletter.title}</h4>
-                              <p className="text-sm text-gray-600">{newsletter.content}</p>
-                              <div className="flex items-center gap-2 mt-2">
-                                <Badge variant={newsletter.status === 'published' ? 'default' : 'secondary'}>
-                                  {newsletter.status}
-                                </Badge>
-                                <span className="text-xs text-gray-500">{newsletter.date}</span>
+{isNewsletterLoading ? (
+                          Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                            </div>
+                          ))
+                        ) : newsletters.length > 0 ? (
+                          newsletters.map((newsletter) => (
+                            <div
+                              key={newsletter.id}
+                              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-900">{newsletter.title}</h4>
+                                <p className="text-sm text-gray-600">{newsletter.content.substring(0, 100) + (newsletter.content.length > 100 ? '...' : '')}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge variant={
+                                    newsletter.status === 'published' ? 'default' : 
+                                    newsletter.status === 'draft' ? 'secondary' : 'outline'
+                                  }>
+                                    {newsletter.status}
+                                  </Badge>
+                                  {newsletter.issueNumber && (
+                                    <Badge variant="outline">Issue #{newsletter.issueNumber}</Badge>
+                                  )}
+                                  <span className="text-xs text-gray-500">
+                                    {newsletter.publicationDate ? formatDate(newsletter.publicationDate) : formatDate(newsletter.createdAt)}
+                                  </span>
+                                  <span className="text-xs text-gray-500">📥 {newsletter.downloadCount} downloads</span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline">
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleEditNewsletter(newsletter)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button size="sm" variant="outline">
+                                  <Download className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleDeleteNewsletter(newsletter.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
                               </div>
                             </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline">
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Download className="w-4 h-4" />
-                              </Button>
-                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No newsletters found</p>
+                            <p className="text-sm">Create your first newsletter to get started</p>
                           </div>
-                        ))}
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -1422,6 +1568,37 @@ export default function AdminPage() {
                         loading={dataLoading}
                         error={error}
                         mode={editingReminder ? 'edit' : 'create'}
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* Newsletter Form Modal/Dialog */}
+                {showNewsletterForm && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+                    onClick={() => setShowNewsletterForm(false)}
+                  >
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                    >
+                      <NewsletterForm
+                        newsletter={editingNewsletter}
+                        onSubmit={handleNewsletterFormSubmit}
+                        onCancel={() => {
+                          setShowNewsletterForm(false)
+                          setEditingNewsletter(null)
+                        }}
+                        loading={dataLoading}
+                        error={error}
+                        mode={editingNewsletter ? 'edit' : 'create'}
                       />
                     </motion.div>
                   </motion.div>
