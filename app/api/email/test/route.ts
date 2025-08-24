@@ -9,31 +9,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import emailService from '@/lib/emailService'
 import templateEngine from '@/lib/emailTemplateEngine'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, isAdmin as checkIsAdmin, AUTH_ERRORS } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
     // 驗證身份（僅管理員可測試）
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-    if (!token) {
-      return NextResponse.json({ error: '未授權訪問' }, { status: 401 })
-    }
-
-    const user = await verifyAuth(token)
+    const user = await getCurrentUser()
     if (!user) {
-      return NextResponse.json({ error: '無效的身份驗證' }, { status: 401 })
+      return NextResponse.json({ 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     // 檢查管理員權限
-    const userRoles = await prisma.userRole.findMany({
-      where: { userId: user.id },
-      include: { role: true }
-    })
-
-    const isAdmin = userRoles.some(ur => ur.role.name === 'admin')
-    if (!isAdmin) {
-      return NextResponse.json({ error: '需要管理員權限' }, { status: 403 })
+    const hasAdminAccess = await checkIsAdmin(user.id)
+    if (!hasAdminAccess) {
+      return NextResponse.json({ 
+        error: AUTH_ERRORS.INSUFFICIENT_PERMISSIONS,
+        message: '需要管理員權限' 
+      }, { status: 403 })
     }
 
     const requestData = await request.json()

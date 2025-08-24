@@ -11,20 +11,18 @@ import { headers } from 'next/headers'
 import emailService from '@/lib/emailService'
 import emailQueue from '@/lib/emailQueue'
 import templateEngine from '@/lib/emailTemplateEngine'
-import { verifyAuth } from '@/lib/auth'
+import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
     // 驗證身份
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-    if (!token) {
-      return NextResponse.json({ error: '未授權訪問' }, { status: 401 })
-    }
-
-    const user = await verifyAuth(token)
+    const user = await getCurrentUser()
     if (!user) {
-      return NextResponse.json({ error: '無效的身份驗證' }, { status: 401 })
+      return NextResponse.json({ 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     // 檢查用戶權限（只有管理員和老師可以發送郵件）
@@ -314,14 +312,12 @@ async function logEmailToDatabase(type: string, data: any) {
 export async function GET(request: NextRequest) {
   try {
     // 驗證身份
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-    if (!token) {
-      return NextResponse.json({ error: '未授權訪問' }, { status: 401 })
-    }
-
-    const user = await verifyAuth(token)
+    const user = await getCurrentUser()
     if (!user) {
-      return NextResponse.json({ error: '無效的身份驗證' }, { status: 401 })
+      return NextResponse.json({ 
+        error: AUTH_ERRORS.TOKEN_REQUIRED,
+        message: '未授權訪問' 
+      }, { status: 401 })
     }
 
     // 獲取郵件服務狀態
