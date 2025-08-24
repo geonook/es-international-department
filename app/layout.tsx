@@ -11,7 +11,12 @@ export const metadata: Metadata = {
   title: "KCISLK ESID Info Hub",
   description:
     "KCISLK Elementary School International Department Information Hub - Providing parents and teachers with the latest educational resources, event updates, and communication tools.",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/placeholder-logo.png',
+  },
 }
 
 /**
