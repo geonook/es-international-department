@@ -23,9 +23,53 @@ import {
 import Link from "next/link"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
+import { useAuth } from "@/hooks/useAuth"
+
+// Define types for our data
+interface Reminder {
+  id: number
+  title: string
+  content: string
+  priority: 'low' | 'medium' | 'high'
+  status: string
+  dueDate?: string
+  reminderType: string
+  creator: {
+    id: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+  createdAt: string
+}
+
+interface MessageBoardPost {
+  id: number
+  title: string
+  content: string
+  boardType: 'teachers' | 'parents' | 'general'
+  isPinned: boolean
+  status: string
+  viewCount: number
+  author: {
+    id: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+  replies: any[]
+  createdAt: string
+}
 
 export default function TeachersPage() {
   const [isLoaded, setIsLoaded] = useState(false)
+  const [reminders, setReminders] = useState<{ urgent: Reminder[], regular: Reminder[], total: number }>({ urgent: [], regular: [], total: 0 })
+  const [messages, setMessages] = useState<{ pinned: MessageBoardPost[], regular: MessageBoardPost[], total: number }>({ pinned: [], regular: [], total: 0 })
+  const [loadingReminders, setLoadingReminders] = useState(true)
+  const [loadingMessages, setLoadingMessages] = useState(true)
+  const [error, setError] = useState('')
+  const { user, loading: authLoading } = useAuth()
+  
   const { scrollY } = useScroll()
   const heroRef = useRef(null)
   const isHeroInView = useInView(heroRef, { once: true })
@@ -34,9 +78,57 @@ export default function TeachersPage() {
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
   const opacity = useTransform(scrollY, [0, 300], [1, 0.3])
 
+  // Fetch reminders data
+  const fetchReminders = async () => {
+    if (!user) return
+    
+    try {
+      setLoadingReminders(true)
+      const response = await fetch('/api/teachers/reminders?limit=10')
+      const result = await response.json()
+      
+      if (result.success) {
+        setReminders(result.data)
+      } else {
+        setError('Failed to fetch reminders')
+      }
+    } catch (err) {
+      console.error('Error fetching reminders:', err)
+      setError('Failed to fetch reminders')
+    } finally {
+      setLoadingReminders(false)
+    }
+  }
+
+  // Fetch message board data
+  const fetchMessages = async () => {
+    if (!user) return
+    
+    try {
+      setLoadingMessages(true)
+      const response = await fetch('/api/teachers/messages?limit=10&boardType=teachers')
+      const result = await response.json()
+      
+      if (result.success) {
+        setMessages(result.data)
+      } else {
+        setError('Failed to fetch messages')
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err)
+      setError('Failed to fetch messages')
+    } finally {
+      setLoadingMessages(false)
+    }
+  }
+
   useEffect(() => {
     setIsLoaded(true)
-  }, [])
+    if (user && !authLoading) {
+      fetchReminders()
+      fetchMessages()
+    }
+  }, [user, authLoading])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -207,6 +299,22 @@ export default function TeachersPage() {
       </motion.header>
 
       <main>
+        {/* Error Display */}
+        {error && (
+          <motion.div
+            className="container mx-auto px-4 py-4"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                <span className="text-sm font-medium">{error}</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Hero Section */}
         <section ref={heroRef} className="relative py-16 overflow-hidden">
           <motion.div className="container mx-auto px-4 text-center relative z-10" style={{ y: y1, opacity }}>
@@ -341,9 +449,27 @@ export default function TeachersPage() {
                     </div>
                     <div className="flex flex-col justify-center">
                       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button className="w-full bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg">
+                        <Button 
+                          className="w-full bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg"
+                          onClick={async () => {
+                            // Create a new feedback submission
+                            const feedbackData = {
+                              title: 'Teacher Feedback - ' + new Date().toLocaleDateString(),
+                              content: '', // Will be filled by user
+                              category: 'general',
+                              priority: 'medium',
+                              isAnonymous: false,
+                              status: 'submitted'
+                            }
+                            
+                            // For now, redirect to a feedback form or open a modal
+                            // In a real implementation, you might want to show a modal form
+                            const mailto = 'mailto:admin@kcislk.ntpc.edu.tw?subject=Teacher Feedback&body=Please share your feedback, suggestions, or concerns...'
+                            window.open(mailto, '_blank')
+                          }}
+                        >
                           <ExternalLink className="w-5 h-5 mr-2" />
-                          Open Feedback Form
+                          Send Feedback
                         </Button>
                       </motion.div>
                       <p className="text-sm text-gray-500 text-center mt-3">
@@ -410,13 +536,37 @@ export default function TeachersPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
-                    <p className="text-gray-600 mb-4 text-center">
-                      Important reminders and notices for all teaching staff
-                    </p>
+                    <div className="mb-4">
+                      {loadingReminders ? (
+                        <div className="text-center py-4">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+                          <p className="text-sm text-gray-500 mt-2">Loading reminders...</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-700">Active Reminders</span>
+                            <span className="text-lg font-bold text-green-600">{reminders.total}</span>
+                          </div>
+                          {reminders.urgent.length > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-red-600">🚨 Urgent</span>
+                              <span className="text-sm font-semibold text-red-600">{reminders.urgent.length}</span>
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-500">
+                            {reminders.total > 0 ? 'Click to view all reminders' : 'No active reminders'}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                      <Button 
+                        className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                        disabled={loadingReminders}
+                      >
                         <FileText className="w-4 h-4 mr-2" />
-                        View Reminders
+                        {loadingReminders ? 'Loading...' : `View Reminders ${reminders.total > 0 ? `(${reminders.total})` : ''}`}
                       </Button>
                     </motion.div>
                   </CardContent>
@@ -457,12 +607,37 @@ export default function TeachersPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
-                    <p className="text-gray-600 mb-2 text-center font-semibold">24-25 School Year</p>
-                    <p className="text-gray-500 mb-4 text-center text-sm">Staff discussions and announcements</p>
+                    <div className="mb-4">
+                      {loadingMessages ? (
+                        <div className="text-center py-4">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                          <p className="text-sm text-gray-500 mt-2">Loading messages...</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-700">Active Posts</span>
+                            <span className="text-lg font-bold text-blue-600">{messages.total}</span>
+                          </div>
+                          {messages.pinned.length > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-amber-600">📌 Pinned</span>
+                              <span className="text-sm font-semibold text-amber-600">{messages.pinned.length}</span>
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-500">
+                            {messages.total > 0 ? 'Staff discussions and announcements' : 'No active posts'}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                      <Button 
+                        className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                        disabled={loadingMessages}
+                      >
                         <MessageSquare className="w-4 h-4 mr-2" />
-                        View Messages
+                        {loadingMessages ? 'Loading...' : `View Messages ${messages.total > 0 ? `(${messages.total})` : ''}`}
                       </Button>
                     </motion.div>
                   </CardContent>
@@ -661,18 +836,28 @@ export default function TeachersPage() {
                     </div>
                     <div className="flex flex-col justify-center">
                       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button className="w-full bg-gradient-to-r from-amber-600 to-amber-800 hover:from-amber-700 hover:to-amber-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg mb-4">
+                        <Button 
+                          className="w-full bg-gradient-to-r from-amber-600 to-amber-800 hover:from-amber-700 hover:to-amber-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg mb-4"
+                          onClick={() => {
+                            // Scroll to message board section or show message board content
+                            document.getElementById('information')?.scrollIntoView({ behavior: 'smooth' })
+                          }}
+                        >
                           <Megaphone className="w-5 h-5 mr-2" />
-                          View Bulletin Board
+                          View Message Board
                         </Button>
                       </motion.div>
                       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                         <Button
                           variant="outline"
                           className="w-full border-amber-300 text-amber-700 hover:bg-amber-50 bg-transparent"
+                          onClick={() => {
+                            const mailto = 'mailto:admin@kcislk.ntpc.edu.tw?subject=Teacher Announcement Request&body=Please describe your announcement or activity that you would like to share with other teachers...'
+                            window.open(mailto, '_blank')
+                          }}
                         >
                           <FileText className="w-4 h-4 mr-2" />
-                          Post Announcement
+                          Request Announcement
                         </Button>
                       </motion.div>
                     </div>
