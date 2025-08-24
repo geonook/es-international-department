@@ -51,6 +51,7 @@ import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
 import MessageBoardForm from '@/components/admin/MessageBoardForm'
+import HeroImageManager from '@/components/admin/HeroImageManager'
 
 interface Announcement {
   id: string
@@ -2204,6 +2205,9 @@ export default function AdminPage() {
                 </div>
 
                 <div className="grid gap-6">
+                  {/* 主視覺圖片管理 */}
+                  <HeroImageManager showPreview={true} />
+                  
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">

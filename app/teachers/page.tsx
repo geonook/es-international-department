@@ -24,6 +24,7 @@ import Link from "next/link"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
+import { useHeroImageSetting } from "@/hooks/useSystemSettings"
 
 // Define types for our data
 interface Reminder {
@@ -69,6 +70,9 @@ export default function TeachersPage() {
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [error, setError] = useState('')
   const { user, loading: authLoading } = useAuth()
+  
+  // 獲取動態主視覺圖片
+  const { imageUrl: heroImageUrl, isLoading: heroImageLoading } = useHeroImageSetting()
   
   const { scrollY } = useScroll()
   const heroRef = useRef(null)
@@ -321,7 +325,7 @@ export default function TeachersPage() {
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: "url('/images/teacher-hero-bg.svg')",
+              backgroundImage: `url('${heroImageUrl}')`,
               opacity: 0.8
             }}
           />
