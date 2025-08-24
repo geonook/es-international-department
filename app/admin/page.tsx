@@ -38,6 +38,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Loader2,
+  MessageCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -49,6 +50,7 @@ import { UserData } from '@/components/admin/UserCard'
 import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
+import MessageBoardForm from '@/components/admin/MessageBoardForm'
 
 interface Announcement {
   id: string
@@ -177,6 +179,38 @@ interface FeedbackFormData {
   }
 }
 
+interface MessageBoardData {
+  id: number
+  title: string
+  content: string
+  boardType: 'teachers' | 'parents' | 'general'
+  isPinned: boolean
+  status: 'active' | 'closed' | 'archived'
+  replyCount: number
+  viewCount: number
+  createdAt: string
+  updatedAt: string
+  author?: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+  replies?: Array<{
+    id: number
+    content: string
+    createdAt: string
+    author?: {
+      id: string
+      email: string
+      displayName?: string
+      firstName?: string
+      lastName?: string
+    }
+  }>
+}
+
 export default function AdminPage() {
   const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin } = useAuth()
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -191,6 +225,7 @@ export default function AdminPage() {
   const [teacherReminders, setTeacherReminders] = useState<TeacherReminder[]>([])
   const [newsletters, setNewsletters] = useState<Newsletter[]>([])
   const [feedbackForms, setFeedbackForms] = useState<FeedbackFormData[]>([])
+  const [messageBoardPosts, setMessageBoardPosts] = useState<MessageBoardData[]>([])
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalTeachers: 0,
     totalParents: 0,
@@ -224,6 +259,11 @@ export default function AdminPage() {
   const [showFeedbackForm, setShowFeedbackForm] = useState(false)
   const [editingFeedback, setEditingFeedback] = useState<FeedbackFormData | null>(null)
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false)
+  
+  // Message board management states
+  const [showMessageBoardForm, setShowMessageBoardForm] = useState(false)
+  const [editingMessageBoard, setEditingMessageBoard] = useState<MessageBoardData | null>(null)
+  const [isMessageBoardLoading, setIsMessageBoardLoading] = useState(false)
 
   // Check user permissions for different features
   const userRoles = user?.roles || []
@@ -395,6 +435,32 @@ export default function AdminPage() {
       setIsFeedbackLoading(false)
     }
   }, [isFeedbackLoading])
+  
+  // Fetch message board posts from API
+  const fetchMessageBoardPosts = useCallback(async () => {
+    if (isMessageBoardLoading) return
+    
+    try {
+      setIsMessageBoardLoading(true)
+      setDataLoading(true)
+      const response = await fetch('/api/admin/messages?limit=20', {
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setMessageBoardPosts(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch message board posts:', error)
+      setError('Failed to load message board posts')
+    } finally {
+      setDataLoading(false)
+      setIsMessageBoardLoading(false)
+    }
+  }, [isMessageBoardLoading])
 
   const fetchUsers = useCallback(async () => {
     if (isUserLoading) return
@@ -827,6 +893,77 @@ export default function AdminPage() {
     }
   }
 
+  // Message board management functions
+  const handleAddMessageBoard = () => {
+    setEditingMessageBoard(null)
+    setShowMessageBoardForm(true)
+  }
+
+  const handleEditMessageBoard = (messageBoard: MessageBoardData) => {
+    setEditingMessageBoard(messageBoard)
+    setShowMessageBoardForm(true)
+  }
+
+  const handleDeleteMessageBoard = async (messageBoardId: number) => {
+    if (!confirm('Are you sure you want to delete this message board post? This will also delete all replies.')) {
+      return
+    }
+
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/messages/${messageBoardId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        fetchMessageBoardPosts() // Refresh message board list
+      } else {
+        setError('Failed to delete message board post')
+      }
+    } catch (error) {
+      console.error('Failed to delete message board post:', error)
+      setError('Failed to delete message board post')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleMessageBoardFormSubmit = async (formData: any) => {
+    try {
+      setDataLoading(true)
+      
+      const url = editingMessageBoard 
+        ? `/api/admin/messages/${editingMessageBoard.id}` 
+        : '/api/admin/messages'
+      
+      const method = editingMessageBoard ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        setShowMessageBoardForm(false)
+        setEditingMessageBoard(null)
+        fetchMessageBoardPosts() // Refresh message board list
+      } else {
+        const errorData = await response.json()
+        setError(errorData.message || 'Failed to save message board post')
+      }
+    } catch (error) {
+      console.error('Failed to save message board post:', error)
+      setError('Failed to save message board post')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
   // Load initial data when authenticated - 根據權限載入不同數據
   useEffect(() => {
     if (isAuthenticated && canViewContent) {
@@ -839,10 +976,11 @@ export default function AdminPage() {
         fetchUsers()
       }
       
-      // Load teacher reminders, newsletters, and feedback forms for all authenticated users
+      // Load teacher reminders, newsletters, feedback forms, and message boards for all authenticated users
       fetchTeacherReminders()
       fetchNewsletters()
       fetchFeedbackForms()
+      fetchMessageBoardPosts()
     }
   }, [isAuthenticated, canViewContent, canManageUsers]) // 基於權限控制數據載入
 
@@ -1046,11 +1184,12 @@ export default function AdminPage() {
             <div className="space-y-2">
               {[
                 { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
-                // 所有用戶都可以看到 Teachers' Corner、Parents' Corner 和 Feedback
+                // 所有用戶都可以看到 Teachers' Corner、Parents' Corner、Feedback 和 Message Board
                 ...(canViewContent ? [
                   { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
                   { id: 'parents', name: "Parents' Corner", icon: Sparkles },
-                  { id: 'feedback', name: 'Feedback Management', icon: MessageSquare }
+                  { id: 'feedback', name: 'Feedback Management', icon: MessageSquare },
+                  { id: 'messages', name: 'Message Board', icon: MessageCircle }
                 ] : []),
                 // 只有管理員可以看到用戶管理
                 ...(canManageUsers ? [
@@ -1743,6 +1882,121 @@ export default function AdminPage() {
               </motion.div>
             )}
 
+            {activeTab === 'messages' && (
+              <motion.div
+                key="messages"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Message Board Management</h2>
+                  <p className="text-gray-600">Manage discussion posts and announcements</p>
+                </div>
+
+                <div className="grid gap-8">
+                  {/* Message Board Posts Management */}
+                  <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <MessageCircle className="w-5 h-5 text-indigo-600" />
+                        Message Board Posts
+                      </CardTitle>
+                      <Button 
+                        size="sm" 
+                        className="bg-indigo-600 hover:bg-indigo-700"
+                        onClick={handleAddMessageBoard}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Post
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {isMessageBoardLoading ? (
+                          Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                            </div>
+                          ))
+                        ) : messageBoardPosts.length > 0 ? (
+                          messageBoardPosts.map((post) => (
+                            <div
+                              key={post.id}
+                              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  {post.isPinned && (
+                                    <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                                      📌 Pinned
+                                    </Badge>
+                                  )}
+                                  <h4 className="font-semibold text-gray-900">{post.title}</h4>
+                                </div>
+                                <p className="text-sm text-gray-600">{post.content.substring(0, 100) + (post.content.length > 100 ? '...' : '')}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge variant={
+                                    post.boardType === 'teachers' ? 'default' :
+                                    post.boardType === 'parents' ? 'secondary' : 'outline'
+                                  }>
+                                    {post.boardType}
+                                  </Badge>
+                                  <Badge variant={
+                                    post.status === 'active' ? 'default' :
+                                    post.status === 'closed' ? 'destructive' : 'outline'
+                                  }>
+                                    {post.status}
+                                  </Badge>
+                                  <span className="text-xs text-gray-500">
+                                    👁️ {post.viewCount} views
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    💬 {post.replyCount} replies
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    {formatDate(post.createdAt)}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline">
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleEditMessageBoard(post)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleDeleteMessageBoard(post.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No message board posts found</p>
+                            <p className="text-sm">Create your first post to get started</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </motion.div>
+            )}
+
             {activeTab === 'users' && (
               <motion.div
                 key="users"
@@ -1876,6 +2130,37 @@ export default function AdminPage() {
                         error={error}
                         mode={editingFeedback ? 'edit' : 'create'}
                         availableAssignees={users.filter(user => user.roles.includes('admin') || user.roles.includes('office_member'))}
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* Message Board Form Modal/Dialog */}
+                {showMessageBoardForm && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+                    onClick={() => setShowMessageBoardForm(false)}
+                  >
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                    >
+                      <MessageBoardForm
+                        message={editingMessageBoard}
+                        onSubmit={handleMessageBoardFormSubmit}
+                        onCancel={() => {
+                          setShowMessageBoardForm(false)
+                          setEditingMessageBoard(null)
+                        }}
+                        loading={dataLoading}
+                        error={error}
+                        mode={editingMessageBoard ? 'edit' : 'create'}
                       />
                     </motion.div>
                   </motion.div>
