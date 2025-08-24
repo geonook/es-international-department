@@ -1,0 +1,224 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
+
+/**
+ * Message Board Management API - /api/admin/messages
+ * 訊息公告板管理系統 API
+ * 
+ * @description Handle message board CRUD operations
+ * @features Create, read, update, delete message board posts
+ * @author Claude Code | Generated for KCISLK ESID Info Hub
+ */
+
+/**
+ * GET /api/admin/messages
+ * Get message board posts with pagination and filtering
+ */
+export async function GET(request: NextRequest) {
+  try {
+    // Verify user authentication
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: AUTH_ERRORS.TOKEN_REQUIRED,
+          message: 'Unauthorized access' 
+        }, 
+        { status: 401 }
+      )
+    }
+
+    // Check admin permissions
+    if (!isAdmin(currentUser)) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: AUTH_ERRORS.ACCESS_DENIED,
+          message: 'Insufficient permissions' 
+        },
+        { status: 403 }
+      )
+    }
+
+    const { searchParams } = new URL(request.url)
+
+    // Parse query parameters
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const boardType = searchParams.get('boardType') // 'teachers', 'parents', 'general'
+    const status = searchParams.get('status')
+    const search = searchParams.get('search')
+    const isPinned = searchParams.get('pinned') // 'true', 'false', or null for all
+
+    // Build filter conditions
+    const where: any = {}
+
+    if (boardType) {
+      where.boardType = boardType
+    }
+
+    if (status) {
+      where.status = status
+    }
+
+    if (isPinned === 'true') {
+      where.isPinned = true
+    } else if (isPinned === 'false') {
+      where.isPinned = false
+    }
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { content: { contains: search, mode: 'insensitive' } }
+      ]
+    }
+
+    // Calculate total count and pagination
+    const totalCount = await prisma.messageBoard.count({ where })
+    const totalPages = Math.ceil(totalCount / limit)
+    const skip = (page - 1) * limit
+
+    // Get message board posts
+    const messages = await prisma.messageBoard.findMany({
+      where,
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            displayName: true,
+            firstName: true,
+            lastName: true
+          }
+        },
+        replies: {
+          take: 3, // Get first 3 replies for preview
+          orderBy: { createdAt: 'desc' },
+          include: {
+            author: {
+              select: {
+                id: true,
+                email: true,
+                displayName: true,
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: [
+        { isPinned: 'desc' },
+        { createdAt: 'desc' }
+      ],
+      skip,
+      take: limit
+    })
+
+    // Build pagination info
+    const pagination = {
+      page,
+      limit,
+      totalCount,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: messages,
+      pagination
+    })
+
+  } catch (error) {
+    console.error('Get message board posts error:', error)
+    return NextResponse.json(
+      { success: false, message: 'Failed to get message board posts' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * POST /api/admin/messages
+ * Create new message board post
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Verify user authentication
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: AUTH_ERRORS.TOKEN_REQUIRED,
+          message: 'Unauthorized access' 
+        }, 
+        { status: 401 }
+      )
+    }
+
+    // Check admin permissions
+    if (!isAdmin(currentUser)) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: AUTH_ERRORS.ACCESS_DENIED,
+          message: 'Insufficient permissions' 
+        },
+        { status: 403 }
+      )
+    }
+
+    // Parse request data
+    const data = await request.json()
+
+    // Validate required fields
+    if (!data.title || !data.content) {
+      return NextResponse.json(
+        { success: false, message: 'Title and content are required' },
+        { status: 400 }
+      )
+    }
+
+    // Create message board post
+    const message = await prisma.messageBoard.create({
+      data: {
+        title: data.title,
+        content: data.content,
+        boardType: data.boardType || 'general',
+        isPinned: data.isPinned || false,
+        status: data.status || 'active',
+        authorId: currentUser.id
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            displayName: true,
+            firstName: true,
+            lastName: true
+          }
+        }
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Message board post created successfully',
+      data: message
+    })
+
+  } catch (error) {
+    console.error('Create message board post error:', error)
+    return NextResponse.json(
+      { success: false, message: 'Failed to create message board post' },
+      { status: 500 }
+    )
+  }
+}
