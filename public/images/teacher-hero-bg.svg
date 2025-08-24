@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="800" viewBox="0 0 1920 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Beautiful gradient background -->
+    <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Subtle pattern overlay -->
+    <pattern id="dots" patternUnits="userSpaceOnUse" width="60" height="60">
+      <circle cx="30" cy="30" r="2" fill="rgba(255,255,255,0.1)"/>
+    </pattern>
+    
+    <!-- Flowing shapes -->
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+  </defs>
+  
+  <!-- Base gradient -->
+  <rect width="1920" height="800" fill="url(#heroGradient)"/>
+  
+  <!-- Subtle dot pattern -->
+  <rect width="1920" height="800" fill="url(#dots)" opacity="0.3"/>
+  
+  <!-- Flowing abstract shapes representing collaboration and education -->
+  <ellipse cx="300" cy="200" rx="150" ry="100" fill="rgba(255,255,255,0.1)" filter="url(#blur)"/>
+  <ellipse cx="1600" cy="600" rx="200" ry="120" fill="rgba(255,255,255,0.08)" filter="url(#blur)"/>
+  <ellipse cx="800" cy="100" rx="120" ry="80" fill="rgba(255,255,255,0.12)" filter="url(#blur)"/>
+  <ellipse cx="1200" cy="700" rx="180" ry="90" fill="rgba(255,255,255,0.09)" filter="url(#blur)"/>
+  
+  <!-- Subtle geometric elements -->
+  <g opacity="0.1">
+    <polygon points="100,300 200,250 200,350" fill="white"/>
+    <polygon points="1700,200 1800,150 1800,250" fill="white"/>
+    <circle cx="1500" cy="150" r="30" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="400" cy="650" r="25" fill="none" stroke="white" stroke-width="2"/>
+  </g>
+  
+  <!-- Educational icons silhouettes -->
+  <g opacity="0.06" fill="white">
+    <!-- Book icon -->
+    <path d="M200 500 L280 500 L280 520 L200 520 Z M210 510 L270 510 M210 505 L250 505"/>
+    
+    <!-- Graduation cap -->
+    <path d="M1400 300 L1500 280 L1600 300 L1580 320 L1420 320 Z M1500 280 L1500 260"/>
+    
+    <!-- Globe/world -->
+    <circle cx="800" cy="600" r="40" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M800 560 Q820 580 800 600 Q780 580 800 560 M760 600 L840 600"/>
+  </g>
+</svg>

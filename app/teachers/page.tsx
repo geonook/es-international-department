@@ -317,6 +317,18 @@ export default function TeachersPage() {
 
         {/* Hero Section */}
         <section ref={heroRef} className="relative py-16 overflow-hidden">
+          {/* Hero Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: "url('/images/teacher-hero-bg.svg')",
+              opacity: 0.8
+            }}
+          />
+          
+          {/* Additional overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-blue-900/30 to-indigo-900/20" />
+          
           <motion.div className="container mx-auto px-4 text-center relative z-10" style={{ y: y1, opacity }}>
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -324,21 +336,24 @@ export default function TeachersPage() {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.h2
-                className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-800 mb-6"
+                className="text-5xl md:text-7xl font-bold text-white drop-shadow-lg mb-6"
                 animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  textShadow: [
+                    "0 0 20px rgba(255,255,255,0.5)",
+                    "0 0 30px rgba(255,255,255,0.8)", 
+                    "0 0 20px rgba(255,255,255,0.5)"
+                  ],
                 }}
                 transition={{
-                  duration: 5,
+                  duration: 3,
                   repeat: Number.POSITIVE_INFINITY,
-                  ease: "linear",
+                  ease: "easeInOut",
                 }}
-                style={{ backgroundSize: "200% 200%" }}
               >
                 ESID TEACHERS
               </motion.h2>
               <motion.p
-                className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed mb-8"
+                className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed mb-8 drop-shadow-md"
                 initial={{ y: 30, opacity: 0 }}
                 animate={isHeroInView ? { y: 0, opacity: 1 } : {}}
                 transition={{ delay: 0.3, duration: 0.8 }}
@@ -354,14 +369,14 @@ export default function TeachersPage() {
               transition={{ delay: 0.6, duration: 0.8 }}
             >
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button className="bg-white/90 hover:bg-white text-blue-700 font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm">
                   Quick Access
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-transparent"
+                  className="border-white/70 text-white hover:bg-white/20 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-white/10 backdrop-blur-sm"
                 >
                   Feedback
                 </Button>
