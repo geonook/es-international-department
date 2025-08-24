@@ -12,25 +12,25 @@ async function testSystem() {
     {
       name: 'Public Settings API - Get Hero Image URL',
       command: 'curl',
-      args: ['-s', 'http://localhost:3000/api/settings?key=teacher_hero_image_url'],
+      args: ['-s', 'http://localhost:3001/api/settings?key=teacher_hero_image_url'],
       expectedContains: 'teacher_hero_image_url'
     },
     {
       name: 'Teachers Page - Load with Dynamic Background',
       command: 'curl',
-      args: ['-s', 'http://localhost:3000/teachers'],
+      args: ['-s', 'http://localhost:3001/teachers'],
       expectedContains: 'ESID TEACHERS'
     },
     {
       name: 'Admin Page - Management Interface',
       command: 'curl',
-      args: ['-I', 'http://localhost:3000/admin'],
+      args: ['-I', 'http://localhost:3001/admin'],
       expectedContains: '200 OK'
     },
     {
       name: 'Upload Configuration API',
       command: 'curl',
-      args: ['-s', 'http://localhost:3000/api/upload'],
+      args: ['-s', 'http://localhost:3001/api/upload'],
       expectedContains: 'supportedTypes'
     }
   ]
