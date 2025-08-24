@@ -36,6 +36,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 import {
   Announcement,
@@ -52,8 +53,11 @@ export default function AnnouncementCard({
   onEdit,
   onDelete,
   onToggleExpand,
+  onSelect,
   isExpanded = false,
+  isSelected = false,
   showActions = true,
+  enableSelection = false,
   className
 }: AnnouncementCardProps) {
   const [localExpanded, setLocalExpanded] = useState(isExpanded)
@@ -87,6 +91,11 @@ export default function AnnouncementCard({
     } finally {
       setIsDeleting(false)
     }
+  }
+
+  // 處理選擇
+  const handleSelect = (checked: boolean) => {
+    onSelect?.(announcement.id, checked)
   }
 
   // 格式化日期
@@ -225,11 +234,27 @@ export default function AnnouncementCard({
         isExpired && "opacity-75 border-red-200 bg-red-50/30",
         isExpiringSoon && "border-orange-200 bg-orange-50/30",
         announcement.priority === 'high' && !isExpired && "border-red-200 bg-red-50/20",
+        isSelected && "ring-2 ring-blue-500 border-blue-300 bg-blue-50/30",
         className
       )}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
+            {/* 選擇框 */}
+            {enableSelection && (
+              <div className="flex items-start pt-1">
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={handleSelect}
+                  className="mt-1"
+                  aria-label={`選擇公告: ${announcement.title}`}
+                />
+              </div>
+            )}
+            
+            <div className={cn(
+              "flex-1 min-w-0",
+              enableSelection && "ml-3"
+            )}>
               <CardTitle className={cn(
                 "text-lg font-semibold leading-tight mb-2",
                 isExpired && "text-gray-600"
@@ -329,13 +354,14 @@ export default function AnnouncementCard({
             </div>
 
             {/* 操作按鈕 */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               {/* 展開/收合按鈕 */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleToggleExpand}
                 className="h-8 w-8 p-0"
+                title={localExpanded ? "收合內容" : "展開內容"}
               >
                 {localExpanded ? (
                   <ChevronUp className="w-4 h-4" />
@@ -352,6 +378,7 @@ export default function AnnouncementCard({
                     size="sm"
                     onClick={handleEdit}
                     className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
+                    title="編輯公告"
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -361,6 +388,7 @@ export default function AnnouncementCard({
                     onClick={handleDelete}
                     disabled={isDeleting}
                     className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                    title="刪除公告"
                   >
                     <Trash2 className={cn(
                       "w-4 h-4",

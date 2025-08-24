@@ -57,7 +57,9 @@ import {
   PaginationInfo, 
   AnnouncementStats,
   ApiResponse,
-  AnnouncementListResponse 
+  AnnouncementListResponse,
+  BulkAnnouncementOperation,
+  BulkAnnouncementResult
 } from '@/lib/types'
 
 export default function AdminDashboard() {
@@ -88,6 +90,11 @@ export default function AdminDashboard() {
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState<string>('')
+  
+  // Batch operations state
+  const [bulkOperationLoading, setBulkOperationLoading] = useState(false)
+  const [bulkOperationError, setBulkOperationError] = useState<string>('')
+  const [bulkOperationSuccess, setBulkOperationSuccess] = useState<string>('')
 
   // Fetch announcement list
   const fetchAnnouncements = useCallback(async (newFilters?: AnnouncementFilters, page?: number) => {
@@ -318,6 +325,53 @@ export default function AdminDashboard() {
   // Handle page change
   const handlePageChange = (page: number) => {
     fetchAnnouncements(filters, page)
+  }
+
+  // Handle bulk operations
+  const handleBulkOperation = async (operation: BulkAnnouncementOperation) => {
+    setBulkOperationLoading(true)
+    setBulkOperationError('')
+    setBulkOperationSuccess('')
+    
+    try {
+      const response = await fetch('/api/announcements/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(operation)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        const { totalProcessed, totalSuccess, totalFailed } = result.data
+        
+        // Show success message
+        setBulkOperationSuccess(
+          `批量操作完成！成功處理 ${totalSuccess}/${totalProcessed} 項，失敗 ${totalFailed} 項`
+        )
+        
+        // Refresh the announcements list
+        await fetchAnnouncements()
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => setBulkOperationSuccess(''), 5000)
+      } else {
+        throw new Error(result.message || '批量操作失敗')
+      }
+    } catch (error) {
+      console.error('Bulk operation error:', error)
+      setBulkOperationError(
+        error instanceof Error ? error.message : '批量操作過程中發生錯誤'
+      )
+    } finally {
+      setBulkOperationLoading(false)
+    }
   }
 
   // Events management state
@@ -834,18 +888,39 @@ export default function AdminDashboard() {
                     </div>
                   )}
 
+                  {/* Bulk Operation Status Messages */}
+                  {bulkOperationSuccess && (
+                    <Alert className="border-green-200 bg-green-50">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <AlertDescription className="text-green-800">
+                        {bulkOperationSuccess}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {bulkOperationError && (
+                    <Alert variant="destructive">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        {bulkOperationError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
                   {/* Announcement List */}
                   <AnnouncementList
                     announcements={announcements}
-                    loading={announcementsLoading}
+                    loading={announcementsLoading || bulkOperationLoading}
                     error={announcementsError}
                     onEdit={handleEditAnnouncement}
                     onDelete={deleteAnnouncement}
+                    onBulkOperation={handleBulkOperation}
                     onFiltersChange={handleFiltersChange}
                     onPageChange={handlePageChange}
                     pagination={pagination}
                     filters={filters}
                     showActions={true}
+                    enableBulkActions={true}
                   />
                 </motion.div>
               )}

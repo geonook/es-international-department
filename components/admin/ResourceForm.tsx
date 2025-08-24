@@ -34,6 +34,7 @@ import {
   Loader2
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 
 interface Resource {
   id: number
@@ -323,12 +324,15 @@ export default function ResourceForm({
               {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="description">描述</Label>
-                <Textarea
-                  id="description"
+                <RichTextEditor
                   value={formData.description}
-                  onChange={(e) => updateFormData('description', e.target.value)}
+                  onChange={(value) => updateFormData('description', value)}
                   placeholder="輸入資源描述"
-                  rows={4}
+                  minHeight={200}
+                  maxHeight={400}
+                  maxLength={10000}
+                  enableImageUpload={true}
+                  relatedType="resource"
                 />
               </div>
 

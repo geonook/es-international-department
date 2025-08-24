@@ -107,8 +107,11 @@ export interface AnnouncementCardProps {
   onEdit?: (announcement: Announcement) => void
   onDelete?: (announcementId: number) => void
   onToggleExpand?: (announcementId: number) => void
+  onSelect?: (announcementId: number, selected: boolean) => void
   isExpanded?: boolean
+  isSelected?: boolean
   showActions?: boolean
+  enableSelection?: boolean
   className?: string
 }
 
@@ -118,11 +121,13 @@ export interface AnnouncementListProps {
   error?: string
   onEdit?: (announcement: Announcement) => void
   onDelete?: (announcementId: number) => void
+  onBulkOperation?: (operation: BulkAnnouncementOperation) => Promise<void>
   onFiltersChange?: (filters: AnnouncementFilters) => void
   onPageChange?: (page: number) => void
   pagination?: PaginationInfo
   filters?: AnnouncementFilters
   showActions?: boolean
+  enableBulkActions?: boolean
   className?: string
 }
 
@@ -204,6 +209,34 @@ export interface SortState {
   sortOrder: 'asc' | 'desc'
 }
 
+// 批量操作類型
+export type BulkAnnouncementAction = 'publish' | 'archive' | 'delete' | 'draft'
+
+// 批量操作介面
+export interface BulkAnnouncementOperation {
+  action: BulkAnnouncementAction
+  announcementIds: number[]
+  targetStatus?: AnnouncementStatus
+}
+
+// 批量操作結果
+export interface BulkAnnouncementResult {
+  success: boolean
+  totalProcessed: number
+  totalSuccess: number
+  totalFailed: number
+  results: {
+    success: number[]
+    failed: { id: number; error: string }[]
+  }
+  message?: string
+}
+
+// 批量操作 API 回應
+export interface BulkAnnouncementResponse extends ApiResponse {
+  data: BulkAnnouncementResult
+}
+
 // Hook 回傳類型
 export interface UseAnnouncementsReturn {
   announcements: Announcement[]
@@ -216,6 +249,7 @@ export interface UseAnnouncementsReturn {
   createAnnouncement: (data: AnnouncementFormData) => Promise<Announcement>
   updateAnnouncement: (id: number, data: Partial<AnnouncementFormData>) => Promise<Announcement>
   deleteAnnouncement: (id: number) => Promise<void>
+  bulkOperation: (operation: BulkAnnouncementOperation) => Promise<BulkAnnouncementResult>
   refetch: () => Promise<void>
 }
 

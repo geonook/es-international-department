@@ -48,7 +48,10 @@
     "test:upload": "tsx scripts/test-upload-system.ts",
     "test:email-system": "tsx scripts/test-email-system.ts",
     "setup:email": "tsx scripts/setup-email-service.ts",
-    "setup:email:gmail": "tsx scripts/setup-email-service.ts --gmail-guide"
+    "setup:email:gmail": "tsx scripts/setup-email-service.ts --gmail-guide",
+    "test:api-health": "tsx scripts/api-health-test.ts",
+    "test:api-quick": "tsx scripts/quick-health-check.ts",
+    "test:api-summary": "tsx scripts/api-health-summary.ts"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -89,6 +92,7 @@
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
     "@tinymce/tinymce-react": "^6.3.0",
+    "@types/node-fetch": "^2.6.13",
     "@types/nodemailer": "^6.4.17",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
@@ -106,6 +110,7 @@
     "lucide-react": "^0.454.0",
     "next": "14.2.16",
     "next-themes": "^0.4.4",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3",
     "react": "^18",

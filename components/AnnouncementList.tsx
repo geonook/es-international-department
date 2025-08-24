@@ -22,7 +22,14 @@ import {
   Loader2,
   AlertTriangle,
   ChevronDown,
-  X
+  X,
+  CheckSquare,
+  Square,
+  Trash2,
+  Archive,
+  Send,
+  FileText,
+  MoreHorizontal
 } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -47,6 +54,21 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import {
   AnnouncementListProps,
@@ -54,7 +76,9 @@ import {
   SortOption,
   TARGET_AUDIENCE_LABELS,
   PRIORITY_LABELS,
-  STATUS_LABELS
+  STATUS_LABELS,
+  BulkAnnouncementOperation,
+  BulkAnnouncementAction
 } from '@/lib/types'
 import AnnouncementCard from './AnnouncementCard'
 
@@ -64,11 +88,13 @@ export default function AnnouncementList({
   error,
   onEdit,
   onDelete,
+  onBulkOperation,
   onFiltersChange,
   onPageChange,
   pagination,
   filters,
   showActions = false,
+  enableBulkActions = false,
   className
 }: AnnouncementListProps) {
   const [localFilters, setLocalFilters] = useState<AnnouncementFilters>({
@@ -84,6 +110,12 @@ export default function AnnouncementList({
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set())
   const [showFilters, setShowFilters] = useState(false)
+  
+  // Batch operations state
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const [showBulkConfirm, setShowBulkConfirm] = useState(false)
+  const [bulkAction, setBulkAction] = useState<BulkAnnouncementAction | null>(null)
+  const [bulkOperationLoading, setBulkOperationLoading] = useState(false)
 
   // 處理搜尋
   const handleSearch = (query: string) => {
@@ -125,6 +157,148 @@ export default function AnnouncementList({
       return newSet
     })
   }
+
+  // 批量選擇處理
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = sortedAnnouncements.map(a => a.id)
+      setSelectedIds(new Set(allIds))
+    } else {
+      setSelectedIds(new Set())
+    }
+  }
+
+  const handleSelectAnnouncement = (announcementId: number, checked: boolean) => {
+    setSelectedIds(prev => {
+      const newSet = new Set(prev)
+      if (checked) {
+        newSet.add(announcementId)
+      } else {
+        newSet.delete(announcementId)
+      }
+      return newSet
+    })
+  }
+
+  // 批量操作處理
+  const handleBulkOperation = async (action: BulkAnnouncementAction) => {
+    if (selectedIds.size === 0) return
+    
+    setBulkAction(action)
+    setShowBulkConfirm(true)
+  }
+
+  const confirmBulkOperation = async () => {
+    if (!bulkAction || selectedIds.size === 0 || !onBulkOperation) return
+
+    setBulkOperationLoading(true)
+    try {
+      const operation: BulkAnnouncementOperation = {
+        action: bulkAction,
+        announcementIds: Array.from(selectedIds),
+        targetStatus: bulkAction === 'publish' ? 'published' : 
+                     bulkAction === 'archive' ? 'archived' : 
+                     bulkAction === 'draft' ? 'draft' : undefined
+      }
+      
+      await onBulkOperation(operation)
+      setSelectedIds(new Set())
+      setShowBulkConfirm(false)
+      setBulkAction(null)
+    } catch (error) {
+      console.error('批量操作失敗:', error)
+    } finally {
+      setBulkOperationLoading(false)
+    }
+  }
+
+  const cancelBulkOperation = () => {
+    setShowBulkConfirm(false)
+    setBulkAction(null)
+  }
+
+  // 取得可用的批量操作
+  const getAvailableBulkActions = () => {
+    if (selectedIds.size === 0) return []
+    
+    const selectedAnnouncements = sortedAnnouncements.filter(a => selectedIds.has(a.id))
+    const statuses = new Set(selectedAnnouncements.map(a => a.status))
+    
+    const actions: { action: BulkAnnouncementAction; label: string; icon: any; variant?: 'default' | 'destructive'; description?: string }[] = []
+    
+    // 如果包含草稿，可以批量發布
+    if (statuses.has('draft')) {
+      const draftCount = selectedAnnouncements.filter(a => a.status === 'draft').length
+      actions.push({ 
+        action: 'publish', 
+        label: `批量發布 (${draftCount})`, 
+        icon: Send,
+        description: '將選中的草稿狀態公告發布給目標對象'
+      })
+    }
+    
+    // 如果包含已發布，可以批量歸檔
+    if (statuses.has('published')) {
+      const publishedCount = selectedAnnouncements.filter(a => a.status === 'published').length
+      actions.push({ 
+        action: 'archive', 
+        label: `批量歸檔 (${publishedCount})`, 
+        icon: Archive,
+        description: '將選中的已發布公告歸檔，用戶將無法查看'
+      })
+    }
+    
+    // 如果包含已發布或已歸檔，可以轉為草稿
+    if (statuses.has('published') || statuses.has('archived')) {
+      const nonDraftCount = selectedAnnouncements.filter(a => a.status !== 'draft').length
+      actions.push({ 
+        action: 'draft', 
+        label: `轉為草稿 (${nonDraftCount})`, 
+        icon: FileText,
+        description: '將選中的公告轉為草稿狀態，停止對用戶顯示'
+      })
+    }
+    
+    // 總是可以批量刪除
+    actions.push({ 
+      action: 'delete', 
+      label: `批量刪除 (${selectedIds.size})`, 
+      icon: Trash2, 
+      variant: 'destructive',
+      description: '永久刪除選中的公告，此操作無法復原'
+    })
+    
+    return actions
+  }
+
+  // 取得批量操作確認訊息
+  const getBulkActionMessage = () => {
+    const count = selectedIds.size
+    const selectedAnnouncements = sortedAnnouncements.filter(a => selectedIds.has(a.id))
+    
+    switch (bulkAction) {
+      case 'publish':
+        const draftCount = selectedAnnouncements.filter(a => a.status === 'draft').length
+        return `確定要發布選中的 ${draftCount} 則草稿公告嗎？發布後將對目標對象可見。其他 ${count - draftCount} 則公告將保持原狀態。`
+      case 'archive':
+        const publishedCount = selectedAnnouncements.filter(a => a.status === 'published').length
+        return `確定要歸檔選中的 ${publishedCount} 則已發布公告嗎？歸檔後將不再對用戶顯示。其他 ${count - publishedCount} 則公告將保持原狀態。`
+      case 'draft':
+        const nonDraftCount = selectedAnnouncements.filter(a => a.status !== 'draft').length
+        return `確定要將選中的 ${nonDraftCount} 則公告轉為草稿嗎？轉為草稿後將不再對用戶顯示。其他 ${count - nonDraftCount} 則公告已是草稿狀態。`
+      case 'delete':
+        return `確定要永久刪除選中的 ${count} 則公告嗎？此操作不可恢復，刪除後無法找回這些公告的內容。`
+      default:
+        return '確定要執行此操作嗎？'
+    }
+  }
+
+  // 判斷是否全選
+  const isAllSelected = sortedAnnouncements.length > 0 && 
+                       sortedAnnouncements.every(a => selectedIds.has(a.id))
+  const isPartialSelected = selectedIds.size > 0 && 
+                           sortedAnnouncements.some(a => selectedIds.has(a.id)) &&
+                           !isAllSelected
 
   // 排序公告
   const sortedAnnouncements = useMemo(() => {
@@ -278,10 +452,52 @@ export default function AnnouncementList({
           <h2 className="text-2xl font-bold text-gray-900">公告管理</h2>
           <p className="text-gray-600 mt-1">
             {pagination ? `共 ${pagination.totalCount} 則公告` : `${announcements.length} 則公告`}
+            {enableBulkActions && selectedIds.size > 0 && (
+              <span className="ml-2 text-blue-600 font-medium">
+                已選擇 {selectedIds.size} 項
+              </span>
+            )}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* 批量操作按鈕 */}
+          {enableBulkActions && selectedIds.size > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <MoreHorizontal className="w-4 h-4" />
+                  批量操作 ({selectedIds.size})
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {getAvailableBulkActions().map((actionItem, index) => (
+                  <div key={actionItem.action}>
+                    {index > 0 && actionItem.action === 'delete' && <DropdownMenuSeparator />}
+                    <DropdownMenuItem
+                      onClick={() => handleBulkOperation(actionItem.action)}
+                      className={cn(
+                        "flex items-center gap-2 cursor-pointer",
+                        actionItem.variant === 'destructive' && "text-red-600 focus:text-red-600"
+                      )}
+                      title={actionItem.description}
+                    >
+                      <actionItem.icon className="w-4 h-4" />
+                      <div className="flex flex-col">
+                        <span className="font-medium">{actionItem.label}</span>
+                        {actionItem.description && (
+                          <span className="text-xs text-gray-500 mt-0.5">
+                            {actionItem.description}
+                          </span>
+                        )}
+                      </div>
+                    </DropdownMenuItem>
+                  </div>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          
           {/* 檢視模式切換 */}
           <div className="flex items-center border rounded-lg p-1">
             <Button
@@ -334,9 +550,30 @@ export default function AnnouncementList({
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
-            {/* 搜尋欄 */}
-            <div className="flex-1">
-              <div className="relative">
+            {/* 批量選擇和搜尋欄 */}
+            <div className="flex-1 flex items-center gap-3">
+              {/* 批量選擇複選框 */}
+              {enableBulkActions && (
+                <div className="flex items-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleSelectAll(!isAllSelected)}
+                    className="h-9 w-9 p-0 border rounded"
+                  >
+                    {isAllSelected ? (
+                      <CheckSquare className="w-4 h-4 text-blue-600" />
+                    ) : isPartialSelected ? (
+                      <CheckSquare className="w-4 h-4 text-blue-400" style={{ opacity: 0.5 }} />
+                    ) : (
+                      <Square className="w-4 h-4 text-gray-400" />
+                    )}
+                  </Button>
+                </div>
+              )}
+              
+              {/* 搜尋欄 */}
+              <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="搜尋公告標題、內容或摘要..."
@@ -557,8 +794,11 @@ export default function AnnouncementList({
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onToggleExpand={handleToggleExpand}
+                    onSelect={enableBulkActions ? handleSelectAnnouncement : undefined}
                     isExpanded={expandedCards.has(announcement.id)}
+                    isSelected={selectedIds.has(announcement.id)}
                     showActions={showActions}
+                    enableSelection={enableBulkActions}
                   />
                 </motion.div>
               ))}
@@ -595,6 +835,39 @@ export default function AnnouncementList({
           </Pagination>
         </div>
       )}
+
+      {/* 批量操作確認對話框 */}
+      <Dialog open={showBulkConfirm} onOpenChange={setShowBulkConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              確認批量操作
+            </DialogTitle>
+            <DialogDescription>
+              {getBulkActionMessage()}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={cancelBulkOperation}
+              disabled={bulkOperationLoading}
+            >
+              取消
+            </Button>
+            <Button
+              onClick={confirmBulkOperation}
+              disabled={bulkOperationLoading}
+              variant={bulkAction === 'delete' ? 'destructive' : 'default'}
+            >
+              {bulkOperationLoading && (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              )}
+              確認
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   )
 }

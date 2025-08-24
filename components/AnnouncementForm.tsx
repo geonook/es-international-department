@@ -33,7 +33,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-// import { RichTextEditor } from '@/components/ui/rich-text-editor'
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -145,6 +145,7 @@ export default function AnnouncementForm({
   const [isDirty, setIsDirty] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
+  const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null)
   
   const isEditMode = mode === 'edit' && announcement
 
@@ -230,6 +231,26 @@ export default function AnnouncementForm({
     onCancel?.()
   }
 
+  // 自動儲存處理
+  const handleAutoSave = useCallback(async (content: string) => {
+    if (!autoSaveEnabled || !isDirty) return
+    
+    try {
+      // 只在編輯模式下自動儲存草稿
+      if (isEditMode) {
+        const data = form.getValues()
+        data.content = content
+        data.status = 'draft'
+        
+        await onSubmit({ ...data, content: sanitizeHtml(content) })
+        setLastAutoSave(new Date())
+        setIsDirty(false)
+      }
+    } catch (error) {
+      console.error('Auto save error:', error)
+    }
+  }, [autoSaveEnabled, isDirty, isEditMode, form, onSubmit])
+
 
   // 取得目標對象圖示
   const getTargetAudienceIcon = (audience: string) => {
@@ -281,6 +302,22 @@ export default function AnnouncementForm({
             </div>
 
             <div className="flex items-center gap-2">
+              {/* 自動儲存開關 */}
+              {isEditMode && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
+                  className={cn(
+                    "flex items-center gap-2 text-xs",
+                    autoSaveEnabled ? "text-green-600 border-green-300" : "text-gray-500"
+                  )}
+                  title={autoSaveEnabled ? '關閉自動儲存' : '開啟自動儲存'}
+                >
+                  {autoSaveEnabled ? '自動儲存' : '手動儲存'}
+                </Button>
+              )}
+              
               {/* 預覽模式切換 */}
               <Button
                 variant="outline"
@@ -442,14 +479,31 @@ export default function AnnouncementForm({
                         <FormItem>
                           <FormLabel>內容 *</FormLabel>
                           <FormControl>
-                            <Textarea
+                            <RichTextEditor
+                              value={field.value}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
                               placeholder="請輸入公告詳細內容..."
-                              className="min-h-[250px]"
-                              {...field}
+                              minHeight={300}
+                              maxHeight={600}
+                              maxLength={50000}
+                              autoSave={autoSaveEnabled && isEditMode}
+                              autoSaveInterval={30000} // 30秒自動儲存
+                              onAutoSave={handleAutoSave}
+                              enableImageUpload={true}
+                              relatedType="announcement"
+                              relatedId={announcement?.id}
+                              error={errors.content?.message}
+                              className="w-full"
                             />
                           </FormControl>
-                          <FormDescription>
-                            支援純文字和基本格式，字數限制：50000 字元
+                          <FormDescription className="flex items-center justify-between">
+                            <span>支援富文本格式、圖片上傳，字數限制：50000 字元</span>
+                            {lastAutoSave && isEditMode && (
+                              <span className="text-xs text-green-600">
+                                最後自動儲存: {format(lastAutoSave, 'HH:mm:ss', { locale: zhTW })}
+                              </span>
+                            )}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>

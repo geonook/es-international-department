@@ -46,6 +46,7 @@ import { useAuth } from '@/hooks/useAuth'
 import UserList from '@/components/admin/UserList'
 import UserForm from '@/components/admin/UserForm'
 import { UserData } from '@/components/admin/UserCard'
+import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 
 interface Announcement {
   id: string
@@ -100,6 +101,29 @@ interface DashboardStats {
   systemHealth: string
 }
 
+interface TeacherReminder {
+  id: number
+  title: string
+  content: string
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  status: 'active' | 'completed' | 'cancelled' | 'pending'
+  dueDate?: string
+  dueTime?: string
+  targetAudience: string
+  reminderType: string
+  isRecurring: boolean
+  recurringPattern?: string
+  createdAt: string
+  updatedAt: string
+  creator?: {
+    id: string
+    email: string
+    displayName?: string
+    firstName?: string
+    lastName?: string
+  }
+}
+
 export default function AdminPage() {
   const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin } = useAuth()
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -111,6 +135,7 @@ export default function AdminPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [events, setEvents] = useState<Event[]>([])
   const [users, setUsers] = useState<UserData[]>([])
+  const [teacherReminders, setTeacherReminders] = useState<TeacherReminder[]>([])
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalTeachers: 0,
     totalParents: 0,
@@ -129,6 +154,11 @@ export default function AdminPage() {
     totalCount: 0,
     totalPages: 0
   })
+
+  // Teacher reminders management states
+  const [showReminderForm, setShowReminderForm] = useState(false)
+  const [editingReminder, setEditingReminder] = useState<TeacherReminder | null>(null)
+  const [isReminderLoading, setIsReminderLoading] = useState(false)
 
   // Check user permissions for different features
   const userRoles = user?.roles || []
@@ -223,6 +253,32 @@ export default function AdminPage() {
   }, [announcements.length, events.length])
 
   // Fetch users from API
+  // Fetch teacher reminders from API
+  const fetchTeacherReminders = useCallback(async () => {
+    if (isReminderLoading) return
+    
+    try {
+      setIsReminderLoading(true)
+      setDataLoading(true)
+      const response = await fetch('/api/admin/reminders?limit=20', {
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setTeacherReminders(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch teacher reminders:', error)
+      setError('Failed to load teacher reminders')
+    } finally {
+      setDataLoading(false)
+      setIsReminderLoading(false)
+    }
+  }, [isReminderLoading])
+
   const fetchUsers = useCallback(async () => {
     if (isUserLoading) return
     
@@ -441,6 +497,77 @@ export default function AdminPage() {
     setUserPagination(prev => ({ ...prev, page }))
   }
 
+  // Teacher reminder management functions
+  const handleAddReminder = () => {
+    setEditingReminder(null)
+    setShowReminderForm(true)
+  }
+
+  const handleEditReminder = (reminder: TeacherReminder) => {
+    setEditingReminder(reminder)
+    setShowReminderForm(true)
+  }
+
+  const handleDeleteReminder = async (reminderId: number) => {
+    if (!confirm('Are you sure you want to delete this reminder? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      setDataLoading(true)
+      const response = await fetch(`/api/admin/reminders/${reminderId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        fetchTeacherReminders() // Refresh reminders list
+      } else {
+        setError('Failed to delete reminder')
+      }
+    } catch (error) {
+      console.error('Failed to delete reminder:', error)
+      setError('Failed to delete reminder')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
+  const handleReminderFormSubmit = async (formData: any) => {
+    try {
+      setDataLoading(true)
+      
+      const url = editingReminder 
+        ? `/api/admin/reminders/${editingReminder.id}` 
+        : '/api/admin/reminders'
+      
+      const method = editingReminder ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        setShowReminderForm(false)
+        setEditingReminder(null)
+        fetchTeacherReminders() // Refresh reminders list
+      } else {
+        const errorData = await response.json()
+        setError(errorData.message || 'Failed to save reminder')
+      }
+    } catch (error) {
+      console.error('Failed to save reminder:', error)
+      setError('Failed to save reminder')
+    } finally {
+      setDataLoading(false)
+    }
+  }
+
   // Load initial data when authenticated - 根據權限載入不同數據
   useEffect(() => {
     if (isAuthenticated && canViewContent) {
@@ -452,6 +579,9 @@ export default function AdminPage() {
       if (canManageUsers) {
         fetchUsers()
       }
+      
+      // Load teacher reminders for all authenticated users
+      fetchTeacherReminders()
     }
   }, [isAuthenticated, canViewContent, canManageUsers]) // 基於權限控制數據載入
 
@@ -478,30 +608,7 @@ export default function AdminPage() {
     })
   }
 
-  // Mock data for Teachers reminders (temporary - to be replaced with real API)
-  const teachersReminders = [
-    {
-      id: 1,
-      title: 'Grade Submission Deadline',
-      content: 'Submit all semester grades by Friday 5 PM',
-      date: '2025-02-01',
-      status: 'active' as const,
-    },
-    {
-      id: 2,
-      title: 'Parent Conference Week',
-      content: 'Schedule your parent conferences for next week',
-      date: '2025-02-05',
-      status: 'pending' as const,
-    },
-    {
-      id: 3,
-      title: 'Curriculum Planning Meeting',
-      content: 'Department heads meeting completed',
-      date: '2025-01-28',
-      status: 'completed' as const,
-    },
-  ]
+  // Teacher reminders data is now fetched from API
 
   // Legacy mock data for newsletters (can be replaced with real API later)
   const [parentsData] = useState({
@@ -840,7 +947,11 @@ export default function AdminPage() {
                           <Calendar className="w-4 h-4 mr-2" />
                           Update Calendar
                         </Button>
-                        <Button className="w-full justify-start bg-transparent" variant="outline">
+                        <Button 
+                          className="w-full justify-start bg-transparent" 
+                          variant="outline"
+                          onClick={() => window.location.href = '/admin/documents'}
+                        >
                           <FileText className="w-4 h-4 mr-2" />
                           Manage Documents
                         </Button>
@@ -1019,46 +1130,91 @@ export default function AdminPage() {
                         <Calendar className="w-5 h-5 text-green-600" />
                         Reminders
                       </CardTitle>
-                      <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                      <Button 
+                        size="sm" 
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={handleAddReminder}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Add Reminder
                       </Button>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {teachersReminders.map((reminder) => (
-                          <div
-                            key={reminder.id}
-                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                          >
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900">{reminder.title}</h4>
-                              <p className="text-sm text-gray-600">{reminder.content}</p>
-                              <div className="flex items-center gap-2 mt-2">
-                                <Badge
-                                  variant={
-                                    reminder.status === 'active'
-                                      ? 'default'
-                                      : reminder.status === 'completed'
-                                      ? 'secondary'
-                                      : 'outline'
-                                  }
+                        {isReminderLoading ? (
+                          Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                            </div>
+                          ))
+                        ) : teacherReminders.length > 0 ? (
+                          teacherReminders.map((reminder) => (
+                            <div
+                              key={reminder.id}
+                              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-900">{reminder.title}</h4>
+                                <p className="text-sm text-gray-600">{reminder.content}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge
+                                    variant={
+                                      reminder.status === 'active'
+                                        ? 'default'
+                                        : reminder.status === 'completed'
+                                        ? 'secondary'
+                                        : reminder.status === 'pending'
+                                        ? 'outline'
+                                        : 'destructive'
+                                    }
+                                  >
+                                    {reminder.status}
+                                  </Badge>
+                                  <Badge
+                                    variant={
+                                      reminder.priority === 'urgent'
+                                        ? 'destructive'
+                                        : reminder.priority === 'high'
+                                        ? 'destructive'
+                                        : reminder.priority === 'medium'
+                                        ? 'default'
+                                        : 'secondary'
+                                    }
+                                  >
+                                    {reminder.priority}
+                                  </Badge>
+                                  <span className="text-xs text-gray-500">
+                                    {reminder.dueDate ? formatDate(reminder.dueDate) : formatDate(reminder.createdAt)}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleEditReminder(reminder)}
                                 >
-                                  {reminder.status}
-                                </Badge>
-                                <span className="text-xs text-gray-500">{reminder.date}</span>
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleDeleteReminder(reminder.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
                               </div>
                             </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No teacher reminders found</p>
+                            <p className="text-sm">Create your first reminder to get started</p>
                           </div>
-                        ))}
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -1235,6 +1391,37 @@ export default function AdminPage() {
                         loading={dataLoading}
                         error={error}
                         mode={editingUser ? 'edit' : 'create'}
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* Teacher Reminder Form Modal/Dialog */}
+                {showReminderForm && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+                    onClick={() => setShowReminderForm(false)}
+                  >
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+                    >
+                      <TeacherReminderForm
+                        reminder={editingReminder}
+                        onSubmit={handleReminderFormSubmit}
+                        onCancel={() => {
+                          setShowReminderForm(false)
+                          setEditingReminder(null)
+                        }}
+                        loading={dataLoading}
+                        error={error}
+                        mode={editingReminder ? 'edit' : 'create'}
                       />
                     </motion.div>
                   </motion.div>

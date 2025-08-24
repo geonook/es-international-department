@@ -9,13 +9,14 @@
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -92,6 +93,11 @@ export default function EventForm({
   // Validation errors
   const [errors, setErrors] = useState<FormValidationErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null)
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
+  
+  // Check if in edit mode
+  const isEditMode = mode === 'edit' && event
 
   // Initialize form data
   useEffect(() => {
@@ -121,6 +127,28 @@ export default function EventForm({
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }))
     }
+  }
+
+  // Auto-save handler for rich text editor
+  const handleAutoSave = useCallback(async (content: string) => {
+    if (!autoSaveEnabled || !isEditMode) return
+    
+    try {
+      const updatedData = { ...formData, description: content }
+      await onSubmit(updatedData)
+      setLastAutoSave(new Date())
+    } catch (error) {
+      console.error('Auto save error:', error)
+    }
+  }, [autoSaveEnabled, isEditMode, formData, onSubmit])
+
+  // HTML content sanitization
+  const sanitizeHtml = (html: string) => {
+    // Basic HTML sanitization - remove dangerous tags
+    return html.replace(/<script[^>]*>.*?<\/script>/gi, '')
+               .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
+               .replace(/javascript:/gi, '')
+               .replace(/on\w+=/gi, '')
   }
 
   // Handle grade selection
@@ -197,7 +225,12 @@ export default function EventForm({
 
     setIsSubmitting(true)
     try {
-      await onSubmit(formData)
+      // Sanitize HTML content before submitting
+      const sanitizedData = {
+        ...formData,
+        description: formData.description ? sanitizeHtml(formData.description) : formData.description
+      }
+      await onSubmit(sanitizedData)
     } catch (error) {
       // Error handling is handled by parent component
     } finally {
@@ -291,16 +324,54 @@ export default function EventForm({
 
             {/* 活動描述 */}
             <div>
-              <Label htmlFor="description">Event Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => updateField('description', e.target.value)}
-                placeholder="請輸入活動描述..."
-                rows={4}
-                className={errors.description ? 'border-red-300' : ''}
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="description">Event Description</Label>
+                {/* Auto-save toggle for edit mode */}
+                {isEditMode && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
+                      className={cn(
+                        "text-xs px-2 py-1 rounded border transition-colors",
+                        autoSaveEnabled 
+                          ? "text-green-600 border-green-300 bg-green-50" 
+                          : "text-gray-500 border-gray-300"
+                      )}
+                      title={autoSaveEnabled ? '關閉自動儲存' : '開啟自動儲存'}
+                    >
+                      {autoSaveEnabled ? '自動儲存' : '手動儲存'}
+                    </button>
+                    {lastAutoSave && (
+                      <span className="text-xs text-green-600">
+                        最後儲存: {lastAutoSave.toLocaleTimeString()}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+              <RichTextEditor
+                value={formData.description || ''}
+                onChange={(content) => updateField('description', content)}
+                placeholder="請輸入活動詳細描述..."
+                minHeight={200}
+                maxHeight={500}
+                maxLength={10000}
+                autoSave={autoSaveEnabled && isEditMode}
+                autoSaveInterval={30000} // 30 seconds
+                onAutoSave={handleAutoSave}
+                enableImageUpload={true}
+                relatedType="event"
+                relatedId={event?.id}
+                error={errors.description}
+                className="w-full"
+                showWordCount={true}
+                showCharCount={true}
               />
               {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+              <p className="text-sm text-gray-500 mt-1">
+                支援富文本格式、圖片上傳，字數限制：10000 字元
+              </p>
             </div>
 
             {/* 日期和時間 */}

@@ -58,6 +58,10 @@ model User {
   permissionUpgradeRequests PermissionUpgradeRequest[] @relation("PermissionUpgradeUser")
   permissionUpgradeRequestsCreated PermissionUpgradeRequest[] @relation("PermissionUpgradeRequestedBy")
   permissionUpgradeRequestsReviewed PermissionUpgradeRequest[] @relation("PermissionUpgradeReviewedBy")
+  resourceVersions ResourceVersion[]
+  resourceEditHistory ResourceEditHistory[]
+  teacherRemindersCreated TeacherReminder[] @relation("TeacherReminderCreator")
+  teacherRemindersCompleted TeacherReminder[] @relation("TeacherReminderCompleter")
 
   @@map("users")
 }
@@ -358,6 +362,8 @@ model Resource {
   category   ResourceCategory? @relation(fields: [categoryId], references: [id])
   creator    User? @relation(fields: [createdBy], references: [id])
   tags       ResourceTagRelation[]
+  versions   ResourceVersion[]
+  editHistory ResourceEditHistory[]
 
   @@map("resources")
 }
@@ -384,6 +390,49 @@ model ResourceTagRelation {
 
   @@id([resourceId, tagId])
   @@map("resource_tag_relations")
+}
+
+// 資源版本控制 | Resource Version Control
+model ResourceVersion {
+  id          Int      @id @default(autoincrement())
+  resourceId  Int      @map("resource_id")
+  version     String   @db.VarChar(20) // v1.0, v1.1, etc.
+  title       String   @db.VarChar(255)
+  description String?
+  fileUrl     String?  @map("file_url")
+  externalUrl String?  @map("external_url")
+  fileSize    BigInt?  @map("file_size")
+  changeLog   String?  @map("change_log") // 版本變更記錄
+  createdBy   String   @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  isActive    Boolean  @default(false) @map("is_active") // 當前啟用版本
+
+  // Relations
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  creator  User     @relation(fields: [createdBy], references: [id])
+
+  @@unique([resourceId, version])
+  @@map("resource_versions")
+}
+
+// 資源編輯歷史 | Resource Edit History
+model ResourceEditHistory {
+  id          Int      @id @default(autoincrement())
+  resourceId  Int      @map("resource_id")
+  action      String   @db.VarChar(50) // create, update, publish, archive, restore
+  fieldName   String?  @map("field_name") @db.VarChar(100) // 異動的欄位名稱
+  oldValue    String?  @map("old_value") // 舊值
+  newValue    String?  @map("new_value") // 新值
+  description String?  // 編輯描述
+  editedBy    String   @map("edited_by")
+  editedAt    DateTime @default(now()) @map("edited_at")
+
+  // Relations
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  editor   User     @relation(fields: [editedBy], references: [id])
+
+  @@index([resourceId, editedAt])
+  @@map("resource_edit_history")
 }
 
 // 通知與溝通 | Notification & Communication
@@ -548,4 +597,33 @@ model UserGradeAssignment {
   @@index([userId, isActive])
   @@index([gradeLevelId, relationship, isActive])
   @@map("user_grade_assignments")
+}
+
+// 教師提醒系統 | Teacher Reminders System
+model TeacherReminder {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  content     String
+  priority    String   @default("medium") @db.VarChar(10) // 'low', 'medium', 'high', 'urgent'
+  status      String   @default("active") @db.VarChar(20) // 'active', 'completed', 'cancelled', 'pending'
+  dueDate     DateTime? @map("due_date") @db.Date
+  dueTime     DateTime? @map("due_time") @db.Time
+  createdBy   String?  @map("created_by")
+  targetAudience String @default("all") @map("target_audience") @db.VarChar(20) // 'all', 'specific_grades', 'departments'
+  reminderType String  @default("general") @map("reminder_type") @db.VarChar(50) // 'deadline', 'meeting', 'task', 'announcement', 'general'
+  isRecurring Boolean  @default(false) @map("is_recurring")
+  recurringPattern String? @map("recurring_pattern") @db.VarChar(50) // 'daily', 'weekly', 'monthly', 'custom'
+  completedAt DateTime? @map("completed_at")
+  completedBy String?  @map("completed_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  creator     User? @relation("TeacherReminderCreator", fields: [createdBy], references: [id])
+  completer   User? @relation("TeacherReminderCompleter", fields: [completedBy], references: [id])
+
+  @@index([status, dueDate])
+  @@index([createdBy, status])
+  @@index([priority, dueDate])
+  @@map("teacher_reminders")
 }
