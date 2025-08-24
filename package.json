@@ -51,7 +51,8 @@
     "setup:email:gmail": "tsx scripts/setup-email-service.ts --gmail-guide",
     "test:api-health": "tsx scripts/api-health-test.ts",
     "test:api-quick": "tsx scripts/quick-health-check.ts",
-    "test:api-summary": "tsx scripts/api-health-summary.ts"
+    "test:api-summary": "tsx scripts/api-health-summary.ts",
+    "create:test-data": "node scripts/create-test-data.js"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
