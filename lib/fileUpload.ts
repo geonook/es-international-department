@@ -310,7 +310,8 @@ export async function uploadFile(
     const fileType = validation.fileType as 'image' | 'document'
     
     // 建立目錄
-    const uploadDir = await ensureUploadDirectory(FILE_TYPES[fileType.toUpperCase() as keyof typeof FILE_TYPES].directory)
+    const fileTypeKey = fileType === 'image' ? 'IMAGES' : 'DOCUMENTS'
+    const uploadDir = await ensureUploadDirectory(FILE_TYPES[fileTypeKey as keyof typeof FILE_TYPES].directory)
     const filePath = join(uploadDir, secureFilename)
     
     // 處理圖片最佳化
