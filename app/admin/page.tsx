@@ -1512,7 +1512,6 @@ export default function AdminPage() {
                         size="sm" 
                         className="bg-orange-600 hover:bg-orange-700"
                         onClick={() => {
-                          console.log('🔥 Add Announcement button clicked!')
                           setShowAnnouncementForm(true)
                         }}
                       >
@@ -2212,32 +2211,46 @@ export default function AdminPage() {
                 {/* Newsletter Form Modal/Dialog */}
                 {/* Announcement Form Modal */}
                 {showAnnouncementForm && (
-                  <AnnouncementForm
-                    announcement={editingAnnouncement || undefined}
-                    onClose={() => {
-                      setShowAnnouncementForm(false)
-                      setEditingAnnouncement(null)
-                    }}
-                    onSubmit={async (data) => {
-                      const endpoint = editingAnnouncement 
-                        ? `/api/admin/announcements/${editingAnnouncement.id}`
-                        : '/api/admin/announcements'
-                      const method = editingAnnouncement ? 'PUT' : 'POST'
-                      
-                      const response = await fetch(endpoint, {
-                        method,
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                      })
-                      
-                      if (response.ok) {
-                        alert(editingAnnouncement ? 'Announcement updated!' : 'Announcement created!')
-                        fetchAnnouncements()
-                      } else {
-                        throw new Error('Failed to save announcement')
-                      }
-                    }}
-                  />
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                  >
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+                    >
+                      <AnnouncementForm
+                        announcement={editingAnnouncement || undefined}
+                        onClose={() => {
+                          setShowAnnouncementForm(false)
+                          setEditingAnnouncement(null)
+                        }}
+                        onSubmit={async (data) => {
+                          const endpoint = editingAnnouncement 
+                            ? `/api/admin/announcements/${editingAnnouncement.id}`
+                            : '/api/admin/announcements'
+                          const method = editingAnnouncement ? 'PUT' : 'POST'
+                          
+                          const response = await fetch(endpoint, {
+                            method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                          })
+                          
+                          if (response.ok) {
+                            alert(editingAnnouncement ? 'Announcement updated!' : 'Announcement created!')
+                            fetchAnnouncements()
+                          } else {
+                            throw new Error('Failed to save announcement')
+                          }
+                        }}
+                      />
+                    </motion.div>
+                  </motion.div>
                 )}
 
                 {/* Event Form Modal */}
