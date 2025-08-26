@@ -322,7 +322,7 @@ export default function EmailManager() {
                 <div className="space-y-4">
                   <div className="flex justify-between">
                     <span>Pending</span>
-                    <Badge variant="secondary">{stats?.queue.pending || 0}</Badge>
+                    <Badge variant="warning">{stats?.queue.pending || 0}</Badge>
                   </div>
                   <div className="flex justify-between">
                     <span>Processing</span>
