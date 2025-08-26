@@ -2146,163 +2146,6 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage user accounts and permissions</p>
                 </div>
 
-                {/* User Form Modal/Dialog */}
-                {showUserForm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-                    onClick={() => setShowUserForm(false)}
-                  >
-                    <motion.div
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-full max-w-3xl max-h-[90vh] overflow-y-auto"
-                    >
-                      <UserForm
-                        user={editingUser}
-                        onSubmit={handleUserFormSubmit}
-                        onCancel={() => {
-                          setShowUserForm(false)
-                          setEditingUser(null)
-                        }}
-                        loading={dataLoading}
-                        error={error}
-                        mode={editingUser ? 'edit' : 'create'}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
-
-                {/* Teacher Reminder Form Modal/Dialog */}
-                {showReminderForm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-                    onClick={() => setShowReminderForm(false)}
-                  >
-                    <motion.div
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-                    >
-                      <TeacherReminderForm
-                        reminder={editingReminder}
-                        onSubmit={handleReminderFormSubmit}
-                        onCancel={() => {
-                          setShowReminderForm(false)
-                          setEditingReminder(null)
-                        }}
-                        loading={dataLoading}
-                        error={error}
-                        mode={editingReminder ? 'edit' : 'create'}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
-
-                {/* Newsletter Form Modal/Dialog */}
-
-
-                {showNewsletterForm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-                    onClick={() => setShowNewsletterForm(false)}
-                  >
-                    <motion.div
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-                    >
-                      <NewsletterForm
-                        newsletter={editingNewsletter}
-                        onSubmit={handleNewsletterFormSubmit}
-                        onCancel={() => {
-                          setShowNewsletterForm(false)
-                          setEditingNewsletter(null)
-                        }}
-                        loading={dataLoading}
-                        error={error}
-                        mode={editingNewsletter ? 'edit' : 'create'}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
-
-                {/* Feedback Form Modal/Dialog */}
-                {showFeedbackForm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-                    onClick={() => setShowFeedbackForm(false)}
-                  >
-                    <motion.div
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-                    >
-                      <FeedbackForm
-                        feedback={editingFeedback}
-                        onSubmit={handleFeedbackFormSubmit}
-                        onCancel={() => {
-                          setShowFeedbackForm(false)
-                          setEditingFeedback(null)
-                        }}
-                        loading={dataLoading}
-                        error={error}
-                        mode={editingFeedback ? 'edit' : 'create'}
-                        availableAssignees={users.filter(user => user.roles.includes('admin') || user.roles.includes('office_member'))}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
-
-                {/* Message Board Form Modal/Dialog */}
-                {showMessageBoardForm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-                    onClick={() => setShowMessageBoardForm(false)}
-                  >
-                    <motion.div
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-                    >
-                      <MessageBoardForm
-                        message={editingMessageBoard}
-                        onSubmit={handleMessageBoardFormSubmit}
-                        onCancel={() => {
-                          setShowMessageBoardForm(false)
-                          setEditingMessageBoard(null)
-                        }}
-                        loading={dataLoading}
-                        error={error}
-                        mode={editingMessageBoard ? 'edit' : 'create'}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
 
                 {/* User List */}
                 <UserList
@@ -2509,6 +2352,153 @@ export default function AdminPage() {
                   loading={false}
                   error=""
                   mode={editingEvent ? 'edit' : 'create'}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* User Form Modal */}
+          {showUserForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+              >
+                <UserForm
+                  user={editingUser}
+                  onSubmit={handleUserFormSubmit}
+                  onCancel={() => {
+                    setShowUserForm(false)
+                    setEditingUser(null)
+                  }}
+                  loading={dataLoading}
+                  error={error}
+                  mode={editingUser ? 'edit' : 'create'}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Reminder Form Modal */}
+          {showReminderForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+              >
+                <TeacherReminderForm
+                  reminder={editingReminder}
+                  onSubmit={handleReminderFormSubmit}
+                  onCancel={() => {
+                    setShowReminderForm(false)
+                    setEditingReminder(null)
+                  }}
+                  loading={dataLoading}
+                  error={error}
+                  mode={editingReminder ? 'edit' : 'create'}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Newsletter Form Modal */}
+          {showNewsletterForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+              >
+                <NewsletterForm
+                  newsletter={editingNewsletter}
+                  onSubmit={handleNewsletterFormSubmit}
+                  onCancel={() => {
+                    setShowNewsletterForm(false)
+                    setEditingNewsletter(null)
+                  }}
+                  loading={dataLoading}
+                  error={error}
+                  mode={editingNewsletter ? 'edit' : 'create'}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Feedback Form Modal */}
+          {showFeedbackForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+              >
+                <FeedbackForm
+                  feedback={editingFeedback}
+                  onSubmit={handleFeedbackFormSubmit}
+                  onCancel={() => {
+                    setShowFeedbackForm(false)
+                    setEditingFeedback(null)
+                  }}
+                  loading={dataLoading}
+                  error={error}
+                  mode={editingFeedback ? 'edit' : 'create'}
+                  availableAssignees={users.filter(user => user.roles.includes('admin') || user.roles.includes('office_member'))}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Message Board Form Modal */}
+          {showMessageBoardForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+              >
+                <MessageBoardForm
+                  message={editingMessageBoard}
+                  onSubmit={handleMessageBoardFormSubmit}
+                  onCancel={() => {
+                    setShowMessageBoardForm(false)
+                    setEditingMessageBoard(null)
+                  }}
+                  loading={dataLoading}
+                  error={error}
+                  mode={editingMessageBoard ? 'edit' : 'create'}
                 />
               </motion.div>
             </motion.div>
