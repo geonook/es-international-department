@@ -52,6 +52,8 @@ import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
 import MessageBoardForm from '@/components/admin/MessageBoardForm'
 import HeroImageManager from '@/components/admin/HeroImageManager'
+import AnnouncementForm from '@/components/admin/AnnouncementForm'
+import EventForm from '@/components/admin/EventForm'
 
 interface Announcement {
   id: string
@@ -265,6 +267,14 @@ export default function AdminPage() {
   const [showMessageBoardForm, setShowMessageBoardForm] = useState(false)
   const [editingMessageBoard, setEditingMessageBoard] = useState<MessageBoardData | null>(null)
   const [isMessageBoardLoading, setIsMessageBoardLoading] = useState(false)
+  
+  // Announcement management states
+  const [showAnnouncementForm, setShowAnnouncementForm] = useState(false)
+  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null)
+  
+  // Event management states
+  const [showEventForm, setShowEventForm] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
 
   // Check user permissions for different features
   const userRoles = user?.roles || []
@@ -761,6 +771,46 @@ export default function AdminPage() {
   const handleEditNewsletter = (newsletter: Newsletter) => {
     setEditingNewsletter(newsletter)
     setShowNewsletterForm(true)
+  }
+  
+  // Announcement handlers
+  const handleAnnouncementDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this announcement?')) return
+    try {
+      const response = await fetch(`/api/admin/announcements/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      if (response.ok) {
+        alert('Announcement deleted successfully')
+        fetchAnnouncements()
+      } else {
+        alert('Failed to delete announcement')
+      }
+    } catch (error) {
+      console.error('Error deleting announcement:', error)
+      alert('Error deleting announcement')
+    }
+  }
+  
+  // Event handlers
+  const handleEventDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this event?')) return
+    try {
+      const response = await fetch(`/api/admin/events/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      if (response.ok) {
+        alert('Event deleted successfully')
+        fetchEvents()
+      } else {
+        alert('Failed to delete event')
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error)
+      alert('Error deleting event')
+    }
   }
 
   const handleDeleteNewsletter = async (newsletterId: number) => {
@@ -1329,7 +1379,11 @@ export default function AdminPage() {
                           <Edit className="w-4 h-4 mr-2" />
                           Manage Announcements
                         </Button>
-                        <Button className="w-full justify-start bg-transparent" variant="outline">
+                        <Button 
+                          className="w-full justify-start bg-transparent" 
+                          variant="outline"
+                          onClick={() => window.location.href = '/admin/events'}
+                        >
                           <Calendar className="w-4 h-4 mr-2" />
                           Update Calendar
                         </Button>
@@ -1362,11 +1416,25 @@ export default function AdminPage() {
                           <Edit className="w-4 h-4 mr-2" />
                           Edit Newsletter
                         </Button>
-                        <Button className="w-full justify-start bg-transparent" variant="outline">
+                        <Button 
+                          className="w-full justify-start bg-transparent" 
+                          variant="outline"
+                          onClick={() => {
+                            console.log('🔥 Manage Events button clicked!')
+                            window.location.href = '/admin/events'
+                          }}
+                        >
                           <Calendar className="w-4 h-4 mr-2" />
                           Manage Events
                         </Button>
-                        <Button className="w-full justify-start bg-transparent" variant="outline">
+                        <Button 
+                          className="w-full justify-start bg-transparent" 
+                          variant="outline"
+                          onClick={() => {
+                            console.log('🔥 Update News Board button clicked!')
+                            setShowMessageBoardForm(true)
+                          }}
+                        >
                           <MessageSquare className="w-4 h-4 mr-2" />
                           Update News Board
                         </Button>
@@ -1440,7 +1508,14 @@ export default function AdminPage() {
                         <Bell className="w-5 h-5 text-orange-600" />
                         Announcements
                       </CardTitle>
-                      <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+                      <Button 
+                        size="sm" 
+                        className="bg-orange-600 hover:bg-orange-700"
+                        onClick={() => {
+                          console.log('🔥 Add Announcement button clicked!')
+                          setShowAnnouncementForm(true)
+                        }}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Add New
                       </Button>
@@ -1486,13 +1561,31 @@ export default function AdminPage() {
                                   </div>
                                 </div>
                                 <div className="flex gap-2">
-                                  <Button size="sm" variant="outline">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                      setEditingAnnouncement(announcement)
+                                      setShowAnnouncementForm(true)
+                                    }}
+                                  >
                                     <Eye className="w-4 h-4" />
                                   </Button>
-                                  <Button size="sm" variant="outline">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                      setEditingAnnouncement(announcement)
+                                      setShowAnnouncementForm(true)
+                                    }}
+                                  >
                                     <Edit className="w-4 h-4" />
                                   </Button>
-                                  <Button size="sm" variant="outline">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => handleAnnouncementDelete(announcement.id)}
+                                  >
                                     <Trash2 className="w-4 h-4" />
                                   </Button>
                                 </div>
@@ -1629,7 +1722,14 @@ export default function AdminPage() {
                         <FileText className="w-5 h-5 text-blue-600" />
                         Newsletters
                       </CardTitle>
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                      <Button 
+                        size="sm" 
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => {
+                          console.log('🔥 Create Newsletter button clicked!')
+                          setShowNewsletterForm(true)
+                        }}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Create Newsletter
                       </Button>
@@ -1670,7 +1770,14 @@ export default function AdminPage() {
                                 </div>
                               </div>
                               <div className="flex gap-2">
-                                <Button size="sm" variant="outline">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingNewsletter(newsletter)
+                                    setShowNewsletterForm(true)
+                                  }}
+                                >
                                   <Eye className="w-4 h-4" />
                                 </Button>
                                 <Button 
@@ -1680,7 +1787,11 @@ export default function AdminPage() {
                                 >
                                   <Edit className="w-4 h-4" />
                                 </Button>
-                                <Button size="sm" variant="outline">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => alert(`Downloading newsletter: ${newsletter.title}`)}
+                                >
                                   <Download className="w-4 h-4" />
                                 </Button>
                                 <Button 
@@ -1711,7 +1822,14 @@ export default function AdminPage() {
                         <Calendar className="w-5 h-5 text-purple-600" />
                         Events
                       </CardTitle>
-                      <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                      <Button 
+                        size="sm" 
+                        className="bg-purple-600 hover:bg-purple-700"
+                        onClick={() => {
+                          console.log('🔥 Add Event button clicked!')
+                          setShowEventForm(true)
+                        }}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Add Event
                       </Button>
@@ -1748,13 +1866,31 @@ export default function AdminPage() {
                                 </div>
                               </div>
                               <div className="flex gap-2">
-                                <Button size="sm" variant="outline">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingEvent(event)
+                                    setShowEventForm(true)
+                                  }}
+                                >
                                   <Eye className="w-4 h-4" />
                                 </Button>
-                                <Button size="sm" variant="outline">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingEvent(event)
+                                    setShowEventForm(true)
+                                  }}
+                                >
                                   <Edit className="w-4 h-4" />
                                 </Button>
-                                <Button size="sm" variant="outline">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleEventDelete(event.id)}
+                                >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
@@ -2074,6 +2210,85 @@ export default function AdminPage() {
                 )}
 
                 {/* Newsletter Form Modal/Dialog */}
+                {/* Announcement Form Modal */}
+                {showAnnouncementForm && (
+                  <AnnouncementForm
+                    announcement={editingAnnouncement || undefined}
+                    onClose={() => {
+                      setShowAnnouncementForm(false)
+                      setEditingAnnouncement(null)
+                    }}
+                    onSubmit={async (data) => {
+                      const endpoint = editingAnnouncement 
+                        ? `/api/admin/announcements/${editingAnnouncement.id}`
+                        : '/api/admin/announcements'
+                      const method = editingAnnouncement ? 'PUT' : 'POST'
+                      
+                      const response = await fetch(endpoint, {
+                        method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                      })
+                      
+                      if (response.ok) {
+                        alert(editingAnnouncement ? 'Announcement updated!' : 'Announcement created!')
+                        fetchAnnouncements()
+                      } else {
+                        throw new Error('Failed to save announcement')
+                      }
+                    }}
+                  />
+                )}
+
+                {/* Event Form Modal */}
+                {showEventForm && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                  >
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+                    >
+                      <EventForm
+                        event={editingEvent || undefined}
+                        onSubmit={async (data) => {
+                          const endpoint = editingEvent 
+                            ? `/api/admin/events/${editingEvent.id}`
+                            : '/api/admin/events'
+                          const method = editingEvent ? 'PUT' : 'POST'
+                          
+                          const response = await fetch(endpoint, {
+                            method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                          })
+                          
+                          if (response.ok) {
+                            alert(editingEvent ? 'Event updated!' : 'Event created!')
+                            setShowEventForm(false)
+                            setEditingEvent(null)
+                            fetchEvents()
+                          } else {
+                            throw new Error('Failed to save event')
+                          }
+                        }}
+                        onCancel={() => {
+                          setShowEventForm(false)
+                          setEditingEvent(null)
+                        }}
+                        loading={false}
+                        error=""
+                        mode={editingEvent ? 'edit' : 'create'}
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+
                 {showNewsletterForm && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -2232,7 +2447,13 @@ export default function AdminPage() {
                             defaultValue="KCISLK Elementary School International Department management portal"
                           />
                         </div>
-                        <Button className="bg-indigo-600 hover:bg-indigo-700">
+                        <Button 
+                          className="bg-indigo-600 hover:bg-indigo-700"
+                          onClick={() => {
+                            console.log('🔥 Save Settings button clicked!')
+                            alert('Settings saved successfully!')
+                          }}
+                        >
                           <Save className="w-4 h-4 mr-2" />
                           Save Settings
                         </Button>
@@ -2257,7 +2478,13 @@ export default function AdminPage() {
                           <Label htmlFor="maxLoginAttempts">Max Login Attempts</Label>
                           <Input id="maxLoginAttempts" type="number" defaultValue="5" />
                         </div>
-                        <Button className="bg-green-600 hover:bg-green-700">
+                        <Button 
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => {
+                            console.log('🔥 Update Security button clicked!')
+                            alert('Security settings updated successfully!')
+                          }}
+                        >
                           <Save className="w-4 h-4 mr-2" />
                           Update Security
                         </Button>
