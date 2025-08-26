@@ -134,18 +134,18 @@ export default function TeacherReminderForm({
     }
   }
 
-  const priorityColors = {
-    low: 'bg-green-100 text-green-800',
-    medium: 'bg-blue-100 text-blue-800', 
-    high: 'bg-orange-100 text-orange-800',
-    urgent: 'bg-red-100 text-red-800'
+  const priorityVariants = {
+    low: 'success' as const,
+    medium: 'info' as const, 
+    high: 'warning' as const,
+    urgent: 'destructive' as const
   }
 
-  const statusColors = {
-    active: 'bg-blue-100 text-blue-800',
-    completed: 'bg-green-100 text-green-800',
-    cancelled: 'bg-gray-100 text-gray-800',
-    pending: 'bg-yellow-100 text-yellow-800'
+  const statusVariants = {
+    active: 'info' as const,
+    completed: 'success' as const,
+    cancelled: 'outline' as const,
+    pending: 'warning' as const
   }
 
   return (
@@ -244,22 +244,22 @@ export default function TeacherReminderForm({
                     <SelectContent>
                       <SelectItem value="low">
                         <div className="flex items-center gap-2">
-                          <Badge className={priorityColors.low}>Low</Badge>
+                          <Badge variant={priorityVariants.low}>Low</Badge>
                         </div>
                       </SelectItem>
                       <SelectItem value="medium">
                         <div className="flex items-center gap-2">
-                          <Badge className={priorityColors.medium}>Medium</Badge>
+                          <Badge variant={priorityVariants.medium}>Medium</Badge>
                         </div>
                       </SelectItem>
                       <SelectItem value="high">
                         <div className="flex items-center gap-2">
-                          <Badge className={priorityColors.high}>High</Badge>
+                          <Badge variant={priorityVariants.high}>High</Badge>
                         </div>
                       </SelectItem>
                       <SelectItem value="urgent">
                         <div className="flex items-center gap-2">
-                          <Badge className={priorityColors.urgent}>Urgent</Badge>
+                          <Badge variant={priorityVariants.urgent}>Urgent</Badge>
                         </div>
                       </SelectItem>
                     </SelectContent>
@@ -277,16 +277,16 @@ export default function TeacherReminderForm({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">
-                        <Badge className={statusColors.active}>Active</Badge>
+                        <Badge variant={statusVariants.active}>Active</Badge>
                       </SelectItem>
                       <SelectItem value="pending">
-                        <Badge className={statusColors.pending}>Pending</Badge>
+                        <Badge variant={statusVariants.pending}>Pending</Badge>
                       </SelectItem>
                       <SelectItem value="completed">
-                        <Badge className={statusColors.completed}>Completed</Badge>
+                        <Badge variant={statusVariants.completed}>Completed</Badge>
                       </SelectItem>
                       <SelectItem value="cancelled">
-                        <Badge className={statusColors.cancelled}>Cancelled</Badge>
+                        <Badge variant={statusVariants.cancelled}>Cancelled</Badge>
                       </SelectItem>
                     </SelectContent>
                   </Select>
