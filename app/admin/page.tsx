@@ -1134,8 +1134,8 @@ export default function AdminPage() {
     )
   }
 
-  // If not authenticated or not admin, return null (redirect will happen automatically)
-  if (!isAuthenticated || !isAdmin()) {
+  // If not authenticated, return null (redirect will happen automatically)
+  if (!isAuthenticated) {
     return null
   }
 
@@ -2209,98 +2209,7 @@ export default function AdminPage() {
                 )}
 
                 {/* Newsletter Form Modal/Dialog */}
-                {/* Announcement Form Modal */}
-                {showAnnouncementForm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-                  >
-                    <motion.div
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
-                    >
-                      <AnnouncementForm
-                        announcement={editingAnnouncement || undefined}
-                        onClose={() => {
-                          setShowAnnouncementForm(false)
-                          setEditingAnnouncement(null)
-                        }}
-                        onSubmit={async (data) => {
-                          const endpoint = editingAnnouncement 
-                            ? `/api/admin/announcements/${editingAnnouncement.id}`
-                            : '/api/admin/announcements'
-                          const method = editingAnnouncement ? 'PUT' : 'POST'
-                          
-                          const response = await fetch(endpoint, {
-                            method,
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                          })
-                          
-                          if (response.ok) {
-                            alert(editingAnnouncement ? 'Announcement updated!' : 'Announcement created!')
-                            fetchAnnouncements()
-                          } else {
-                            throw new Error('Failed to save announcement')
-                          }
-                        }}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
 
-                {/* Event Form Modal */}
-                {showEventForm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-                  >
-                    <motion.div
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
-                    >
-                      <EventForm
-                        event={editingEvent || undefined}
-                        onSubmit={async (data) => {
-                          const endpoint = editingEvent 
-                            ? `/api/admin/events/${editingEvent.id}`
-                            : '/api/admin/events'
-                          const method = editingEvent ? 'PUT' : 'POST'
-                          
-                          const response = await fetch(endpoint, {
-                            method,
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                          })
-                          
-                          if (response.ok) {
-                            alert(editingEvent ? 'Event updated!' : 'Event created!')
-                            setShowEventForm(false)
-                            setEditingEvent(null)
-                            fetchEvents()
-                          } else {
-                            throw new Error('Failed to save event')
-                          }
-                        }}
-                        onCancel={() => {
-                          setShowEventForm(false)
-                          setEditingEvent(null)
-                        }}
-                        loading={false}
-                        error=""
-                        mode={editingEvent ? 'edit' : 'create'}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
 
                 {showNewsletterForm && (
                   <motion.div
@@ -2509,6 +2418,102 @@ export default function AdminPage() {
             )}
           </AnimatePresence>
         </main>
+
+        {/* Global Modals - Outside AnimatePresence */}
+        <AnimatePresence>
+          {/* Announcement Form Modal */}
+          {showAnnouncementForm && (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+              >
+                <AnnouncementForm
+                  announcement={editingAnnouncement || undefined}
+                  onClose={() => {
+                    setShowAnnouncementForm(false)
+                    setEditingAnnouncement(null)
+                  }}
+                  onSubmit={async (data) => {
+                    const endpoint = editingAnnouncement 
+                      ? `/api/admin/announcements/${editingAnnouncement.id}`
+                      : '/api/admin/announcements'
+                    const method = editingAnnouncement ? 'PUT' : 'POST'
+                    
+                    const response = await fetch(endpoint, {
+                      method,
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(data)
+                    })
+                    
+                    if (response.ok) {
+                      alert(editingAnnouncement ? 'Announcement updated!' : 'Announcement created!')
+                      fetchAnnouncements()
+                    } else {
+                      throw new Error('Failed to save announcement')
+                    }
+                  }}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Event Form Modal */}
+          {showEventForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+              >
+                <EventForm
+                  event={editingEvent || undefined}
+                  onSubmit={async (data) => {
+                    const endpoint = editingEvent 
+                      ? `/api/admin/events/${editingEvent.id}`
+                      : '/api/admin/events'
+                    const method = editingEvent ? 'PUT' : 'POST'
+                    
+                    const response = await fetch(endpoint, {
+                      method,
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(data)
+                    })
+                    
+                    if (response.ok) {
+                      alert(editingEvent ? 'Event updated!' : 'Event created!')
+                      setShowEventForm(false)
+                      setEditingEvent(null)
+                      fetchEvents()
+                    } else {
+                      throw new Error('Failed to save event')
+                    }
+                  }}
+                  onCancel={() => {
+                    setShowEventForm(false)
+                    setEditingEvent(null)
+                  }}
+                  loading={false}
+                  error=""
+                  mode={editingEvent ? 'edit' : 'create'}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
