@@ -52,6 +52,7 @@ import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
 import MessageBoardForm from '@/components/admin/MessageBoardForm'
 import HeroImageManager from '@/components/admin/HeroImageManager'
+import PageContentManager from '@/components/admin/PageContentManager'
 import AnnouncementForm from '@/components/admin/AnnouncementForm'
 import EventForm from '@/components/admin/EventForm'
 
@@ -1242,8 +1243,9 @@ export default function AdminPage() {
                   { id: 'feedback', name: 'Feedback Management', icon: MessageSquare },
                   { id: 'messages', name: 'Message Board', icon: MessageCircle }
                 ] : []),
-                // 只有管理員可以看到用戶管理
+                // 只有管理員可以看到內容管理和用戶管理
                 ...(canManageUsers ? [
+                  { id: 'content', name: 'Page Content Management', icon: FileText },
                   { id: 'users', name: 'User Management', icon: Users }
                 ] : []),
                 // 只有管理員可以看到系統設置
@@ -2172,6 +2174,22 @@ export default function AdminPage() {
                   roleFilter={userRoleFilter}
                   showActions={true}
                 />
+              </motion.div>
+            )}
+
+            {activeTab === 'content' && (
+              <motion.div
+                key="content"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Page Content Management</h2>
+                  <p className="text-gray-600">Manage static text content across various pages</p>
+                </div>
+                <PageContentManager className="w-full" />
               </motion.div>
             )}
 
