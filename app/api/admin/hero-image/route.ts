@@ -25,9 +25,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // 獲取請求參數
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get('type') || 'teacher'
+    const settingKey = type === 'parent' ? 'parent_hero_image_url' : 'teacher_hero_image_url'
+
     // 獲取主視覺圖片設定
     const heroImageSetting = await prisma.systemSetting.findUnique({
-      where: { key: 'teacher_hero_image_url' },
+      where: { key: settingKey },
       include: { updater: true }
     })
 
@@ -120,6 +125,7 @@ export async function POST(request: NextRequest) {
     // 解析表單資料
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const type = formData.get('type') as string || 'teacher'
 
     if (!file) {
       return NextResponse.json(
@@ -159,8 +165,12 @@ export async function POST(request: NextRequest) {
     // 轉換為 Buffer
     const buffer = Buffer.from(await file.arrayBuffer())
 
+    // 確定設定鍵值和檔案前綴
+    const settingKey = type === 'parent' ? 'parent_hero_image_url' : 'teacher_hero_image_url'
+    const filePrefix = type === 'parent' ? 'parent-hero' : 'hero'
+
     // 上傳檔案
-    const uploadResult = await uploadFile(buffer, `hero-${Date.now()}.${fileExtension}`, {
+    const uploadResult = await uploadFile(buffer, `${filePrefix}-${Date.now()}.${fileExtension}`, {
       relatedType: 'hero_image',
       generateThumbnail: true,
       compressImage: true,
@@ -176,7 +186,7 @@ export async function POST(request: NextRequest) {
 
     // 更新系統設定
     const updatedSetting = await prisma.systemSetting.update({
-      where: { key: 'teacher_hero_image_url' },
+      where: { key: settingKey },
       data: {
         value: uploadResult.filePath,
         updatedBy: currentUser.id
@@ -235,11 +245,19 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
+    // 解析請求體以獲取類型
+    const body = await request.json().catch(() => ({}))
+    const type = body.type || 'teacher'
+
+    // 確定設定鍵值和預設圖片
+    const settingKey = type === 'parent' ? 'parent_hero_image_url' : 'teacher_hero_image_url'
+    const defaultImage = type === 'parent' ? '/images/parent-hero-bg.svg' : '/images/teacher-hero-bg.svg'
+
     // 恢復預設背景圖片
     const updatedSetting = await prisma.systemSetting.update({
-      where: { key: 'teacher_hero_image_url' },
+      where: { key: settingKey },
       data: {
-        value: '/images/teacher-hero-bg.svg',
+        value: defaultImage,
         updatedBy: currentUser.id
       },
       include: { updater: true }

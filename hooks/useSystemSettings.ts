@@ -168,7 +168,26 @@ export function useHeroImageSetting() {
 }
 
 /**
- * Hook for admin hero image management
+ * Hook specifically for the parent hero image URL setting
+ */
+export function useParentHeroImageSetting() {
+  const { setting, isLoading, error, refetch, updateSetting } = useSystemSetting('parent_hero_image_url')
+  
+  const updateParentHeroImage = useCallback(async (imageUrl: string): Promise<boolean> => {
+    return await updateSetting('parent_hero_image_url', imageUrl)
+  }, [updateSetting])
+
+  return {
+    imageUrl: setting?.value || '/images/parent-hero-bg.svg',
+    isLoading,
+    error,
+    refetch,
+    updateParentHeroImage,
+  }
+}
+
+/**
+ * Hook for admin hero image management (Teachers)
  */
 export function useHeroImageManagement() {
   const [uploadingImage, setUploadingImage] = useState(false)
@@ -240,6 +259,100 @@ export function useHeroImageManagement() {
       return true
     } catch (err) {
       console.error('Error resetting hero image:', err)
+      return false
+    }
+  }, [refetch])
+
+  return {
+    currentImageUrl: imageUrl,
+    isLoading,
+    error,
+    uploadingImage,
+    uploadProgress,
+    uploadImage,
+    resetToDefault,
+    refetch,
+  }
+}
+
+/**
+ * Hook for admin parent hero image management
+ */
+export function useParentHeroImageManagement() {
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  
+  const { imageUrl, isLoading, error, refetch } = useParentHeroImageSetting()
+
+  const uploadImage = useCallback(async (file: File): Promise<boolean> => {
+    try {
+      setUploadingImage(true)
+      setUploadProgress(0)
+
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('type', 'parent') // Indicate this is for parent hero
+
+      // 模擬上傳進度（因為 fetch 無法直接追蹤上傳進度）
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90))
+      }, 100)
+
+      const response = await fetch('/api/admin/hero-image', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      })
+
+      clearInterval(progressInterval)
+      setUploadProgress(100)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (!result.success) {
+        throw new Error(result.error || 'Upload failed')
+      }
+
+      await refetch()
+      return true
+    } catch (err) {
+      console.error('Error uploading parent hero image:', err)
+      return false
+    } finally {
+      setUploadingImage(false)
+      setUploadProgress(0)
+    }
+  }, [refetch])
+
+  const resetToDefault = useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/admin/hero-image', {
+        method: 'DELETE',
+        credentials: 'include',
+        body: JSON.stringify({ type: 'parent' }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (!result.success) {
+        throw new Error(result.error || 'Reset failed')
+      }
+
+      await refetch()
+      return true
+    } catch (err) {
+      console.error('Error resetting parent hero image:', err)
       return false
     }
   }, [refetch])

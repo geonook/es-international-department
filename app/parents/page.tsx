@@ -35,7 +35,7 @@ import Link from "next/link"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
-import { useHeroImageSetting } from "@/hooks/useSystemSettings"
+import { useParentHeroImageSetting } from "@/hooks/useSystemSettings"
 import MobileNav from "@/components/ui/mobile-nav"
 
 // Define types for our data
@@ -84,8 +84,8 @@ export default function ParentsPage() {
   const [error, setError] = useState('')
   const { user, loading: authLoading } = useAuth()
   
-  // 獲取動態主視覺圖片 (將來擴展為 parent-specific)
-  const { imageUrl: heroImageUrl, isLoading: heroImageLoading } = useHeroImageSetting()
+  // 獲取父母專用的動態主視覺圖片
+  const { imageUrl: heroImageUrl, isLoading: heroImageLoading } = useParentHeroImageSetting()
   
   const { scrollY } = useScroll()
   const heroRef = useRef(null)

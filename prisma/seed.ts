@@ -180,6 +180,41 @@ const defaultSystemSettings = [
     description: 'Maximum login attempts before lockout',
     dataType: 'number',
     isPublic: false
+  },
+  {
+    key: 'teacher_hero_image_url',
+    value: '/images/teacher-hero-bg.svg',
+    description: 'Teachers page hero background image URL',
+    dataType: 'string',
+    isPublic: true
+  },
+  {
+    key: 'parent_hero_image_url',
+    value: '/images/parent-hero-bg.svg',
+    description: 'Parents page hero background image URL',
+    dataType: 'string',
+    isPublic: true
+  },
+  {
+    key: 'hero_image_upload_enabled',
+    value: 'true',
+    description: 'Enable hero image upload functionality',
+    dataType: 'boolean',
+    isPublic: false
+  },
+  {
+    key: 'hero_image_max_size',
+    value: '5242880',
+    description: 'Maximum hero image file size in bytes (5MB)',
+    dataType: 'number',
+    isPublic: false
+  },
+  {
+    key: 'hero_image_allowed_types',
+    value: 'jpg,jpeg,png,webp,svg',
+    description: 'Allowed hero image file types',
+    dataType: 'string',
+    isPublic: false
   }
 ]
 

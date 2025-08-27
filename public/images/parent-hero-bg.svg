@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="800" viewBox="0 0 1920 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Beautiful parent-themed gradient background -->
+    <linearGradient id="parentHeroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#be185d;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Subtle pattern overlay -->
+    <pattern id="parentDots" patternUnits="userSpaceOnUse" width="60" height="60">
+      <circle cx="30" cy="30" r="2" fill="rgba(255,255,255,0.1)"/>
+    </pattern>
+    
+    <!-- Flowing shapes -->
+    <filter id="parentBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+  </defs>
+  
+  <!-- Base gradient -->
+  <rect width="1920" height="800" fill="url(#parentHeroGradient)"/>
+  
+  <!-- Subtle dot pattern -->
+  <rect width="1920" height="800" fill="url(#parentDots)" opacity="0.3"/>
+  
+  <!-- Flowing abstract shapes representing family and connection -->
+  <ellipse cx="250" cy="180" rx="160" ry="110" fill="rgba(255,255,255,0.1)" filter="url(#parentBlur)"/>
+  <ellipse cx="1650" cy="620" rx="220" ry="130" fill="rgba(255,255,255,0.08)" filter="url(#parentBlur)"/>
+  <ellipse cx="850" cy="80" rx="140" ry="90" fill="rgba(255,255,255,0.12)" filter="url(#parentBlur)"/>
+  <ellipse cx="1150" cy="720" rx="190" ry="100" fill="rgba(255,255,255,0.09)" filter="url(#parentBlur)"/>
+  
+  <!-- Heart-themed geometric elements -->
+  <g opacity="0.1">
+    <path d="M150 250 C150 240 160 230 170 230 C180 230 190 240 190 250 C190 260 170 280 170 280 C170 280 150 260 150 250 Z" fill="white"/>
+    <path d="M1750 180 C1750 170 1760 160 1770 160 C1780 160 1790 170 1790 180 C1790 190 1770 210 1770 210 C1770 210 1750 190 1750 180 Z" fill="white"/>
+    <circle cx="1450" cy="130" r="30" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="350" cy="680" r="25" fill="none" stroke="white" stroke-width="2"/>
+  </g>
+  
+  <!-- Family-themed icons silhouettes -->
+  <g opacity="0.06" fill="white">
+    <!-- House/home icon -->
+    <path d="M180 520 L220 480 L260 520 L260 580 L180 580 Z M200 560 L240 560 M210 550 L230 550"/>
+    
+    <!-- Heart icon -->
+    <path d="M1420 320 C1420 310 1430 300 1440 300 C1450 300 1460 310 1460 320 C1460 340 1440 360 1440 360 C1440 360 1420 340 1420 320 Z"/>
+    
+    <!-- Family group -->
+    <circle cx="780" cy="580" r="15" fill="white"/>
+    <circle cx="810" cy="580" r="12" fill="white"/>
+    <circle cx="840" cy="585" r="8" fill="white"/>
+    <path d="M765 595 L795 595 M795 595 L825 595 M825 595 L855 600"/>
+  </g>
+</svg>
