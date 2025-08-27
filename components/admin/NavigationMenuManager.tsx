@@ -506,19 +506,20 @@ export default function NavigationMenuManager({ className, section }: Navigation
 
   return (
     <Card className={`bg-white/90 backdrop-blur-lg shadow-lg border-0 ${className}`}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Navigation className="w-5 h-5 text-indigo-600" />
-          導航選單管理
+      <CardHeader className="px-4 sm:px-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Navigation className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 shrink-0" />
+          <span className="hidden sm:inline">導航選單管理</span>
+          <span className="sm:hidden">選單管理</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
         {/* 載入狀態 */}
         {isLoading && (
-          <div className="flex items-center justify-center py-8">
+          <div className="flex items-center justify-center py-6 sm:py-8">
             <div className="flex items-center gap-2">
               <RefreshCw className="w-4 h-4 animate-spin" />
-              <span className="text-sm text-gray-600">載入導航選單中...</span>
+              <span className="text-sm text-gray-600">載入中...</span>
             </div>
           </div>
         )}
@@ -543,28 +544,33 @@ export default function NavigationMenuManager({ className, section }: Navigation
 
         {!isLoading && (
           <Tabs value={selectedSection} onValueChange={setSelectedSection} className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="all">全部</TabsTrigger>
-              <TabsTrigger value="header">主選單</TabsTrigger>
-              <TabsTrigger value="teachers">教師頁</TabsTrigger>
-              <TabsTrigger value="parents">家長頁</TabsTrigger>
-              <TabsTrigger value="footer">頁腳</TabsTrigger>
-              <TabsTrigger value="admin">管理</TabsTrigger>
-            </TabsList>
+            {/* 行動版使用滿版滿訊式 */}
+            <div className="w-full overflow-x-auto">
+              <TabsList className="grid w-full grid-cols-6 min-w-[420px] sm:min-w-0">
+                <TabsTrigger value="all" className="min-h-[44px] text-xs sm:text-sm px-2">全部</TabsTrigger>
+                <TabsTrigger value="header" className="min-h-[44px] text-xs sm:text-sm px-2">主選單</TabsTrigger>
+                <TabsTrigger value="teachers" className="min-h-[44px] text-xs sm:text-sm px-2">教師</TabsTrigger>
+                <TabsTrigger value="parents" className="min-h-[44px] text-xs sm:text-sm px-2">家長</TabsTrigger>
+                <TabsTrigger value="footer" className="min-h-[44px] text-xs sm:text-sm px-2">頁腳</TabsTrigger>
+                <TabsTrigger value="admin" className="min-h-[44px] text-xs sm:text-sm px-2">管理</TabsTrigger>
+              </TabsList>
+            </div>
             
-            <TabsContent value={selectedSection} className="space-y-4 mt-6">
+            <TabsContent value={selectedSection} className="space-y-4 mt-4 sm:mt-6">
               {/* 新增按鈕 */}
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {selectedSection === 'all' ? '所有導航項目' : `${selectedSection} 區域導航`}
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                  <span className="hidden sm:inline">{selectedSection === 'all' ? '所有導航項目' : `${selectedSection} 區域導航`}</span>
+                  <span className="sm:hidden">{selectedSection === 'all' ? '所有項目' : `${selectedSection} 區域`}</span>
                 </h3>
                 <Button
                   onClick={handleCreateNew}
                   disabled={isSaving || editingItem !== null}
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto min-h-[44px]"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  新增導航項目
+                  <Plus className="w-4 h-4 mr-2 shrink-0" />
+                  <span className="hidden sm:inline">新增導航項目</span>
+                  <span className="sm:hidden">新增</span>
                 </Button>
               </div>
 
@@ -573,50 +579,53 @@ export default function NavigationMenuManager({ className, section }: Navigation
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-blue-50 border border-blue-200 rounded-lg p-6"
+                  className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6"
                 >
-                  <h4 className="text-lg font-medium text-blue-900 mb-4">
+                  <h4 className="text-base sm:text-lg font-medium text-blue-900 mb-4">
                     {isCreatingNew ? '新增導航項目' : '編輯導航項目'}
                   </h4>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="label">顯示名稱 *</Label>
+                      <Label htmlFor="label" className="text-sm font-medium">顯示名稱 *</Label>
                       <Input
                         id="label"
                         value={editedItem.label || ''}
                         onChange={(e) => setEditedItem(prev => ({ ...prev, label: e.target.value }))}
                         placeholder="例：Home"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="key">系統鍵值 *</Label>
+                      <Label htmlFor="key" className="text-sm font-medium">系統鍵值 *</Label>
                       <Input
                         id="key"
                         value={editedItem.key || ''}
                         onChange={(e) => setEditedItem(prev => ({ ...prev, key: e.target.value }))}
                         placeholder="例：header_home"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="href">連結位址 *</Label>
+                      <Label htmlFor="href" className="text-sm font-medium">連結位址 *</Label>
                       <Input
                         id="href"
                         value={editedItem.href || ''}
                         onChange={(e) => setEditedItem(prev => ({ ...prev, href: e.target.value }))}
                         placeholder="例：/teachers 或 #information"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="section">所屬區域 *</Label>
+                      <Label htmlFor="section" className="text-sm font-medium">所屬區域 *</Label>
                       <Select 
                         value={editedItem.section} 
                         onValueChange={(value) => setEditedItem(prev => ({ ...prev, section: value as any }))}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="min-h-[44px] text-sm sm:text-base">
                           <SelectValue placeholder="選擇區域" />
                         </SelectTrigger>
                         <SelectContent>
@@ -630,33 +639,35 @@ export default function NavigationMenuManager({ className, section }: Navigation
                     </div>
 
                     <div>
-                      <Label htmlFor="icon">圖示名稱</Label>
+                      <Label htmlFor="icon" className="text-sm font-medium">圖示名稱</Label>
                       <Input
                         id="icon"
                         value={editedItem.icon || ''}
                         onChange={(e) => setEditedItem(prev => ({ ...prev, icon: e.target.value }))}
                         placeholder="例：Home, Users, FileText"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="order">顯示順序</Label>
+                      <Label htmlFor="order" className="text-sm font-medium">顯示順序</Label>
                       <Input
                         id="order"
                         type="number"
                         value={editedItem.order || 1}
                         onChange={(e) => setEditedItem(prev => ({ ...prev, order: parseInt(e.target.value) || 1 }))}
                         min="1"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="requiredRole">權限要求</Label>
+                      <Label htmlFor="requiredRole" className="text-sm font-medium">權限要求</Label>
                       <Select 
                         value={editedItem.requiredRole || 'null'} 
                         onValueChange={(value) => setEditedItem(prev => ({ ...prev, requiredRole: value === 'null' ? null : value as any }))}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="min-h-[44px] text-sm sm:text-base">
                           <SelectValue placeholder="選擇權限" />
                         </SelectTrigger>
                         <SelectContent>
@@ -668,14 +679,14 @@ export default function NavigationMenuManager({ className, section }: Navigation
                       </Select>
                     </div>
 
-                    <div className="flex items-center space-x-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="flex items-center space-x-2">
                         <Switch
                           id="isVisible"
                           checked={editedItem.isVisible || false}
                           onCheckedChange={(checked) => setEditedItem(prev => ({ ...prev, isVisible: checked }))}
                         />
-                        <Label htmlFor="isVisible">顯示</Label>
+                        <Label htmlFor="isVisible" className="text-sm font-medium">顯示</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -684,7 +695,7 @@ export default function NavigationMenuManager({ className, section }: Navigation
                           checked={editedItem.isExternal || false}
                           onCheckedChange={(checked) => setEditedItem(prev => ({ ...prev, isExternal: checked }))}
                         />
-                        <Label htmlFor="isExternal">外部連結</Label>
+                        <Label htmlFor="isExternal" className="text-sm font-medium">外部連結</Label>
                       </div>
 
                       <div className="flex items-center space-x-2">
@@ -693,35 +704,37 @@ export default function NavigationMenuManager({ className, section }: Navigation
                           checked={editedItem.targetBlank || false}
                           onCheckedChange={(checked) => setEditedItem(prev => ({ ...prev, targetBlank: checked }))}
                         />
-                        <Label htmlFor="targetBlank">新分頁</Label>
+                        <Label htmlFor="targetBlank" className="text-sm font-medium">新分頁</Label>
                       </div>
                     </div>
 
-                    <div className="md:col-span-2">
-                      <Label htmlFor="description">描述</Label>
+                    <div className="lg:col-span-2">
+                      <Label htmlFor="description" className="text-sm font-medium">描述</Label>
                       <Textarea
                         id="description"
                         value={editedItem.description || ''}
                         onChange={(e) => setEditedItem(prev => ({ ...prev, description: e.target.value }))}
                         placeholder="簡要描述此導航項目的用途"
                         rows={2}
+                        className="min-h-[44px] text-sm sm:text-base resize-none"
                       />
                     </div>
                   </div>
 
-                  <div className="flex gap-3 mt-6">
+                  <div className="flex flex-col sm:flex-row gap-3 mt-6">
                     <Button
                       onClick={() => handleSaveItem(editingItem)}
                       disabled={isSaving}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 w-full sm:w-auto min-h-[44px]"
                     >
-                      <Save className="w-4 h-4 mr-2" />
+                      <Save className="w-4 h-4 mr-2 shrink-0" />
                       {isSaving ? '保存中...' : '保存'}
                     </Button>
                     <Button
                       variant="outline"
                       onClick={handleCancelEdit}
                       disabled={isSaving}
+                      className="w-full sm:w-auto min-h-[44px]"
                     >
                       取消
                     </Button>
@@ -732,111 +745,109 @@ export default function NavigationMenuManager({ className, section }: Navigation
               {/* 導航項目列表 */}
               <div className="space-y-3">
                 {filteredItems.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Navigation className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>此區域暫無導航項目</p>
+                  <div className="text-center py-6 sm:py-8 text-gray-500">
+                    <Navigation className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-sm sm:text-base">此區域暫無導航項目</p>
                   </div>
                 ) : (
-                  filteredItems.map((item) => {
-                    const SectionIcon = getSectionIcon(item.section)
-                    
-                    return (
-                      <motion.div
-                        key={item.id}
-                        layout
-                        className={`border border-gray-200 rounded-lg p-4 bg-white ${!item.isVisible ? 'opacity-60' : ''}`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <SectionIcon className="w-5 h-5 text-gray-600" />
-                              <h4 className="font-medium text-gray-900">{item.label}</h4>
-                              <Badge className={getSectionColor(item.section)}>
-                                {item.section}
-                              </Badge>
-                              {!item.isVisible && (
-                                <Badge variant="secondary" className="bg-gray-100 text-gray-600">
-                                  隱藏
+                  <div className="space-y-3 overflow-x-auto">
+                    {filteredItems.map((item) => {
+                      const SectionIcon = getSectionIcon(item.section)
+                      
+                      return (
+                        <motion.div
+                          key={item.id}
+                          layout
+                          className={`border border-gray-200 rounded-lg p-3 sm:p-4 bg-white min-w-0 ${!item.isVisible ? 'opacity-60' : ''}`}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                <SectionIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 shrink-0" />
+                                <h4 className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.label}</h4>
+                                <Badge className={`${getSectionColor(item.section)} text-xs shrink-0`}>
+                                  {item.section}
                                 </Badge>
-                              )}
-                              {item.isExternal && (
-                                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                                  <ExternalLink className="w-3 h-3 mr-1" />
-                                  外部
-                                </Badge>
-                              )}
-                              {item.requiredRole && (
-                                <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                                  {item.requiredRole}
-                                </Badge>
-                              )}
-                            </div>
-                            
-                            <div className="text-sm text-gray-600 mb-2">
-                              <strong>連結：</strong> {item.href}
-                            </div>
-                            
-                            {item.description && (
-                              <div className="text-xs text-gray-500 mb-2">
-                                {item.description}
+                                {!item.isVisible && (
+                                  <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs">
+                                    隱藏
+                                  </Badge>
+                                )}
+                                {item.isExternal && (
+                                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                    <ExternalLink className="w-3 h-3 mr-1" />
+                                    <span className="hidden sm:inline">外部</span>
+                                  </Badge>
+                                )}
+                                {item.requiredRole && (
+                                  <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
+                                    {item.requiredRole}
+                                  </Badge>
+                                )}
                               </div>
-                            )}
-                            
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
-                              <span>順序：{item.order}</span>
-                              {item.icon && <span>圖示：{item.icon}</span>}
-                              {item.targetBlank && <span>新分頁開啟</span>}
+                              
+                              <div className="text-xs sm:text-sm text-gray-600 mb-2 break-all">
+                                <strong>連結：</strong> {item.href}
+                              </div>
+                              
+                              {item.description && (
+                                <div className="text-xs text-gray-500 mb-2">
+                                  {item.description}
+                                </div>
+                              )}
+                              
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-gray-500">
+                                <span>順序：{item.order}</span>
+                                {item.icon && <span className="hidden sm:block">圖示：{item.icon}</span>}
+                                {item.targetBlank && <span className="hidden sm:block">新分頁開啟</span>}
+                              </div>
                             </div>
-                          </div>
 
-                          <div className="flex items-center gap-2 ml-4">
-                            {/* 順序調整按鈕 */}
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                              {/* 順序調整按鈕 */}
+                              <div className="flex sm:flex-col gap-1 justify-center">
+                                <Button
+                                  variant="outline"
+                                  onClick={() => handleReorderItem(item.id, 'up')}
+                                  disabled={editingItem !== null || isSaving || item.order === 1}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <ChevronUp className="w-3 h-3" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => handleReorderItem(item.id, 'down')}
+                                  disabled={editingItem !== null || isSaving}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <ChevronDown className="w-3 h-3" />
+                                </Button>
+                              </div>
+
                               <Button
-                                size="sm"
                                 variant="outline"
-                                onClick={() => handleReorderItem(item.id, 'up')}
-                                disabled={editingItem !== null || isSaving || item.order === 1}
-                                className="h-6 w-6 p-0"
-                              >
-                                <ChevronUp className="w-3 h-3" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleReorderItem(item.id, 'down')}
+                                onClick={() => handleEditItem(item.id)}
                                 disabled={editingItem !== null || isSaving}
-                                className="h-6 w-6 p-0"
+                                className="gap-1 min-h-[44px] text-sm w-full sm:w-auto"
                               >
-                                <ChevronDown className="w-3 h-3" />
+                                <Edit className="w-3 h-3" />
+                                編輯
+                              </Button>
+                              <Button
+                                variant="outline"
+                                onClick={() => handleDeleteItem(item.id)}
+                                disabled={editingItem !== null || isSaving}
+                                className="gap-1 border-red-300 text-red-600 hover:bg-red-50 min-h-[44px] text-sm w-full sm:w-auto"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                刪除
                               </Button>
                             </div>
-
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEditItem(item.id)}
-                              disabled={editingItem !== null || isSaving}
-                              className="gap-1"
-                            >
-                              <Edit className="w-3 h-3" />
-                              編輯
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteItem(item.id)}
-                              disabled={editingItem !== null || isSaving}
-                              className="gap-1 border-red-300 text-red-600 hover:bg-red-50"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                              刪除
-                            </Button>
                           </div>
-                        </div>
-                      </motion.div>
-                    )
-                  })
+                        </motion.div>
+                      )
+                    })}
+                  </div>
                 )}
               </div>
             </TabsContent>
@@ -844,15 +855,15 @@ export default function NavigationMenuManager({ className, section }: Navigation
         )}
 
         {/* 使用說明 */}
-        <div className="bg-blue-50 rounded-lg p-4">
+        <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
           <h5 className="text-sm font-medium text-blue-900 mb-2">使用說明</h5>
           <ul className="text-xs text-blue-800 space-y-1">
             <li>• 各區域導航項目可單獨管理顯示和順序</li>
             <li>• 權限要求決定哪些用戶可以看到該項目</li>
-            <li>• 外部連結會在新分頁開啟</li>
+            <li className="hidden sm:block">• 外部連結會在新分頁開啟</li>
             <li>• 順序數值決定在選單中的顯示位置</li>
-            <li>• 隱藏的項目不會在前台頁面顯示</li>
-            <li>• 圖示名稱使用 Lucide React 圖示庫</li>
+            <li className="hidden sm:block">• 隱藏的項目不會在前台頁面顯示</li>
+            <li className="hidden sm:block">• 圖示名稱使用 Lucide React 圖示庫</li>
           </ul>
         </div>
       </CardContent>

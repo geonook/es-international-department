@@ -1236,16 +1236,16 @@ export default function AdminPage() {
         </div>
       </motion.header>
 
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         {/* Sidebar */}
         <motion.aside
-          className="w-64 bg-white/80 backdrop-blur-lg shadow-lg border-r border-white/20 min-h-screen"
+          className="w-full lg:w-64 bg-white/80 backdrop-blur-lg shadow-lg border-b lg:border-r lg:border-b-0 border-white/20 lg:min-h-screen"
           initial={{ x: -100 }}
           animate={{ x: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           <nav className="p-4">
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-2 lg:block">
               {[
                 { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
                 // 所有用戶都可以看到 Teachers' Corner、Parents' Corner、Feedback 和 Message Board
@@ -1287,7 +1287,7 @@ export default function AdminPage() {
         </motion.aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 lg:p-8 min-w-0">
           {error && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -1345,7 +1345,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
                   {[
                     { title: 'Total Teachers', value: dashboardStats.totalTeachers.toString(), icon: GraduationCap, color: 'blue' },
                     { title: 'Total Parents', value: dashboardStats.totalParents.toString(), icon: Users, color: 'purple' },
@@ -1377,7 +1377,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -1462,7 +1462,7 @@ export default function AdminPage() {
                 {/* System Links */}
                 <div className="mt-8">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Access</h3>
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                     <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0 overflow-hidden group hover:shadow-xl transition-all duration-300">
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
@@ -1516,7 +1516,7 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage content for the teachers' platform</p>
                 </div>
 
-                <div className="grid gap-8">
+                <div className="grid gap-4 lg:gap-8">
                   {/* Announcements Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">
@@ -1731,7 +1731,7 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage content for the parents' platform</p>
                 </div>
 
-                <div className="grid gap-8">
+                <div className="grid gap-4 lg:gap-8">
                   {/* Newsletter Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">
@@ -1942,7 +1942,7 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage user feedback and support requests</p>
                 </div>
 
-                <div className="grid gap-8">
+                <div className="grid gap-4 lg:gap-8">
                   {/* Feedback Forms Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">
@@ -2051,7 +2051,7 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage discussion posts and announcements</p>
                 </div>
 
-                <div className="grid gap-8">
+                <div className="grid gap-4 lg:gap-8">
                   {/* Message Board Posts Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">
@@ -2252,7 +2252,7 @@ export default function AdminPage() {
                   <p className="text-gray-600">Configure system preferences and options</p>
                 </div>
 
-                <div className="grid gap-6">
+                <div className="grid gap-4 lg:gap-6">
                   {/* 主視覺圖片管理 */}
                   <HeroImageManager showPreview={true} />
                   

@@ -387,19 +387,20 @@ export default function ContactInfoManager({ className, department }: ContactInf
 
   return (
     <Card className={`bg-white/90 backdrop-blur-lg shadow-lg border-0 ${className}`}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Phone className="w-5 h-5 text-indigo-600" />
-          聯絡資訊管理
+      <CardHeader className="px-4 sm:px-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 shrink-0" />
+          <span className="hidden sm:inline">聯絡資訊管理</span>
+          <span className="sm:hidden">聯絡管理</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
         {/* 載入狀態 */}
         {isLoading && (
-          <div className="flex items-center justify-center py-8">
+          <div className="flex items-center justify-center py-6 sm:py-8">
             <div className="flex items-center gap-2">
               <RefreshCw className="w-4 h-4 animate-spin" />
-              <span className="text-sm text-gray-600">載入聯絡資訊中...</span>
+              <span className="text-sm text-gray-600">載入中...</span>
             </div>
           </div>
         )}
@@ -424,27 +425,32 @@ export default function ContactInfoManager({ className, department }: ContactInf
 
         {!isLoading && (
           <Tabs value={selectedDepartment} onValueChange={setSelectedDepartment} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="all">全部</TabsTrigger>
-              <TabsTrigger value="general">一般</TabsTrigger>
-              <TabsTrigger value="teachers">教師</TabsTrigger>
-              <TabsTrigger value="parents">家長</TabsTrigger>
-              <TabsTrigger value="admin">管理</TabsTrigger>
-            </TabsList>
+            {/* 行動版使用滿版滿訊式 */}
+            <div className="w-full overflow-x-auto">
+              <TabsList className="grid w-full grid-cols-5 min-w-[320px] sm:min-w-0">
+                <TabsTrigger value="all" className="min-h-[44px] text-xs sm:text-sm">全部</TabsTrigger>
+                <TabsTrigger value="general" className="min-h-[44px] text-xs sm:text-sm">一般</TabsTrigger>
+                <TabsTrigger value="teachers" className="min-h-[44px] text-xs sm:text-sm">教師</TabsTrigger>
+                <TabsTrigger value="parents" className="min-h-[44px] text-xs sm:text-sm">家長</TabsTrigger>
+                <TabsTrigger value="admin" className="min-h-[44px] text-xs sm:text-sm">管理</TabsTrigger>
+              </TabsList>
+            </div>
             
-            <TabsContent value={selectedDepartment} className="space-y-4 mt-6">
+            <TabsContent value={selectedDepartment} className="space-y-4 mt-4 sm:mt-6">
               {/* 新增按鈕 */}
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {selectedDepartment === 'all' ? '所有聯絡資訊' : `${selectedDepartment} 部門聯絡資訊`}
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                  <span className="hidden sm:inline">{selectedDepartment === 'all' ? '所有聯絡資訊' : `${selectedDepartment} 部門聯絡資訊`}</span>
+                  <span className="sm:hidden">{selectedDepartment === 'all' ? '所有資訊' : `${selectedDepartment} 部門`}</span>
                 </h3>
                 <Button
                   onClick={handleCreateNew}
                   disabled={isSaving || editingContact !== null}
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto min-h-[44px]"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  新增聯絡資訊
+                  <Plus className="w-4 h-4 mr-2 shrink-0" />
+                  <span className="hidden sm:inline">新增聯絡資訊</span>
+                  <span className="sm:hidden">新增</span>
                 </Button>
               </div>
 
@@ -453,40 +459,42 @@ export default function ContactInfoManager({ className, department }: ContactInf
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-blue-50 border border-blue-200 rounded-lg p-6"
+                  className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6"
                 >
-                  <h4 className="text-lg font-medium text-blue-900 mb-4">
+                  <h4 className="text-base sm:text-lg font-medium text-blue-900 mb-4">
                     {isCreatingNew ? '新增聯絡資訊' : '編輯聯絡資訊'}
                   </h4>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="label">名稱 *</Label>
+                      <Label htmlFor="label" className="text-sm font-medium">名稱 *</Label>
                       <Input
                         id="label"
                         value={editedContact.label || ''}
                         onChange={(e) => setEditedContact(prev => ({ ...prev, label: e.target.value }))}
                         placeholder="例：學校主要信箱"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="key">系統鍵值 *</Label>
+                      <Label htmlFor="key" className="text-sm font-medium">系統鍵值 *</Label>
                       <Input
                         id="key"
                         value={editedContact.key || ''}
                         onChange={(e) => setEditedContact(prev => ({ ...prev, key: e.target.value }))}
                         placeholder="例：general_main_email"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="type">類型 *</Label>
+                      <Label htmlFor="type" className="text-sm font-medium">類型 *</Label>
                       <Select 
                         value={editedContact.type} 
                         onValueChange={(value) => setEditedContact(prev => ({ ...prev, type: value as any }))}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="min-h-[44px] text-sm sm:text-base">
                           <SelectValue placeholder="選擇類型" />
                         </SelectTrigger>
                         <SelectContent>
@@ -501,12 +509,12 @@ export default function ContactInfoManager({ className, department }: ContactInf
                     </div>
 
                     <div>
-                      <Label htmlFor="department">部門 *</Label>
+                      <Label htmlFor="department" className="text-sm font-medium">部門 *</Label>
                       <Select 
                         value={editedContact.department} 
                         onValueChange={(value) => setEditedContact(prev => ({ ...prev, department: value as any }))}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="min-h-[44px] text-sm sm:text-base">
                           <SelectValue placeholder="選擇部門" />
                         </SelectTrigger>
                         <SelectContent>
@@ -519,41 +527,44 @@ export default function ContactInfoManager({ className, department }: ContactInf
                       </Select>
                     </div>
 
-                    <div className="md:col-span-2">
-                      <Label htmlFor="value">聯絡資訊內容 *</Label>
+                    <div className="lg:col-span-2">
+                      <Label htmlFor="value" className="text-sm font-medium">聯絡資訊內容 *</Label>
                       <Input
                         id="value"
                         value={editedContact.value || ''}
                         onChange={(e) => setEditedContact(prev => ({ ...prev, value: e.target.value }))}
                         placeholder="例：info@kcislk.ntpc.edu.tw"
+                        className="min-h-[44px] text-sm sm:text-base"
                       />
                     </div>
 
-                    <div className="md:col-span-2">
-                      <Label htmlFor="description">描述</Label>
+                    <div className="lg:col-span-2">
+                      <Label htmlFor="description" className="text-sm font-medium">描述</Label>
                       <Textarea
                         id="description"
                         value={editedContact.description || ''}
                         onChange={(e) => setEditedContact(prev => ({ ...prev, description: e.target.value }))}
                         placeholder="簡要描述此聯絡資訊的用途"
                         rows={2}
+                        className="min-h-[44px] text-sm sm:text-base resize-none"
                       />
                     </div>
                   </div>
 
-                  <div className="flex gap-3 mt-6">
+                  <div className="flex flex-col sm:flex-row gap-3 mt-6">
                     <Button
                       onClick={() => handleSaveContact(editingContact)}
                       disabled={isSaving}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 w-full sm:w-auto min-h-[44px]"
                     >
-                      <Save className="w-4 h-4 mr-2" />
+                      <Save className="w-4 h-4 mr-2 shrink-0" />
                       {isSaving ? '保存中...' : '保存'}
                     </Button>
                     <Button
                       variant="outline"
                       onClick={handleCancelEdit}
                       disabled={isSaving}
+                      className="w-full sm:w-auto min-h-[44px]"
                     >
                       取消
                     </Button>
@@ -564,80 +575,80 @@ export default function ContactInfoManager({ className, department }: ContactInf
               {/* 聯絡資訊列表 */}
               <div className="space-y-3">
                 {filteredContacts.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Phone className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>此部門暫無聯絡資訊</p>
+                  <div className="text-center py-6 sm:py-8 text-gray-500">
+                    <Phone className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-sm sm:text-base">此部門暫無聯絡資訊</p>
                   </div>
                 ) : (
-                  filteredContacts.map((contact) => {
-                    const ContactIcon = getContactIcon(contact.type)
-                    const DeptIcon = getDepartmentIcon(contact.department)
-                    
-                    return (
-                      <motion.div
-                        key={contact.id}
-                        layout
-                        className="border border-gray-200 rounded-lg p-4 bg-white"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <ContactIcon className="w-5 h-5 text-gray-600" />
-                              <h4 className="font-medium text-gray-900">{contact.label}</h4>
-                              <Badge className={getDepartmentColor(contact.department)}>
-                                <DeptIcon className="w-3 h-3 mr-1" />
-                                {contact.department}
-                              </Badge>
-                              {contact.isPublic && (
-                                <Badge variant="secondary" className="bg-green-100 text-green-800">
-                                  公開
+                  <div className="space-y-3 overflow-x-auto">
+                    {filteredContacts.map((contact) => {
+                      const ContactIcon = getContactIcon(contact.type)
+                      const DeptIcon = getDepartmentIcon(contact.department)
+                      
+                      return (
+                        <motion.div
+                          key={contact.id}
+                          layout
+                          className="border border-gray-200 rounded-lg p-3 sm:p-4 bg-white min-w-0"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                <ContactIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 shrink-0" />
+                                <h4 className="font-medium text-gray-900 text-sm sm:text-base truncate">{contact.label}</h4>
+                                <Badge className={`${getDepartmentColor(contact.department)} text-xs shrink-0`}>
+                                  <DeptIcon className="w-3 h-3 mr-1" />
+                                  {contact.department}
                                 </Badge>
-                              )}
-                            </div>
-                            
-                            <div className="text-sm text-gray-600 mb-2">
-                              <strong>內容：</strong> {contact.value}
-                            </div>
-                            
-                            {contact.description && (
-                              <div className="text-xs text-gray-500 mb-2">
-                                {contact.description}
+                                {contact.isPublic && (
+                                  <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                                    公開
+                                  </Badge>
+                                )}
                               </div>
-                            )}
-                            
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
-                              <span>類型：{contact.type}</span>
-                              <span>顯示位置：{contact.displayLocation.join(', ')}</span>
-                              <span>順序：{contact.order}</span>
+                              
+                              <div className="text-xs sm:text-sm text-gray-600 mb-2 break-all">
+                                <strong>內容：</strong> {contact.value}
+                              </div>
+                              
+                              {contact.description && (
+                                <div className="text-xs text-gray-500 mb-2">
+                                  {contact.description}
+                                </div>
+                              )}
+                              
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-gray-500">
+                                <span>類型：{contact.type}</span>
+                                <span className="hidden sm:block">顯示位置：{contact.displayLocation.join(', ')}</span>
+                                <span>順序：{contact.order}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                              <Button
+                                variant="outline"
+                                onClick={() => handleEditContact(contact.id)}
+                                disabled={editingContact !== null || isSaving}
+                                className="gap-1 min-h-[44px] text-sm w-full sm:w-auto"
+                              >
+                                <Edit className="w-3 h-3" />
+                                編輯
+                              </Button>
+                              <Button
+                                variant="outline"
+                                onClick={() => handleDeleteContact(contact.id)}
+                                disabled={editingContact !== null || isSaving}
+                                className="gap-1 border-red-300 text-red-600 hover:bg-red-50 min-h-[44px] text-sm w-full sm:w-auto"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                刪除
+                              </Button>
                             </div>
                           </div>
-
-                          <div className="flex items-center gap-2 ml-4">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEditContact(contact.id)}
-                              disabled={editingContact !== null || isSaving}
-                              className="gap-1"
-                            >
-                              <Edit className="w-3 h-3" />
-                              編輯
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteContact(contact.id)}
-                              disabled={editingContact !== null || isSaving}
-                              className="gap-1 border-red-300 text-red-600 hover:bg-red-50"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                              刪除
-                            </Button>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )
-                  })
+                        </motion.div>
+                      )
+                    })}
+                  </div>
                 )}
               </div>
             </TabsContent>
@@ -645,14 +656,14 @@ export default function ContactInfoManager({ className, department }: ContactInf
         )}
 
         {/* 使用說明 */}
-        <div className="bg-blue-50 rounded-lg p-4">
+        <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
           <h5 className="text-sm font-medium text-blue-900 mb-2">使用說明</h5>
           <ul className="text-xs text-blue-800 space-y-1">
             <li>• 各部門聯絡資訊可在對應頁面顯示</li>
             <li>• 公開聯絡資訊會顯示在前台頁面</li>
-            <li>• 系統鍵值用於程式識別，不可重複</li>
+            <li className="hidden sm:block">• 系統鍵值用於程式識別，不可重複</li>
             <li>• 順序數值決定顯示順序</li>
-            <li>• 緊急聯絡資訊會在所有頁面顯示</li>
+            <li className="hidden sm:block">• 緊急聯絡資訊會在所有頁面顯示</li>
           </ul>
         </div>
       </CardContent>

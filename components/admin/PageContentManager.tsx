@@ -420,16 +420,17 @@ export default function PageContentManager({ className, page }: PageContentManag
 
   return (
     <Card className={`bg-white/90 backdrop-blur-lg shadow-lg border-0 ${className}`}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-indigo-600" />
-          頁面內容管理 - Teachers 頁面
+      <CardHeader className="px-4 sm:px-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 shrink-0" />
+          <span className="hidden sm:inline">頁面內容管理 - Teachers 頁面</span>
+          <span className="sm:hidden">內容管理</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
         {/* 載入狀態 */}
         {isLoading && (
-          <div className="flex items-center justify-center py-8">
+          <div className="flex items-center justify-center py-6 sm:py-8">
             <div className="flex items-center gap-2">
               <RefreshCw className="w-4 h-4 animate-spin" />
               <span className="text-sm text-gray-600">載入內容中...</span>
@@ -458,17 +459,18 @@ export default function PageContentManager({ className, page }: PageContentManag
         {/* 批量操作按鈕 */}
         {Object.keys(editedContent).length > 0 && (
           <motion.div 
-            className="flex gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200"
+            className="flex flex-col sm:flex-row gap-3 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
             <Button
               onClick={handleBulkSave}
               disabled={isSaving}
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto min-h-[44px] text-sm sm:text-base"
             >
-              <Save className="w-4 h-4 mr-2" />
-              {isSaving ? '保存中...' : `保存所有更改 (${Object.keys(editedContent).length})`}
+              <Save className="w-4 h-4 mr-2 shrink-0" />
+              <span className="hidden sm:inline">{isSaving ? '保存中...' : `保存所有更改 (${Object.keys(editedContent).length})`}</span>
+              <span className="sm:hidden">{isSaving ? '保存中...' : `保存 (${Object.keys(editedContent).length})`}</span>
             </Button>
             <Button
               variant="outline"
@@ -477,8 +479,10 @@ export default function PageContentManager({ className, page }: PageContentManag
                 setEditedContent({})
               }}
               disabled={isSaving}
+              className="w-full sm:w-auto min-h-[44px] text-sm sm:text-base"
             >
-              取消所有更改
+              <span className="hidden sm:inline">取消所有更改</span>
+              <span className="sm:hidden">取消</span>
             </Button>
           </motion.div>
         )}
@@ -487,36 +491,36 @@ export default function PageContentManager({ className, page }: PageContentManag
         {!isLoading && (
           <Tabs value={selectedPage} onValueChange={setSelectedPage} className="w-full">
             <TabsList className="grid w-full grid-cols-1">
-              <TabsTrigger value="teachers">Teachers 頁面</TabsTrigger>
+              <TabsTrigger value="teachers" className="min-h-[44px]">Teachers 頁面</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="teachers" className="space-y-6 mt-6">
+            <TabsContent value="teachers" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
               {Object.entries(groupedSections).map(([sectionKey, sections]) => {
                 const SectionIcon = sectionIcons[sectionKey as keyof typeof sectionIcons] || Settings
                 const sectionLabel = sectionLabels[sectionKey as keyof typeof sectionLabels] || sectionKey
                 
                 return (
                   <Card key={sectionKey} className="overflow-hidden">
-                    <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 pb-3">
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <SectionIcon className="w-5 h-5 text-gray-600" />
-                        {sectionLabel}
-                        <Badge variant="outline" className="ml-auto">
-                          {sections.length} 項目
+                    <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 pb-3 px-4 sm:px-6">
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <SectionIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 shrink-0" />
+                        <span className="flex-1 truncate">{sectionLabel}</span>
+                        <Badge variant="outline" className="shrink-0 text-xs">
+                          {sections.length}
                         </Badge>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-4 space-y-4">
+                    <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
                       {sections.map((section) => (
-                        <div key={section.id} className="border border-gray-200 rounded-lg p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h4 className="font-medium text-gray-900">{section.title}</h4>
+                        <div key={section.id} className="border border-gray-200 rounded-lg p-3 sm:p-4">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 gap-2">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-gray-900 text-sm sm:text-base truncate">{section.title}</h4>
                               {section.description && (
-                                <p className="text-sm text-gray-500 mt-1">{section.description}</p>
+                                <p className="text-xs sm:text-sm text-gray-500 mt-1">{section.description}</p>
                               )}
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 shrink-0">
                               <Badge variant="secondary" className="text-xs">
                                 {section.type}
                               </Badge>
@@ -539,7 +543,7 @@ export default function PageContentManager({ className, page }: PageContentManag
                                   }))}
                                   maxLength={section.maxLength}
                                   rows={4}
-                                  className="resize-none"
+                                  className="resize-none text-sm sm:text-base min-h-[44px]"
                                 />
                               ) : (
                                 <Input
@@ -550,6 +554,7 @@ export default function PageContentManager({ className, page }: PageContentManag
                                     [section.id]: e.target.value
                                   }))}
                                   maxLength={section.maxLength}
+                                  className="text-sm sm:text-base min-h-[44px]"
                                 />
                               )}
                               
@@ -561,21 +566,20 @@ export default function PageContentManager({ className, page }: PageContentManag
                                 </div>
                               )}
                               
-                              <div className="flex gap-2">
+                              <div className="flex flex-col sm:flex-row gap-2">
                                 <Button
-                                  size="sm"
                                   onClick={() => handleSaveSection(section.id)}
                                   disabled={isSaving}
-                                  className="bg-green-600 hover:bg-green-700"
+                                  className="bg-green-600 hover:bg-green-700 w-full sm:w-auto min-h-[44px] text-sm sm:text-base"
                                 >
-                                  <Save className="w-3 h-3 mr-1" />
+                                  <Save className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                   保存
                                 </Button>
                                 <Button
-                                  size="sm"
                                   variant="outline"
                                   onClick={handleCancelEdit}
                                   disabled={isSaving}
+                                  className="w-full sm:w-auto min-h-[44px] text-sm sm:text-base"
                                 >
                                   取消
                                 </Button>
@@ -583,19 +587,18 @@ export default function PageContentManager({ className, page }: PageContentManag
                             </div>
                           ) : (
                             <div className="space-y-3">
-                              <div className="p-3 bg-gray-50 rounded border">
-                                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                              <div className="p-3 bg-gray-50 rounded border overflow-auto">
+                                <p className="text-xs sm:text-sm text-gray-700 whitespace-pre-wrap break-words">
                                   {section.content || <span className="text-gray-400 italic">空白內容</span>}
                                 </p>
                               </div>
                               <div className="flex justify-end">
                                 <Button
-                                  size="sm"
                                   variant="outline"
                                   onClick={() => handleEditSection(section.id)}
-                                  className="gap-1"
+                                  className="gap-1 min-h-[44px] text-sm sm:text-base px-4 sm:px-6"
                                 >
-                                  <Edit className="w-3 h-3" />
+                                  <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                                   編輯
                                 </Button>
                               </div>
@@ -612,14 +615,14 @@ export default function PageContentManager({ className, page }: PageContentManag
         )}
 
         {/* 使用說明 */}
-        <div className="bg-blue-50 rounded-lg p-4">
+        <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
           <h5 className="text-sm font-medium text-blue-900 mb-2">使用說明</h5>
           <ul className="text-xs text-blue-800 space-y-1">
             <li>• 點擊「編輯」按鈕修改內容</li>
             <li>• 必填項目必須有內容才能保存</li>
             <li>• 支援批量編輯和保存</li>
-            <li>• 修改後立即生效於對應頁面</li>
-            <li>• 建議定期備份重要內容</li>
+            <li className="hidden sm:block">• 修改後立即生效於對應頁面</li>
+            <li className="hidden sm:block">• 建議定期備份重要內容</li>
           </ul>
         </div>
       </CardContent>
