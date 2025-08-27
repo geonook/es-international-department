@@ -717,10 +717,10 @@ export default function TeachersPage() {
                           </div>
                           <motion.div 
                             className="flex items-center justify-center py-2"
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                            animate={{ scale: [1, 1.1, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
                           >
-                            <MessageSquare className="w-6 h-6 text-blue-500" />
+                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
                             <span className="text-xs text-blue-600 ml-2 font-medium">Loading messages...</span>
                           </motion.div>
                         </motion.div>
