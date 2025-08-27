@@ -40,7 +40,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState, useCallback } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { useParentHeroImageSetting } from "@/hooks/useSystemSettings"
 import MobileNav from "@/components/ui/mobile-nav"
@@ -89,6 +89,9 @@ export default function ParentsPage() {
   const [loadingNotifications, setLoadingNotifications] = useState(true)
   const [loadingEvents, setLoadingEvents] = useState(true)
   const [error, setError] = useState('')
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [celebrationMessage, setCelebrationMessage] = useState('')
+  const [heartClicks, setHeartClicks] = useState(0)
   const { user, loading: authLoading } = useAuth()
   
   // 獲取父母專用的動態主視覺圖片
@@ -101,6 +104,39 @@ export default function ParentsPage() {
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
   const opacity = useTransform(scrollY, [0, 300], [1, 0.3])
+
+  // Easter egg: Heart click celebration
+  const handleHeartClick = useCallback(() => {
+    setHeartClicks(prev => prev + 1)
+    const messages = [
+      "Your family is amazing! 💕",
+      "We love having you in our school community! 🌟",
+      "Thank you for being such wonderful parents! 🎉",
+      "Your child is lucky to have you! 💫",
+      "Together we make learning magical! ✨",
+      "Family love makes everything better! 💖"
+    ]
+    setCelebrationMessage(messages[Math.floor(Math.random() * messages.length)])
+    setShowConfetti(true)
+    setTimeout(() => {
+      setShowConfetti(false)
+      setCelebrationMessage('')
+    }, 3000)
+  }, [])
+
+  // Success celebration when data loads
+  const celebrateDataLoad = useCallback(() => {
+    if (!loadingNotifications && !loadingEvents && !error) {
+      setTimeout(() => {
+        setCelebrationMessage("Welcome back! Everything is ready for you 🎉")
+        setShowConfetti(true)
+        setTimeout(() => {
+          setShowConfetti(false)
+          setCelebrationMessage('')
+        }, 2500)
+      }, 500)
+    }
+  }, [loadingNotifications, loadingEvents, error])
 
   // Fetch notifications data
   const fetchNotifications = async () => {
@@ -154,6 +190,10 @@ export default function ParentsPage() {
     }
   }, [user, authLoading])
 
+  useEffect(() => {
+    celebrateDataLoad()
+  }, [celebrateDataLoad])
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -179,10 +219,79 @@ export default function ParentsPage() {
       repeat: Number.POSITIVE_INFINITY,
       ease: "easeInOut",
     },
-  }
+  };
+
+  const breathingVariants = {
+    animate: {
+      scale: [1, 1.02, 1],
+    },
+    transition: {
+      duration: 4,
+      repeat: Number.POSITIVE_INFINITY,
+      ease: "easeInOut",
+    },
+  };
+
+  const sparkleVariants = {
+    animate: {
+      scale: [0, 1, 0],
+      rotate: [0, 180, 360],
+      opacity: [0, 1, 0],
+    },
+    transition: {
+      duration: 2,
+      repeat: Number.POSITIVE_INFINITY,
+      ease: "easeInOut",
+      delay: Math.random() * 2,
+    },
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-100 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-100 overflow-hidden relative">
+      {/* Confetti Effect */}
+      {showConfetti && (
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+          {[...Array(50)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 rounded-full"
+              style={{
+                backgroundColor: ['#ec4899', '#8b5cf6', '#06d6a0', '#fbbf24', '#ef4444'][i % 5],
+                left: `${Math.random() * 100}%`,
+                top: '-10px',
+              }}
+              animate={{
+                y: [0, window.innerHeight + 100],
+                x: [0, (Math.random() - 0.5) * 200],
+                rotate: [0, 360],
+                opacity: [1, 0],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                ease: "easeOut",
+                delay: i * 0.02,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Celebration Message */}
+      {celebrationMessage && (
+        <motion.div
+          className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full shadow-2xl border-2 border-white/20"
+          initial={{ y: -100, opacity: 0, scale: 0.8 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: -100, opacity: 0, scale: 0.8 }}
+          transition={{ type: "spring", damping: 15, stiffness: 300 }}
+        >
+          <div className="flex items-center gap-3 text-lg font-semibold">
+            <Heart className="w-6 h-6" />
+            <span>{celebrationMessage}</span>
+            <Sparkles className="w-6 h-6" />
+          </div>
+        </motion.div>
+      )}
       {/* Enhanced Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -210,9 +319,9 @@ export default function ParentsPage() {
           }}
         />
         
-        {/* Additional floating hearts */}
+        {/* Interactive floating hearts */}
         <motion.div
-          className="absolute top-1/4 left-1/4 opacity-10"
+          className="absolute top-1/4 left-1/4 opacity-10 cursor-pointer hover:opacity-30 transition-opacity"
           animate={{
             y: [0, -30, 0],
             rotate: [0, 360],
@@ -222,11 +331,14 @@ export default function ParentsPage() {
             repeat: Number.POSITIVE_INFINITY,
             ease: "easeInOut",
           }}
+          whileHover={{ scale: 1.2, opacity: 0.4 }}
+          whileTap={{ scale: 0.8 }}
+          onClick={handleHeartClick}
         >
           <Heart className="w-12 h-12 text-pink-500" />
         </motion.div>
         <motion.div
-          className="absolute top-3/4 right-1/3 opacity-10"
+          className="absolute top-3/4 right-1/3 opacity-10 cursor-pointer hover:opacity-30 transition-opacity"
           animate={{
             y: [0, 25, 0],
             rotate: [0, -360],
@@ -237,9 +349,28 @@ export default function ParentsPage() {
             ease: "easeInOut",
             delay: 2,
           }}
+          whileHover={{ scale: 1.2, opacity: 0.4 }}
+          whileTap={{ scale: 0.8 }}
+          onClick={handleHeartClick}
         >
           <HeartHandshake className="w-16 h-16 text-purple-500" />
         </motion.div>
+
+        {/* Random sparkles */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute opacity-20"
+            style={{
+              top: `${10 + (i % 4) * 20}%`,
+              left: `${5 + (i % 3) * 30}%`,
+            }}
+            variants={sparkleVariants}
+            animate="animate"
+          >
+            <Sparkles className="w-4 h-4 text-purple-400" />
+          </motion.div>
+        ))}
       </div>
 
       {/* Enhanced LINE Bot Floating Button */}
@@ -337,7 +468,11 @@ export default function ParentsPage() {
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <motion.div className="flex items-center gap-3" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+            <motion.div 
+            className="flex items-center gap-3" 
+            whileHover={{ scale: 1.05, rotate: 1 }} 
+            transition={{ duration: 0.2, type: "spring", stiffness: 400 }}
+          >
               <motion.div
                 className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-800 rounded-xl flex items-center justify-center shadow-lg"
                 whileHover={{ rotate: 360 }}
@@ -472,8 +607,16 @@ export default function ParentsPage() {
                       repeat: Number.POSITIVE_INFINITY,
                       ease: "easeInOut",
                     }}
+                    whileHover={{ 
+                      scale: 1.4, 
+                      rotate: 15,
+                      cursor: "pointer"
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleHeartClick}
+                    className="cursor-pointer"
                   >
-                    <Heart className="w-16 h-16 md:w-20 md:h-20 text-pink-300" />
+                    <Heart className="w-16 h-16 md:w-20 md:h-20 text-pink-300 drop-shadow-lg" />
                   </motion.div>
                   ESID PARENTS
                   <motion.div
@@ -554,8 +697,20 @@ export default function ParentsPage() {
                     transition={{ duration: 0.6 }}
                   />
                   <div className="relative flex items-center">
-                    <PartyPopper className="w-5 h-5 mr-3" />
-                    <span>Parent Portal</span>
+                    <motion.div
+                      animate={{ 
+                        rotate: [0, 15, -15, 0],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <PartyPopper className="w-5 h-5 mr-3" />
+                    </motion.div>
+                    <span>Your Family Hub</span>
                     <motion.div
                       className="ml-3"
                       animate={{ x: [0, 5, 0] }}
@@ -591,11 +746,26 @@ export default function ParentsPage() {
                     transition={{ duration: 0.6 }}
                   />
                   <div className="relative flex items-center">
-                    <HeartHandshake className="w-5 h-5 mr-3" />
-                    <span>Family Support</span>
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 10, -10, 0] 
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <HeartHandshake className="w-5 h-5 mr-3" />
+                    </motion.div>
+                    <span>We're Here to Help</span>
                     <motion.div
                       className="ml-3"
-                      animate={{ rotate: [0, 15, -15, 0] }}
+                      animate={{ 
+                        rotate: [0, 15, -15, 0],
+                        scale: [1, 1.2, 1]
+                      }}
                       transition={{
                         duration: 2,
                         repeat: Number.POSITIVE_INFINITY,
@@ -662,9 +832,9 @@ export default function ParentsPage() {
                 <HeartHandshake className="w-8 h-8 text-purple-500" />
               </motion.div>
               <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Stay connected with your child's <span className="font-semibold text-purple-600">educational journey</span> through 
-                <span className="font-medium text-pink-600"> meaningful partnerships</span> and 
-                <span className="font-semibold text-purple-600">supportive community connections</span>
+                Stay connected with your child's <span className="font-semibold text-purple-600">amazing educational journey</span> through 
+                <span className="font-medium text-pink-600">warm, meaningful partnerships</span> and 
+                <span className="font-semibold text-purple-600">our caring school community</span> ❤️
               </p>
               <motion.div 
                 className="mt-4 flex justify-center"
@@ -677,7 +847,7 @@ export default function ParentsPage() {
               >
                 <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full border border-purple-100">
                   <Shield className="w-4 h-4 text-green-500" />
-                  <span className="text-sm font-medium text-gray-700">Secure • Confidential • Always Available</span>
+                  <span className="text-sm font-medium text-gray-700">Secure • Caring • Always Here for You</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -815,8 +985,8 @@ export default function ParentsPage() {
                             <CheckCircle className="w-6 h-6 text-purple-500 mt-0.5 flex-shrink-0" />
                           </motion.div>
                           <div>
-                            <span className="font-semibold">Direct messaging with your child's teachers</span>
-                            <p className="text-sm text-gray-600 mt-1">Real-time communication for immediate concerns and celebrations</p>
+                            <span className="font-semibold">Direct messaging with your child's amazing teachers</span>
+                            <p className="text-sm text-gray-600 mt-1">Real-time communication for concerns, questions, and celebrating wins together! 🎉</p>
                           </div>
                         </motion.li>
                         <motion.li 
@@ -838,8 +1008,8 @@ export default function ParentsPage() {
                             <CheckCircle className="w-6 h-6 text-pink-500 mt-0.5 flex-shrink-0" />
                           </motion.div>
                           <div>
-                            <span className="font-semibold">Parent-teacher conference scheduling</span>
-                            <p className="text-sm text-gray-600 mt-1">Flexible booking system for in-depth learning discussions</p>
+                            <span className="font-semibold">Easy parent-teacher conference scheduling</span>
+                            <p className="text-sm text-gray-600 mt-1">Book meaningful conversations about your child's growth and achievements 🌟</p>
                           </div>
                         </motion.li>
                         <motion.li 
@@ -861,8 +1031,8 @@ export default function ParentsPage() {
                             <CheckCircle className="w-6 h-6 text-purple-500 mt-0.5 flex-shrink-0" />
                           </motion.div>
                           <div>
-                            <span className="font-semibold">School announcements and updates</span>
-                            <p className="text-sm text-gray-600 mt-1">Stay informed about important events and school news</p>
+                            <span className="font-semibold">Important school announcements and exciting updates</span>
+                            <p className="text-sm text-gray-600 mt-1">Never miss the fun events and important news that matter to your family 📢</p>
                           </div>
                         </motion.li>
                         <motion.li 
@@ -883,8 +1053,8 @@ export default function ParentsPage() {
                             <Sparkles className="w-6 h-6 text-emerald-500 mt-0.5 flex-shrink-0" />
                           </motion.div>
                           <div>
-                            <span className="font-semibold text-emerald-700">Emergency communication system</span>
-                            <p className="text-sm text-emerald-600 mt-1">Immediate alerts for urgent school or safety matters</p>
+                            <span className="font-semibold text-emerald-700">Emergency support communication</span>
+                            <p className="text-sm text-emerald-600 mt-1">Instant alerts to keep your family safe and informed 🙏</p>
                           </div>
                         </motion.li>
                       </ul>
@@ -906,7 +1076,7 @@ export default function ParentsPage() {
                             24/7 Family Support
                           </Badge>
                         </motion.div>
-                        <p className="text-xs text-gray-500 mt-2">Response within 2 hours during school days</p>
+                        <p className="text-xs text-gray-500 mt-2">Quick responses within 2 hours during school days - we care about your time! ⏰</p>
                       </div>
                       
                       <div className="space-y-4">
@@ -986,11 +1156,15 @@ export default function ParentsPage() {
                         }}
                       >
                         <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-                          <Heart className="w-4 h-4 text-pink-500" />
-                          <span className="font-medium">Building stronger connections between home and school</span>
-                          <Heart className="w-4 h-4 text-purple-500" />
+                          <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+                            <Heart className="w-4 h-4 text-pink-500" />
+                          </motion.div>
+                          <span className="font-medium">Building stronger connections between loving families and caring teachers</span>
+                          <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>
+                            <Heart className="w-4 h-4 text-purple-500" />
+                          </motion.div>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">Every conversation strengthens our partnership</p>
+                        <p className="text-xs text-gray-500 mt-1">Every conversation makes our school community stronger 🌱</p>
                       </motion.div>
                     </div>
                   </div>
@@ -1083,7 +1257,8 @@ export default function ParentsPage() {
             >
               {/* Enhanced Parent Notifications */}
               <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-2 border-purple-100/50 overflow-hidden group hover:shadow-4xl hover:border-purple-200 transition-all duration-500 h-full">
+                <motion.div variants={breathingVariants} animate="animate">
+                  <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-2 border-purple-100/50 overflow-hidden group hover:shadow-4xl hover:border-purple-200 transition-all duration-500 h-full hover:scale-[1.02] cursor-pointer">
                   <CardHeader className="text-center pb-6 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-50 relative overflow-hidden">
                     {/* Animated background pattern */}
                     <motion.div
@@ -1149,7 +1324,7 @@ export default function ParentsPage() {
                             transition={{ duration: 1.5, repeat: Infinity }}
                           >
                             <div className="animate-spin rounded-full h-6 w-6 border-2 border-purple-600 border-t-transparent"></div>
-                            <span className="text-xs text-purple-600 ml-2 font-medium">Loading notifications...</span>
+                            <span className="text-xs text-purple-600 ml-2 font-medium">Gathering family updates...</span>
                           </motion.div>
                         </motion.div>
                       ) : (
@@ -1195,11 +1370,11 @@ export default function ParentsPage() {
                             <p className="text-sm text-gray-700 font-medium">
                               {notifications.total > 0 ? (
                                 <>
-                                  <span className="text-green-600 font-semibold">📋 Latest:</span> Important updates about school events, activities, and announcements awaiting your attention
+                                  <span className="text-green-600 font-semibold">📋 Fresh News:</span> Exciting updates about school events, fun activities, and important announcements just for your family! 🎉
                                 </>
                               ) : (
                                 <>
-                                  <span className="text-gray-500">✅ All Caught Up!</span> No new notifications at this time
+                                  <span className="text-emerald-500">✅ You're All Set!</span> No new updates right now - enjoy some family time! 😊
                                 </>
                               )}
                             </p>
@@ -1261,12 +1436,14 @@ export default function ParentsPage() {
                       </Button>
                     </motion.div>
                   </CardContent>
-                </Card>
+                  </Card>
+                </motion.div>
               </motion.div>
 
               {/* Enhanced School Calendar */}
               <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-2 border-rose-100/50 overflow-hidden group hover:shadow-4xl hover:border-rose-200 transition-all duration-500 h-full">
+                <motion.div variants={breathingVariants} animate="animate" transition={{ delay: 0.5 }}>
+                  <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-2 border-rose-100/50 overflow-hidden group hover:shadow-4xl hover:border-rose-200 transition-all duration-500 h-full hover:scale-[1.02] cursor-pointer">
                   <CardHeader className="text-center pb-6 bg-gradient-to-br from-rose-50 via-pink-50 to-rose-50 relative overflow-hidden">
                     {/* Animated calendar pattern */}
                     <motion.div
@@ -1314,8 +1491,8 @@ export default function ParentsPage() {
                   <CardContent className="p-6">
                     <div className="space-y-4 mb-6">
                       <div className="text-center p-4 bg-gradient-to-r from-rose-50 to-pink-50 rounded-xl border border-rose-100">
-                        <p className="text-lg font-bold text-gray-800 mb-1">🎆 2025 Academic Year</p>
-                        <p className="text-sm text-gray-600">All the important dates at your fingertips</p>
+                        <p className="text-lg font-bold text-gray-800 mb-1">🎆 Your 2025 Family Calendar</p>
+                        <p className="text-sm text-gray-600">All the important dates your family needs, organized just for you</p>
                       </div>
                       
                       <div className="grid grid-cols-2 gap-3 text-sm">
@@ -1387,12 +1564,14 @@ export default function ParentsPage() {
                       </Button>
                     </motion.div>
                   </CardContent>
-                </Card>
+                  </Card>
+                </motion.div>
               </motion.div>
 
               {/* Parent Events */}
               <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500 h-full">
+                <motion.div variants={breathingVariants} animate="animate" transition={{ delay: 1 }}>
+                  <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-2 border-violet-100/50 overflow-hidden group hover:shadow-4xl hover:border-violet-200 transition-all duration-500 h-full hover:scale-[1.02] cursor-pointer">
                   <CardHeader className="text-center pb-4 bg-gradient-to-r from-violet-50 to-purple-50">
                     <CardTitle className="text-xl text-purple-700 flex items-center justify-center gap-2">
                       <Users className="w-6 h-6" />
@@ -1422,7 +1601,7 @@ export default function ParentsPage() {
                             transition={{ duration: 1.5, repeat: Infinity }}
                           >
                             <div className="animate-spin rounded-full h-6 w-6 border-2 border-violet-600 border-t-transparent"></div>
-                            <span className="text-xs text-violet-600 ml-2 font-medium">Loading events...</span>
+                            <span className="text-xs text-violet-600 ml-2 font-medium">Finding fun activities...</span>
                           </motion.div>
                         </motion.div>
                       ) : (
@@ -1438,7 +1617,7 @@ export default function ParentsPage() {
                             </div>
                           )}
                           <p className="text-xs text-gray-500">
-                            {events.total > 0 ? 'Workshops, meetings, and activities' : 'No upcoming events'}
+                            {events.total > 0 ? 'Fun workshops, friendly meetings, and engaging activities for your family!' : 'No upcoming events - perfect time for family bonding! 😊'}
                           </p>
                         </div>
                       )}
@@ -1453,7 +1632,8 @@ export default function ParentsPage() {
                       </Button>
                     </motion.div>
                   </CardContent>
-                </Card>
+                  </Card>
+                </motion.div>
               </motion.div>
             </motion.div>
           </div>
@@ -1470,9 +1650,9 @@ export default function ParentsPage() {
         >
           <div className="container mx-auto px-4">
             <motion.div variants={itemVariants} className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">PARENT RESOURCES & GUIDELINES</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">HELPFUL FAMILY RESOURCES</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Essential resources and guidelines to support your child's educational journey
+                Everything you need to support your child's amazing learning adventure - we're here to help! 🌟
               </p>
             </motion.div>
 
@@ -1487,24 +1667,30 @@ export default function ParentsPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
-                    <p className="text-gray-600 mb-6">Resources to help support your child's learning at home</p>
+                    <p className="text-gray-600 mb-6">Helpful resources to make learning at home fun and engaging for your family 🏠✨</p>
                     <div className="space-y-3">
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Homework Guidelines
+                      <motion.div whileHover={{ scale: 1.02, x: 5 }} whileTap={{ scale: 0.98 }}>
+                        <Button variant="outline" className="w-full justify-start bg-transparent hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-300">
+                          <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                            <FileText className="w-4 h-4 mr-2 text-emerald-600" />
+                          </motion.div>
+                          Homework Made Easy
                         </Button>
                       </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <BookOpen className="w-4 h-4 mr-2" />
-                          Reading Resources
+                      <motion.div whileHover={{ scale: 1.02, x: 5 }} whileTap={{ scale: 0.98 }}>
+                        <Button variant="outline" className="w-full justify-start bg-transparent hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-300">
+                          <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}>
+                            <BookOpen className="w-4 h-4 mr-2 text-emerald-600" />
+                          </motion.div>
+                          Fun Reading Adventures
                         </Button>
                       </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <GraduationCap className="w-4 h-4 mr-2" />
-                          Learning Support
+                      <motion.div whileHover={{ scale: 1.02, x: 5 }} whileTap={{ scale: 0.98 }}>
+                        <Button variant="outline" className="w-full justify-start bg-transparent hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-300">
+                          <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
+                            <GraduationCap className="w-4 h-4 mr-2 text-emerald-600" />
+                          </motion.div>
+                          Learning Support & Tips
                         </Button>
                       </motion.div>
                     </div>
@@ -1523,7 +1709,7 @@ export default function ParentsPage() {
                   </CardHeader>
                   <CardContent className="p-6">
                     <p className="text-gray-600 mb-6">
-                      Information about daily school life and expectations
+                      Everything about your child's daily school adventure and what to expect 🏫🌈
                     </p>
                     <div className="space-y-3">
                       <motion.div whileHover={{ scale: 1.02 }}>
@@ -1559,7 +1745,7 @@ export default function ParentsPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
-                    <p className="text-gray-600 mb-6">Stay connected with teachers and school community</p>
+                    <p className="text-gray-600 mb-6">Stay connected with our wonderful teachers and loving school community 💕💬</p>
                     <div className="space-y-3">
                       <motion.div whileHover={{ scale: 1.02 }}>
                         <Button variant="outline" className="w-full justify-start bg-transparent">
@@ -1598,9 +1784,17 @@ export default function ParentsPage() {
         >
           <div className="container mx-auto px-4">
             <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">PARENT COMMUNITY</h2>
+              <motion.div className="flex items-center justify-center gap-4 mb-4">
+                <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }}>
+                  <Users2 className="w-8 h-8 text-pink-500" />
+                </motion.div>
+                <h2 className="text-4xl font-bold text-gray-900">OUR AMAZING PARENT COMMUNITY</h2>
+                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+                  <Heart className="w-8 h-8 text-purple-500" />
+                </motion.div>
+              </motion.div>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Connect with other families and participate in school community activities
+                Connect with other wonderful families and join our vibrant school community activities! 🎉👪
               </p>
             </motion.div>
 
@@ -1626,23 +1820,31 @@ export default function ParentsPage() {
                 <CardContent className="p-8">
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
-                      <h4 className="text-xl font-semibold text-gray-900 mb-4">Ways to Get Involved</h4>
+                      <motion.div className="flex items-center gap-3 mb-4">
+                        <motion.div animate={{ bounce: [0, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                          <PartyPopper className="w-6 h-6 text-pink-500" />
+                        </motion.div>
+                        <h4 className="text-xl font-semibold text-gray-900">Fun Ways to Get Involved</h4>
+                        <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 3, repeat: Infinity }}>
+                          <Sparkles className="w-5 h-5 text-purple-500" />
+                        </motion.div>
+                      </motion.div>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span>Parent volunteer opportunities</span>
+                          <span>Amazing parent volunteer opportunities to make a difference! 🌟</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span>School event planning committees</span>
+                          <span>Join fun school event planning committees (it's easier than it sounds!) 🎈</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span>Parent-teacher association meetings</span>
+                          <span>Friendly parent-teacher association meetings with snacks! ☕🍰</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span>Family social gatherings and workshops</span>
+                          <span>Wonderful family social gatherings and helpful workshops 😊🏠</span>
                         </li>
                       </ul>
                     </div>
@@ -1778,9 +1980,14 @@ export default function ParentsPage() {
 
             <motion.div initial={{ y: 30, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
               <h3 className="text-xl font-bold mb-4">Family Hub</h3>
-              <p className="text-purple-200 italic leading-relaxed">
-                "Supporting families through partnership, communication, and shared commitment to every child's success."
-              </p>
+              <motion.div 
+                animate={{ scale: [1, 1.02, 1] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                <p className="text-purple-200 italic leading-relaxed text-center">
+                  "🎆 Supporting families through loving partnership, open communication, and our shared commitment to making every child's learning journey absolutely magical! ✨"
+                </p>
+              </motion.div>
             </motion.div>
           </div>
 
@@ -1790,8 +1997,18 @@ export default function ParentsPage() {
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <p>&copy; 2025 ESID Parents' Corner, KCIS. All rights reserved.</p>
-            <p className="text-purple-300 text-sm mt-2">Strengthening the Home-School Partnership</p>
+            <motion.div 
+              animate={{ opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="text-center"
+            >
+              <p>&copy; 2025 ESID Parents' Corner, KCIS. All rights reserved.</p>
+              <p className="text-purple-300 text-sm mt-2 flex items-center justify-center gap-2">
+                <Heart className="w-4 h-4" />
+                Strengthening Families & Schools Together
+                <Heart className="w-4 h-4" />
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </motion.footer>
