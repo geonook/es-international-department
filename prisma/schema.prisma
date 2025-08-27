@@ -467,6 +467,7 @@ model SystemSetting {
   updatedAt   DateTime @updatedAt @map("updated_at")
   updater     User?    @relation(fields: [updatedBy], references: [id])
 
+  @@index([key, isPublic], name: "system_settings_key_public_idx")
   @@map("system_settings")
 }
 
