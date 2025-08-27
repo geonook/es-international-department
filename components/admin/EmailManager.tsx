@@ -547,7 +547,7 @@ export default function EmailManager() {
                               {template.variables.map((variable) => (
                                 <Badge
                                   key={variable}
-                                  variant={template.requiredVariables.includes(variable) ? "default" : "secondary"}
+                                  variant={template.requiredVariables.includes(variable) ? "destructive" : "info"}
                                   className="text-xs"
                                 >
                                   {variable}

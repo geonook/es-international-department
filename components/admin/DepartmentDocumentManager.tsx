@@ -638,7 +638,11 @@ export default function DepartmentDocumentManager() {
                                   </h4>
                                   <div className="flex items-center gap-2">
                                     <Badge 
-                                      variant={document.status === 'published' ? 'default' : 'secondary'}
+                                      variant={
+                                        document.status === 'published' ? 'success' :
+                                        document.status === 'draft' ? 'warning' :
+                                        document.status === 'archived' ? 'outline' : 'secondary'
+                                      }
                                     >
                                       {document.status === 'published' ? '已發佈' : 
                                        document.status === 'draft' ? '草稿' : '已封存'}

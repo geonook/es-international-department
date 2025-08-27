@@ -1342,7 +1342,7 @@ export default function AdminDashboard() {
                                 <div className="flex items-center space-x-2 mb-2">
                                   <h3 className="font-semibold">{newsletter.title}</h3>
                                   <Badge 
-                                    variant={newsletter.status === 'published' ? 'default' : 'secondary'}
+                                    variant={newsletter.status === 'published' ? 'success' : newsletter.status === 'draft' ? 'warning' : 'outline'}
                                   >
                                     {newsletter.status === 'published' ? 'Published' : 'Draft'}
                                   </Badge>
@@ -1406,7 +1406,13 @@ export default function AdminDashboard() {
                                       <Badge variant="outline">
                                         {event.eventType?.replace('_', ' ') || 'Event'}
                                       </Badge>
-                                      <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
+                                      <Badge variant={
+                                        event.status === 'published' ? 'success' :
+                                        event.status === 'completed' ? 'success' :
+                                        event.status === 'draft' ? 'warning' :
+                                        event.status === 'in_progress' ? 'info' :
+                                        event.status === 'cancelled' ? 'destructive' : 'outline'
+                                      }>
                                         {event.status}
                                       </Badge>
                                       {event.isFeatured && (

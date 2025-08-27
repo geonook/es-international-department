@@ -1854,8 +1854,10 @@ export default function AdminPage() {
                                 <div className="flex items-center gap-2 mt-2">
                                   <Badge variant="outline">{event.eventType}</Badge>
                                   <Badge variant={
-                                    event.status === 'published' ? 'default' :
-                                    event.status === 'completed' ? 'secondary' :
+                                    event.status === 'published' ? 'success' :
+                                    event.status === 'completed' ? 'success' :
+                                    event.status === 'draft' ? 'warning' :
+                                    event.status === 'in_progress' ? 'info' :
                                     event.status === 'cancelled' ? 'destructive' : 'outline'
                                   }>
                                     {event.status}
