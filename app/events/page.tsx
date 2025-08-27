@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
+import MobileNav from "@/components/ui/mobile-nav"
 
 /**
  * Events Page Component - KCISLK ESID Events
@@ -235,38 +236,44 @@ export default function EventsPage() {
               </div>
             </motion.div>
 
-            <nav className="hidden md:flex items-center space-x-8">
-              {[
-                { name: "Home", href: "/" },
-                { name: "Events", href: "/events", active: true },
-                { name: "Resources", href: "/resources", hasDropdown: true },
-              ].map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                >
-                  <Link
-                    href={item.href}
-                    className={`relative px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-1 ${
-                      item.active
-                        ? "text-purple-600 bg-purple-100/50"
-                        : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50"
-                    }`}
+            <div className="flex items-center gap-4">
+              {/* 桌面版導航 */}
+              <nav className="hidden md:flex items-center space-x-8">
+                {[
+                  { name: "Home", href: "/" },
+                  { name: "Events", href: "/events", active: true },
+                  { name: "Resources", href: "/resources", hasDropdown: true },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 + 0.3 }}
                   >
-                    {item.name}
-                    {item.hasDropdown && <ChevronDown className="w-3 h-3" />}
-                    {item.active && (
-                      <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full"
-                        layoutId="activeTab"
-                      />
-                    )}
-                  </Link>
-                </motion.div>
-              ))}
-            </nav>
+                    <Link
+                      href={item.href}
+                      className={`relative px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-1 ${
+                        item.active
+                          ? "text-purple-600 bg-purple-100/50"
+                          : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50"
+                      }`}
+                    >
+                      {item.name}
+                      {item.hasDropdown && <ChevronDown className="w-3 h-3" />}
+                      {item.active && (
+                        <motion.div
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full"
+                          layoutId="activeTab"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              {/* 行動版導航 */}
+              <MobileNav />
+            </div>
           </div>
         </div>
       </motion.header>

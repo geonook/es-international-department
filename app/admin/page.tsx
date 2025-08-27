@@ -46,6 +46,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import MobileNav from '@/components/ui/mobile-nav'
 import UserList from '@/components/admin/UserList'
 import UserForm from '@/components/admin/UserForm'
 import { UserData } from '@/components/admin/UserCard'
@@ -1189,8 +1190,13 @@ export default function AdminPage() {
             </motion.div>
 
             <div className="flex items-center gap-4">
+              {/* 行動版導航 - 提供回到主頁面的便利方式 */}
+              <div className="md:hidden">
+                <MobileNav />
+              </div>
+              
               {user && (
-                <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-3">
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-900">{user.displayName}</p>
                     <p className="text-xs text-gray-500">{user.email}</p>
@@ -1204,7 +1210,7 @@ export default function AdminPage() {
                   )}
                 </div>
               )}
-              <Badge variant="outline" className="text-green-600 border-green-300">
+              <Badge variant="outline" className="text-green-600 border-green-300 hidden md:flex">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                 Admin
               </Badge>
@@ -1214,13 +1220,15 @@ export default function AdminPage() {
                   variant="outline"
                   className="border-red-300 text-red-600 hover:bg-red-50 bg-transparent"
                   disabled={isLoggingOut}
+                  size="sm"
                 >
                   {isLoggingOut ? (
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   ) : (
                     <LogOut className="w-4 h-4 mr-2" />
                   )}
-                  {isLoggingOut ? 'Logging out...' : 'Logout'}
+                  <span className="hidden md:inline">{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
+                  <span className="md:hidden">{isLoggingOut ? '...' : 'Out'}</span>
                 </Button>
               </motion.div>
             </div>

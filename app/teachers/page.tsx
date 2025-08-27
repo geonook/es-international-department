@@ -31,6 +31,7 @@ import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { useHeroImageSetting } from "@/hooks/useSystemSettings"
+import MobileNav from "@/components/ui/mobile-nav"
 
 // Define types for our data
 interface Reminder {
@@ -268,42 +269,48 @@ export default function TeachersPage() {
               </div>
             </motion.div>
 
-            <nav className="hidden md:flex items-center space-x-8">
-              {[
-                { name: "Home", href: "/teachers", active: true },
-                { name: "Information", href: "#information" },
-                { name: "Documents", href: "#documents" },
-                { name: "Bulletin", href: "#bulletin" },
-                { name: "Parents' Corner", href: "/" },
-              ].map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                >
-                  <a
-                    href={item.href}
-                    className={`relative px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-1 ${
-                      item.active
-                        ? "text-blue-600 bg-blue-100/50"
-                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
-                    }`}
+            <div className="flex items-center gap-4">
+              {/* 桌面版導航 */}
+              <nav className="hidden md:flex items-center space-x-8">
+                {[
+                  { name: "Home", href: "/teachers", active: true },
+                  { name: "Information", href: "#information" },
+                  { name: "Documents", href: "#documents" },
+                  { name: "Bulletin", href: "#bulletin" },
+                  { name: "Parents' Corner", href: "/" },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 + 0.3 }}
                   >
-                    {item.name}
-                    {item.active && (
-                      <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full"
-                        layoutId="activeTab"
-                      />
-                    )}
-                  </a>
+                    <a
+                      href={item.href}
+                      className={`relative px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-1 ${
+                        item.active
+                          ? "text-blue-600 bg-blue-100/50"
+                          : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                      }`}
+                    >
+                      {item.name}
+                      {item.active && (
+                        <motion.div
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full"
+                          layoutId="activeTab"
+                        />
+                      )}
+                    </a>
+                  </motion.div>
+                ))}
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <Search className="h-5 w-5 text-gray-600 cursor-pointer hover:text-blue-600 transition-colors" />
                 </motion.div>
-              ))}
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Search className="h-5 w-5 text-gray-600 cursor-pointer hover:text-blue-600 transition-colors" />
-              </motion.div>
-            </nav>
+              </nav>
+
+              {/* 行動版導航 */}
+              <MobileNav />
+            </div>
           </div>
         </div>
       </motion.header>
