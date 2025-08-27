@@ -40,6 +40,7 @@ import {
   Loader2,
   MessageCircle,
   Phone,
+  Navigation,
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -55,6 +56,7 @@ import MessageBoardForm from '@/components/admin/MessageBoardForm'
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
 import ContactInfoManager from '@/components/admin/ContactInfoManager'
+import NavigationMenuManager from '@/components/admin/NavigationMenuManager'
 import AnnouncementForm from '@/components/admin/AnnouncementForm'
 import EventForm from '@/components/admin/EventForm'
 
@@ -1249,6 +1251,7 @@ export default function AdminPage() {
                 ...(canManageUsers ? [
                   { id: 'content', name: 'Page Content Management', icon: FileText },
                   { id: 'contacts', name: 'Contact Information', icon: Phone },
+                  { id: 'navigation', name: 'Navigation Menu', icon: Navigation },
                   { id: 'users', name: 'User Management', icon: Users }
                 ] : []),
                 // 只有管理員可以看到系統設置
@@ -2209,6 +2212,22 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage contact information displayed across the website</p>
                 </div>
                 <ContactInfoManager className="w-full" />
+              </motion.div>
+            )}
+
+            {activeTab === 'navigation' && (
+              <motion.div
+                key="navigation"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Navigation Menu Management</h2>
+                  <p className="text-gray-600">Manage navigation menu items and their display order</p>
+                </div>
+                <NavigationMenuManager className="w-full" />
               </motion.div>
             )}
 
