@@ -761,33 +761,19 @@ export default function TeachersPage() {
                       )}
                     </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button 
-                        className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                        disabled={loadingReminders}
-                        onClick={() => !loadingReminders && fetchReminders()}
-                      >
-                        {loadingReminders ? (
-                          <div className="flex items-center gap-2">
-                            <motion.div
-                              className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                            <span>Loading reminders...</span>
-                          </div>
-                        ) : (
+                      <Link href="/teachers/reminders">
+                        <Button 
+                          className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                        >
                           <div className="flex items-center gap-2">
                             <FileText className="w-4 h-4" />
                             <span>
-                              {error && error.includes('reminders') 
-                                ? 'Retry Reminders' 
-                                : `View Reminders ${reminders.total > 0 ? `(${reminders.total})` : ''}`
-                              }
+                              View Reminders {reminders.total > 0 ? `(${reminders.total})` : ''}
                             </span>
-                            {!error && <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />}
+                            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                           </div>
-                        )}
-                      </Button>
+                        </Button>
+                      </Link>
                     </motion.div>
                   </CardContent>
                 </Card>
@@ -808,10 +794,13 @@ export default function TeachersPage() {
                       View important dates and add to your personal calendar
                     </p>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        Open Calendar
-                      </Button>
+                      <Link href="/teachers/calendar">
+                        <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          Open Calendar
+                          <ArrowRight className="w-3 h-3 ml-auto group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </Link>
                     </motion.div>
                   </CardContent>
                 </Card>
@@ -892,33 +881,19 @@ export default function TeachersPage() {
                       )}
                     </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button 
-                        className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                        disabled={loadingMessages}
-                        onClick={() => !loadingMessages && fetchMessages()}
-                      >
-                        {loadingMessages ? (
-                          <div className="flex items-center gap-2">
-                            <motion.div
-                              className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                            <span>Loading messages...</span>
-                          </div>
-                        ) : (
+                      <Link href="/teachers/messages">
+                        <Button 
+                          className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                        >
                           <div className="flex items-center gap-2">
                             <MessageSquare className="w-4 h-4" />
                             <span>
-                              {error && error.includes('messages') 
-                                ? 'Retry Messages' 
-                                : `View Messages ${messages.total > 0 ? `(${messages.total})` : ''}`
-                              }
+                              View Messages {messages.total > 0 ? `(${messages.total})` : ''}
                             </span>
-                            {!error && <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />}
+                            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                           </div>
-                        )}
-                      </Button>
+                        </Button>
+                      </Link>
                     </motion.div>
                   </CardContent>
                 </Card>
