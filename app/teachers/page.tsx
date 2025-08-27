@@ -277,7 +277,7 @@ export default function TeachersPage() {
                   { name: "Information", href: "#information" },
                   { name: "Documents", href: "#documents" },
                   { name: "Bulletin", href: "#bulletin" },
-                  { name: "Parents' Corner", href: "/" },
+                  { name: "Parents' Corner", href: "/parents" },
                 ].map((item, index) => (
                   <motion.div
                     key={item.name}
@@ -1014,7 +1014,7 @@ export default function TeachersPage() {
                     perspective and enhance home-school collaboration.
                   </p>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link href="/">
+                    <Link href="/parents">
                       <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
                         <ExternalLink className="w-5 h-5 mr-2" />
                         Visit Parents' Corner
