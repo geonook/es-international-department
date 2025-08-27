@@ -30,6 +30,13 @@ import {
   Bell,
   Home,
   Sparkles,
+  HeartHandshake,
+  Shield,
+  Target,
+  TrendingUp,
+  BookOpenCheck,
+  Users2,
+  PartyPopper,
 } from "lucide-react"
 import Link from "next/link"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
@@ -167,11 +174,16 @@ export default function ParentsPage() {
     animate: {
       y: [-10, 10, -10],
     },
+    transition: {
+      duration: 3,
+      repeat: Number.POSITIVE_INFINITY,
+      ease: "easeInOut",
+    },
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-100 overflow-hidden">
-      {/* Animated Background Elements */}
+      {/* Enhanced Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"
@@ -197,56 +209,122 @@ export default function ParentsPage() {
             ease: "linear",
           }}
         />
+        
+        {/* Additional floating hearts */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 opacity-10"
+          animate={{
+            y: [0, -30, 0],
+            rotate: [0, 360],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+          }}
+        >
+          <Heart className="w-12 h-12 text-pink-500" />
+        </motion.div>
+        <motion.div
+          className="absolute top-3/4 right-1/3 opacity-10"
+          animate={{
+            y: [0, 25, 0],
+            rotate: [0, -360],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        >
+          <HeartHandshake className="w-16 h-16 text-purple-500" />
+        </motion.div>
       </div>
 
-      {/* LINE Bot Floating Button */}
+      {/* Enhanced LINE Bot Floating Button */}
       <motion.div
         className="fixed bottom-6 right-6 z-50"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 2, duration: 0.5, ease: "easeOut" }}
       >
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          animate={{
-            y: [0, -8, 0],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-          }}
-        >
-          <Button
-            className="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 p-0 group"
-            title="LINE Bot Assistant"
+        <motion.div className="relative">
+          {/* Pulsing ring effect */}
+          <motion.div
+            className="absolute inset-0 w-16 h-16 border-4 border-green-400 rounded-full"
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.8, 0, 0.8],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.div
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+            animate={{
+              y: [0, -8, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+            className="relative"
           >
-            <motion.div className="relative" whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
-              <MessageCircle className="w-8 h-8" />
-              <motion.div
-                className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
-                animate={{
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-              />
-            </motion.div>
-          </Button>
+            <Button
+              className="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-2xl hover:shadow-green-500/30 hover:shadow-3xl transition-all duration-300 p-0 group border-2 border-white/20"
+              title="Family Support Chat"
+            >
+              <motion.div className="relative" whileHover={{ rotate: 360 }} transition={{ duration: 0.8 }}>
+                <MessageCircle className="w-8 h-8" />
+                <motion.div
+                  className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full border border-white"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                />
+                {/* Heart icon overlay */}
+                <motion.div
+                  className="absolute -bottom-2 -left-2 text-pink-200"
+                  animate={{
+                    scale: [0.8, 1.1, 0.8],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                    delay: 0.5,
+                  }}
+                >
+                  <Heart className="w-4 h-4" />
+                </motion.div>
+              </motion.div>
+            </Button>
+          </motion.div>
         </motion.div>
 
-        {/* Tooltip */}
+        {/* Enhanced Tooltip */}
         <motion.div
-          className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap"
-          initial={{ opacity: 0, y: 10 }}
-          whileHover={{ opacity: 1, y: 0 }}
+          className="absolute bottom-full right-0 mb-3 px-4 py-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white text-sm rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap border border-gray-700"
+          initial={{ opacity: 0, y: 10, scale: 0.9 }}
+          whileHover={{ opacity: 1, y: 0, scale: 1 }}
         >
-          LINE Bot Assistant
-          <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+          <div className="flex items-center gap-2">
+            <Heart className="w-4 h-4 text-pink-400" />
+            <span className="font-medium">Family Support Chat</span>
+          </div>
+          <div className="text-xs text-gray-300 mt-1">Always here for you</div>
+          <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
         </motion.div>
       </motion.div>
 
@@ -362,9 +440,9 @@ export default function ParentsPage() {
                 className="text-6xl md:text-8xl font-black text-white drop-shadow-2xl mb-8 tracking-tight"
                 animate={{
                   textShadow: [
-                    "0 0 20px rgba(147, 51, 234, 0.8)",
-                    "0 0 40px rgba(219, 39, 119, 0.6)", 
-                    "0 0 20px rgba(147, 51, 234, 0.8)"
+                    "0 0 30px rgba(147, 51, 234, 0.9)",
+                    "0 0 60px rgba(219, 39, 119, 0.7)", 
+                    "0 0 30px rgba(147, 51, 234, 0.9)"
                   ],
                 }}
                 transition={{
@@ -373,9 +451,46 @@ export default function ParentsPage() {
                   ease: "easeInOut",
                 }}
               >
-                <span className="bg-gradient-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent">
+                <motion.span 
+                  className="bg-gradient-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent inline-flex items-center gap-4"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 10, -10, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <Heart className="w-16 h-16 md:w-20 md:h-20 text-pink-300" />
+                  </motion.div>
                   ESID PARENTS
-                </span>
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      rotate: [0, -10, 10, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                      delay: 1.5,
+                    }}
+                  >
+                    <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-purple-200" />
+                  </motion.div>
+                </motion.span>
               </motion.h2>
               <motion.p
                 className="text-2xl md:text-3xl text-white/95 max-w-4xl mx-auto leading-relaxed mb-12 drop-shadow-xl font-light tracking-wide"
@@ -383,7 +498,39 @@ export default function ParentsPage() {
                 animate={isHeroInView ? { y: 0, opacity: 1 } : {}}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                Your <span className="font-semibold text-purple-200">dedicated family hub</span> for school updates, events, and communication with your child's learning journey
+                Your <motion.span 
+                  className="font-bold text-transparent bg-gradient-to-r from-purple-200 via-pink-200 to-rose-200 bg-clip-text"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                >dedicated family hub</motion.span> for school updates, events, and meaningful communication supporting your child's <motion.span 
+                  className="font-semibold text-yellow-200"
+                  animate={{ opacity: [0.7, 1, 0.7] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                >extraordinary learning journey</motion.span>
+                <motion.span
+                  className="inline-block ml-2"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                    delay: 1,
+                  }}
+                >
+                  ✨
+                </motion.span>
               </motion.p>
             </motion.div>
 
@@ -399,10 +546,28 @@ export default function ParentsPage() {
                 className="relative"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full blur opacity-30"></div>
-                <Button className="relative bg-white/95 hover:bg-white text-purple-700 font-bold px-10 py-4 rounded-full shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 backdrop-blur-sm border-2 border-white/50 text-lg">
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Quick Access
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                <Button className="relative bg-white/95 hover:bg-white text-purple-700 font-bold px-12 py-5 rounded-full shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 backdrop-blur-sm border-2 border-white/50 text-lg group overflow-hidden">
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full"
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: "100%" }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <div className="relative flex items-center">
+                    <PartyPopper className="w-5 h-5 mr-3" />
+                    <span>Parent Portal</span>
+                    <motion.div
+                      className="ml-3"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </motion.div>
+                  </div>
                 </Button>
               </motion.div>
               <motion.div 
@@ -413,11 +578,33 @@ export default function ParentsPage() {
                 <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-rose-500 rounded-full blur opacity-25"></div>
                 <Button
                   variant="outline"
-                  className="relative border-2 border-white/80 text-white hover:bg-white/25 hover:border-white px-10 py-4 rounded-full shadow-2xl hover:shadow-pink-500/25 transition-all duration-300 bg-white/15 backdrop-blur-sm font-bold text-lg"
+                  className="relative border-2 border-white/80 text-white hover:bg-white/25 hover:border-white px-12 py-5 rounded-full shadow-2xl hover:shadow-pink-500/30 transition-all duration-300 bg-white/15 backdrop-blur-sm font-bold text-lg group overflow-hidden"
+                  onClick={() => {
+                    const mailto = 'mailto:parents@kcislk.ntpc.edu.tw?subject=Parent Support Request&body=Dear Parent Support Team,%0D%0A%0D%0APlease describe how we can help you today...'
+                    window.open(mailto, '_blank')
+                  }}
                 >
-                  <MessageSquare className="w-5 h-5 mr-2" />
-                  Support
-                  <ExternalLink className="w-4 h-4 ml-2" />
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-rose-400/20 rounded-full"
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: "100%" }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <div className="relative flex items-center">
+                    <HeartHandshake className="w-5 h-5 mr-3" />
+                    <span>Family Support</span>
+                    <motion.div
+                      className="ml-3"
+                      animate={{ rotate: [0, 15, -15, 0] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <Heart className="w-4 h-4" />
+                    </motion.div>
+                  </div>
                 </Button>
               </motion.div>
             </motion.div>
@@ -456,99 +643,355 @@ export default function ParentsPage() {
           variants={containerVariants}
         >
           <div className="container mx-auto px-4">
-            <motion.div variants={itemVariants} className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">PARENT COMMUNICATION</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Stay connected with your child's educational journey and school community
+            <motion.div variants={itemVariants} className="text-center mb-16">
+              <motion.div
+                className="inline-flex items-center gap-3 mb-6"
+                animate={{
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              >
+                <Heart className="w-8 h-8 text-pink-500" />
+                <h2 className="text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+                  PARENT COMMUNICATION
+                </h2>
+                <HeartHandshake className="w-8 h-8 text-purple-500" />
+              </motion.div>
+              <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                Stay connected with your child's <span className="font-semibold text-purple-600">educational journey</span> through 
+                <span className="font-medium text-pink-600"> meaningful partnerships</span> and 
+                <span className="font-semibold text-purple-600">supportive community connections</span>
               </p>
+              <motion.div 
+                className="mt-4 flex justify-center"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              >
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full border border-purple-100">
+                  <Shield className="w-4 h-4 text-green-500" />
+                  <span className="text-sm font-medium text-gray-700">Secure • Confidential • Always Available</span>
+                </div>
+              </motion.div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="max-w-4xl mx-auto">
-              <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-600 text-white relative overflow-hidden">
+            <motion.div variants={itemVariants} className="max-w-5xl mx-auto">
+              <Card className="bg-white/95 backdrop-blur-lg shadow-3xl border-2 border-white/50 overflow-hidden group hover:shadow-4xl transition-all duration-500">
+                <CardHeader className="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 text-white relative overflow-hidden py-8">
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-purple-400/50 to-pink-500/50"
+                    className="absolute inset-0 bg-gradient-to-r from-purple-400/50 via-pink-400/50 to-purple-500/50"
                     animate={{
                       x: ["-100%", "100%"],
                     }}
                     transition={{
-                      duration: 3,
+                      duration: 4,
                       repeat: Number.POSITIVE_INFINITY,
                       ease: "linear",
                     }}
                   />
-                  <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                    <MessageCircle className="h-8 w-8" />
-                    Connect & Communicate
+                  {/* Floating hearts in header */}
+                  <motion.div
+                    className="absolute top-4 right-8 opacity-20"
+                    animate={{
+                      y: [0, -10, 0],
+                      rotate: [0, 15, -15, 0],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <Heart className="w-6 h-6" />
+                  </motion.div>
+                  <motion.div
+                    className="absolute bottom-4 left-8 opacity-15"
+                    animate={{
+                      y: [0, 10, 0],
+                      rotate: [0, -20, 20, 0],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                      delay: 2,
+                    }}
+                  >
+                    <HeartHandshake className="w-8 h-8" />
+                  </motion.div>
+                  <CardTitle className="flex items-center justify-center gap-4 text-4xl relative z-10 font-bold">
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.1, 1],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <MessageCircle className="h-10 w-10" />
+                    </motion.div>
+                    <span>Connect & Communicate</span>
+                    <motion.div
+                      animate={{
+                        rotate: [0, 360],
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                      }}
+                    >
+                      <Sparkles className="h-8 w-8" />
+                    </motion.div>
                   </CardTitle>
+                  <motion.p 
+                    className="text-center text-purple-100 mt-2 text-lg relative z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    Building stronger connections between home and school
+                  </motion.p>
                 </CardHeader>
-                <CardContent className="p-8">
-                  <div className="grid md:grid-cols-2 gap-8">
+                <CardContent className="p-10">
+                  <div className="grid md:grid-cols-2 gap-10">
                     <div>
-                      <div className="flex items-center gap-3 mb-4">
-                        <h4 className="text-xl font-semibold text-gray-900">Communication Channels</h4>
-                        <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
-                          <Heart className="w-3 h-3 mr-1" />
-                          Always Open
-                        </Badge>
+                      <div className="flex items-center gap-4 mb-6">
+                        <motion.div
+                          animate={{
+                            scale: [1, 1.05, 1],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Number.POSITIVE_INFINITY,
+                            ease: "easeInOut",
+                          }}
+                        >
+                          <h4 className="text-2xl font-bold text-gray-900">Communication Channels</h4>
+                        </motion.div>
+                        <motion.div
+                          animate={{
+                            scale: [1, 1.1, 1],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Number.POSITIVE_INFINITY,
+                            ease: "easeInOut",
+                            delay: 0.5,
+                          }}
+                        >
+                          <Badge variant="secondary" className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border-purple-200 px-3 py-1">
+                            <Heart className="w-3 h-3 mr-1" />
+                            <span className="font-semibold">Always Open</span>
+                          </Badge>
+                        </motion.div>
                       </div>
-                      <ul className="space-y-4 text-gray-700">
+                      <ul className="space-y-5 text-gray-700">
                         <motion.li 
-                          className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100"
-                          whileHover={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
+                          className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border-2 border-purple-100 shadow-sm hover:shadow-md transition-all duration-300"
+                          whileHover={{ scale: 1.03, x: 5 }}
+                          transition={{ duration: 0.3 }}
                         >
-                          <CheckCircle className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                          <span>Direct messaging with your child's teachers</span>
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.2, 1],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: "easeInOut",
+                              delay: 0.2,
+                            }}
+                          >
+                            <CheckCircle className="w-6 h-6 text-purple-500 mt-0.5 flex-shrink-0" />
+                          </motion.div>
+                          <div>
+                            <span className="font-semibold">Direct messaging with your child's teachers</span>
+                            <p className="text-sm text-gray-600 mt-1">Real-time communication for immediate concerns and celebrations</p>
+                          </div>
                         </motion.li>
                         <motion.li 
-                          className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100"
-                          whileHover={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
+                          className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border-2 border-purple-100 shadow-sm hover:shadow-md transition-all duration-300"
+                          whileHover={{ scale: 1.03, x: 5 }}
+                          transition={{ duration: 0.3 }}
                         >
-                          <CheckCircle className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                          <span>Parent-teacher conference scheduling</span>
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.2, 1],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: "easeInOut",
+                              delay: 0.6,
+                            }}
+                          >
+                            <CheckCircle className="w-6 h-6 text-pink-500 mt-0.5 flex-shrink-0" />
+                          </motion.div>
+                          <div>
+                            <span className="font-semibold">Parent-teacher conference scheduling</span>
+                            <p className="text-sm text-gray-600 mt-1">Flexible booking system for in-depth learning discussions</p>
+                          </div>
                         </motion.li>
                         <motion.li 
-                          className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100"
-                          whileHover={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
+                          className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border-2 border-purple-100 shadow-sm hover:shadow-md transition-all duration-300"
+                          whileHover={{ scale: 1.03, x: 5 }}
+                          transition={{ duration: 0.3 }}
                         >
-                          <CheckCircle className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                          <span>School announcements and updates</span>
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.2, 1],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: "easeInOut",
+                              delay: 1,
+                            }}
+                          >
+                            <CheckCircle className="w-6 h-6 text-purple-500 mt-0.5 flex-shrink-0" />
+                          </motion.div>
+                          <div>
+                            <span className="font-semibold">School announcements and updates</span>
+                            <p className="text-sm text-gray-600 mt-1">Stay informed about important events and school news</p>
+                          </div>
+                        </motion.li>
+                        <motion.li 
+                          className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-100 shadow-sm hover:shadow-md transition-all duration-300"
+                          whileHover={{ scale: 1.03, x: 5 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <motion.div
+                            animate={{
+                              rotate: [0, 360],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: "linear",
+                            }}
+                          >
+                            <Sparkles className="w-6 h-6 text-emerald-500 mt-0.5 flex-shrink-0" />
+                          </motion.div>
+                          <div>
+                            <span className="font-semibold text-emerald-700">Emergency communication system</span>
+                            <p className="text-sm text-emerald-600 mt-1">Immediate alerts for urgent school or safety matters</p>
+                          </div>
                         </motion.li>
                       </ul>
                     </div>
                     <div className="flex flex-col justify-center">
-                      <div className="mb-4 text-center">
-                        <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 text-green-800">
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          24/7 Support
-                        </Badge>
-                      </div>
-                      <motion.div 
-                        whileHover={{ scale: 1.02, rotate: 1 }} 
-                        whileTap={{ scale: 0.98 }}
-                        className="relative"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg blur opacity-25"></div>
-                        <Button 
-                          className="relative w-full bg-gradient-to-r from-purple-600 to-pink-800 hover:from-purple-700 hover:to-pink-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg border-2 border-white"
-                          onClick={async () => {
-                            const mailto = 'mailto:parents@kcislk.ntpc.edu.tw?subject=Parent Communication&body=Dear ESID Team,%0D%0A%0D%0APlease share your message, question, or feedback...'
-                            window.open(mailto, '_blank')
+                      <div className="mb-6 text-center">
+                        <motion.div
+                          animate={{
+                            scale: [1, 1.05, 1],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Number.POSITIVE_INFINITY,
+                            ease: "easeInOut",
                           }}
                         >
-                          <div className="flex items-center gap-2">
-                            <MessageCircle className="w-5 h-5" />
-                            <span>Connect Now</span>
-                            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </Button>
+                          <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 text-green-800 px-4 py-2 text-sm font-semibold">
+                            <Shield className="w-4 h-4 mr-2" />
+                            24/7 Family Support
+                          </Badge>
+                        </motion.div>
+                        <p className="text-xs text-gray-500 mt-2">Response within 2 hours during school days</p>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <motion.div 
+                          whileHover={{ scale: 1.05, rotate: 1 }} 
+                          whileTap={{ scale: 0.95 }}
+                          className="relative group"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 rounded-xl blur opacity-30 group-hover:opacity-40 transition-opacity"></div>
+                          <Button 
+                            className="relative w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 hover:from-purple-700 hover:via-pink-700 hover:to-purple-800 text-white shadow-xl hover:shadow-2xl transition-all duration-300 py-5 text-lg border-2 border-white/20 font-bold overflow-hidden group"
+                            onClick={async () => {
+                              const mailto = 'mailto:parents@kcislk.ntpc.edu.tw?subject=Parent Communication - Immediate Response Needed&body=Dear ESID Parent Support Team,%0D%0A%0D%0A🏫 Child Name: [Please enter]%0D%0A👥 Class: [Please enter]%0D%0A%0D%0A📝 Message:%0D%0A[Please describe your question, concern, or feedback]%0D%0A%0D%0AThank you for your prompt attention to this matter.%0D%0A%0D%0ABest regards,%0D%0A[Your name]'
+                              window.open(mailto, '_blank')
+                            }}
+                          >
+                            <motion.div 
+                              className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
+                              initial={{ x: "-100%" }}
+                              whileHover={{ x: "100%" }}
+                              transition={{ duration: 0.6 }}
+                            />
+                            <div className="relative flex items-center justify-center gap-3">
+                              <motion.div
+                                animate={{
+                                  scale: [1, 1.2, 1],
+                                }}
+                                transition={{
+                                  duration: 1.5,
+                                  repeat: Number.POSITIVE_INFINITY,
+                                  ease: "easeInOut",
+                                }}
+                              >
+                                <HeartHandshake className="w-6 h-6" />
+                              </motion.div>
+                              <span>Connect Now</span>
+                              <motion.div
+                                animate={{ x: [0, 5, 0] }}
+                                transition={{
+                                  duration: 1,
+                                  repeat: Number.POSITIVE_INFINITY,
+                                  ease: "easeInOut",
+                                }}
+                              >
+                                <ArrowRight className="w-5 h-5" />
+                              </motion.div>
+                            </div>
+                          </Button>
+                        </motion.div>
+                        
+                        <motion.div 
+                          whileHover={{ scale: 1.03 }} 
+                          whileTap={{ scale: 0.97 }}
+                          className="relative"
+                        >
+                          <Button 
+                            variant="outline" 
+                            className="w-full border-2 border-purple-200 text-purple-700 hover:bg-purple-50 bg-white/80 py-4 text-base font-semibold transition-all duration-300 hover:border-purple-300"
+                            onClick={() => {
+                              // Scroll to resources section
+                              document.getElementById('resources')?.scrollIntoView({ behavior: 'smooth' })
+                            }}
+                          >
+                            <BookOpenCheck className="w-5 h-5 mr-2" />
+                            Communication Guidelines
+                          </Button>
+                        </motion.div>
+                      </div>
+                      
+                      <motion.div 
+                        className="mt-6 text-center"
+                        animate={{ opacity: [0.7, 1, 0.7] }}
+                        transition={{
+                          duration: 3,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                          <Heart className="w-4 h-4 text-pink-500" />
+                          <span className="font-medium">Building stronger connections between home and school</span>
+                          <Heart className="w-4 h-4 text-purple-500" />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Every conversation strengthens our partnership</p>
                       </motion.div>
-                      <p className="text-sm text-gray-500 text-center mt-3">
-                        Building bridges between home and school
-                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -572,25 +1015,63 @@ export default function ParentsPage() {
 
           <div className="container mx-auto px-4 relative z-10">
             <motion.h2
-              className="text-5xl font-bold text-white text-center mb-16"
+              className="text-5xl md:text-6xl font-bold text-white text-center mb-16"
               initial={{ y: 50, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8 }}
             >
-              PARENT
-              <motion.span
-                className="inline-block ml-4"
-                animate={{
-                  textShadow: [
-                    "0 0 10px rgba(255,255,255,0.5)",
-                    "0 0 20px rgba(255,255,255,0.8)",
-                    "0 0 10px rgba(255,255,255,0.5)",
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+              <div className="inline-flex items-center gap-4 flex-wrap justify-center">
+                <motion.div
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 15, -15, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <Heart className="w-12 h-12 md:w-16 md:h-16 text-pink-300" />
+                </motion.div>
+                <span>PARENT</span>
+                <motion.span
+                  className="inline-block"
+                  animate={{
+                    textShadow: [
+                      "0 0 20px rgba(255,255,255,0.6)",
+                      "0 0 40px rgba(255,255,255,0.9)",
+                      "0 0 20px rgba(255,255,255,0.6)",
+                    ],
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                >
+                  PORTAL
+                </motion.span>
+                <motion.div
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    rotate: [0, -20, 20, 0],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                    delay: 1,
+                  }}
+                >
+                  <Users2 className="w-10 h-10 md:w-14 md:h-14 text-purple-200" />
+                </motion.div>
+              </div>
+              <motion.p 
+                className="text-lg md:text-xl text-purple-100 mt-4 font-light max-w-2xl mx-auto"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
               >
-                PORTAL
-              </motion.span>
+                Your personalized dashboard for school life insights and updates
+              </motion.p>
             </motion.h2>
 
             <motion.div
@@ -600,13 +1081,49 @@ export default function ParentsPage() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {/* Parent Notifications */}
+              {/* Enhanced Parent Notifications */}
               <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500 h-full">
-                  <CardHeader className="text-center pb-4 bg-gradient-to-r from-purple-50 to-pink-50">
-                    <CardTitle className="text-xl text-purple-700 flex items-center justify-center gap-2">
-                      <Bell className="w-6 h-6" />
-                      Notifications
+                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-2 border-purple-100/50 overflow-hidden group hover:shadow-4xl hover:border-purple-200 transition-all duration-500 h-full">
+                  <CardHeader className="text-center pb-6 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-50 relative overflow-hidden">
+                    {/* Animated background pattern */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-purple-100/30 to-pink-100/30"
+                      animate={{
+                        x: ["-100%", "100%"],
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                      }}
+                    />
+                    <CardTitle className="text-2xl font-bold text-purple-700 flex items-center justify-center gap-3 relative z-10">
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.1, 1],
+                          rotate: [0, 15, -15, 0],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <Bell className="w-7 h-7" />
+                      </motion.div>
+                      <span>Parent Updates</span>
+                      <motion.div
+                        animate={{
+                          opacity: [0.5, 1, 0.5],
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <Sparkles className="w-5 h-5 text-pink-500" />
+                      </motion.div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -636,54 +1153,237 @@ export default function ParentsPage() {
                           </motion.div>
                         </motion.div>
                       ) : (
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-gray-700">New Updates</span>
-                            <span className="text-lg font-bold text-purple-600">{notifications.total}</span>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
+                            <span className="text-base font-semibold text-gray-800">📬 New Updates</span>
+                            <motion.span 
+                              className="text-2xl font-bold text-purple-600 px-3 py-1 bg-white rounded-full shadow-sm"
+                              animate={{
+                                scale: notifications.total > 0 ? [1, 1.1, 1] : 1,
+                              }}
+                              transition={{
+                                duration: 1.5,
+                                repeat: notifications.total > 0 ? Number.POSITIVE_INFINITY : 0,
+                                ease: "easeInOut",
+                              }}
+                            >
+                              {notifications.total}
+                            </motion.span>
                           </div>
+                          
                           {notifications.urgent.length > 0 && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-red-600">🚨 Urgent</span>
-                              <span className="text-sm font-semibold text-red-600">{notifications.urgent.length}</span>
-                            </div>
+                            <motion.div 
+                              className="flex items-center justify-between p-2 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg border-l-4 border-red-400"
+                              animate={{
+                                scale: [1, 1.02, 1],
+                              }}
+                              transition={{
+                                duration: 1,
+                                repeat: Number.POSITIVE_INFINITY,
+                                ease: "easeInOut",
+                              }}
+                            >
+                              <span className="text-sm font-semibold text-red-700 flex items-center gap-1">
+                                <AlertTriangle className="w-4 h-4" />
+                                Urgent Items
+                              </span>
+                              <span className="text-lg font-bold text-red-600 bg-white px-2 py-1 rounded-full">{notifications.urgent.length}</span>
+                            </motion.div>
                           )}
-                          <p className="text-xs text-gray-500">
-                            {notifications.total > 0 ? 'Important school updates for parents' : 'No new notifications'}
-                          </p>
+                          
+                          <div className="bg-gradient-to-r from-gray-50 to-purple-50/30 p-3 rounded-lg border border-gray-100">
+                            <p className="text-sm text-gray-700 font-medium">
+                              {notifications.total > 0 ? (
+                                <>
+                                  <span className="text-green-600 font-semibold">📋 Latest:</span> Important updates about school events, activities, and announcements awaiting your attention
+                                </>
+                              ) : (
+                                <>
+                                  <span className="text-gray-500">✅ All Caught Up!</span> No new notifications at this time
+                                </>
+                              )}
+                            </p>
+                          </div>
                         </div>
                       )}
                     </div>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <motion.div 
+                      whileHover={{ scale: 1.05, y: -2 }} 
+                      whileTap={{ scale: 0.95 }}
+                      className="relative group"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-35 transition-opacity"></div>
                       <Button 
-                        className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                        className="relative w-full bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 hover:from-purple-700 hover:via-purple-800 hover:to-purple-900 text-white shadow-xl hover:shadow-2xl transition-all duration-300 py-4 text-base font-semibold border-2 border-white/20 overflow-hidden group"
                         disabled={loadingNotifications}
                       >
-                        <Bell className="w-4 h-4 mr-2" />
-                        {loadingNotifications ? 'Loading...' : `View Notifications ${notifications.total > 0 ? `(${notifications.total})` : ''}`}
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
+                          initial={{ x: "-100%" }}
+                          whileHover={{ x: "100%" }}
+                          transition={{ duration: 0.6 }}
+                        />
+                        <div className="relative flex items-center justify-center gap-3">
+                          <motion.div
+                            animate={loadingNotifications ? {
+                              rotate: [0, 360],
+                            } : {
+                              scale: [1, 1.1, 1],
+                            }}
+                            transition={{
+                              duration: loadingNotifications ? 1 : 2,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: loadingNotifications ? "linear" : "easeInOut",
+                            }}
+                          >
+                            <Bell className="w-5 h-5" />
+                          </motion.div>
+                          <span>
+                            {loadingNotifications ? 'Loading Updates...' : (
+                              notifications.total > 0 
+                                ? `View Updates (${notifications.total})` 
+                                : 'Check Updates'
+                            )}
+                          </span>
+                          {notifications.total > 0 && !loadingNotifications && (
+                            <motion.div
+                              animate={{ x: [0, 3, 0] }}
+                              transition={{
+                                duration: 1,
+                                repeat: Number.POSITIVE_INFINITY,
+                                ease: "easeInOut",
+                              }}
+                            >
+                              <ArrowRight className="w-4 h-4" />
+                            </motion.div>
+                          )}
+                        </div>
                       </Button>
                     </motion.div>
                   </CardContent>
                 </Card>
               </motion.div>
 
-              {/* School Calendar */}
+              {/* Enhanced School Calendar */}
               <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500 h-full">
-                  <CardHeader className="text-center pb-4 bg-gradient-to-r from-rose-50 to-pink-50">
-                    <CardTitle className="text-xl text-purple-700 flex items-center justify-center gap-2">
-                      <Calendar className="w-6 h-6" />
-                      School Calendar
+                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-2 border-rose-100/50 overflow-hidden group hover:shadow-4xl hover:border-rose-200 transition-all duration-500 h-full">
+                  <CardHeader className="text-center pb-6 bg-gradient-to-br from-rose-50 via-pink-50 to-rose-50 relative overflow-hidden">
+                    {/* Animated calendar pattern */}
+                    <motion.div
+                      className="absolute top-2 right-4 opacity-10"
+                      animate={{
+                        rotate: [0, 360],
+                      }}
+                      transition={{
+                        duration: 20,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                      }}
+                    >
+                      <Calendar className="w-8 h-8 text-rose-400" />
+                    </motion.div>
+                    <CardTitle className="text-2xl font-bold text-purple-700 flex items-center justify-center gap-3 relative z-10">
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.1, 1],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <Calendar className="w-7 h-7 text-rose-600" />
+                      </motion.div>
+                      <span>School Calendar</span>
+                      <motion.div
+                        animate={{
+                          opacity: [0.5, 1, 0.5],
+                        }}
+                        transition={{
+                          duration: 1.8,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                          delay: 0.5,
+                        }}
+                      >
+                        <Target className="w-5 h-5 text-pink-500" />
+                      </motion.div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
-                    <p className="text-gray-600 mb-2 text-center font-semibold">2024 Academic Year</p>
-                    <p className="text-gray-500 mb-4 text-center text-sm">
-                      Important dates, holidays, and school events
-                    </p>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button className="w-full bg-gradient-to-r from-rose-600 to-pink-800 hover:from-rose-700 hover:to-pink-900 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        View Calendar
+                    <div className="space-y-4 mb-6">
+                      <div className="text-center p-4 bg-gradient-to-r from-rose-50 to-pink-50 rounded-xl border border-rose-100">
+                        <p className="text-lg font-bold text-gray-800 mb-1">🎆 2025 Academic Year</p>
+                        <p className="text-sm text-gray-600">All the important dates at your fingertips</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-3 rounded-lg border border-blue-100">
+                          <div className="font-semibold text-blue-700 flex items-center gap-1">
+                            <span>🎓</span> Term Dates
+                          </div>
+                          <div className="text-blue-600 text-xs mt-1">Start & end dates</div>
+                        </div>
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg border border-green-100">
+                          <div className="font-semibold text-green-700 flex items-center gap-1">
+                            <span>🎉</span> Events
+                          </div>
+                          <div className="text-green-600 text-xs mt-1">School activities</div>
+                        </div>
+                        <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-3 rounded-lg border border-orange-100">
+                          <div className="font-semibold text-orange-700 flex items-center gap-1">
+                            <span>🏦</span> Holidays
+                          </div>
+                          <div className="text-orange-600 text-xs mt-1">No school days</div>
+                        </div>
+                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg border border-purple-100">
+                          <div className="font-semibold text-purple-700 flex items-center gap-1">
+                            <span>📅</span> Meetings
+                          </div>
+                          <div className="text-purple-600 text-xs mt-1">Parent conferences</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <motion.div 
+                      whileHover={{ scale: 1.05, y: -2 }} 
+                      whileTap={{ scale: 0.95 }}
+                      className="relative group"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-rose-400 to-pink-500 rounded-lg blur opacity-25 group-hover:opacity-35 transition-opacity"></div>
+                      <Button className="relative w-full bg-gradient-to-r from-rose-600 via-pink-700 to-rose-800 hover:from-rose-700 hover:via-pink-800 hover:to-rose-900 text-white shadow-xl hover:shadow-2xl transition-all duration-300 py-4 text-base font-semibold border-2 border-white/20 overflow-hidden">
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
+                          initial={{ x: "-100%" }}
+                          whileHover={{ x: "100%" }}
+                          transition={{ duration: 0.6 }}
+                        />
+                        <div className="relative flex items-center justify-center gap-3">
+                          <motion.div
+                            animate={{
+                              rotate: [0, 15, -15, 0],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: "easeInOut",
+                            }}
+                          >
+                            <Calendar className="w-5 h-5" />
+                          </motion.div>
+                          <span>Explore Calendar</span>
+                          <motion.div
+                            animate={{ x: [0, 3, 0] }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: "easeInOut",
+                            }}
+                          >
+                            <ArrowRight className="w-4 h-4" />
+                          </motion.div>
+                        </div>
                       </Button>
                     </motion.div>
                   </CardContent>
