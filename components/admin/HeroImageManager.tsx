@@ -22,9 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
-import { ImageUploader } from '@/components/FileUploader'
 import { useHeroImageManagement } from '@/hooks/useSystemSettings'
-import type { UploadedFile, UploadError } from '@/lib/types/upload'
 
 interface HeroImageManagerProps {
   className?: string
@@ -46,20 +44,27 @@ export default function HeroImageManager({ className, showPreview = true }: Hero
     refetch
   } = useHeroImageManagement()
 
-  const handleImageUpload = useCallback(async (files: UploadedFile[]) => {
+  const handleImageUpload = useCallback(async (files: File[]) => {
     if (files.length === 0) return
 
     const file = files[0]
-    // 這裡需要將 UploadedFile 轉換為實際的 File 物件
-    // 由於我們使用的是 ImageUploader，我們需要從原始檔案上傳
-    setLastUploadResult('上傳成功！主視覺圖片已更新。')
-    setShowUploader(false)
-  }, [])
+    
+    try {
+      const success = await uploadImage(file)
+      if (success) {
+        setLastUploadResult('上傳成功！主視覺圖片已更新。')
+        setShowUploader(false)
+        // 重新載入圖片
+        await refetch()
+      } else {
+        setLastUploadResult('上傳失敗，請重試。')
+      }
+    } catch (error) {
+      console.error('Image upload error:', error)
+      setLastUploadResult('上傳失敗：' + (error instanceof Error ? error.message : '未知錯誤'))
+    }
+  }, [uploadImage, refetch])
 
-  const handleImageError = useCallback((errors: UploadError[]) => {
-    const errorMessage = errors.map(e => `${e.filename}: ${e.error}`).join(', ')
-    setLastUploadResult(`上傳失敗：${errorMessage}`)
-  }, [])
 
   const handleResetToDefault = useCallback(async () => {
     if (confirm('確定要恢復預設背景圖片嗎？當前的自訂圖片將會被移除。')) {
@@ -174,13 +179,33 @@ export default function HeroImageManager({ className, showPreview = true }: Hero
               className="space-y-4"
             >
               <h4 className="text-sm font-medium text-gray-700">上傳新的主視覺圖片</h4>
-              <ImageUploader
-                maxFiles={1}
-                maxSize={5 * 1024 * 1024} // 5MB
-                onUpload={handleImageUpload}
-                onError={handleImageError}
-                disabled={uploadingImage}
-              />
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || [])
+                    if (files.length > 0) {
+                      handleImageUpload(files)
+                    }
+                  }}
+                  disabled={uploadingImage}
+                  className="hidden"
+                  id="hero-image-input"
+                />
+                <label 
+                  htmlFor="hero-image-input" 
+                  className={`cursor-pointer ${uploadingImage ? 'cursor-not-allowed opacity-50' : ''}`}
+                >
+                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-lg font-medium text-gray-900 mb-2">
+                    點擊選擇圖片檔案
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    支援 JPG, PNG, WebP 格式，最大 5MB
+                  </p>
+                </label>
+              </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
