@@ -39,6 +39,7 @@ import {
   CheckCircle,
   Loader2,
   MessageCircle,
+  Phone,
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -53,6 +54,7 @@ import FeedbackForm from '@/components/admin/FeedbackForm'
 import MessageBoardForm from '@/components/admin/MessageBoardForm'
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
+import ContactInfoManager from '@/components/admin/ContactInfoManager'
 import AnnouncementForm from '@/components/admin/AnnouncementForm'
 import EventForm from '@/components/admin/EventForm'
 
@@ -1246,6 +1248,7 @@ export default function AdminPage() {
                 // 只有管理員可以看到內容管理和用戶管理
                 ...(canManageUsers ? [
                   { id: 'content', name: 'Page Content Management', icon: FileText },
+                  { id: 'contacts', name: 'Contact Information', icon: Phone },
                   { id: 'users', name: 'User Management', icon: Users }
                 ] : []),
                 // 只有管理員可以看到系統設置
@@ -2190,6 +2193,22 @@ export default function AdminPage() {
                   <p className="text-gray-600">Manage static text content across various pages</p>
                 </div>
                 <PageContentManager className="w-full" />
+              </motion.div>
+            )}
+
+            {activeTab === 'contacts' && (
+              <motion.div
+                key="contacts"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Contact Information Management</h2>
+                  <p className="text-gray-600">Manage contact information displayed across the website</p>
+                </div>
+                <ContactInfoManager className="w-full" />
               </motion.div>
             )}
 
