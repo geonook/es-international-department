@@ -1640,10 +1640,12 @@ export default function AdminPage() {
                                   <Badge
                                     variant={
                                       reminder.status === 'active'
-                                        ? 'default'
+                                        ? 'info'
                                         : reminder.status === 'completed'
-                                        ? 'secondary'
+                                        ? 'success'
                                         : reminder.status === 'pending'
+                                        ? 'warning'
+                                        : reminder.status === 'cancelled'
                                         ? 'outline'
                                         : 'destructive'
                                     }
@@ -1655,10 +1657,10 @@ export default function AdminPage() {
                                       reminder.priority === 'urgent'
                                         ? 'destructive'
                                         : reminder.priority === 'high'
-                                        ? 'destructive'
+                                        ? 'warning'
                                         : reminder.priority === 'medium'
-                                        ? 'default'
-                                        : 'secondary'
+                                        ? 'info'
+                                        : 'success'
                                     }
                                   >
                                     {reminder.priority}
