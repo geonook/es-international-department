@@ -2,8 +2,6 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   ExternalLink,
   Mail,
@@ -21,10 +19,6 @@ import {
   Megaphone,
   LinkIcon,
   MessageCircle,
-  Star,
-  ArrowRight,
-  CheckCircle,
-  AlertTriangle,
 } from "lucide-react"
 import Link from "next/link"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
@@ -346,65 +340,49 @@ export default function TeachersPage() {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.h2
-                className="text-6xl md:text-8xl font-black text-white drop-shadow-2xl mb-8 tracking-tight"
+                className="text-5xl md:text-7xl font-bold text-white drop-shadow-lg mb-6"
                 animate={{
                   textShadow: [
-                    "0 0 20px rgba(59, 130, 246, 0.8)",
-                    "0 0 40px rgba(147, 51, 234, 0.6)", 
-                    "0 0 20px rgba(59, 130, 246, 0.8)"
+                    "0 0 20px rgba(255,255,255,0.5)",
+                    "0 0 30px rgba(255,255,255,0.8)", 
+                    "0 0 20px rgba(255,255,255,0.5)"
                   ],
                 }}
                 transition={{
-                  duration: 4,
+                  duration: 3,
                   repeat: Number.POSITIVE_INFINITY,
                   ease: "easeInOut",
                 }}
               >
-                <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-                  ESID TEACHERS
-                </span>
+                ESID TEACHERS
               </motion.h2>
               <motion.p
-                className="text-2xl md:text-3xl text-white/95 max-w-4xl mx-auto leading-relaxed mb-12 drop-shadow-xl font-light tracking-wide"
+                className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed mb-8 drop-shadow-md"
                 initial={{ y: 30, opacity: 0 }}
                 animate={isHeroInView ? { y: 0, opacity: 1 } : {}}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                Your <span className="font-semibold text-blue-200">comprehensive professional hub</span> for resources, collaboration, and communication
+                Your comprehensive professional hub for resources, collaboration, and communication
               </motion.p>
             </motion.div>
 
             <motion.div
-              className="flex flex-col sm:flex-row justify-center items-center gap-6 mt-12"
+              className="flex justify-center gap-4 mt-8"
               initial={{ y: 30, opacity: 0 }}
               animate={isHeroInView ? { y: 0, opacity: 1 } : {}}
               transition={{ delay: 0.6, duration: 0.8 }}
             >
-              <motion.div 
-                whileHover={{ scale: 1.08, y: -3, rotate: 1 }} 
-                whileTap={{ scale: 0.95 }}
-                className="relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur opacity-30"></div>
-                <Button className="relative bg-white/95 hover:bg-white text-blue-700 font-bold px-10 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 backdrop-blur-sm border-2 border-white/50 text-lg">
-                  <Star className="w-5 h-5 mr-2" />
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Button className="bg-white/90 hover:bg-white text-blue-700 font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm">
                   Quick Access
-                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </motion.div>
-              <motion.div 
-                whileHover={{ scale: 1.08, y: -3, rotate: -1 }} 
-                whileTap={{ scale: 0.95 }}
-                className="relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full blur opacity-25"></div>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
-                  className="relative border-2 border-white/80 text-white hover:bg-white/25 hover:border-white px-10 py-4 rounded-full shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 bg-white/15 backdrop-blur-sm font-bold text-lg"
+                  className="border-white/70 text-white hover:bg-white/20 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-white/10 backdrop-blur-sm"
                 >
-                  <MessageSquare className="w-5 h-5 mr-2" />
                   Feedback
-                  <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               </motion.div>
             </motion.div>
@@ -472,55 +450,26 @@ export default function TeachersPage() {
                 <CardContent className="p-8">
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
-                      <div className="flex items-center gap-3 mb-4">
-                        <h4 className="text-xl font-semibold text-gray-900">How to Submit Feedback</h4>
-                        <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
-                          <Star className="w-3 h-3 mr-1" />
-                          Easy Process
-                        </Badge>
-                      </div>
-                      <ul className="space-y-4 text-gray-700">
-                        <motion.li 
-                          className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100"
-                          whileHover={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <CheckCircle className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                      <h4 className="text-xl font-semibold text-gray-900 mb-4">How to Submit Feedback</h4>
+                      <ul className="space-y-3 text-gray-700">
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                           <span>Click the feedback form link to access Google Forms</span>
-                        </motion.li>
-                        <motion.li 
-                          className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100"
-                          whileHover={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <CheckCircle className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                           <span>Submit anonymously or include your name</span>
-                        </motion.li>
-                        <motion.li 
-                          className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100"
-                          whileHover={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <CheckCircle className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                           <span>Management team will review and respond appropriately</span>
-                        </motion.li>
+                        </li>
                       </ul>
                     </div>
                     <div className="flex flex-col justify-center">
-                      <div className="mb-4 text-center">
-                        <Badge variant="outline" className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 text-green-800">
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          Quick & Secure
-                        </Badge>
-                      </div>
-                      <motion.div 
-                        whileHover={{ scale: 1.02, rotate: 1 }} 
-                        whileTap={{ scale: 0.98 }}
-                        className="relative"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg blur opacity-25"></div>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                         <Button 
-                          className="relative w-full bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg border-2 border-white"
+                          className="w-full bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg"
                           onClick={async () => {
                             // Create a new feedback submission
                             const feedbackData = {
@@ -538,11 +487,8 @@ export default function TeachersPage() {
                             window.open(mailto, '_blank')
                           }}
                         >
-                          <div className="flex items-center gap-2">
-                            <MessageSquare className="w-5 h-5" />
-                            <span>Send Feedback</span>
-                            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                          </div>
+                          <ExternalLink className="w-5 h-5 mr-2" />
+                          Send Feedback
                         </Button>
                       </motion.div>
                       <p className="text-sm text-gray-500 text-center mt-3">
@@ -611,29 +557,10 @@ export default function TeachersPage() {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       {loadingReminders ? (
-                        <motion.div 
-                          className="space-y-3"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <Skeleton className="h-4 w-24 bg-green-100" />
-                            <Skeleton className="h-6 w-8 bg-green-200 rounded-full" />
-                          </div>
-                          <div className="space-y-2">
-                            <Skeleton className="h-3 w-16 bg-green-50" />
-                            <Skeleton className="h-3 w-12 bg-green-50" />
-                          </div>
-                          <motion.div 
-                            className="flex items-center justify-center py-2"
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          >
-                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-green-600 border-t-transparent"></div>
-                            <span className="text-xs text-green-600 ml-2 font-medium">Loading reminders...</span>
-                          </motion.div>
-                        </motion.div>
+                        <div className="text-center py-4">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+                          <p className="text-sm text-gray-500 mt-2">Loading reminders...</p>
+                        </div>
                       ) : (
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
@@ -701,29 +628,10 @@ export default function TeachersPage() {
                   <CardContent className="p-6">
                     <div className="mb-4">
                       {loadingMessages ? (
-                        <motion.div 
-                          className="space-y-3"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <Skeleton className="h-4 w-20 bg-blue-100" />
-                            <Skeleton className="h-6 w-8 bg-blue-200 rounded-full" />
-                          </div>
-                          <div className="space-y-2">
-                            <Skeleton className="h-3 w-14 bg-blue-50" />
-                            <Skeleton className="h-3 w-16 bg-blue-50" />
-                          </div>
-                          <motion.div 
-                            className="flex items-center justify-center py-2"
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                          >
-                            <MessageSquare className="w-6 h-6 text-blue-500" />
-                            <span className="text-xs text-blue-600 ml-2 font-medium">Loading messages...</span>
-                          </motion.div>
-                        </motion.div>
+                        <div className="text-center py-4">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                          <p className="text-sm text-gray-500 mt-2">Loading messages...</p>
+                        </div>
                       ) : (
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
