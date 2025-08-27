@@ -76,6 +76,8 @@ export default function TeachersPage() {
   const [loadingReminders, setLoadingReminders] = useState(true)
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [error, setError] = useState('')
+  const [successAnimationReminders, setSuccessAnimationReminders] = useState(false)
+  const [successAnimationMessages, setSuccessAnimationMessages] = useState(false)
   const { user, loading: authLoading } = useAuth()
   
   // 獲取動態主視覺圖片
@@ -89,57 +91,135 @@ export default function TeachersPage() {
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
   const opacity = useTransform(scrollY, [0, 300], [1, 0.3])
 
-  // Fetch reminders data
-  const fetchReminders = async () => {
-    if (!user) return
+  // Fetch reminders data with enhanced error handling and retry
+  const fetchReminders = async (retryCount = 0) => {
+    if (!user) {
+      setLoadingReminders(false)
+      return
+    }
     
     try {
       setLoadingReminders(true)
-      const response = await fetch('/api/teachers/reminders?limit=10')
+      setError('')
+      
+      // Add timeout to prevent infinite loading
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+      
+      const response = await fetch('/api/teachers/reminders?limit=10', {
+        signal: controller.signal,
+        headers: {
+          'Cache-Control': 'no-cache',
+        }
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
       const result = await response.json()
       
       if (result.success) {
         setReminders(result.data)
+        // Trigger success animation
+        setSuccessAnimationReminders(true)
+        setTimeout(() => setSuccessAnimationReminders(false), 2000)
       } else {
-        setError('Failed to fetch reminders')
+        throw new Error(result.message || 'Failed to fetch reminders')
       }
     } catch (err) {
       console.error('Error fetching reminders:', err)
-      setError('Failed to fetch reminders')
+      
+      // Retry logic for network errors (but not for auth errors)
+      if (retryCount < 2 && !err.message.includes('401') && !err.message.includes('Unauthorized')) {
+        setTimeout(() => fetchReminders(retryCount + 1), 2000 * (retryCount + 1))
+        return
+      }
+      
+      setError(err.name === 'AbortError' ? 'Request timed out. Please try again.' : 'Failed to fetch reminders')
     } finally {
       setLoadingReminders(false)
     }
   }
 
-  // Fetch message board data
-  const fetchMessages = async () => {
-    if (!user) return
+  // Fetch message board data with enhanced error handling and retry
+  const fetchMessages = async (retryCount = 0) => {
+    if (!user) {
+      setLoadingMessages(false)
+      return
+    }
     
     try {
       setLoadingMessages(true)
-      const response = await fetch('/api/teachers/messages?limit=10&boardType=teachers')
+      setError('')
+      
+      // Add timeout to prevent infinite loading
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+      
+      const response = await fetch('/api/teachers/messages?limit=10&boardType=teachers', {
+        signal: controller.signal,
+        headers: {
+          'Cache-Control': 'no-cache',
+        }
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
       const result = await response.json()
       
       if (result.success) {
         setMessages(result.data)
+        // Trigger success animation
+        setSuccessAnimationMessages(true)
+        setTimeout(() => setSuccessAnimationMessages(false), 2000)
       } else {
-        setError('Failed to fetch messages')
+        throw new Error(result.message || 'Failed to fetch messages')
       }
     } catch (err) {
       console.error('Error fetching messages:', err)
-      setError('Failed to fetch messages')
+      
+      // Retry logic for network errors (but not for auth errors)
+      if (retryCount < 2 && !err.message.includes('401') && !err.message.includes('Unauthorized')) {
+        setTimeout(() => fetchMessages(retryCount + 1), 2000 * (retryCount + 1))
+        return
+      }
+      
+      setError(err.name === 'AbortError' ? 'Request timed out. Please try again.' : 'Failed to fetch messages')
     } finally {
       setLoadingMessages(false)
     }
   }
 
+  // Enhanced useEffect with better auth handling
   useEffect(() => {
     setIsLoaded(true)
+    
+    // Only fetch data when user is authenticated and auth loading is complete
     if (user && !authLoading) {
       fetchReminders()
       fetchMessages()
+    } else if (!user && !authLoading) {
+      // Reset loading states when user is not authenticated
+      setLoadingReminders(false)
+      setLoadingMessages(false)
+      setError('')
     }
   }, [user, authLoading])
+
+  // Auto-clear error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(''), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [error])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -607,8 +687,29 @@ export default function TeachersPage() {
               viewport={{ once: true }}
             >
               {/* Reminders */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500 h-full">
+              <motion.div 
+                variants={itemVariants}
+                animate={successAnimationReminders ? {
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 2, -2, 0],
+                  boxShadow: [
+                    "0 10px 25px rgba(34, 197, 94, 0.15)",
+                    "0 20px 40px rgba(34, 197, 94, 0.3)",
+                    "0 10px 25px rgba(34, 197, 94, 0.15)"
+                  ]
+                } : {}}
+                transition={{ duration: 0.6 }}
+              >
+                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500 h-full relative">
+                  {/* Success celebration overlay */}
+                  {successAnimationReminders && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 pointer-events-none z-10"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0, 1, 0] }}
+                      transition={{ duration: 1.5 }}
+                    />
+                  )}
                   <CardHeader className="text-center pb-4 bg-gradient-to-r from-green-50 to-emerald-50">
                     <CardTitle className="text-xl text-blue-700 flex items-center justify-center gap-2">
                       <Clock className="w-6 h-6" />
@@ -663,9 +764,29 @@ export default function TeachersPage() {
                       <Button 
                         className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                         disabled={loadingReminders}
+                        onClick={() => !loadingReminders && fetchReminders()}
                       >
-                        <FileText className="w-4 h-4 mr-2" />
-                        {loadingReminders ? 'Loading...' : `View Reminders ${reminders.total > 0 ? `(${reminders.total})` : ''}`}
+                        {loadingReminders ? (
+                          <div className="flex items-center gap-2">
+                            <motion.div
+                              className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            />
+                            <span>Loading reminders...</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <FileText className="w-4 h-4" />
+                            <span>
+                              {error && error.includes('reminders') 
+                                ? 'Retry Reminders' 
+                                : `View Reminders ${reminders.total > 0 ? `(${reminders.total})` : ''}`
+                              }
+                            </span>
+                            {!error && <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />}
+                          </div>
+                        )}
                       </Button>
                     </motion.div>
                   </CardContent>
@@ -697,8 +818,29 @@ export default function TeachersPage() {
               </motion.div>
 
               {/* Message Board */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500 h-full">
+              <motion.div 
+                variants={itemVariants}
+                animate={successAnimationMessages ? {
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 2, -2, 0],
+                  boxShadow: [
+                    "0 10px 25px rgba(59, 130, 246, 0.15)",
+                    "0 20px 40px rgba(59, 130, 246, 0.3)",
+                    "0 10px 25px rgba(59, 130, 246, 0.15)"
+                  ]
+                } : {}}
+                transition={{ duration: 0.6 }}
+              >
+                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500 h-full relative">
+                  {/* Success celebration overlay */}
+                  {successAnimationMessages && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 pointer-events-none z-10"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0, 1, 0] }}
+                      transition={{ duration: 1.5 }}
+                    />
+                  )}
                   <CardHeader className="text-center pb-4 bg-gradient-to-r from-blue-50 to-cyan-50">
                     <CardTitle className="text-xl text-blue-700 flex items-center justify-center gap-2">
                       <MessageSquare className="w-6 h-6" />
@@ -753,9 +895,29 @@ export default function TeachersPage() {
                       <Button 
                         className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                         disabled={loadingMessages}
+                        onClick={() => !loadingMessages && fetchMessages()}
                       >
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        {loadingMessages ? 'Loading...' : `View Messages ${messages.total > 0 ? `(${messages.total})` : ''}`}
+                        {loadingMessages ? (
+                          <div className="flex items-center gap-2">
+                            <motion.div
+                              className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            />
+                            <span>Loading messages...</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <MessageSquare className="w-4 h-4" />
+                            <span>
+                              {error && error.includes('messages') 
+                                ? 'Retry Messages' 
+                                : `View Messages ${messages.total > 0 ? `(${messages.total})` : ''}`
+                              }
+                            </span>
+                            {!error && <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />}
+                          </div>
+                        )}
                       </Button>
                     </motion.div>
                   </CardContent>
