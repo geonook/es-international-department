@@ -288,18 +288,18 @@ export default function AdminPage() {
   const userIsOfficeMember = userRoles.includes('office_member')
   const userIsViewer = userRoles.includes('viewer')
   
-  // 權限級別：admin > office_member > viewer
+  // Permission levels: admin > office_member > viewer
   const canManageUsers = userIsAdmin
   const canManageSystem = userIsAdmin
   const canEditContent = userIsAdmin || userIsOfficeMember
   const canViewContent = userIsAdmin || userIsOfficeMember || userIsViewer
 
-  // Check authentication only - 所有已認證用戶都可進入 admin
+  // Check authentication only - all authenticated users can enter admin
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       redirectToLogin('/admin')
     }
-    // 移除角色檢查 - 讓所有已認證用戶都能進入 admin
+    // Remove role check - allow all authenticated users to enter admin
   }, [isLoading, isAuthenticated, redirectToLogin])
 
   // Prevent duplicate requests with separate flags
@@ -585,7 +585,7 @@ export default function AdminPage() {
   }
 
   const handleApproveUser = async (userId: string) => {
-    if (!confirm('確定要批准這個用戶嗎？將會為其分配 Office Member 角色。')) {
+    if (!confirm('Are you sure you want to approve this user? They will be assigned the Office Member role.')) {
       return
     }
 
@@ -598,15 +598,15 @@ export default function AdminPage() {
         },
         credentials: 'include',
         body: JSON.stringify({
-          role: 'office_member' // 預設分配 office_member 角色
+          role: 'office_member' // Default assignment of office_member role
         })
       })
 
       const data = await response.json()
       if (response.ok && data.success) {
-        // 刷新用戶列表
+        // Refresh user list
         await fetchUsers()
-        // 顯示成功訊息（可選）
+        // Show success message (optional)
         console.log('User approved successfully:', data.message)
       } else {
         setError(data.message || 'Failed to approve user')
@@ -620,7 +620,7 @@ export default function AdminPage() {
   }
 
   const handleRejectUser = async (userId: string) => {
-    if (!confirm('確定要拒絕這個用戶嗎？用戶資料將被永久刪除。')) {
+    if (!confirm('Are you sure you want to reject this user? User data will be permanently deleted.')) {
       return
     }
 
@@ -633,9 +633,9 @@ export default function AdminPage() {
 
       const data = await response.json()
       if (response.ok && data.success) {
-        // 刷新用戶列表
+        // Refresh user list
         await fetchUsers()
-        // 顯示成功訊息（可選）
+        // Show success message (optional)
         console.log('User rejected successfully:', data.message)
       } else {
         setError(data.message || 'Failed to reject user')
@@ -1021,14 +1021,14 @@ export default function AdminPage() {
     }
   }
 
-  // Load initial data when authenticated - 根據權限載入不同數據
+  // Load initial data when authenticated - load different data based on permissions
   useEffect(() => {
     if (isAuthenticated && canViewContent) {
-      // 所有用戶都可以查看公告和活動
+      // All users can view announcements and events
       fetchAnnouncements()
       fetchEvents()
       
-      // 只有管理員可以載入用戶管理數據
+      // Only administrators can load user management data
       if (canManageUsers) {
         fetchUsers()
       }
@@ -1039,16 +1039,16 @@ export default function AdminPage() {
       fetchFeedbackForms()
       fetchMessageBoardPosts()
     }
-  }, [isAuthenticated, canViewContent, canManageUsers]) // 基於權限控制數據載入
+  }, [isAuthenticated, canViewContent, canManageUsers]) // Data loading based on permission control
 
-  // Refetch users when search/filter parameters change - 只有管理員可以搜尋用戶
+  // Refetch users when search/filter parameters change - only administrators can search users
   useEffect(() => {
     if (isAuthenticated && canManageUsers && (userSearchQuery || userRoleFilter || userPagination.page > 1)) {
       fetchUsers()
     }
   }, [userSearchQuery, userRoleFilter, userPagination.page, isAuthenticated, canManageUsers, fetchUsers])
 
-  // Update stats when data changes - 根據權限載入統計數據
+  // Update stats when data changes - load statistics based on permissions
   useEffect(() => {
     if (isAuthenticated && canViewContent) {
       fetchDashboardStats()
@@ -1190,7 +1190,7 @@ export default function AdminPage() {
             </motion.div>
 
             <div className="flex items-center gap-4">
-              {/* 行動版導航 - 提供回到主頁面的便利方式 */}
+              {/* Mobile navigation - convenient way to return to main page */}
               <div className="md:hidden">
                 <MobileNav />
               </div>
@@ -1248,21 +1248,21 @@ export default function AdminPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-2 lg:block">
               {[
                 { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
-                // 所有用戶都可以看到 Teachers' Corner、Parents' Corner、Feedback 和 Message Board
+                // All users can see Teachers' Corner, Parents' Corner, Feedback and Message Board
                 ...(canViewContent ? [
                   { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
                   { id: 'parents', name: "Parents' Corner", icon: Sparkles },
                   { id: 'feedback', name: 'Feedback Management', icon: MessageSquare },
                   { id: 'messages', name: 'Message Board', icon: MessageCircle }
                 ] : []),
-                // 只有管理員可以看到內容管理和用戶管理
+                // Only administrators can see content management and user management
                 ...(canManageUsers ? [
                   { id: 'content', name: 'Page Content Management', icon: FileText },
                   { id: 'contacts', name: 'Contact Information', icon: Phone },
                   { id: 'navigation', name: 'Navigation Menu', icon: Navigation },
                   { id: 'users', name: 'User Management', icon: Users }
                 ] : []),
-                // 只有管理員可以看到系統設置
+                // Only administrators can see system settings
                 ...(canManageSystem ? [
                   { id: 'settings', name: 'Settings', icon: Settings }
                 ] : [])
@@ -1314,7 +1314,7 @@ export default function AdminPage() {
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
                   <p className="text-gray-600">Monitor and manage both Teachers' and Parents' Corner systems</p>
                   
-                  {/* 權限升級請求提示 - 只對 viewer 用戶顯示 */}
+                  {/* Permission upgrade request prompt - only shown to viewer users */}
                   {userIsViewer && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -2253,7 +2253,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className="grid gap-4 lg:gap-6">
-                  {/* 主視覺圖片管理 */}
+                  {/* Hero image management */}
                   <HeroImageManager showPreview={true} />
                   
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">

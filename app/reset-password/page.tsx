@@ -240,7 +240,7 @@ export default function ResetPasswordPage() {
                 onClick={() => router.push('/login')}
                 className="w-full"
               >
-                返回登入頁面
+                Back to Sign In
               </Button>
             </div>
           </CardContent>

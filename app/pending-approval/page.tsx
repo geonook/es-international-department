@@ -2,7 +2,7 @@
 
 /**
  * Pending Approval Page
- * 待審核頁面 - 新註冊用戶等待管理員審核
+ * User account pending administrative approval after registration
  */
 
 import { useEffect, useState } from 'react'
@@ -27,10 +27,10 @@ export default function PendingApprovalPage() {
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  // 檢查用戶狀態
+  // Check user status
   useEffect(() => {
     if (!isLoading && user) {
-      // 如果用戶已啟用且有角色，重定向到適當頁面
+      // If user is active and has roles, redirect to appropriate page
       if (user.isActive && user.roles.length > 0) {
         if (user.roles.includes('admin') || user.roles.includes('office_member')) {
           router.push('/admin')
@@ -39,7 +39,7 @@ export default function PendingApprovalPage() {
         }
       }
     } else if (!isLoading && !user) {
-      // 未登入用戶重定向到登入頁面
+      // Redirect unauthenticated users to login page
       router.push('/login')
     }
   }, [user, isLoading, router])
@@ -64,7 +64,7 @@ export default function PendingApprovalPage() {
   }
 
   if (!user) {
-    return null // 將被重定向到登入頁面
+    return null // Will be redirected to login page
   }
 
   return (
@@ -87,17 +87,17 @@ export default function PendingApprovalPage() {
             </motion.div>
             
             <CardTitle className="text-2xl font-bold text-gray-900">
-              帳號審核中
+              Account Under Review
             </CardTitle>
           </CardHeader>
           
           <CardContent className="space-y-6">
-            {/* 用戶資訊 */}
+            {/* User Information */}
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
               <div className="flex items-center space-x-3">
                 <User className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500">註冊用戶</p>
+                  <p className="text-sm text-gray-500">Registered User</p>
                   <p className="font-medium">{user.displayName || `${user.firstName} ${user.lastName}`}</p>
                 </div>
               </div>
@@ -111,54 +111,54 @@ export default function PendingApprovalPage() {
               </div>
             </div>
 
-            {/* 狀態說明 */}
+            {/* Status Information */}
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-sm">
-                <strong>您的帳號正在審核中</strong>
+                <strong>Your account is under review</strong>
                 <br />
-                管理員將會審核您的註冊申請並分配適當的權限。這個過程通常在24小時內完成。
+                An administrator will review your registration and assign appropriate permissions. This process typically takes up to 24 hours.
               </AlertDescription>
             </Alert>
 
-            {/* 下一步說明 */}
+            {/* Next Steps */}
             <div className="space-y-3">
               <h3 className="font-medium text-gray-900 flex items-center">
                 <Shield className="w-4 h-4 mr-2 text-indigo-600" />
-                下一步驟
+                Next Steps
               </h3>
               
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>✅ Google 帳號認證完成</span>
+                  <span>✅ Google account verification completed</span>
                 </div>
                 
                 <div className="flex items-start space-x-3">
                   <Clock className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                  <span>⏳ 等待管理員審核並分配角色</span>
+                  <span>⏳ Awaiting administrator review and role assignment</span>
                 </div>
                 
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-4 h-4 text-gray-300 mt-0.5 flex-shrink-0" />
-                  <span>📧 審核完成後將收到email通知</span>
+                  <span>📧 Email notification upon approval completion</span>
                 </div>
               </div>
             </div>
 
-            {/* 聯絡資訊 */}
+            {/* Contact Information */}
             <div className="bg-blue-50 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">需要協助？</h4>
+              <h4 className="font-medium text-blue-900 mb-2">Need Assistance?</h4>
               <p className="text-sm text-blue-700">
-                如有疑問，請聯絡學校辦公室：
+                If you have any questions, please contact the school office:
                 <br />
-                📞 電話：02-xxxx-xxxx
+                📞 Phone: 02-xxxx-xxxx
                 <br />
-                📧 Email：office@kcislk.ntpc.edu.tw
+                📧 Email: office@kcislk.ntpc.edu.tw
               </p>
             </div>
 
-            {/* 登出按鈕 */}
+            {/* Logout Button */}
             <div className="pt-4 border-t">
               <Button
                 onClick={handleLogout}
@@ -167,7 +167,7 @@ export default function PendingApprovalPage() {
                 disabled={isLoggingOut}
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                {isLoggingOut ? '登出中...' : '登出'}
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
               </Button>
             </div>
           </CardContent>

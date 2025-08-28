@@ -182,7 +182,7 @@ export default function ForgotPasswordPage() {
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              返回登入頁面
+              Back to Sign In
             </Link>
           </div>
         </CardContent>

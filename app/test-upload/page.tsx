@@ -1,6 +1,6 @@
 /**
  * File Upload Test Page for KCISLK ESID Info Hub
- * 檔案上傳測試頁面 - 測試和展示檔案上傳功能
+ * File upload testing page - Test and demonstrate file upload functionality
  */
 
 'use client'
@@ -35,7 +35,7 @@ export default function TestUploadPage() {
     console.log('Downloading file:', fileId)
   }
 
-  // 轉換 UploadedFile 為 FileMetadata 格式
+  // Convert UploadedFile to FileMetadata format
   const convertToFileMetadata = (files: UploadedFile[]): FileMetadata[] => {
     return files.map(file => ({
       id: file.fileId,
@@ -58,18 +58,18 @@ export default function TestUploadPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            檔案上傳系統測試
+            File Upload System Test
           </h1>
           <p className="text-gray-600">
-            測試檔案上傳功能，包括圖片和文件上傳，以及安全驗證機制。
+            Test file upload functionality, including image and document upload, as well as security validation mechanisms.
           </p>
         </div>
 
-        {/* 錯誤顯示 */}
+        {/* Error Display */}
         {errors.length > 0 && (
           <Card className="mb-6 border-red-200 bg-red-50">
             <CardHeader>
-              <CardTitle className="text-red-800">上傳錯誤</CardTitle>
+              <CardTitle className="text-red-800">Upload Errors</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -86,15 +86,15 @@ export default function TestUploadPage() {
 
         <Tabs defaultValue="general" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="general">通用上傳</TabsTrigger>
-            <TabsTrigger value="images">圖片上傳</TabsTrigger>
-            <TabsTrigger value="documents">文件上傳</TabsTrigger>
+            <TabsTrigger value="general">General Upload</TabsTrigger>
+            <TabsTrigger value="images">Image Upload</TabsTrigger>
+            <TabsTrigger value="documents">Document Upload</TabsTrigger>
           </TabsList>
 
           <TabsContent value="general" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>通用檔案上傳</CardTitle>
+                <CardTitle>General File Upload</CardTitle>
               </CardHeader>
               <CardContent>
                 <FileUploader
@@ -111,7 +111,7 @@ export default function TestUploadPage() {
           <TabsContent value="images" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>圖片專用上傳</CardTitle>
+                <CardTitle>Image-Specific Upload</CardTitle>
               </CardHeader>
               <CardContent>
                 <ImageUploader
@@ -127,7 +127,7 @@ export default function TestUploadPage() {
           <TabsContent value="documents" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>文件專用上傳</CardTitle>
+                <CardTitle>Document-Specific Upload</CardTitle>
               </CardHeader>
               <CardContent>
                 <DocumentUploader
@@ -141,11 +141,11 @@ export default function TestUploadPage() {
           </TabsContent>
         </Tabs>
 
-        {/* 上傳結果 */}
+        {/* Upload Results */}
         {uploadedFiles.length > 0 && (
           <Card className="mt-8">
             <CardHeader>
-              <CardTitle>已上傳的檔案 ({uploadedFiles.length})</CardTitle>
+              <CardTitle>Uploaded Files ({uploadedFiles.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <FileList
@@ -157,42 +157,42 @@ export default function TestUploadPage() {
           </Card>
         )}
 
-        {/* 系統資訊 */}
+        {/* System Information */}
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle>系統設定</CardTitle>
+            <CardTitle>System Configuration</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">圖片檔案</h4>
+                <h4 className="font-medium text-gray-900 mb-2">Image Files</h4>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• 支援格式: JPG, PNG, GIF, WebP</li>
-                  <li>• 最大大小: 5MB</li>
-                  <li>• 自動壓縮最佳化</li>
-                  <li>• 自動產生縮略圖</li>
+                  <li>• Supported formats: JPG, PNG, GIF, WebP</li>
+                  <li>• Maximum size: 5MB</li>
+                  <li>• Automatic compression optimization</li>
+                  <li>• Automatic thumbnail generation</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">文件檔案</h4>
+                <h4 className="font-medium text-gray-900 mb-2">Document Files</h4>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• 支援格式: PDF, DOC, DOCX, TXT, RTF</li>
-                  <li>• 最大大小: 10MB</li>
-                  <li>• 惡意檔案檢測</li>
-                  <li>• 檔名安全化處理</li>
+                  <li>• Supported formats: PDF, DOC, DOCX, TXT, RTF</li>
+                  <li>• Maximum size: 10MB</li>
+                  <li>• Malicious file detection</li>
+                  <li>• Filename sanitization processing</li>
                 </ul>
               </div>
             </div>
 
             <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">安全特性</h4>
+              <h4 className="font-medium text-blue-900 mb-2">Security Features</h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-blue-800">
-                <Badge variant="secondary">MIME 類型驗證</Badge>
-                <Badge variant="secondary">檔案簽章驗證</Badge>
-                <Badge variant="secondary">惡意模式檢測</Badge>
-                <Badge variant="secondary">檔名安全化</Badge>
-                <Badge variant="secondary">路徑遍歷防護</Badge>
-                <Badge variant="secondary">大小限制強制</Badge>
+                <Badge variant="secondary">MIME Type Validation</Badge>
+                <Badge variant="secondary">File Signature Verification</Badge>
+                <Badge variant="secondary">Malicious Pattern Detection</Badge>
+                <Badge variant="secondary">Filename Sanitization</Badge>
+                <Badge variant="secondary">Path Traversal Protection</Badge>
+                <Badge variant="secondary">Size Limit Enforcement</Badge>
               </div>
             </div>
           </CardContent>
