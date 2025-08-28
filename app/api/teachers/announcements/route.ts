@@ -1,6 +1,6 @@
 /**
  * Teachers Announcements API
- * 教師公告 API - 需要教師或管理員權限
+ * Teachers Announcements API - Requires teacher or admin permissions
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -9,10 +9,10 @@ import { prisma } from '@/lib/prisma'
 
 /**
  * GET /api/teachers/announcements
- * 獲取教師可見的公告
+ * Get announcements visible to teachers
  */
 export async function GET(request: NextRequest) {
-  // 檢查教師權限 (管理員也可存取)
+  // Check teacher permissions (admin can also access)
   const teacherUser = await requireTeacher(request)
   if (teacherUser instanceof NextResponse) {
     return teacherUser
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit
 
-    // 建構查詢條件 - 教師可見公告
+    // Build query conditions - announcements visible to teachers
     const whereClause: any = {
       status: 'published',
       OR: [
@@ -39,13 +39,13 @@ export async function GET(request: NextRequest) {
       whereClause.priority = priority
     }
 
-    // 檢查過期時間
+    // Check expiration time
     whereClause.OR = [
       { expiresAt: null },
       { expiresAt: { gte: new Date() } }
     ]
 
-    // 獲取公告列表
+    // Get announcements list
     const [announcements, totalCount] = await Promise.all([
       prisma.announcement.findMany({
         where: whereClause,
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Failed to fetch announcements',
-        message: '獲取公告失敗'
+        message: 'Failed to get announcements'
       },
       { status: 500 }
     )
@@ -105,10 +105,10 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/teachers/announcements
- * 創建教師公告 (需要管理員權限或特殊教師權限)
+ * Create teacher announcement (requires admin permissions or special teacher permissions)
  */
 export async function POST(request: NextRequest) {
-  // 檢查教師權限
+  // Check teacher permissions
   const teacherUser = await requireTeacher(request)
   if (teacherUser instanceof NextResponse) {
     return teacherUser
@@ -124,32 +124,32 @@ export async function POST(request: NextRequest) {
       priority = 'medium'
     } = body
 
-    // 基本驗證
+    // Basic validation
     if (!title || !content) {
       return NextResponse.json(
         {
           success: false,
           error: 'Missing required fields',
-          message: '標題和內容為必填欄位'
+          message: 'Title and content are required fields'
         },
         { status: 400 }
       )
     }
 
-    // 教師只能創建給教師或學生的公告
+    // Teachers can only create announcements for teachers or students
     const allowedAudiences = ['teachers', 'students']
     if (!allowedAudiences.includes(targetAudience)) {
       return NextResponse.json(
         {
           success: false,
           error: 'Invalid target audience',
-          message: '教師只能創建給教師或學生的公告'
+          message: 'Teachers can only create announcements for teachers or students'
         },
         { status: 403 }
       )
     }
 
-    // 創建公告 (狀態為 draft，需要管理員審核)
+    // Create announcement (status as draft, requires admin approval)
     const newAnnouncement = await prisma.announcement.create({
       data: {
         title,
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
         summary,
         targetAudience,
         priority,
-        status: 'draft', // 教師創建的公告需要審核
+        status: 'draft', // Teacher-created announcements require approval
         authorId: teacherUser.id
       },
       include: {
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: { announcement: newAnnouncement },
-      message: '公告已創建，等待審核'
+      message: 'Announcement created, awaiting approval'
     }, { status: 201 })
 
   } catch (error) {
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Failed to create announcement',
-        message: '創建公告失敗'
+        message: 'Failed to create announcement'
       },
       { status: 500 }
     )
