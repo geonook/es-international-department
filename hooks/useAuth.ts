@@ -51,8 +51,8 @@ export function useAuth() {
     isAuthenticated: false
   })
 
-  // 檢查當前認證狀態
-  const checkAuth = useCallback(async () => {
+  // 檢查當前認證狀態 (增強版，支援自動Token刷新)
+  const checkAuth = useCallback(async (retryCount = 0) => {
     try {
       const response = await fetch('/api/auth/me', {
         credentials: 'include'
@@ -70,6 +70,16 @@ export function useAuth() {
         }
       }
 
+      // 如果認證失敗且是401錯誤，嘗試刷新Token (只重試一次)
+      if (response.status === 401 && retryCount === 0) {
+        const refreshResult = await attemptTokenRefresh()
+        if (refreshResult) {
+          // Token刷新成功，重新檢查認證狀態
+          return await checkAuth(1)
+        }
+      }
+
+      // 認證失敗或Token刷新失敗
       setAuthState({
         user: null,
         isLoading: false,
@@ -78,12 +88,41 @@ export function useAuth() {
       return null
     } catch (error) {
       console.error('Auth check error:', error)
+      
+      // 網路錯誤時，如果是第一次嘗試，試著刷新Token
+      if (retryCount === 0) {
+        const refreshResult = await attemptTokenRefresh()
+        if (refreshResult) {
+          return await checkAuth(1)
+        }
+      }
+      
       setAuthState({
         user: null,
         isLoading: false,
         isAuthenticated: false
       })
       return null
+    }
+  }, [])
+
+  // 嘗試刷新Token的函式
+  const attemptTokenRefresh = useCallback(async () => {
+    try {
+      const refreshResponse = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include'
+      })
+
+      if (refreshResponse.ok) {
+        const refreshData = await refreshResponse.json()
+        return refreshData.success
+      }
+
+      return false
+    } catch (error) {
+      console.error('Token refresh attempt failed:', error)
+      return false
     }
   }, [])
 
@@ -226,6 +265,37 @@ export function useAuth() {
     return hasRole('viewer')
   }, [hasRole])
 
+  // 帶有自動Token刷新功能的API請求函式
+  const authenticatedFetch = useCallback(async (url: string, options: RequestInit = {}) => {
+    const makeRequest = async (retryCount = 0): Promise<Response> => {
+      const response = await fetch(url, {
+        ...options,
+        credentials: 'include',
+      })
+
+      // 如果是401錯誤且沒有重試過，嘗試刷新Token
+      if (response.status === 401 && retryCount === 0) {
+        const refreshResult = await attemptTokenRefresh()
+        if (refreshResult) {
+          // Token刷新成功，重新發送原始請求
+          return await fetch(url, {
+            ...options,
+            credentials: 'include',
+          })
+        }
+      }
+
+      return response
+    }
+
+    try {
+      return await makeRequest()
+    } catch (error) {
+      console.error('Authenticated fetch error:', error)
+      throw error
+    }
+  }, [attemptTokenRefresh])
+
   // 組件掛載時檢查認證狀態
   useEffect(() => {
     checkAuth()
@@ -243,6 +313,7 @@ export function useAuth() {
     updateProfile,
     checkAuth,
     redirectToLogin,
+    authenticatedFetch, // 增強的API請求函式，支援自動Token刷新
     
     // 權限檢查
     hasRole,

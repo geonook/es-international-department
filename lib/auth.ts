@@ -178,7 +178,7 @@ export function isTeacher(user: User | null): boolean {
 }
 
 /**
- * Set authentication cookie
+ * Set authentication cookie (legacy function - prefer setAuthCookies for token pairs)
  */
 export function setAuthCookie(token: string) {
   const cookieStore = cookies()
@@ -186,7 +186,7 @@ export function setAuthCookie(token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: 4 * 60 * 60, // 4 hours (consistent with ACCESS_TOKEN_EXPIRES_IN)
     path: '/',
   })
 }
@@ -229,9 +229,9 @@ export const AUTH_ERRORS = {
   INVALID_REFRESH_TOKEN: 'Invalid or expired refresh token',
 } as const
 
-// Refresh Token settings
+// Token expiry settings - optimized for better user experience
 const REFRESH_TOKEN_EXPIRES_IN = '30d' // 30 days expiry
-const ACCESS_TOKEN_EXPIRES_IN = '15m' // 15 minutes expiry
+const ACCESS_TOKEN_EXPIRES_IN = '4h' // 4 hours expiry (extended from 15m to reduce login frequency)
 
 export interface RefreshTokenPayload {
   userId: string
@@ -370,12 +370,12 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenPai
 export function setAuthCookies(tokenPair: TokenPair) {
   const cookieStore = cookies()
   
-  // Access Token (short-lived)
+  // Access Token (extended for better UX)
   cookieStore.set('auth-token', tokenPair.accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 15 * 60, // 15 minutes
+    maxAge: 4 * 60 * 60, // 4 hours (matches ACCESS_TOKEN_EXPIRES_IN)
     path: '/',
   })
 

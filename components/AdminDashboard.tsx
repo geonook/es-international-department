@@ -63,9 +63,11 @@ import {
 } from '@/lib/types'
 
 export default function AdminDashboard() {
-  const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin } = useAuth()
+  const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin, checkAuth } = useAuth()
   const [activeTab, setActiveTab] = useState("dashboard")
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [authCheckAttempts, setAuthCheckAttempts] = useState(0)
+  const [showGracePeriod, setShowGracePeriod] = useState(false)
 
   // Announcement management state
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -465,24 +467,91 @@ export default function AdminDashboard() {
     )
   }
 
-  // Check authentication and permissions - Automatically redirect to login page
+  // Enhanced authentication check with Grace Period and retry logic
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !isAdmin())) {
-      redirectToLogin('/admin')
-    }
-  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
+    const handleAuthCheck = async () => {
+      // Skip if still loading or already authenticated as admin
+      if (isLoading || (isAuthenticated && isAdmin())) {
+        setShowGracePeriod(false)
+        return
+      }
 
-  // Not logged in or no administrator privileges - Show loading screen waiting for redirect
-  if (!isAuthenticated || !isAdmin()) {
+      // If not authenticated, give it some grace period before redirecting
+      if (!isAuthenticated && authCheckAttempts < 2) {
+        setShowGracePeriod(true)
+        setAuthCheckAttempts(prev => prev + 1)
+        
+        // Wait a bit and try to re-check auth (maybe token refresh is in progress)
+        setTimeout(async () => {
+          const user = await checkAuth()
+          if (!user || !isAdmin()) {
+            // After grace period, redirect to login
+            redirectToLogin('/admin')
+          } else {
+            setShowGracePeriod(false)
+          }
+        }, 2000) // 2 second grace period
+        
+        return
+      }
+
+      // If authenticated but not admin, redirect immediately
+      if (isAuthenticated && !isAdmin()) {
+        redirectToLogin('/admin')
+        return
+      }
+
+      // Final fallback - redirect if not authenticated after retries
+      if (!isAuthenticated) {
+        redirectToLogin('/admin')
+      }
+    }
+
+    handleAuthCheck()
+  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin, checkAuth, authCheckAttempts])
+
+  // Not logged in or no administrator privileges - Show appropriate loading or grace period screen
+  if (isLoading || (!isAuthenticated || !isAdmin())) {
+    const message = showGracePeriod 
+      ? "Verifying authentication, please wait..."
+      : isLoading 
+        ? "Loading..."
+        : "Checking permissions..."
+    
+    const showRetryButton = showGracePeriod && authCheckAttempts >= 1
+
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center"
+          className="text-center max-w-md"
         >
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Verifying permissions, redirecting...</p>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+            <p className="text-gray-600 mb-4">{message}</p>
+            
+            {showGracePeriod && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-sm text-gray-500 mb-4"
+              >
+                Attempting to refresh authentication automatically...
+              </motion.div>
+            )}
+
+            {showRetryButton && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => window.location.href = '/login?redirect=%2Fadmin'}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Go to Login
+              </motion.button>
+            )}
+          </div>
         </motion.div>
       </div>
     )
