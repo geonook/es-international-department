@@ -533,7 +533,7 @@ export default function TeachersPage() {
             <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">ESID FEEDBACK</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Share your thoughts, suggestions, or encouragement with the management team
+                Share your concerns, questions, or compliments through our new feedback form. Include your name if you'd like follow-up or submit anonymously—your input helps us grow and improve!
               </p>
             </motion.div>
 

@@ -103,7 +103,7 @@ export default function PageContentManager({ className, page }: PageContentManag
       id: 'teachers_feedback_description',
       key: 'teachers_page_feedback_description',
       title: '意見反饋描述',
-      content: 'Share your thoughts, suggestions, or encouragement with the management team',
+      content: 'Share your concerns, questions, or compliments through our new feedback form. Include your name if you\'d like follow-up or submit anonymously—your input helps us grow and improve!',
       type: 'textarea',
       page: 'teachers',
       section: 'feedback',
