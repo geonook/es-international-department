@@ -1,6 +1,6 @@
 /**
  * File Uploader Component for KCISLK ESID Info Hub
- * 檔案上傳組件 - 支援拖放上傳與進度顯示
+ * File upload component - supports drag and drop upload with progress display
  */
 
 'use client'
@@ -71,13 +71,13 @@ export function FileUploader({
   const handleFiles = useCallback((files: File[]) => {
     if (files.length === 0) return
 
-    // 驗證檔案數量
+    // Validate file count
     if (files.length > maxFiles) {
       onError?.([{ filename: 'Multiple files', error: `Maximum ${maxFiles} files allowed` }])
       return
     }
 
-    // 驗證檔案大小
+    // Validate file size
     const oversizedFiles = files.filter(file => file.size > maxSize)
     if (oversizedFiles.length > 0) {
       onError?.(oversizedFiles.map(file => ({
@@ -125,7 +125,7 @@ export function FileUploader({
 
   return (
     <div className={cn('w-full', className)}>
-      {/* 隱藏的檔案輸入 */}
+      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -136,7 +136,7 @@ export function FileUploader({
         disabled={disabled}
       />
 
-      {/* 拖放區域 */}
+      {/* Drag and drop area */}
       <div
         className={cn(
           'relative border-2 border-dashed rounded-lg p-6 transition-colors',
@@ -154,16 +154,16 @@ export function FileUploader({
           <div className="text-center">
             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <p className="text-lg font-medium text-gray-900 mb-2">
-              拖放檔案到此處或點擊選擇檔案
+              Drag and drop files here or click to select files
             </p>
             <p className="text-sm text-gray-500">
-              支援 {allowedTypes.join(', ')} 格式，最大 {formatFileSize(maxSize)}
+              Supports {allowedTypes.join(', ')} formats, maximum {formatFileSize(maxSize)}
             </p>
           </div>
         )}
       </div>
 
-      {/* 錯誤顯示 */}
+      {/* Error display */}
       {error && (
         <Alert variant="destructive" className="mt-4">
           <AlertCircle className="h-4 w-4" />
@@ -171,11 +171,11 @@ export function FileUploader({
         </Alert>
       )}
 
-      {/* 選中的檔案列表 */}
+      {/* Selected files list */}
       {selectedFiles.length > 0 && (
         <div className="mt-4 space-y-2">
           <h4 className="text-sm font-medium text-gray-700">
-            已選擇的檔案 ({selectedFiles.length})
+            Selected Files ({selectedFiles.length})
           </h4>
           {selectedFiles.map((file, index) => (
             <div
@@ -202,25 +202,25 @@ export function FileUploader({
             </div>
           ))}
 
-          {/* 上傳進度 */}
+          {/* Upload progress */}
           {uploading && (
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">上傳中...</span>
+                <span className="text-sm font-medium text-gray-700">Uploading...</span>
                 <span className="text-sm text-gray-500">{progress}%</span>
               </div>
               <Progress value={progress} className="w-full" />
             </div>
           )}
 
-          {/* 操作按鈕 */}
+          {/* Action buttons */}
           <div className="flex space-x-2 mt-4">
             <Button
               onClick={handleUpload}
               disabled={disabled || uploading || selectedFiles.length === 0}
               className="flex-1"
             >
-              {uploading ? '上傳中...' : `上傳 ${selectedFiles.length} 個檔案`}
+              {uploading ? 'Uploading...' : `Upload ${selectedFiles.length} file${selectedFiles.length === 1 ? '' : 's'}`}
             </Button>
             <Button
               variant="outline"
@@ -230,7 +230,7 @@ export function FileUploader({
               }}
               disabled={uploading}
             >
-              清除
+              Clear
             </Button>
           </div>
         </div>
@@ -239,7 +239,7 @@ export function FileUploader({
   )
 }
 
-// 圖片專用上傳組件
+// Image-specific upload component
 export function ImageUploader({
   maxFiles = 5,
   maxSize = 5 * 1024 * 1024, // 5MB
@@ -260,17 +260,17 @@ export function ImageUploader({
       <div className="text-center">
         <Image className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <p className="text-lg font-medium text-gray-900 mb-2">
-          拖放圖片到此處或點擊選擇
+          Drag and drop images here or click to select
         </p>
         <p className="text-sm text-gray-500">
-          支援 JPG, PNG, GIF, WebP 格式，最大 {(maxSize / 1024 / 1024).toFixed(0)}MB
+          Supports JPG, PNG, GIF, WebP formats, maximum {(maxSize / 1024 / 1024).toFixed(0)}MB
         </p>
       </div>
     </FileUploader>
   )
 }
 
-// 文件專用上傳組件
+// Document-specific upload component
 export function DocumentUploader({
   maxFiles = 10,
   maxSize = 10 * 1024 * 1024, // 10MB
@@ -291,10 +291,10 @@ export function DocumentUploader({
       <div className="text-center">
         <File className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <p className="text-lg font-medium text-gray-900 mb-2">
-          拖放文件到此處或點擊選擇
+          Drag and drop documents here or click to select
         </p>
         <p className="text-sm text-gray-500">
-          支援 PDF, DOC, DOCX, TXT, RTF 格式，最大 {(maxSize / 1024 / 1024).toFixed(0)}MB
+          Supports PDF, DOC, DOCX, TXT, RTF formats, maximum {(maxSize / 1024 / 1024).toFixed(0)}MB
         </p>
       </div>
     </FileUploader>
