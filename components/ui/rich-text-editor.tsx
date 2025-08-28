@@ -305,7 +305,7 @@ export function RichTextEditor({
     plugins: enableImageUpload ? [
       'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste', 'imagetools'
+      'insertdatetime', 'media', 'table', 'help', 'wordcount'
     ] : [
       'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
