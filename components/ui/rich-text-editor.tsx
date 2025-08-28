@@ -242,6 +242,7 @@ export function RichTextEditor({
 
   // 編輯器配置
   const editorConfig = {
+    license_key: 'g8m7eowhg5po3acger7lotjaqxqprxm2bikbp5fxmisbv4so',
     height: minHeight,
     max_height: maxHeight,
     menubar: false,
