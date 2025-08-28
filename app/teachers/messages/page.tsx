@@ -317,9 +317,9 @@ export default function TeacherMessagesPage() {
                 </div>
                 <div>
                   <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-800 bg-clip-text text-transparent">
-                    Teachers Message Board
+                    Messages
                   </h1>
-                  <p className="text-xs text-gray-500">Teacher Message Board</p>
+                  <p className="text-xs text-gray-500">Professional Communication Hub</p>
                 </div>
               </motion.div>
             </div>

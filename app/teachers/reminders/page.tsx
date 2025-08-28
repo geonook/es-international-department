@@ -176,13 +176,13 @@ export default function TeacherRemindersPage() {
     
     // Add relative time indicator
     if (diffDays === 0) {
-      dateDisplay += " (今天)"
+      dateDisplay += " (Today)"
     } else if (diffDays === 1) {
-      dateDisplay += " (明天)"
+      dateDisplay += " (Tomorrow)"
     } else if (diffDays > 0 && diffDays <= 7) {
-      dateDisplay += ` (${diffDays} 天後)`
+      dateDisplay += ` (in ${diffDays} days)`
     } else if (diffDays < 0 && diffDays >= -7) {
-      dateDisplay += ` (${Math.abs(diffDays)} 天前)`
+      dateDisplay += ` (${Math.abs(diffDays)} days ago)`
     }
     
     return dateDisplay
@@ -192,7 +192,7 @@ export default function TeacherRemindersPage() {
   const getCreatorName = (creator: Reminder['creator']) => {
     return creator.displayName || 
            `${creator.firstName || ''} ${creator.lastName || ''}`.trim() || 
-           '未知'
+           'Unknown'
   }
 
   const containerVariants = {
@@ -216,7 +216,7 @@ export default function TeacherRemindersPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">正在驗證身份...</p>
+          <p className="text-gray-600">Authenticating...</p>
         </div>
       </div>
     )
@@ -228,10 +228,10 @@ export default function TeacherRemindersPage() {
         <Card className="w-full max-w-md mx-4">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">需要登入</h2>
-            <p className="text-gray-600 mb-4">請先登入以查看教師提醒</p>
+            <h2 className="text-xl font-semibold mb-2">Login Required</h2>
+            <p className="text-gray-600 mb-4">Please log in to view teacher reminders</p>
             <Link href="/login">
-              <Button className="w-full">前往登入</Button>
+              <Button className="w-full">Go to Login</Button>
             </Link>
           </CardContent>
         </Card>
@@ -282,7 +282,7 @@ export default function TeacherRemindersPage() {
               <Link href="/teachers">
                 <Button variant="ghost" size="sm" className="flex items-center gap-2">
                   <ArrowLeft className="w-4 h-4" />
-                  返回教師頁面
+                  Back to Teachers
                 </Button>
               </Link>
               <div className="h-6 w-px bg-gray-300" />
@@ -292,7 +292,7 @@ export default function TeacherRemindersPage() {
                 </div>
                 <div>
                   <h1 className="text-lg font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-                    教師提醒
+                    Teacher Reminders
                   </h1>
                   <p className="text-xs text-gray-500">Teacher Reminders</p>
                 </div>
@@ -303,16 +303,16 @@ export default function TeacherRemindersPage() {
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-6">
                 <Link href="/teachers" className="text-gray-600 hover:text-green-600 transition-colors">
-                  首頁
+                  Home
                 </Link>
                 <Link href="/teachers/reminders" className="text-green-600 font-medium">
-                  提醒
+                  Reminders
                 </Link>
                 <Link href="/teachers/calendar" className="text-gray-600 hover:text-green-600 transition-colors">
-                  行事曆
+                  Calendar
                 </Link>
                 <Link href="/teachers/messages" className="text-gray-600 hover:text-green-600 transition-colors">
-                  留言板
+                  Messages
                 </Link>
               </nav>
 
@@ -341,7 +341,7 @@ export default function TeacherRemindersPage() {
                     <Bell className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">總提醒數</p>
+                    <p className="text-sm text-gray-600">Total Reminders</p>
                     <p className="text-2xl font-bold text-gray-900">{reminders.total}</p>
                   </div>
                 </div>
@@ -355,7 +355,7 @@ export default function TeacherRemindersPage() {
                     <AlertTriangle className="w-6 h-6 text-red-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">緊急提醒</p>
+                    <p className="text-sm text-gray-600">Urgent</p>
                     <p className="text-2xl font-bold text-red-600">{reminders.totalUrgent}</p>
                   </div>
                 </div>
@@ -369,7 +369,7 @@ export default function TeacherRemindersPage() {
                     <Target className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">篩選結果</p>
+                    <p className="text-sm text-gray-600">Filtered Results</p>
                     <p className="text-2xl font-bold text-green-600">{filteredReminders.length}</p>
                   </div>
                 </div>
@@ -385,7 +385,7 @@ export default function TeacherRemindersPage() {
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="搜尋提醒標題或內容..."
+                    placeholder="Search reminder titles or content..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -395,28 +395,28 @@ export default function TeacherRemindersPage() {
                 {/* Priority Filter */}
                 <Select value={selectedPriority} onValueChange={setSelectedPriority}>
                   <SelectTrigger className="w-full md:w-40">
-                    <SelectValue placeholder="優先級" />
+                    <SelectValue placeholder="Priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">所有優先級</SelectItem>
-                    <SelectItem value="high">高</SelectItem>
-                    <SelectItem value="medium">中</SelectItem>
-                    <SelectItem value="low">低</SelectItem>
+                    <SelectItem value="all">All Priorities</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
                   </SelectContent>
                 </Select>
 
                 {/* Type Filter */}
                 <Select value={selectedType} onValueChange={setSelectedType}>
                   <SelectTrigger className="w-full md:w-40">
-                    <SelectValue placeholder="類型" />
+                    <SelectValue placeholder="Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">所有類型</SelectItem>
-                    <SelectItem value="assignment">作業</SelectItem>
-                    <SelectItem value="meeting">會議</SelectItem>
-                    <SelectItem value="deadline">截止日期</SelectItem>
-                    <SelectItem value="event">活動</SelectItem>
-                    <SelectItem value="general">一般</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="assignment">Assignment</SelectItem>
+                    <SelectItem value="meeting">Meeting</SelectItem>
+                    <SelectItem value="deadline">Deadline</SelectItem>
+                    <SelectItem value="event">Event</SelectItem>
+                    <SelectItem value="general">General</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -433,7 +433,7 @@ export default function TeacherRemindersPage() {
                   ) : (
                     <RefreshCw className="w-4 h-4" />
                   )}
-                  重新整理
+                  Refresh
                 </Button>
               </div>
             </CardContent>
@@ -492,12 +492,12 @@ export default function TeacherRemindersPage() {
                 <CardContent className="p-12 text-center">
                   <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {reminders.total === 0 ? '暫無提醒' : '沒有符合條件的提醒'}
+                    {reminders.total === 0 ? 'No reminders yet' : 'No matching reminders'}
                   </h3>
                   <p className="text-gray-600">
                     {reminders.total === 0 
-                      ? '目前沒有任何提醒事項。' 
-                      : '請嘗試調整搜尋條件或篩選設定。'
+                      ? 'Currently no reminder items available.' 
+                      : 'Please try adjusting your search criteria or filter settings.'
                     }
                   </p>
                 </CardContent>
@@ -531,20 +531,20 @@ export default function TeacherRemindersPage() {
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-600">
                             <User className="w-4 h-4" />
-                            <span>建立者：{getCreatorName(reminder.creator)}</span>
+                            <span>Created by: {getCreatorName(reminder.creator)}</span>
                           </div>
                         </div>
                         
                         <div className="flex flex-col items-end gap-2">
                           <Badge className={`${priorityColors[reminder.priority]} font-medium`}>
-                            {reminder.priority === 'high' ? '高' : 
-                             reminder.priority === 'medium' ? '中' : '低'} 優先級
+                            {reminder.priority === 'high' ? 'High' : 
+                             reminder.priority === 'medium' ? 'Medium' : 'Low'} Priority
                           </Badge>
                           <Badge className={reminderTypeColors[reminder.reminderType as keyof typeof reminderTypeColors] || reminderTypeColors.general}>
-                            {reminder.reminderType === 'assignment' ? '作業' :
-                             reminder.reminderType === 'meeting' ? '會議' :
-                             reminder.reminderType === 'deadline' ? '截止日期' :
-                             reminder.reminderType === 'event' ? '活動' : '一般'}
+                            {reminder.reminderType === 'assignment' ? 'Assignment' :
+                             reminder.reminderType === 'meeting' ? 'Meeting' :
+                             reminder.reminderType === 'deadline' ? 'Deadline' :
+                             reminder.reminderType === 'event' ? 'Event' : 'General'}
                           </Badge>
                         </div>
                       </div>
@@ -562,19 +562,19 @@ export default function TeacherRemindersPage() {
                           {reminder.dueDate && (
                             <div className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
-                              <span>到期：{formatDate(reminder.dueDate, reminder.dueTime)}</span>
+                              <span>Due: {formatDate(reminder.dueDate, reminder.dueTime)}</span>
                             </div>
                           )}
                           {reminder.targetAudience && (
                             <div className="flex items-center gap-1">
                               <MapPin className="w-4 h-4" />
-                              <span>對象：{reminder.targetAudience}</span>
+                              <span>Target: {reminder.targetAudience}</span>
                             </div>
                           )}
                         </div>
                         
                         <div className="text-xs text-gray-500">
-                          建立於 {new Date(reminder.createdAt).toLocaleDateString('zh-TW')}
+                          Created on {new Date(reminder.createdAt).toLocaleDateString('en-US')}
                         </div>
                       </div>
                     </CardContent>

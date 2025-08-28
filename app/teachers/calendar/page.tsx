@@ -31,6 +31,7 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/hooks/useAuth"
 import MobileNav from "@/components/ui/mobile-nav"
+import TeachersCalendarWrapper from "@/components/teachers/TeachersCalendarWrapper"
 
 // Define types for event data
 interface Event {
@@ -78,6 +79,9 @@ interface CalendarResponse {
   }
 }
 
+// View mode for calendar
+type ViewMode = 'list' | 'calendar'
+
 const eventTypeColors = {
   academic: "bg-blue-100 text-blue-800 border-blue-200",
   sports: "bg-green-100 text-green-800 border-green-200",
@@ -92,16 +96,16 @@ const eventTypeColors = {
 }
 
 const eventTypeNames = {
-  academic: "學術活動",
-  sports: "體育活動", 
-  cultural: "文化活動",
-  parent_meeting: "家長會議",
-  field_trip: "校外教學",
-  workshop: "工作坊",
-  celebration: "慶祝活動",
-  meeting: "會議",
-  conference: "研討會",
-  other: "其他"
+  academic: "Academic Activity",
+  sports: "Sports Activity", 
+  cultural: "Cultural Event",
+  parent_meeting: "Parent Meeting",
+  field_trip: "Field Trip",
+  workshop: "Workshop",
+  celebration: "Celebration",
+  meeting: "Meeting",
+  conference: "Conference",
+  other: "Other"
 }
 
 const registrationStatusColors = {
@@ -111,9 +115,9 @@ const registrationStatusColors = {
 }
 
 const registrationStatusNames = {
-  confirmed: "已確認",
-  waiting_list: "候補中",
-  cancelled: "已取消"
+  confirmed: "Confirmed",
+  waiting_list: "Waiting List",
+  cancelled: "Cancelled"
 }
 
 export default function TeacherCalendarPage() {
@@ -128,6 +132,7 @@ export default function TeacherCalendarPage() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear())
   const [currentMonth, setCurrentMonth] = useState<number | null>(new Date().getMonth() + 1)
   const [viewMode, setViewMode] = useState<'month' | 'year'>('month')
+  const [displayMode, setDisplayMode] = useState<ViewMode>('calendar')
   const { user, loading: authLoading } = useAuth()
 
   // Fetch calendar data
@@ -252,7 +257,7 @@ export default function TeacherCalendarPage() {
   // Get current period display
   const getPeriodDisplay = () => {
     if (viewMode === 'year') {
-      return `${currentYear} 年`
+      return `Year ${currentYear}`
     } else {
       const monthName = new Date(currentYear, (currentMonth || 1) - 1).toLocaleDateString('zh-TW', { 
         year: 'numeric', 
@@ -283,7 +288,7 @@ export default function TeacherCalendarPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">正在驗證身份...</p>
+          <p className="text-gray-600">Authenticating...</p>
         </div>
       </div>
     )
@@ -295,10 +300,10 @@ export default function TeacherCalendarPage() {
         <Card className="w-full max-w-md mx-4">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">需要登入</h2>
-            <p className="text-gray-600 mb-4">請先登入以查看行事曆</p>
+            <h2 className="text-xl font-semibold mb-2">Login Required</h2>
+            <p className="text-gray-600 mb-4">Please log in to view the calendar</p>
             <Link href="/login">
-              <Button className="w-full">前往登入</Button>
+              <Button className="w-full">Go to Login</Button>
             </Link>
           </CardContent>
         </Card>
@@ -349,7 +354,7 @@ export default function TeacherCalendarPage() {
               <Link href="/teachers">
                 <Button variant="ghost" size="sm" className="flex items-center gap-2">
                   <ArrowLeft className="w-4 h-4" />
-                  返回教師頁面
+                  Back to Teachers
                 </Button>
               </Link>
               <div className="h-6 w-px bg-gray-300" />
@@ -359,7 +364,7 @@ export default function TeacherCalendarPage() {
                 </div>
                 <div>
                   <h1 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                    教師行事曆
+                    Teachers Calendar
                   </h1>
                   <p className="text-xs text-gray-500">Teacher Calendar</p>
                 </div>
@@ -370,16 +375,16 @@ export default function TeacherCalendarPage() {
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-6">
                 <Link href="/teachers" className="text-gray-600 hover:text-purple-600 transition-colors">
-                  首頁
+                  Home
                 </Link>
                 <Link href="/teachers/reminders" className="text-gray-600 hover:text-purple-600 transition-colors">
-                  提醒
+                  Reminders
                 </Link>
                 <Link href="/teachers/calendar" className="text-purple-600 font-medium">
-                  行事曆
+                  Calendar
                 </Link>
                 <Link href="/teachers/messages" className="text-gray-600 hover:text-purple-600 transition-colors">
-                  留言板
+                  Messages
                 </Link>
               </nav>
 
@@ -426,23 +431,25 @@ export default function TeacherCalendarPage() {
                   
                   <div className="h-6 w-px bg-gray-300" />
                   
-                  {/* View Mode Toggle */}
+                  {/* Display Mode Toggle */}
                   <div className="flex bg-gray-100 rounded-lg p-1">
                     <Button
-                      variant={viewMode === 'month' ? 'default' : 'ghost'}
+                      variant={displayMode === 'calendar' ? 'default' : 'ghost'}
                       size="sm"
-                      onClick={() => setViewMode('month')}
+                      onClick={() => setDisplayMode('calendar')}
                       className="h-8"
                     >
-                      月檢視
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Calendar View
                     </Button>
                     <Button
-                      variant={viewMode === 'year' ? 'default' : 'ghost'}
+                      variant={displayMode === 'list' ? 'default' : 'ghost'}
                       size="sm"
-                      onClick={() => setViewMode('year')}
+                      onClick={() => setDisplayMode('list')}
                       className="h-8"
                     >
-                      年檢視
+                      <BookOpen className="w-4 h-4 mr-1" />
+                      List View
                     </Button>
                   </div>
                 </div>
@@ -457,7 +464,7 @@ export default function TeacherCalendarPage() {
                       setCurrentMonth(new Date().getMonth() + 1)
                     }}
                   >
-                    今天
+                    Today
                   </Button>
                   <Button
                     onClick={fetchCalendarData}
@@ -470,7 +477,7 @@ export default function TeacherCalendarPage() {
                     ) : (
                       <RefreshCw className="w-4 h-4" />
                     )}
-                    重新整理
+                    Refresh
                   </Button>
                 </div>
               </div>
@@ -493,7 +500,7 @@ export default function TeacherCalendarPage() {
                     <Calendar className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">總活動數</p>
+                    <p className="text-sm text-gray-600">Total Events</p>
                     <p className="text-2xl font-bold text-gray-900">{calendarData.stats.totalEvents}</p>
                   </div>
                 </div>
@@ -507,7 +514,7 @@ export default function TeacherCalendarPage() {
                     <UserCheck className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">已報名活動</p>
+                    <p className="text-sm text-gray-600">Registered Events</p>
                     <p className="text-2xl font-bold text-green-600">{calendarData.stats.userRegistrations}</p>
                   </div>
                 </div>
@@ -521,7 +528,7 @@ export default function TeacherCalendarPage() {
                     <Target className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">篩選結果</p>
+                    <p className="text-sm text-gray-600">Filter Results</p>
                     <p className="text-2xl font-bold text-purple-600">{filteredEvents.length}</p>
                   </div>
                 </div>
@@ -535,7 +542,7 @@ export default function TeacherCalendarPage() {
                     <BookOpen className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">活動類型</p>
+                    <p className="text-sm text-gray-600">Event Types</p>
                     <p className="text-2xl font-bold text-orange-600">{Object.keys(calendarData.stats.byType).length}</p>
                   </div>
                 </div>
@@ -558,7 +565,7 @@ export default function TeacherCalendarPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="搜尋活動標題、描述或地點..."
+                    placeholder="Search event titles, descriptions, or locations..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -570,10 +577,10 @@ export default function TeacherCalendarPage() {
                   {/* Event Type Filter */}
                   <Select value={selectedEventType} onValueChange={setSelectedEventType}>
                     <SelectTrigger>
-                      <SelectValue placeholder="活動類型" />
+                      <SelectValue placeholder="Event Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">所有類型</SelectItem>
+                      <SelectItem value="all">All Types</SelectItem>
                       {Object.entries(eventTypeNames).map(([key, name]) => (
                         <SelectItem key={key} value={key}>{name}</SelectItem>
                       ))}
@@ -583,16 +590,16 @@ export default function TeacherCalendarPage() {
                   {/* Grade Filter */}
                   <Select value={selectedGrade} onValueChange={setSelectedGrade}>
                     <SelectTrigger>
-                      <SelectValue placeholder="年級" />
+                      <SelectValue placeholder="Grade" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">所有年級</SelectItem>
-                      <SelectItem value="G1">1年級</SelectItem>
-                      <SelectItem value="G2">2年級</SelectItem>
-                      <SelectItem value="G3">3年級</SelectItem>
-                      <SelectItem value="G4">4年級</SelectItem>
-                      <SelectItem value="G5">5年級</SelectItem>
-                      <SelectItem value="G6">6年級</SelectItem>
+                      <SelectItem value="all">All Grades</SelectItem>
+                      <SelectItem value="G1">Grade 1</SelectItem>
+                      <SelectItem value="G2">Grade 2</SelectItem>
+                      <SelectItem value="G3">Grade 3</SelectItem>
+                      <SelectItem value="G4">Grade 4</SelectItem>
+                      <SelectItem value="G5">Grade 5</SelectItem>
+                      <SelectItem value="G6">Grade 6</SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -603,7 +610,7 @@ export default function TeacherCalendarPage() {
                     className="justify-start"
                   >
                     <UserCheck className="w-4 h-4 mr-2" />
-                    我已報名
+                    My Registrations
                   </Button>
 
                   {/* Clear Filters */}
@@ -616,7 +623,7 @@ export default function TeacherCalendarPage() {
                       setShowUserRegistered(false)
                     }}
                   >
-                    清除篩選
+                    Clear Filters
                   </Button>
                 </div>
               </div>
@@ -638,60 +645,68 @@ export default function TeacherCalendarPage() {
           </motion.div>
         )}
 
-        {/* Events List */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-4"
-        >
-          {loading ? (
-            // Loading skeleton
-            Array.from({ length: 3 }).map((_, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg">
-                  <CardContent className="p-6">
-                    <div className="animate-pulse space-y-4">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2 flex-1">
-                          <Skeleton className="h-6 w-3/4" />
-                          <Skeleton className="h-4 w-1/2" />
+        {/* Calendar/List Content */}
+        {displayMode === 'calendar' ? (
+          <TeachersCalendarWrapper
+            events={calendarData?.events || []}
+            loading={loading}
+            error={error}
+            onRefresh={fetchCalendarData}
+          />
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-4"
+          >
+            {loading ? (
+              // Loading skeleton
+              Array.from({ length: 3 }).map((_, index) => (
+                <motion.div key={index} variants={itemVariants}>
+                  <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg">
+                    <CardContent className="p-6">
+                      <div className="animate-pulse space-y-4">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2 flex-1">
+                            <Skeleton className="h-6 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                          </div>
+                          <Skeleton className="h-8 w-24" />
                         </div>
-                        <Skeleton className="h-8 w-24" />
+                        <Skeleton className="h-16 w-full" />
+                        <div className="flex items-center gap-4">
+                          <Skeleton className="h-4 w-28" />
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-4 w-32" />
+                        </div>
                       </div>
-                      <Skeleton className="h-16 w-full" />
-                      <div className="flex items-center gap-4">
-                        <Skeleton className="h-4 w-28" />
-                        <Skeleton className="h-4 w-24" />
-                        <Skeleton className="h-4 w-32" />
-                      </div>
-                    </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))
+            ) : filteredEvents.length === 0 ? (
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg">
+                  <CardContent className="p-12 text-center">
+                    <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {calendarData?.stats.totalEvents === 0 ? 'No events available' : 'No events match your criteria'}
+                    </h3>
+                    <p className="text-gray-600">
+                      {calendarData?.stats.totalEvents === 0 
+                        ? 'No events are scheduled for this period.' 
+                        : 'Try adjusting your search terms or filter settings.'
+                      }
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
-            ))
-          ) : filteredEvents.length === 0 ? (
-            <motion.div variants={itemVariants}>
-              <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg">
-                <CardContent className="p-12 text-center">
-                  <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {calendarData?.stats.totalEvents === 0 ? '暫無活動' : '沒有符合條件的活動'}
-                  </h3>
-                  <p className="text-gray-600">
-                    {calendarData?.stats.totalEvents === 0 
-                      ? '目前此期間沒有任何活動。' 
-                      : '請嘗試調整搜尋條件或篩選設定。'
-                    }
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ) : (
-            <AnimatePresence>
-              {filteredEvents.map((event, index) => (
-                <motion.div
-                  key={event.id}
+            ) : (
+              <AnimatePresence>
+                {filteredEvents.map((event, index) => (
+                  <motion.div
+                    key={event.id}
                   variants={itemVariants}
                   initial="hidden"
                   animate="visible"
@@ -727,7 +742,7 @@ export default function TeacherCalendarPage() {
                         
                         <div className="flex flex-col items-end gap-2">
                           <Badge className={eventTypeColors[event.eventType as keyof typeof eventTypeColors] || eventTypeColors.other}>
-                            {eventTypeNames[event.eventType as keyof typeof eventTypeNames] || '其他'}
+                            {eventTypeNames[event.eventType as keyof typeof eventTypeNames] || 'Other'}
                           </Badge>
                           {event.isUserRegistered && event.userRegistration && (
                             <Badge className={registrationStatusColors[event.userRegistration.status]}>
@@ -752,29 +767,29 @@ export default function TeacherCalendarPage() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <Users className="w-4 h-4 text-blue-600" />
-                              <span className="text-sm font-medium text-blue-900">報名資訊</span>
+                              <span className="text-sm font-medium text-blue-900">Registration Info</span>
                             </div>
                             <div className="text-sm text-blue-700">
                               {event.maxParticipants ? (
                                 <>
-                                  已報名：{event.registrationCount} / {event.maxParticipants}
+                                  Registered: {event.registrationCount} / {event.maxParticipants}
                                   {event.spotsRemaining !== null && event.spotsRemaining > 0 && (
                                     <span className="ml-2 text-green-600">
-                                      (剩餘 {event.spotsRemaining} 名額)
+                                      ({event.spotsRemaining} spots remaining)
                                     </span>
                                   )}
                                   {event.spotsRemaining === 0 && (
-                                    <span className="ml-2 text-red-600">(額滿)</span>
+                                    <span className="ml-2 text-red-600">(Full)</span>
                                   )}
                                 </>
                               ) : (
-                                `已報名：${event.registrationCount} 人`
+                                `Registered: ${event.registrationCount} people`
                               )}
                             </div>
                           </div>
                           {event.registrationDeadline && (
                             <div className="mt-2 text-sm text-blue-600">
-                              報名截止：{new Date(event.registrationDeadline).toLocaleDateString('zh-TW')}
+                              Registration Deadline: {new Date(event.registrationDeadline).toLocaleDateString('en-US')}
                             </div>
                           )}
                         </div>
@@ -785,13 +800,13 @@ export default function TeacherCalendarPage() {
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           {event.creator && (
                             <div className="flex items-center gap-1">
-                              <span>主辦：{event.creator}</span>
+                              <span>Organizer: {event.creator}</span>
                             </div>
                           )}
                           {event.targetGrades && event.targetGrades.length > 0 && (
                             <div className="flex items-center gap-1">
                               <Target className="w-4 h-4" />
-                              <span>對象：{event.targetGrades.join(', ')}</span>
+                              <span>Target: {event.targetGrades.join(', ')}</span>
                             </div>
                           )}
                         </div>
@@ -800,7 +815,7 @@ export default function TeacherCalendarPage() {
                           <Link href={`/events/${event.id}`}>
                             <Button variant="outline" size="sm">
                               <Eye className="w-4 h-4 mr-2" />
-                              查看詳情
+                              View Details
                             </Button>
                           </Link>
                         </div>
@@ -809,9 +824,10 @@ export default function TeacherCalendarPage() {
                   </Card>
                 </motion.div>
               ))}
-            </AnimatePresence>
-          )}
-        </motion.div>
+              </AnimatePresence>
+            )}
+          </motion.div>
+        )}
       </main>
     </div>
   )

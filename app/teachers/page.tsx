@@ -80,7 +80,7 @@ export default function TeachersPage() {
   const [successAnimationMessages, setSuccessAnimationMessages] = useState(false)
   const { user, loading: authLoading } = useAuth()
   
-  // 獲取動態主視覺圖片
+  // Get dynamic hero background image
   const { imageUrl: heroImageUrl, isLoading: heroImageLoading } = useHeroImageSetting()
   
   const { scrollY } = useScroll()
@@ -350,7 +350,7 @@ export default function TeachersPage() {
             </motion.div>
 
             <div className="flex items-center gap-4">
-              {/* 桌面版導航 */}
+              {/* Desktop Navigation */}}
               <nav className="hidden md:flex items-center space-x-8">
                 {[
                   { name: "Home", href: "/teachers", active: true },
@@ -388,7 +388,7 @@ export default function TeachersPage() {
                 </motion.div>
               </nav>
 
-              {/* 行動版導航 */}
+              {/* Mobile Navigation */}}
               <MobileNav />
             </div>
           </div>
