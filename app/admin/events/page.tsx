@@ -126,7 +126,7 @@ export default function AdminEventsPage() {
         setPagination(data.pagination)
         setFilters(currentFilters)
         
-        // 設定統計資訊
+        // Set statistical information
         if (data.stats) {
           setEventStats(data.stats)
         }
@@ -144,7 +144,7 @@ export default function AdminEventsPage() {
   // Handle filter changes
   const handleFiltersChange = (newFilters: EventFilters) => {
     setFilters(newFilters)
-    fetchEvents(newFilters, 1) // 重置到第一頁
+    fetchEvents(newFilters, 1) // Reset to first page
   }
 
   // Handle pagination changes
@@ -246,6 +246,13 @@ export default function AdminEventsPage() {
     }
   }, [isAuthenticated, fetchEvents, isAdmin])
 
+  // Check authentication and permissions
+  useEffect(() => {
+    if (!isLoading && (!isAuthenticated || !isAdmin())) {
+      redirectToLogin('/admin/events')
+    }
+  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
+
   // Loading state
   if (isLoading) {
     return (
@@ -261,13 +268,6 @@ export default function AdminEventsPage() {
       </div>
     )
   }
-
-  // Check authentication and permissions
-  useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !isAdmin())) {
-      redirectToLogin('/admin/events')
-    }
-  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin])
 
   // Not logged in or no admin permissions
   if (!isAuthenticated || !isAdmin()) {
