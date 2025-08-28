@@ -2,7 +2,7 @@
 
 /**
  * AnnouncementForm Component
- * 新增/編輯公告的表單組件
+ * Form component for creating and editing announcements
  */
 
 import { useState, useEffect, useCallback } from 'react'
@@ -63,9 +63,9 @@ import {
   STATUS_LABELS
 } from '@/lib/types'
 
-// 簡化的 HTML 清理函數
+// Simplified HTML sanitization function
 const sanitizeHtml = (html: string) => {
-  // 基本的 HTML 清理，移除危險標籤
+  // Basic HTML sanitization, remove dangerous tags
   return html.replace(/<script[^>]*>.*?<\/script>/gi, '')
              .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
              .replace(/javascript:/gi, '')
@@ -73,58 +73,58 @@ const sanitizeHtml = (html: string) => {
 }
 
 const extractTextFromHtml = (html: string) => {
-  // 提取 HTML 中的純文字
+  // Extract plain text from HTML
   return html.replace(/<[^>]*>/g, '').trim()
 }
 
-// 表單驗證 Schema
+// Form validation schema
 const announcementSchema = z.object({
   title: z
     .string()
-    .min(1, '標題為必填項目')
-    .max(200, '標題不能超過 200 個字元'),
+    .min(1, 'Title is required')
+    .max(200, 'Title cannot exceed 200 characters'),
   content: z
     .string()
-    .min(1, '內容為必填項目')
-    .max(50000, '內容不能超過 50000 個字元'),
+    .min(1, 'Content is required')
+    .max(50000, 'Content cannot exceed 50000 characters'),
   summary: z
     .string()
-    .max(500, '摘要不能超過 500 個字元')
+    .max(500, 'Summary cannot exceed 500 characters')
     .optional(),
   targetAudience: z.enum(['teachers', 'parents', 'all'], {
-    required_error: '請選擇目標對象'
+    required_error: 'Please select target audience'
   }),
   priority: z.enum(['low', 'medium', 'high'], {
-    required_error: '請選擇優先級'
+    required_error: 'Please select priority level'
   }),
   status: z.enum(['draft', 'published', 'archived'], {
-    required_error: '請選擇狀態'
+    required_error: 'Please select status'
   }),
   publishedAt: z.string().optional(),
   expiresAt: z.string().optional()
 }).refine((data) => {
-  // 如果設定了發布時間和到期時間，確保到期時間晚於發布時間
+  // If publish time and expiry time are set, ensure expiry time is later than publish time
   if (data.publishedAt && data.expiresAt) {
     return new Date(data.expiresAt) > new Date(data.publishedAt)
   }
   return true
 }, {
-  message: '到期時間必須晚於發布時間',
+  message: 'Expiry time must be later than publish time',
   path: ['expiresAt']
 }).refine((data) => {
-  // 如果狀態為已發布，確保有發布時間
+  // If status is published, ensure publish time is set
   if (data.status === 'published' && !data.publishedAt) {
     return false
   }
   return true
 }, {
-  message: '發布公告時必須設定發布時間',
+  message: 'Publish time must be set when publishing announcement',
   path: ['publishedAt']
 })
 
 type FormData = z.infer<typeof announcementSchema>
 
-// 圖片上傳類型定義
+// Image upload type definitions
 interface UploadedImage {
   fileId: string
   originalName: string
@@ -149,7 +149,7 @@ export default function AnnouncementForm({
   
   const isEditMode = mode === 'edit' && announcement
 
-  // 初始化表單
+  // Initialize form
   const form = useForm<FormData>({
     resolver: zodResolver(announcementSchema),
     defaultValues: {
@@ -169,7 +169,7 @@ export default function AnnouncementForm({
   const { handleSubmit, watch, formState: { isSubmitting, errors } } = form
   const watchedValues = watch()
 
-  // 監聽表單變化
+  // Monitor form changes
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name) {
@@ -179,10 +179,10 @@ export default function AnnouncementForm({
     return () => subscription.unsubscribe()
   }, [watch])
 
-  // 處理表單提交
+  // Handle form submission
   const onSubmitHandler = async (data: FormData) => {
     try {
-      // 清理 HTML 內容
+      // Sanitize HTML content
       const sanitizedData = {
         ...data,
         content: sanitizeHtml(data.content),
@@ -196,11 +196,11 @@ export default function AnnouncementForm({
     }
   }
 
-  // 處理草稿儲存
+  // Handle draft saving
   const handleSaveDraft = async () => {
     const data = form.getValues()
     data.status = 'draft'
-    // 生成摘要（如果沒有手動輸入）
+    // Generate summary (if not manually entered)
     if (!data.summary && data.content) {
       const textContent = extractTextFromHtml(data.content)
       data.summary = textContent.length > 200 ? textContent.substring(0, 200) + '...' : textContent
@@ -208,14 +208,14 @@ export default function AnnouncementForm({
     await onSubmitHandler(data)
   }
 
-  // 處理發布
+  // Handle publishing
   const handlePublish = async () => {
     const data = form.getValues()
     data.status = 'published'
     if (!data.publishedAt) {
       data.publishedAt = format(new Date(), "yyyy-MM-dd'T'HH:mm")
     }
-    // 生成摘要（如果沒有手動輸入）
+    // Generate summary (if not manually entered)
     if (!data.summary && data.content) {
       const textContent = extractTextFromHtml(data.content)
       data.summary = textContent.length > 200 ? textContent.substring(0, 200) + '...' : textContent
@@ -223,20 +223,20 @@ export default function AnnouncementForm({
     await onSubmitHandler(data)
   }
 
-  // 處理取消
+  // Handle cancel
   const handleCancel = () => {
-    if (isDirty && !confirm('有未儲存的變更，確定要離開嗎？')) {
+    if (isDirty && !confirm('There are unsaved changes. Are you sure you want to leave?')) {
       return
     }
     onCancel?.()
   }
 
-  // 自動儲存處理
+  // Auto-save handling
   const handleAutoSave = useCallback(async (content: string) => {
     if (!autoSaveEnabled || !isDirty) return
     
     try {
-      // 只在編輯模式下自動儲存草稿
+      // Only auto-save drafts in edit mode
       if (isEditMode) {
         const data = form.getValues()
         data.content = content
@@ -252,7 +252,7 @@ export default function AnnouncementForm({
   }, [autoSaveEnabled, isDirty, isEditMode, form, onSubmit])
 
 
-  // 取得目標對象圖示
+  // Get target audience icon
   const getTargetAudienceIcon = (audience: string) => {
     switch (audience) {
       case 'teachers':
@@ -292,17 +292,17 @@ export default function AnnouncementForm({
             <div>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-blue-600" />
-                {isEditMode ? '編輯公告' : '新增公告'}
+                {isEditMode ? 'Edit Announcement' : 'Create Announcement'}
               </CardTitle>
               {isEditMode && (
                 <p className="text-sm text-gray-600 mt-1">
-                  公告 ID: {announcement.id}
+                  Announcement ID: {announcement.id}
                 </p>
               )}
             </div>
 
             <div className="flex items-center gap-2">
-              {/* 自動儲存開關 */}
+              {/* Auto-save toggle */}
               {isEditMode && (
                 <Button
                   variant="outline"
@@ -312,13 +312,13 @@ export default function AnnouncementForm({
                     "flex items-center gap-2 text-xs",
                     autoSaveEnabled ? "text-green-600 border-green-300" : "text-gray-500"
                   )}
-                  title={autoSaveEnabled ? '關閉自動儲存' : '開啟自動儲存'}
+                  title={autoSaveEnabled ? 'Disable auto-save' : 'Enable auto-save'}
                 >
-                  {autoSaveEnabled ? '自動儲存' : '手動儲存'}
+                  {autoSaveEnabled ? 'Auto-save' : 'Manual save'}
                 </Button>
               )}
               
-              {/* 預覽模式切換 */}
+              {/* Preview mode toggle */}
               <Button
                 variant="outline"
                 size="sm"
@@ -328,17 +328,17 @@ export default function AnnouncementForm({
                 {previewMode ? (
                   <>
                     <Eye className="w-4 h-4" />
-                    編輯模式
+                    Edit Mode
                   </>
                 ) : (
                   <>
                     <EyeOff className="w-4 h-4" />
-                    預覽模式
+                    Preview Mode
                   </>
                 )}
               </Button>
 
-              {/* 關閉按鈕 */}
+              {/* Close button */}
               <Button
                 variant="outline"
                 size="sm"
@@ -350,17 +350,17 @@ export default function AnnouncementForm({
             </div>
           </div>
 
-          {/* 狀態指示 */}
+          {/* Status indicator */}
           {isDirty && (
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                表單有未儲存的變更
+                Form has unsaved changes
               </AlertDescription>
             </Alert>
           )}
 
-          {/* 錯誤訊息 */}
+          {/* Error messages */}
           {error && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
@@ -372,14 +372,14 @@ export default function AnnouncementForm({
 
         <CardContent>
           {previewMode ? (
-            // 預覽模式
+            // Preview mode
             <div className="space-y-6">
               <div className="prose prose-sm max-w-none">
                 <h1 className="text-2xl font-bold mb-4">{watchedValues.title}</h1>
                 
                 {watchedValues.summary && (
                   <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                    <h3 className="font-semibold text-blue-800 mb-2">摘要</h3>
+                    <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
                     <p className="text-blue-700">{watchedValues.summary}</p>
                   </div>
                 )}
@@ -400,7 +400,7 @@ export default function AnnouncementForm({
                 <div 
                   className="prose prose-sm max-w-none dark:prose-invert"
                   dangerouslySetInnerHTML={{ 
-                    __html: watchedValues.content || '<p>暫無內容</p>'
+                    __html: watchedValues.content || '<p>No content</p>'
                   }}
                 />
 
@@ -410,13 +410,13 @@ export default function AnnouncementForm({
                       {watchedValues.publishedAt && (
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
-                          <span>發布時間: {format(new Date(watchedValues.publishedAt), 'yyyy/MM/dd HH:mm', { locale: zhTW })}</span>
+                          <span>Published: {format(new Date(watchedValues.publishedAt), 'yyyy/MM/dd HH:mm', { locale: zhTW })}</span>
                         </div>
                       )}
                       {watchedValues.expiresAt && (
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4" />
-                          <span>到期時間: {format(new Date(watchedValues.expiresAt), 'yyyy/MM/dd HH:mm', { locale: zhTW })}</span>
+                          <span>Expires: {format(new Date(watchedValues.expiresAt), 'yyyy/MM/dd HH:mm', { locale: zhTW })}</span>
                         </div>
                       )}
                     </div>
@@ -425,22 +425,22 @@ export default function AnnouncementForm({
               </div>
             </div>
           ) : (
-            // 編輯模式
+            // Edit mode
             <Form {...form}>
               <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-6">
-                {/* 基本資訊 */}
+                {/* Basic information */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="lg:col-span-2 space-y-4">
-                    {/* 標題 */}
+                    {/* Title */}
                     <FormField
                       control={form.control}
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>標題 *</FormLabel>
+                          <FormLabel>Title *</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="請輸入公告標題"
+                              placeholder="Enter announcement title"
                               {...field}
                             />
                           </FormControl>
@@ -449,46 +449,46 @@ export default function AnnouncementForm({
                       )}
                     />
 
-                    {/* 摘要 */}
+                    {/* Summary */}
                     <FormField
                       control={form.control}
                       name="summary"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>摘要</FormLabel>
+                          <FormLabel>Summary</FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="請輸入公告摘要（選填）"
+                              placeholder="Enter announcement summary (optional)"
                               className="min-h-[80px]"
                               {...field}
                             />
                           </FormControl>
                           <FormDescription>
-                            簡短描述公告內容，將顯示在公告列表中
+                            Brief description of the announcement content, will be displayed in the announcement list
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    {/* 內容 */}
+                    {/* Content */}
                     <FormField
                       control={form.control}
                       name="content"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>內容 *</FormLabel>
+                          <FormLabel>Content *</FormLabel>
                           <FormControl>
                             <RichTextEditor
                               value={field.value}
                               onChange={field.onChange}
                               onBlur={field.onBlur}
-                              placeholder="請輸入公告詳細內容..."
+                              placeholder="Enter detailed announcement content..."
                               minHeight={300}
                               maxHeight={600}
                               maxLength={50000}
                               autoSave={autoSaveEnabled && isEditMode}
-                              autoSaveInterval={30000} // 30秒自動儲存
+                              autoSaveInterval={30000} // Auto-save every 30 seconds
                               onAutoSave={handleAutoSave}
                               enableImageUpload={true}
                               relatedType="announcement"
@@ -498,10 +498,10 @@ export default function AnnouncementForm({
                             />
                           </FormControl>
                           <FormDescription className="flex items-center justify-between">
-                            <span>支援富文本格式、圖片上傳，字數限制：50000 字元</span>
+                            <span>Supports rich text format, image upload, character limit: 50000 characters</span>
                             {lastAutoSave && isEditMode && (
                               <span className="text-xs text-green-600">
-                                最後自動儲存: {format(lastAutoSave, 'HH:mm:ss', { locale: zhTW })}
+                                Last auto-saved: {format(lastAutoSave, 'HH:mm:ss', { locale: zhTW })}
                               </span>
                             )}
                           </FormDescription>
@@ -511,38 +511,38 @@ export default function AnnouncementForm({
                     />
                   </div>
 
-                  {/* 設定面板 */}
+                  {/* Settings panel */}
                   <div className="space-y-4">
-                    {/* 目標對象 */}
+                    {/* Target audience */}
                     <FormField
                       control={form.control}
                       name="targetAudience"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>目標對象 *</FormLabel>
+                          <FormLabel>Target Audience *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="選擇目標對象" />
+                                <SelectValue placeholder="Select target audience" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="all">
                                 <div className="flex items-center gap-2">
                                   <Globe className="w-4 h-4" />
-                                  所有人
+                                  Everyone
                                 </div>
                               </SelectItem>
                               <SelectItem value="teachers">
                                 <div className="flex items-center gap-2">
                                   <GraduationCap className="w-4 h-4" />
-                                  教師
+                                  Teachers
                                 </div>
                               </SelectItem>
                               <SelectItem value="parents">
                                 <div className="flex items-center gap-2">
                                   <Users className="w-4 h-4" />
-                                  家長
+                                  Parents
                                 </div>
                               </SelectItem>
                             </SelectContent>
@@ -552,23 +552,23 @@ export default function AnnouncementForm({
                       )}
                     />
 
-                    {/* 優先級 */}
+                    {/* Priority */}
                     <FormField
                       control={form.control}
                       name="priority"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>優先級 *</FormLabel>
+                          <FormLabel>Priority *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="選擇優先級" />
+                                <SelectValue placeholder="Select priority" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="high">高優先級</SelectItem>
-                              <SelectItem value="medium">一般</SelectItem>
-                              <SelectItem value="low">低優先級</SelectItem>
+                              <SelectItem value="high">High Priority</SelectItem>
+                              <SelectItem value="medium">Medium</SelectItem>
+                              <SelectItem value="low">Low Priority</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -576,23 +576,23 @@ export default function AnnouncementForm({
                       )}
                     />
 
-                    {/* 狀態 */}
+                    {/* Status */}
                     <FormField
                       control={form.control}
                       name="status"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>狀態 *</FormLabel>
+                          <FormLabel>Status *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="選擇狀態" />
+                                <SelectValue placeholder="Select status" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="draft">草稿</SelectItem>
-                              <SelectItem value="published">已發布</SelectItem>
-                              <SelectItem value="archived">已封存</SelectItem>
+                              <SelectItem value="draft">Draft</SelectItem>
+                              <SelectItem value="published">Published</SelectItem>
+                              <SelectItem value="archived">Archived</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -600,13 +600,13 @@ export default function AnnouncementForm({
                       )}
                     />
 
-                    {/* 發布時間 */}
+                    {/* Publish time */}
                     <FormField
                       control={form.control}
                       name="publishedAt"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>發布時間</FormLabel>
+                          <FormLabel>Publish Time</FormLabel>
                           <FormControl>
                             <Input 
                               type="datetime-local"
@@ -614,20 +614,20 @@ export default function AnnouncementForm({
                             />
                           </FormControl>
                           <FormDescription>
-                            留空則使用當前時間
+                            Leave empty to use current time
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    {/* 到期時間 */}
+                    {/* Expiry time */}
                     <FormField
                       control={form.control}
                       name="expiresAt"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>到期時間</FormLabel>
+                          <FormLabel>Expiry Time</FormLabel>
                           <FormControl>
                             <Input 
                               type="datetime-local"
@@ -635,7 +635,7 @@ export default function AnnouncementForm({
                             />
                           </FormControl>
                           <FormDescription>
-                            留空則永不過期
+                            Leave empty to never expire
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -644,7 +644,7 @@ export default function AnnouncementForm({
                   </div>
                 </div>
 
-                {/* 表單按鈕 */}
+                {/* Form buttons */}
                 <div className="flex items-center justify-between pt-6 border-t border-gray-200">
                   <Button
                     type="button"
@@ -652,11 +652,11 @@ export default function AnnouncementForm({
                     onClick={handleCancel}
                     disabled={loading || isSubmitting}
                   >
-                    取消
+                    Cancel
                   </Button>
 
                   <div className="flex items-center gap-2">
-                    {/* 儲存草稿 */}
+                    {/* Save draft */}
                     <Button
                       type="button"
                       variant="outline"
@@ -669,10 +669,10 @@ export default function AnnouncementForm({
                       ) : (
                         <Save className="w-4 h-4" />
                       )}
-                      儲存草稿
+                      Save Draft
                     </Button>
 
-                    {/* 發布/更新 */}
+                    {/* Publish/Update */}
                     <Button
                       type="button"
                       onClick={handlePublish}
@@ -684,7 +684,7 @@ export default function AnnouncementForm({
                       ) : (
                         <Send className="w-4 h-4" />
                       )}
-                      {isEditMode ? '更新公告' : '發布公告'}
+                      {isEditMode ? 'Update Announcement' : 'Publish Announcement'}
                     </Button>
                   </div>
                 </div>
