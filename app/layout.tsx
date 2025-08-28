@@ -4,7 +4,11 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 
 // Google 字型配置 - Inter 字體 | Google Fonts configuration - Inter font
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap", // Optimize font loading to prevent layout shifts
+  preload: true // Ensure proper preloading
+})
 
 // 網站中繼資料配置 | Website metadata configuration
 export const metadata: Metadata = {
