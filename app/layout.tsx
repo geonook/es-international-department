@@ -3,14 +3,14 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 
-// Google 字型配置 - Inter 字體 | Google Fonts configuration - Inter font
+// Google Fonts configuration - Inter font
 const inter = Inter({ 
   subsets: ["latin"],
   display: "swap", // Optimize font loading to prevent layout shifts
   preload: true // Ensure proper preloading
 })
 
-// 網站中繼資料配置 | Website metadata configuration
+// Website metadata configuration
 export const metadata: Metadata = {
   title: "KCISLK ESID Info Hub",
   description:
@@ -24,11 +24,10 @@ export const metadata: Metadata = {
 }
 
 /**
- * 根佈局組件 - Next.js 應用程式的主要佈局
  * Root Layout Component - Main layout for Next.js application
  * 
- * @description 定義應用程式的基本 HTML 結構和全域樣式
- * @param children 子組件內容
+ * @description Defines the basic HTML structure and global styles for the application
+ * @param children React children components
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 export default function RootLayout({

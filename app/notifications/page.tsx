@@ -1,11 +1,10 @@
 'use client'
 
 /**
- * Notifications Page
- * 通知頁面
+ * Notifications Page - KCISLK ESID Info Hub
  * 
- * @description 完整的通知管理頁面，整合通知中心、設定和統計功能
- * @features 通知列表、偏好設定、統計概覽、實時更新
+ * @description Complete notification management page with notification center, settings, and analytics
+ * @features Notification list, preference settings, statistics overview, real-time updates
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -32,7 +31,7 @@ export default function NotificationsPage() {
   const [activeTab, setActiveTab] = useState('center')
   const [unreadCount, setUnreadCount] = useState(0)
 
-  // 動畫變體
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -52,7 +51,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
-      {/* 動畫背景 */}
+      {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"
@@ -80,7 +79,7 @@ export default function NotificationsPage() {
         />
       </div>
 
-      {/* 標題欄 */}
+      {/* Header section */}
       <motion.header
         className="relative bg-white/80 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-50"
         initial={{ y: -100 }}
@@ -131,18 +130,18 @@ export default function NotificationsPage() {
       </motion.header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* 導航 */}
+        {/* Navigation breadcrumb */}
         <div className="mb-6">
           <Link 
             href="/" 
             className="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            返回首頁
+            Back to Home
           </Link>
         </div>
 
-        {/* 頁面標題 */}
+        {/* Page title section */}
         <motion.div
           className="text-center mb-12"
           variants={containerVariants}
@@ -153,17 +152,17 @@ export default function NotificationsPage() {
             className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6"
             variants={itemVariants}
           >
-            通知中心 Notifications
+            Notification Center
           </motion.h2>
           <motion.p
             className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed"
             variants={itemVariants}
           >
-            管理您的通知偏好，查看重要訊息，掌握最新動態
+            Manage your notification preferences, view important messages, and stay updated with the latest information
           </motion.p>
         </motion.div>
 
-        {/* 通知統計卡片 */}
+        {/* Notification statistics cards */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
           variants={containerVariants}
@@ -175,7 +174,7 @@ export default function NotificationsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-600 text-sm font-medium">未讀通知</p>
+                    <p className="text-blue-600 text-sm font-medium">Unread</p>
                     <p className="text-2xl font-bold text-blue-800">{unreadCount}</p>
                   </div>
                   <Bell className="w-8 h-8 text-blue-600" />
@@ -189,7 +188,7 @@ export default function NotificationsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-green-600 text-sm font-medium">本週通知</p>
+                    <p className="text-green-600 text-sm font-medium">This Week</p>
                     <p className="text-2xl font-bold text-green-800">24</p>
                   </div>
                   <BarChart3 className="w-8 h-8 text-green-600" />
@@ -203,7 +202,7 @@ export default function NotificationsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-600 text-sm font-medium">高優先級</p>
+                    <p className="text-purple-600 text-sm font-medium">High Priority</p>
                     <p className="text-2xl font-bold text-purple-800">3</p>
                   </div>
                   <Filter className="w-8 h-8 text-purple-600" />
@@ -217,7 +216,7 @@ export default function NotificationsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-600 text-sm font-medium">已讀率</p>
+                    <p className="text-orange-600 text-sm font-medium">Read Rate</p>
                     <p className="text-2xl font-bold text-orange-800">85%</p>
                   </div>
                   <CheckCheck className="w-8 h-8 text-orange-600" />
@@ -227,7 +226,7 @@ export default function NotificationsPage() {
           </motion.div>
         </motion.div>
 
-        {/* 主要內容區域 */}
+        {/* Main content area */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -243,21 +242,21 @@ export default function NotificationsPage() {
                       className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
                     >
                       <Bell className="w-4 h-4 mr-2" />
-                      通知列表
+                      Notifications
                     </TabsTrigger>
                     <TabsTrigger 
                       value="settings"
                       className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
                     >
                       <Settings className="w-4 h-4 mr-2" />
-                      通知設定
+                      Settings
                     </TabsTrigger>
                     <TabsTrigger 
                       value="stats"
                       className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
                     >
                       <BarChart3 className="w-4 h-4 mr-2" />
-                      統計分析
+                      Analytics
                     </TabsTrigger>
                   </TabsList>
                 </div>
@@ -292,14 +291,14 @@ export default function NotificationsPage() {
                     >
                       <motion.div variants={itemVariants}>
                         <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                          通知統計分析
+                          Notification Analytics
                         </h3>
                         <p className="text-gray-600 mb-6">
-                          了解您的通知接收和閱讀習慣，優化通知體驗
+                          Understand your notification receiving and reading habits to optimize your notification experience
                         </p>
                       </motion.div>
 
-                      {/* 統計圖表區域 */}
+                      {/* Statistics charts area */}
                       <motion.div 
                         className="grid grid-cols-1 md:grid-cols-2 gap-6"
                         variants={containerVariants}
@@ -307,12 +306,12 @@ export default function NotificationsPage() {
                         <motion.div variants={itemVariants}>
                           <Card>
                             <CardHeader>
-                              <CardTitle className="text-lg">通知類型分佈</CardTitle>
+                              <CardTitle className="text-lg">Notification Type Distribution</CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="space-y-3">
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm text-gray-600">公告通知</span>
+                                  <span className="text-sm text-gray-600">Announcements</span>
                                   <div className="flex items-center gap-2">
                                     <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                                       <div className="w-3/4 h-full bg-blue-500 rounded-full"></div>
@@ -321,7 +320,7 @@ export default function NotificationsPage() {
                                   </div>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm text-gray-600">活動通知</span>
+                                  <span className="text-sm text-gray-600">Events</span>
                                   <div className="flex items-center gap-2">
                                     <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                                       <div className="w-1/2 h-full bg-green-500 rounded-full"></div>
@@ -330,7 +329,7 @@ export default function NotificationsPage() {
                                   </div>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm text-gray-600">系統通知</span>
+                                  <span className="text-sm text-gray-600">System</span>
                                   <div className="flex items-center gap-2">
                                     <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                                       <div className="w-1/4 h-full bg-purple-500 rounded-full"></div>
@@ -346,24 +345,24 @@ export default function NotificationsPage() {
                         <motion.div variants={itemVariants}>
                           <Card>
                             <CardHeader>
-                              <CardTitle className="text-lg">閱讀趨勢</CardTitle>
+                              <CardTitle className="text-lg">Reading Trends</CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">平均閱讀時間</span>
-                                  <span className="text-lg font-semibold">2.3 分鐘</span>
+                                  <span className="text-sm text-gray-600">Avg. Reading Time</span>
+                                  <span className="text-lg font-semibold">2.3 min</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">最佳閱讀時段</span>
-                                  <Badge>上午 9-11 點</Badge>
+                                  <span className="text-sm text-gray-600">Peak Reading Time</span>
+                                  <Badge>9-11 AM</Badge>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">週平均通知</span>
-                                  <span className="text-lg font-semibold">18 則</span>
+                                  <span className="text-sm text-gray-600">Weekly Average</span>
+                                  <span className="text-lg font-semibold">18 items</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">回應率</span>
+                                  <span className="text-sm text-gray-600">Response Rate</span>
                                   <span className="text-lg font-semibold text-green-600">92%</span>
                                 </div>
                               </div>
@@ -372,27 +371,27 @@ export default function NotificationsPage() {
                         </motion.div>
                       </motion.div>
 
-                      {/* 建議和洞察 */}
+                      {/* Recommendations and insights */}
                       <motion.div variants={itemVariants}>
                         <Card>
                           <CardHeader>
-                            <CardTitle className="text-lg">個人化建議</CardTitle>
+                            <CardTitle className="text-lg">Personalized Recommendations</CardTitle>
                           </CardHeader>
                           <CardContent>
                             <div className="space-y-3">
                               <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                                 <p className="text-sm text-blue-800">
-                                  💡 您最常在上午時段閱讀通知，建議將重要通知設定在這個時間發送
+                                  💡 You read notifications most often in the morning. Consider scheduling important notifications during this time.
                                 </p>
                               </div>
                               <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                                 <p className="text-sm text-green-800">
-                                  ✅ 您的通知回應率很高，繼續保持這個良好的習慣！
+                                  ✅ Your notification response rate is excellent. Keep up the great engagement!
                                 </p>
                               </div>
                               <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                                 <p className="text-sm text-yellow-800">
-                                  ⚠️ 有 3 則高優先級通知尚未處理，建議優先查看
+                                  ⚠️ You have 3 high-priority notifications pending. Consider reviewing them first.
                                 </p>
                               </div>
                             </div>
@@ -408,7 +407,7 @@ export default function NotificationsPage() {
         </motion.div>
       </main>
 
-      {/* 頁尾 */}
+      {/* Footer */}
       <motion.footer
         className="bg-gradient-to-r from-purple-800 to-purple-900 text-white py-12 relative overflow-hidden mt-16"
         initial={{ opacity: 0 }}
@@ -429,7 +428,7 @@ export default function NotificationsPage() {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            林口康橋國際學校 | Excellence in International Education
+            Kang Chiao International School | Excellence in International Education
           </motion.p>
         </div>
         <div className="absolute inset-0 opacity-10">

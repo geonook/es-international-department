@@ -80,9 +80,9 @@ const boardTypeColors = {
 }
 
 const boardTypeNames = {
-  teachers: "教師專區",
-  parents: "家長專區", 
-  general: "一般討論"
+  teachers: "Teachers Area",
+  parents: "Parents Area", 
+  general: "General Discussion"
 }
 
 export default function TeacherMessagesPage() {
@@ -185,7 +185,7 @@ export default function TeacherMessagesPage() {
   const getAuthorName = (author: MessageAuthor) => {
     return author.displayName || 
            `${author.firstName || ''} ${author.lastName || ''}`.trim() || 
-           '未知用戶'
+           'Unknown User'
   }
 
   // Format date display
@@ -198,13 +198,13 @@ export default function TeacherMessagesPage() {
     const diffMinutes = Math.floor(diffTime / (1000 * 60))
     
     if (diffMinutes < 1) {
-      return "剛才"
+      return "Just now"
     } else if (diffMinutes < 60) {
-      return `${diffMinutes} 分鐘前`
+      return `${diffMinutes} minutes ago`
     } else if (diffHours < 24) {
-      return `${diffHours} 小時前`
+      return `${diffHours} hours ago`
     } else if (diffDays < 7) {
-      return `${diffDays} 天前`
+      return `${diffDays} days ago`
     } else {
       return date.toLocaleDateString('zh-TW', {
         year: 'numeric',
@@ -241,7 +241,7 @@ export default function TeacherMessagesPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">正在驗證身份...</p>
+          <p className="text-gray-600">Authenticating...</p>
         </div>
       </div>
     )
@@ -253,10 +253,10 @@ export default function TeacherMessagesPage() {
         <Card className="w-full max-w-md mx-4">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">需要登入</h2>
-            <p className="text-gray-600 mb-4">請先登入以查看留言板</p>
+            <h2 className="text-xl font-semibold mb-2">Login Required</h2>
+            <p className="text-gray-600 mb-4">Please log in to view the message board</p>
             <Link href="/login">
-              <Button className="w-full">前往登入</Button>
+              <Button className="w-full">Go to Login</Button>
             </Link>
           </CardContent>
         </Card>
@@ -307,7 +307,7 @@ export default function TeacherMessagesPage() {
               <Link href="/teachers">
                 <Button variant="ghost" size="sm" className="flex items-center gap-2">
                   <ArrowLeft className="w-4 h-4" />
-                  返回教師頁面
+                  Back to Teachers
                 </Button>
               </Link>
               <div className="h-6 w-px bg-gray-300" />
@@ -317,7 +317,7 @@ export default function TeacherMessagesPage() {
                 </div>
                 <div>
                   <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-800 bg-clip-text text-transparent">
-                    教師留言板
+                    Teachers Message Board
                   </h1>
                   <p className="text-xs text-gray-500">Teacher Message Board</p>
                 </div>
@@ -328,16 +328,16 @@ export default function TeacherMessagesPage() {
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-6">
                 <Link href="/teachers" className="text-gray-600 hover:text-cyan-600 transition-colors">
-                  首頁
+                  Home
                 </Link>
                 <Link href="/teachers/reminders" className="text-gray-600 hover:text-cyan-600 transition-colors">
-                  提醒
+                  Reminders
                 </Link>
                 <Link href="/teachers/calendar" className="text-gray-600 hover:text-cyan-600 transition-colors">
-                  行事曆
+                  Calendar
                 </Link>
                 <Link href="/teachers/messages" className="text-cyan-600 font-medium">
-                  留言板
+                  Messages
                 </Link>
               </nav>
 
@@ -364,7 +364,7 @@ export default function TeacherMessagesPage() {
                   <MessageSquare className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">總討論數</p>
+                  <p className="text-sm text-gray-600">Total Discussions</p>
                   <p className="text-2xl font-bold text-gray-900">{messages.total}</p>
                 </div>
               </div>
@@ -378,7 +378,7 @@ export default function TeacherMessagesPage() {
                   <Pin className="w-6 h-6 text-amber-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">置頂討論</p>
+                  <p className="text-sm text-gray-600">Pinned</p>
                   <p className="text-2xl font-bold text-amber-600">{messages.totalPinned}</p>
                 </div>
               </div>
@@ -392,7 +392,7 @@ export default function TeacherMessagesPage() {
                   <Target className="w-6 h-6 text-cyan-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">篩選結果</p>
+                  <p className="text-sm text-gray-600">Filtered Results</p>
                   <p className="text-2xl font-bold text-cyan-600">{filteredMessages.length}</p>
                 </div>
               </div>
@@ -406,7 +406,7 @@ export default function TeacherMessagesPage() {
                   <MessageCircle className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">總回覆數</p>
+                  <p className="text-sm text-gray-600">Total Replies</p>
                   <p className="text-2xl font-bold text-green-600">
                     {filteredMessages.reduce((sum, msg) => sum + msg.replyCount, 0)}
                   </p>
@@ -430,7 +430,7 @@ export default function TeacherMessagesPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="搜尋討論標題、內容或作者..."
+                    placeholder="Search discussions, content, or authors..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -442,10 +442,10 @@ export default function TeacherMessagesPage() {
                   {/* Board Type Filter */}
                   <Select value={selectedBoardType} onValueChange={setSelectedBoardType}>
                     <SelectTrigger>
-                      <SelectValue placeholder="討論區類型" />
+                      <SelectValue placeholder="Board Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">所有討論區</SelectItem>
+                      <SelectItem value="all">All Boards</SelectItem>
                       {Object.entries(boardTypeNames).map(([key, name]) => (
                         <SelectItem key={key} value={key}>{name}</SelectItem>
                       ))}
@@ -459,7 +459,7 @@ export default function TeacherMessagesPage() {
                     className="justify-start"
                   >
                     <Pin className="w-4 h-4 mr-2" />
-                    僅顯示置頂
+                    Pinned Only
                   </Button>
 
                   {/* Refresh Button */}
@@ -473,7 +473,7 @@ export default function TeacherMessagesPage() {
                     ) : (
                       <RefreshCw className="w-4 h-4 mr-2" />
                     )}
-                    重新整理
+                    Refresh
                   </Button>
 
                   {/* Clear Filters */}
@@ -485,7 +485,7 @@ export default function TeacherMessagesPage() {
                       setShowPinnedOnly(false)
                     }}
                   >
-                    清除篩選
+                    Clear Filters
                   </Button>
                 </div>
               </div>
@@ -545,12 +545,12 @@ export default function TeacherMessagesPage() {
                 <CardContent className="p-12 text-center">
                   <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {messages.total === 0 ? '暫無討論' : '沒有符合條件的討論'}
+                    {messages.total === 0 ? 'No discussions yet' : 'No matching discussions'}
                   </h3>
                   <p className="text-gray-600">
                     {messages.total === 0 
-                      ? '目前沒有任何討論內容。' 
-                      : '請嘗試調整搜尋條件或篩選設定。'
+                      ? 'Currently no discussion content available.' 
+                      : 'Please try adjusting your search criteria or filter settings.'
                     }
                   </p>
                 </CardContent>
@@ -593,7 +593,7 @@ export default function TeacherMessagesPage() {
                             </div>
                             <div className="flex items-center gap-1">
                               <Eye className="w-4 h-4" />
-                              <span>{message.viewCount} 次瀏覽</span>
+                              <span>{message.viewCount} views</span>
                             </div>
                           </div>
                         </div>
@@ -605,7 +605,7 @@ export default function TeacherMessagesPage() {
                           {message.replyCount > 0 && (
                             <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                               <MessageCircle className="w-3 h-3 mr-1" />
-                              {message.replyCount} 回覆
+                              {message.replyCount} replies
                             </Badge>
                           )}
                         </div>
@@ -623,7 +623,7 @@ export default function TeacherMessagesPage() {
                         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                           <div className="flex items-center gap-2 mb-2">
                             <Reply className="w-4 h-4 text-gray-500" />
-                            <span className="text-sm font-medium text-gray-700">最新回覆</span>
+                            <span className="text-sm font-medium text-gray-700">Recent Replies</span>
                           </div>
                           <div className="space-y-2">
                             {message.replies.slice(0, 2).map((reply) => (
@@ -643,7 +643,7 @@ export default function TeacherMessagesPage() {
                             ))}
                             {message.replyCount > 2 && (
                               <div className="text-sm text-gray-500">
-                                還有 {message.replyCount - 2} 則回覆...
+                                {message.replyCount - 2} more replies...
                               </div>
                             )}
                           </div>
@@ -659,7 +659,7 @@ export default function TeacherMessagesPage() {
                           </div>
                           {message.updatedAt !== message.createdAt && (
                             <div className="flex items-center gap-1">
-                              <span>更新於 {formatDate(message.updatedAt)}</span>
+                              <span>Updated {formatDate(message.updatedAt)}</span>
                             </div>
                           )}
                         </div>
@@ -667,7 +667,7 @@ export default function TeacherMessagesPage() {
                         <div className="flex items-center gap-2">
                           <Button variant="outline" size="sm">
                             <Eye className="w-4 h-4 mr-2" />
-                            查看完整討論
+                            View Full Discussion
                           </Button>
                         </div>
                       </div>
