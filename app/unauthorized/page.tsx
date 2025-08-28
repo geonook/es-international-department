@@ -1,6 +1,6 @@
 /**
  * Unauthorized Access Page
- * 未授權存取頁面
+ * Page shown when user lacks permission to access a resource
  */
 
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ export default function UnauthorizedPage() {
               <Shield className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-red-600">
-              存取受限
+              Access Restricted
             </CardTitle>
           </CardHeader>
 
@@ -27,7 +27,7 @@ export default function UnauthorizedPage() {
             <Alert variant="destructive">
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                很抱歉，您沒有權限存取此頁面。請確認您已使用正確的帳戶登入，或聯繫系統管理員獲取相關權限。
+                Sorry, you don't have permission to access this page. Please ensure you're logged in with the correct account or contact the system administrator for access.
               </AlertDescription>
             </Alert>
 
@@ -38,7 +38,7 @@ export default function UnauthorizedPage() {
               >
                 <Link href="/login">
                   <LogIn className="w-4 h-4 mr-2" />
-                  重新登入
+                  Sign In Again
                 </Link>
               </Button>
               
@@ -49,14 +49,14 @@ export default function UnauthorizedPage() {
               >
                 <Link href="/">
                   <Home className="w-4 h-4 mr-2" />
-                  返回首頁
+                  Back to Home
                 </Link>
               </Button>
             </div>
 
             <div className="text-center pt-4 border-t border-gray-100">
               <p className="text-sm text-gray-600">
-                需要協助？請聯繫系統管理員
+                Need help? Contact your system administrator
               </p>
               <p className="text-xs text-gray-500 mt-1">
                 Error Code: 403 - Forbidden

@@ -5,29 +5,28 @@ import { EventNotificationType, NotificationRecipientType } from '@/lib/types'
 
 /**
  * Event Notifications API - /api/events/[id]/notifications
- * 活動通知 API
  * 
- * @description 處理活動通知相關操作
- * @features 發送通知、查詢通知歷史、預約通知
+ * @description Handle event notification related operations
+ * @features Send notifications, query notification history, schedule notifications
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
 /**
  * GET /api/events/[id]/notifications
- * 獲取活動通知列表（僅管理員）
+ * Get event notification list (admin only)
  */
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證管理員權限
+    // Verify admin permissions
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -35,19 +34,19 @@ export async function GET(
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '權限不足' 
+        message: 'Insufficient permissions' 
       }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 檢查活動是否存在
+    // Check if event exists
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       select: { id: true, title: true }
@@ -55,19 +54,19 @@ export async function GET(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, message: '活動不存在' },
+        { success: false, message: 'Event does not exist' },
         { status: 404 }
       )
     }
 
-    // 解析查詢參數
+    // Parse query parameters
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const status = searchParams.get('status')
     const type = searchParams.get('type')
 
-    // 構建篩選條件
+    // Build filter conditions
     const where: any = { eventId }
 
     if (status && status !== 'all') {
@@ -78,12 +77,12 @@ export async function GET(
       where.type = type
     }
 
-    // 計算總數和分頁
+    // Calculate total count and pagination
     const totalCount = await prisma.eventNotification.count({ where })
     const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // 獲取通知列表
+    // Get notification list
     const notifications = await prisma.eventNotification.findMany({
       where,
       include: {
@@ -103,7 +102,7 @@ export async function GET(
       take: limit
     })
 
-    // 構建分頁資訊
+    // Build pagination information
     const pagination = {
       page,
       limit,
@@ -123,7 +122,7 @@ export async function GET(
   } catch (error) {
     console.error('Get notifications error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取通知列表失敗' },
+      { success: false, message: 'Failed to get notification list' },
       { status: 500 }
     )
   }
@@ -131,20 +130,20 @@ export async function GET(
 
 /**
  * POST /api/events/[id]/notifications
- * 建立並發送活動通知（僅管理員）
+ * Create and send event notification (admin only)
  */
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 驗證管理員權限
+    // Verify admin permissions
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -152,19 +151,19 @@ export async function POST(
       return NextResponse.json({ 
         success: false, 
         error: AUTH_ERRORS.ACCESS_DENIED,
-        message: '權限不足' 
+        message: 'Insufficient permissions' 
       }, { status: 403 })
     }
 
     const eventId = parseInt(params.id)
     if (isNaN(eventId)) {
       return NextResponse.json(
-        { success: false, message: '無效的活動ID' },
+        { success: false, message: 'Invalid event ID' },
         { status: 400 }
       )
     }
 
-    // 解析請求資料
+    // Parse request data
     const data = await request.json()
     const {
       type,
@@ -176,15 +175,15 @@ export async function POST(
       specificUserIds
     } = data
 
-    // 驗證必填欄位
+    // Validate required fields
     if (!type || !recipientType || !title || !message) {
       return NextResponse.json(
-        { success: false, message: '缺少必填欄位' },
+        { success: false, message: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // 檢查活動是否存在
+    // Check if event exists
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       include: {
@@ -207,12 +206,12 @@ export async function POST(
 
     if (!event) {
       return NextResponse.json(
-        { success: false, message: '活動不存在' },
+        { success: false, message: 'Event does not exist' },
         { status: 404 }
       )
     }
 
-    // 計算接收者數量
+    // Calculate number of recipients
     let recipientCount = 0
     let recipients: string[] = []
 
@@ -230,13 +229,13 @@ export async function POST(
         break
       
       case 'target_audience':
-        // 根據活動的目標對象發送
+        // Send based on event target audience
         if (event.targetGrades && Array.isArray(event.targetGrades)) {
           const users = await prisma.user.findMany({
             where: {
               isActive: true,
-              // 這裡需要根據實際的用戶-年級關聯邏輯來篩選
-              // 暫時發送給所有活躍用戶
+              // Filter based on actual user-grade association logic
+              // Temporarily send to all active users
             },
             select: { id: true }
           })
@@ -247,11 +246,11 @@ export async function POST(
       
       case 'grade_level':
         if (targetGrades && Array.isArray(targetGrades)) {
-          // 根據指定年級發送
+          // Send based on specified grades
           const users = await prisma.user.findMany({
             where: {
               isActive: true,
-              // 這裡需要根據實際的用戶-年級關聯邏輯來篩選
+              // Filter based on actual user-grade association logic
             },
             select: { id: true }
           })
@@ -261,7 +260,7 @@ export async function POST(
         break
     }
 
-    // 建立通知記錄
+    // Create notification record
     const notification = await prisma.eventNotification.create({
       data: {
         eventId,
@@ -275,10 +274,10 @@ export async function POST(
       }
     })
 
-    // 如果是立即發送，則處理通知發送
+    // If immediate send, handle notification sending
     if (!scheduledFor) {
       try {
-        // 為每個接收者建立個人通知記錄
+        // Create personal notification record for each recipient
         const personalNotifications = recipients.map(userId => ({
           recipientId: userId,
           title,
@@ -293,7 +292,7 @@ export async function POST(
             data: personalNotifications
           })
 
-          // 更新通知狀態為已發送
+          // Update notification status to sent
           await prisma.eventNotification.update({
             where: { id: notification.id },
             data: {
@@ -306,7 +305,7 @@ export async function POST(
 
         return NextResponse.json({
           success: true,
-          message: `通知已發送給 ${personalNotifications.length} 位用戶`,
+          message: `Notification sent to ${personalNotifications.length} users`,
           data: {
             ...notification,
             status: 'sent',
@@ -318,7 +317,7 @@ export async function POST(
       } catch (sendError) {
         console.error('Send notification error:', sendError)
         
-        // 更新通知狀態為失敗
+        // Update notification status to failed
         await prisma.eventNotification.update({
           where: { id: notification.id },
           data: {
@@ -329,7 +328,7 @@ export async function POST(
 
         return NextResponse.json({
           success: false,
-          message: '通知建立成功但發送失敗',
+          message: 'Notification created successfully but sending failed',
           data: notification
         }, { status: 500 })
       }
@@ -337,14 +336,14 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: scheduledFor ? '通知已預約發送' : '通知建立成功',
+      message: scheduledFor ? 'Notification scheduled for sending' : 'Notification created successfully',
       data: notification
     })
 
   } catch (error) {
     console.error('Create notification error:', error)
     return NextResponse.json(
-      { success: false, message: '建立通知失敗' },
+      { success: false, message: 'Failed to create notification' },
       { status: 500 }
     )
   }

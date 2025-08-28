@@ -2,10 +2,10 @@
 
 /**
  * Notification Toast Component
- * 通知彈窗組件
+ * Real-time notification toast component
  * 
- * @description 用於顯示實時通知彈窗，支持多種樣式和自動消失
- * @features 多種通知類型、自動消失、手動關閉、動畫效果、堆疊顯示
+ * @description Used to display real-time notification toasts with multiple styles and auto-dismiss functionality
+ * @features Multiple notification types, auto-dismiss, manual close, animations, stacked display
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
-// 通知類型
+// Notification types
 export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'notification'
 export type NotificationType = 'system' | 'announcement' | 'event' | 'registration' | 'resource' | 'newsletter' | 'maintenance' | 'reminder'
 
@@ -74,25 +74,25 @@ export default function NotificationToast({
   const [isVisible, setIsVisible] = useState(true)
   const [isHovered, setIsHovered] = useState(false)
 
-  // 自動消失邏輯
+  // Auto-dismiss logic
   useEffect(() => {
     if (persistent || isHovered) return
 
     const timer = setTimeout(() => {
       setIsVisible(false)
-      setTimeout(() => onClose?.(), 300) // 等待退出動畫完成
+      setTimeout(() => onClose?.(), 300) // Wait for exit animation to complete
     }, duration)
 
     return () => clearTimeout(timer)
   }, [duration, persistent, isHovered, onClose])
 
-  // 手動關閉
+  // Manual close
   const handleClose = () => {
     setIsVisible(false)
     setTimeout(() => onClose?.(), 300)
   }
 
-  // 獲取通知圖標
+  // Get notification icon
   const getNotificationIcon = () => {
     if (type !== 'notification') {
       switch (type) {
@@ -117,7 +117,7 @@ export default function NotificationToast({
     }
   }
 
-  // 獲取樣式類別
+  // Get style classes
   const getToastStyles = () => {
     if (type !== 'notification') {
       switch (type) {
@@ -132,7 +132,7 @@ export default function NotificationToast({
       }
     }
 
-    // 根據優先級決定樣式
+    // Style based on priority level
     switch (priority) {
       case 'urgent': 
         return 'bg-red-50 border-red-200 text-red-800'
@@ -146,7 +146,7 @@ export default function NotificationToast({
     }
   }
 
-  // 獲取圖標顏色
+  // Get icon color
   const getIconColor = () => {
     if (type !== 'notification') {
       switch (type) {
@@ -167,13 +167,13 @@ export default function NotificationToast({
     }
   }
 
-  // 獲取優先級徽章
+  // Get priority badge
   const getPriorityBadge = () => {
     if (type !== 'notification' || priority === 'low') return null
 
-    const badgeText = priority === 'urgent' ? '緊急' 
-      : priority === 'high' ? '高優先級' 
-      : '中優先級'
+    const badgeText = priority === 'urgent' ? 'Urgent' 
+      : priority === 'high' ? 'High Priority' 
+      : 'Medium Priority'
 
     const badgeVariant = priority === 'urgent' ? 'destructive' : 'secondary'
 
@@ -184,7 +184,7 @@ export default function NotificationToast({
     )
   }
 
-  // 獲取位置樣式
+  // Get position styles
   const getPositionStyles = () => {
     switch (position) {
       case 'top-left':
@@ -232,7 +232,7 @@ export default function NotificationToast({
             getToastStyles()
           )}>
             <div className="flex items-start gap-3">
-              {/* 通知圖標 */}
+              {/* Notification icon */}
               <div className={cn(
                 "flex-shrink-0 p-1 rounded-full",
                 getIconColor()
@@ -240,7 +240,7 @@ export default function NotificationToast({
                 <IconComponent className="w-5 h-5" />
               </div>
 
-              {/* 通知內容 */}
+              {/* Notification content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between mb-1">
                   <h4 className="font-medium text-sm leading-5 flex items-center">
@@ -248,7 +248,7 @@ export default function NotificationToast({
                     {getPriorityBadge()}
                   </h4>
                   
-                  {/* 關閉按鈕 */}
+                  {/* Close button */}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -259,17 +259,17 @@ export default function NotificationToast({
                   </Button>
                 </div>
 
-                {/* 通知訊息 */}
+                {/* Notification message */}
                 {message && (
                   <p className="text-sm text-current/80 mb-3 leading-5">
                     {message}
                   </p>
                 )}
 
-                {/* 操作按鈕區域 */}
+                {/* Action buttons area */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {/* 自定義操作按鈕 */}
+                    {/* Custom action button */}
                     {actionLabel && onAction && (
                       <Button
                         variant="outline"
@@ -284,13 +284,13 @@ export default function NotificationToast({
                       </Button>
                     )}
 
-                    {/* 相關內容鏈接 */}
+                    {/* Related content link */}
                     {relatedId && (
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                          // 處理跳轉邏輯
+                          // Handle navigation logic
                           const baseUrl = relatedType === 'event' ? '/events' 
                             : relatedType === 'announcement' ? '/announcements'
                             : relatedType === 'resource' ? '/resources'
@@ -305,7 +305,7 @@ export default function NotificationToast({
                     )}
                   </div>
 
-                  {/* 進度條（非持久化通知） */}
+                  {/* Progress bar (non-persistent notifications) */}
                   {!persistent && (
                     <div className="flex-1 max-w-16 ml-3">
                       <motion.div
@@ -327,18 +327,18 @@ export default function NotificationToast({
               </div>
             </div>
 
-            {/* 通知類型標籤 */}
+            {/* Notification type label */}
             {type === 'notification' && (
               <div className="mt-2 pt-2 border-t border-current/10">
                 <Badge variant="outline" className="text-xs">
-                  {notificationType === 'announcement' ? '公告通知' 
-                    : notificationType === 'event' ? '活動通知'
-                    : notificationType === 'registration' ? '報名通知'
-                    : notificationType === 'resource' ? '資源更新'
-                    : notificationType === 'maintenance' ? '系統維護'
-                    : notificationType === 'newsletter' ? '電子報'
-                    : notificationType === 'reminder' ? '提醒'
-                    : '系統通知'}
+                  {notificationType === 'announcement' ? 'Announcement' 
+                    : notificationType === 'event' ? 'Event Notification'
+                    : notificationType === 'registration' ? 'Registration Notice'
+                    : notificationType === 'resource' ? 'Resource Update'
+                    : notificationType === 'maintenance' ? 'System Maintenance'
+                    : notificationType === 'newsletter' ? 'Newsletter'
+                    : notificationType === 'reminder' ? 'Reminder'
+                    : 'System Notification'}
                 </Badge>
               </div>
             )}
@@ -349,7 +349,7 @@ export default function NotificationToast({
   )
 }
 
-// 通知管理器 Hook
+// Notification manager hook
 export function useNotificationToasts() {
   const [toasts, setToasts] = useState<ToastNotification[]>([])
 
@@ -381,7 +381,7 @@ export function useNotificationToasts() {
   }
 }
 
-// Toast 容器組件
+// Toast container component
 export function NotificationToastContainer({ 
   toasts, 
   position = 'top-right' 

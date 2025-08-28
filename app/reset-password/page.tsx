@@ -1,6 +1,6 @@
 /**
  * Reset Password Page  
- * 密碼重設頁面
+ * Page for resetting user password with reset token
  */
 
 'use client'
@@ -32,7 +32,7 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('')
   const [tokenExpiry, setTokenExpiry] = useState<Date | null>(null)
 
-  // 從 URL 參數獲取 email 和 token
+  // Get email and token from URL parameters
   useEffect(() => {
     const emailParam = searchParams.get('email')
     const tokenParam = searchParams.get('token')
@@ -41,7 +41,7 @@ export default function ResetPasswordPage() {
     if (tokenParam) setResetToken(tokenParam)
   }, [searchParams])
 
-  // 驗證 reset token
+  // Validate reset token
   useEffect(() => {
     if (email && resetToken) {
       validateToken()
@@ -66,11 +66,11 @@ export default function ResetPasswordPage() {
           setTokenExpiry(new Date(data.data.expiresAt))
         }
       } else {
-        setError(data.message || '重設碼無效或已過期')
+        setError(data.message || 'Reset code is invalid or expired')
         setIsValidToken(false)
       }
     } catch (error) {
-      setError('驗證重設碼時發生錯誤')
+      setError('Error occurred while validating reset code')
       setIsValidToken(false)
     } finally {
       setIsValidating(false)
@@ -82,15 +82,15 @@ export default function ResetPasswordPage() {
     setIsLoading(true)
     setError('')
 
-    // 驗證密碼
+    // Validate password
     if (newPassword !== confirmPassword) {
-      setError('密碼確認不符')
+      setError('Password confirmation does not match')
       setIsLoading(false)
       return
     }
 
     if (newPassword.length < 8) {
-      setError('密碼長度至少 8 個字元')
+      setError('Password must be at least 8 characters long')
       setIsLoading(false)
       return
     }
@@ -113,16 +113,16 @@ export default function ResetPasswordPage() {
       if (data.success) {
         setSuccess(true)
       } else {
-        setError(data.message || '密碼重設失敗，請重試')
+        setError(data.message || 'Password reset failed, please try again')
       }
     } catch (error) {
-      setError('網路錯誤，請檢查連線後再試')
+      setError('Network error, please check your connection and try again')
     } finally {
       setIsLoading(false)
     }
   }
 
-  // 密碼強度檢查
+  // Password strength check
   const getPasswordStrength = (password: string) => {
     if (!password) return { score: 0, text: '' }
     
@@ -130,21 +130,21 @@ export default function ResetPasswordPage() {
     let feedback = []
 
     if (password.length >= 8) score += 1
-    else feedback.push('至少 8 個字元')
+    else feedback.push('At least 8 characters')
 
     if (/[a-z]/.test(password)) score += 1
-    else feedback.push('包含小寫字母')
+    else feedback.push('Include lowercase letters')
 
     if (/[A-Z]/.test(password)) score += 1
-    else feedback.push('包含大寫字母')
+    else feedback.push('Include uppercase letters')
 
     if (/\d/.test(password)) score += 1
-    else feedback.push('包含數字')
+    else feedback.push('Include numbers')
 
     if (/[^a-zA-Z\d]/.test(password)) score += 1
-    else feedback.push('包含特殊字元')
+    else feedback.push('Include special characters')
 
-    const strength = ['很弱', '弱', '一般', '強', '很強'][Math.min(score, 4)]
+    const strength = ['Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'][Math.min(score, 4)]
     const color = ['text-red-500', 'text-orange-500', 'text-yellow-500', 'text-blue-500', 'text-green-500'][Math.min(score, 4)]
 
     return { score, text: strength, color, feedback }
@@ -152,7 +152,7 @@ export default function ResetPasswordPage() {
 
   const passwordStrength = getPasswordStrength(newPassword)
 
-  // 成功頁面
+  // Success page
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -162,18 +162,18 @@ export default function ResetPasswordPage() {
               <CheckCircle className="h-6 w-6 text-green-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              密碼重設成功
+              Password Reset Successful
             </CardTitle>
             <CardDescription>
-              您的密碼已成功更新
+              Your password has been successfully updated
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert>
               <CheckCircle className="h-4 w-4" />
               <AlertDescription>
-                密碼已成功重設。請使用新密碼登入系統。
-                為了安全起見，所有現有的登入會話已被清除。
+                Your password has been successfully reset. Please use your new password to sign in.
+                For security reasons, all existing login sessions have been cleared.
               </AlertDescription>
             </Alert>
 
@@ -181,7 +181,7 @@ export default function ResetPasswordPage() {
               onClick={() => router.push('/login')}
               className="w-full"
             >
-              前往登入頁面
+              Go to Sign In
             </Button>
           </CardContent>
         </Card>
@@ -189,7 +189,7 @@ export default function ResetPasswordPage() {
     )
   }
 
-  // 驗證中
+  // Validating
   if (isValidating) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -197,7 +197,7 @@ export default function ResetPasswordPage() {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">正在驗證重設碼...</p>
+              <p className="text-gray-600">Validating reset code...</p>
             </div>
           </CardContent>
         </Card>
@@ -205,7 +205,7 @@ export default function ResetPasswordPage() {
     )
   }
 
-  // Token 無效
+  // Invalid token
   if (!isValidToken) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -215,10 +215,10 @@ export default function ResetPasswordPage() {
               <AlertCircle className="h-6 w-6 text-red-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              重設碼無效
+              Invalid Reset Code
             </CardTitle>
             <CardDescription>
-              重設碼可能已過期或無效
+              The reset code may have expired or is invalid
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -232,7 +232,7 @@ export default function ResetPasswordPage() {
                 onClick={() => router.push('/forgot-password')}
                 className="w-full"
               >
-                重新申請密碼重設
+                Request New Password Reset
               </Button>
               
               <Button 
@@ -249,7 +249,7 @@ export default function ResetPasswordPage() {
     )
   }
 
-  // 重設密碼表單
+  // Reset password form
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <Card className="w-full max-w-md">
@@ -258,13 +258,13 @@ export default function ResetPasswordPage() {
             <Lock className="h-6 w-6 text-blue-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">
-            重設密碼
+            Reset Password
           </CardTitle>
           <CardDescription>
-            為 {email} 設定新密碼
+            Set a new password for {email}
             {tokenExpiry && (
               <div className="text-sm text-gray-500 mt-1">
-                重設碼將於 {tokenExpiry.toLocaleString()} 過期
+                Reset code expires at {tokenExpiry.toLocaleString()}
               </div>
             )}
           </CardDescription>
@@ -280,12 +280,12 @@ export default function ResetPasswordPage() {
 
             <div className="space-y-2">
               <label htmlFor="resetToken" className="text-sm font-medium text-gray-700">
-                重設碼
+                Reset Code
               </label>
               <Input
                 id="resetToken"
                 type="text"
-                placeholder="請輸入 6 位數重設碼"
+                placeholder="Enter 6-digit reset code"
                 value={resetToken}
                 onChange={(e) => setResetToken(e.target.value)}
                 required
@@ -297,13 +297,13 @@ export default function ResetPasswordPage() {
 
             <div className="space-y-2">
               <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
-                新密碼
+                New Password
               </label>
               <div className="relative">
                 <Input
                   id="newPassword"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="請輸入新密碼"
+                  placeholder="Enter new password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
@@ -325,11 +325,11 @@ export default function ResetPasswordPage() {
               {newPassword && (
                 <div className="text-xs">
                   <div className={`font-medium ${passwordStrength.color}`}>
-                    密碼強度: {passwordStrength.text}
+                    Password Strength: {passwordStrength.text}
                   </div>
                   {passwordStrength.feedback.length > 0 && (
                     <div className="text-gray-500 mt-1">
-                      建議: {passwordStrength.feedback.join('、')}
+                      Suggestions: {passwordStrength.feedback.join(', ')}
                     </div>
                   )}
                 </div>
@@ -338,13 +338,13 @@ export default function ResetPasswordPage() {
 
             <div className="space-y-2">
               <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-                確認新密碼
+                Confirm New Password
               </label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="請再次輸入新密碼"
+                  placeholder="Enter new password again"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -365,7 +365,7 @@ export default function ResetPasswordPage() {
               </div>
               {confirmPassword && newPassword !== confirmPassword && (
                 <div className="text-xs text-red-500">
-                  密碼確認不符
+                  Passwords do not match
                 </div>
               )}
             </div>
@@ -375,7 +375,7 @@ export default function ResetPasswordPage() {
               className="w-full" 
               disabled={isLoading || !resetToken || !newPassword || !confirmPassword || newPassword !== confirmPassword}
             >
-              {isLoading ? '重設中...' : '重設密碼'}
+              {isLoading ? 'Resetting...' : 'Reset Password'}
             </Button>
           </form>
 

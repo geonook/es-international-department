@@ -16,16 +16,16 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
-    // 驗證身份
+    // Authenticate user
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
-    // 檢查用戶權限（只有管理員和老師可以發送郵件）
+    // Check user permissions (only admins and teachers can send emails)
     const userRoles = await prisma.userRole.findMany({
       where: { userId: user.id },
       include: { role: true }
@@ -36,27 +36,27 @@ export async function POST(request: NextRequest) {
     )
 
     if (!hasPermission) {
-      return NextResponse.json({ error: '權限不足' }, { status: 403 })
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
     const requestData = await request.json()
     const { type, recipients, template, templateData, options = {} } = requestData
 
-    // 驗證必需欄位
+    // Validate required fields
     if (!type || !recipients || !template) {
       return NextResponse.json({ 
-        error: '缺少必需欄位: type, recipients, template' 
+        error: 'Missing required fields: type, recipients, template' 
       }, { status: 400 })
     }
 
-    // 驗證收件人列表
+    // Validate recipients list
     if (!Array.isArray(recipients) || recipients.length === 0) {
       return NextResponse.json({ 
-        error: '收件人列表不能為空' 
+        error: 'Recipients list cannot be empty' 
       }, { status: 400 })
     }
 
-    // 根據發送類型處理
+    // Handle by sending type
     switch (type) {
       case 'single':
         return await handleSingleEmail(recipients[0], template, templateData, options)
@@ -75,21 +75,21 @@ export async function POST(request: NextRequest) {
       
       default:
         return NextResponse.json({ 
-          error: `不支持的郵件類型: ${type}` 
+          error: `Unsupported email type: ${type}` 
         }, { status: 400 })
     }
 
   } catch (error) {
-    console.error('郵件發送API錯誤:', error)
+    console.error('Email send API error:', error)
     return NextResponse.json({ 
-      error: '郵件發送失败',
-      details: error instanceof Error ? error.message : '未知錯誤'
+      error: 'Email sending failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }
 
 /**
- * 處理單一郵件發送
+ * Handle single email sending
  */
 async function handleSingleEmail(
   recipient: string,
@@ -98,10 +98,10 @@ async function handleSingleEmail(
   options: any
 ) {
   try {
-    // 渲染模板
+    // Render template
     const rendered = await templateEngine.render(template, templateData, options)
     
-    // 發送郵件
+    // Send email
     const success = await emailService.sendEmail({
       to: recipient,
       subject: rendered.subject,
@@ -111,20 +111,20 @@ async function handleSingleEmail(
 
     return NextResponse.json({
       success,
-      message: success ? '郵件發送成功' : '郵件發送失敗',
+      message: success ? 'Email sent successfully' : 'Email sending failed',
       recipient
     })
 
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '發送失敗'
+      error: error instanceof Error ? error.message : 'Send failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 處理批量郵件發送
+ * Handle bulk email sending
  */
 async function handleBulkEmail(
   recipients: string[],
@@ -133,10 +133,10 @@ async function handleBulkEmail(
   options: any
 ) {
   try {
-    // 渲染模板
+    // Render template
     const rendered = await templateEngine.render(template, templateData, options)
     
-    // 準備批量郵件
+    // Prepare bulk emails
     const emails = recipients.map(recipient => ({
       to: recipient,
       subject: rendered.subject,
@@ -144,12 +144,12 @@ async function handleBulkEmail(
       text: rendered.text
     }))
 
-    // 發送批量郵件
+    // Send bulk emails
     const result = await emailService.sendBulkEmails(emails, options.priority || 'normal')
 
     return NextResponse.json({
       success: result.success,
-      message: `郵件批量發送完成`,
+      message: 'Bulk email sending completed',
       totalRecipients: recipients.length,
       queueId: result.queueId,
       details: {
@@ -162,13 +162,13 @@ async function handleBulkEmail(
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '批量發送失敗'
+      error: error instanceof Error ? error.message : 'Bulk sending failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 處理公告郵件發送
+ * Handle announcement email sending
  */
 async function handleAnnouncementEmail(
   recipients: string[],
@@ -185,7 +185,7 @@ async function handleAnnouncementEmail(
       priority
     )
 
-    // 記錄到資料庫
+    // Log to database
     if (options.logToDatabase !== false) {
       await logEmailToDatabase('announcement', {
         recipients: recipients.length,
@@ -198,20 +198,20 @@ async function handleAnnouncementEmail(
 
     return NextResponse.json({
       success: result.success,
-      message: '公告郵件發送完成',
+      message: 'Announcement email sending completed',
       details: result
     })
 
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '公告郵件發送失敗'
+      error: error instanceof Error ? error.message : 'Announcement email sending failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 處理活動通知郵件發送
+ * Handle event notification email sending
  */
 async function handleEventNotificationEmail(
   recipients: string[],
@@ -228,11 +228,11 @@ async function handleEventNotificationEmail(
       eventDetails
     )
 
-    // 記錄到資料庫
+    // Log to database
     if (options.logToDatabase !== false) {
       await logEmailToDatabase('event_notification', {
         recipients: recipients.length,
-        subject: `活動通知：${eventTitle}`,
+        subject: `Event Notification: ${eventTitle}`,
         content: eventDetails,
         status: result.success ? 'sent' : 'failed',
         details: result
@@ -241,20 +241,20 @@ async function handleEventNotificationEmail(
 
     return NextResponse.json({
       success: result.success,
-      message: '活動通知郵件發送完成',
+      message: 'Event notification email sending completed',
       details: result
     })
 
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '活動通知郵件發送失敗'
+      error: error instanceof Error ? error.message : 'Event notification email sending failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 處理電子報郵件發送
+ * Handle newsletter email sending
  */
 async function handleNewsletterEmail(
   recipients: string[],
@@ -271,11 +271,11 @@ async function handleNewsletterEmail(
       issueNumber
     )
 
-    // 記錄到資料庫
+    // Log to database
     if (options.logToDatabase !== false) {
       await logEmailToDatabase('newsletter', {
         recipients: recipients.length,
-        subject: `${title}${issueNumber ? ` - 第${issueNumber}期` : ''}`,
+        subject: `${title}${issueNumber ? ` - Issue ${issueNumber}` : ''}`,
         content,
         status: result.success ? 'sent' : 'failed',
         details: result
@@ -284,43 +284,43 @@ async function handleNewsletterEmail(
 
     return NextResponse.json({
       success: result.success,
-      message: '電子報郵件發送完成',
+      message: 'Newsletter email sending completed',
       details: result
     })
 
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '電子報郵件發送失敗'
+      error: error instanceof Error ? error.message : 'Newsletter email sending failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 記錄郵件發送到資料庫
+ * Log email sending to database
  */
 async function logEmailToDatabase(type: string, data: any) {
   try {
-    // 這裡可以創建一個專門的郵件日誌表
-    // 或者使用現有的通知表來記錄
+    // Create a dedicated email log table here
+    // Or use existing notification table to record
     console.log('📧 Email log:', { type, ...data })
   } catch (error) {
-    console.error('記錄郵件發送失敗:', error)
+    console.error('Failed to log email sending:', error)
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    // 驗證身份
+    // Authenticate user
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
-    // 獲取郵件服務狀態
+    // Get email service status
     const connectionStatus = await emailService.testConnection()
     const queueStats = emailService.getQueueStats()
     const availableTemplates = templateEngine.getAvailableTemplates()

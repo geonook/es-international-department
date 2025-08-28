@@ -2,7 +2,7 @@
 
 /**
  * Rich Text Editor Test Page
- * 富文本編輯器測試頁面
+ * Rich text editor testing interface
  */
 
 import { useState } from 'react'
@@ -25,21 +25,21 @@ import { sanitizeHtml, extractTextFromHtml, getHtmlStats } from '@/lib/html-sani
 
 export default function TestRichEditorPage() {
   const [content, setContent] = useState(`
-    <h2>歡迎使用富文本編輯器</h2>
-    <p>這是一個功能完整的富文本編輯器，支援以下功能：</p>
+    <h2>Welcome to the Rich Text Editor</h2>
+    <p>This is a fully-featured rich text editor that supports the following functions:</p>
     <ul>
-      <li><strong>文字格式化</strong>：粗體、斜體、底線等</li>
-      <li><strong>標題</strong>：多級標題支援</li>
-      <li><strong>列表</strong>：有序和無序列表</li>
-      <li><strong>連結</strong>：<a href="https://example.com" target="_blank">外部連結</a></li>
-      <li><strong>引用區塊</strong></li>
+      <li><strong>Text Formatting</strong>: Bold, italic, underline, etc.</li>
+      <li><strong>Headers</strong>: Multiple header level support</li>
+      <li><strong>Lists</strong>: Ordered and unordered lists</li>
+      <li><strong>Links</strong>: <a href="https://example.com" target="_blank">External links</a></li>
+      <li><strong>Blockquotes</strong></li>
     </ul>
     
     <blockquote>
-      <p>這是一個引用區塊的範例，可以用來突出重要資訊。</p>
+      <p>This is an example of a blockquote, which can be used to highlight important information.</p>
     </blockquote>
     
-    <p>編輯器支援自動儲存、字數統計、內容驗證等進階功能。</p>
+    <p>The editor supports advanced features such as auto-save, word count, content validation, and more.</p>
   `)
   
   const [autoSave, setAutoSave] = useState(true)
@@ -51,7 +51,7 @@ export default function TestRichEditorPage() {
 
   const handleAutoSave = (content: string) => {
     setSaveStatus('saving')
-    // 模擬 API 調用
+    // Simulate API call
     setTimeout(() => {
       console.log('Auto-saved content:', content.substring(0, 100) + '...')
       setSaveStatus('saved')
@@ -74,43 +74,43 @@ export default function TestRichEditorPage() {
 
   const handleLoadSample = () => {
     setContent(`
-      <h1>範例公告：國際文化日活動通知</h1>
+      <h1>Sample Announcement: International Culture Day Event Notice</h1>
       
-      <p><strong>親愛的家長及同學們：</strong></p>
+      <p><strong>Dear Parents and Students:</strong></p>
       
-      <p>我們很高興地宣布，ES國際部將於 <em>2月28日</em> 舉辦一年一度的國際文化日活動！</p>
+      <p>We are pleased to announce that the ES International Department will be holding our annual International Culture Day event on <em>February 28th</em>!</p>
       
-      <h2>活動詳情</h2>
+      <h2>Event Details</h2>
       <ul>
-        <li><strong>日期：</strong>2025年2月28日（星期五）</li>
-        <li><strong>時間：</strong>上午9:00 - 下午3:00</li>
-        <li><strong>地點：</strong>學校多功能廳及各教室</li>
-        <li><strong>參與對象：</strong>全校師生及家長</li>
+        <li><strong>Date:</strong> Friday, February 28th, 2025</li>
+        <li><strong>Time:</strong> 9:00 AM - 3:00 PM</li>
+        <li><strong>Venue:</strong> School multipurpose hall and various classrooms</li>
+        <li><strong>Participants:</strong> All students, staff, and parents</li>
       </ul>
       
-      <h2>活動內容</h2>
+      <h2>Event Activities</h2>
       <ol>
-        <li><strong>文化展示區：</strong>各國文化介紹、傳統服飾展示</li>
-        <li><strong>美食品嘗：</strong>來自世界各地的特色小食</li>
-        <li><strong>表演節目：</strong>學生才藝表演、民族舞蹈</li>
-        <li><strong>互動遊戲：</strong>文化知識問答、手工藝體驗</li>
+        <li><strong>Cultural Exhibition:</strong> Introduction to various cultures and traditional costume displays</li>
+        <li><strong>Food Tasting:</strong> Special delicacies from around the world</li>
+        <li><strong>Performance Shows:</strong> Student talent shows and folk dances</li>
+        <li><strong>Interactive Games:</strong> Cultural knowledge quiz and handicraft experiences</li>
       </ol>
       
       <blockquote>
-        <p><strong>特別提醒：</strong>歡迎家長穿著傳統服飾參與活動，讓我們一起慶祝文化的多樣性！</p>
+        <p><strong>Special Reminder:</strong> Parents are welcome to wear traditional costumes to participate in the event. Let's celebrate cultural diversity together!</p>
       </blockquote>
       
-      <h2>報名方式</h2>
-      <p>請於 <strong>2月20日前</strong> 透過以下方式報名：</p>
+      <h2>Registration Methods</h2>
+      <p>Please register by <strong>February 20th</strong> through one of the following methods:</p>
       <ul>
-        <li>線上報名：<a href="https://school.example.com/register" target="_blank">點此報名</a></li>
-        <li>紙本報名：填寫報名表交至班導師</li>
-        <li>電話報名：(02) 1234-5678</li>
+        <li>Online Registration: <a href="https://school.example.com/register" target="_blank">Click here to register</a></li>
+        <li>Paper Registration: Complete the registration form and submit to your homeroom teacher</li>
+        <li>Phone Registration: (02) 1234-5678</li>
       </ul>
       
-      <p>期待您的參與！</p>
+      <p>We look forward to your participation!</p>
       
-      <p><em>ES國際部教務處<br>2025年2月1日</em></p>
+      <p><em>ES International Department Academic Affairs Office<br>February 1st, 2025</em></p>
     `)
   }
 
@@ -127,10 +127,10 @@ export default function TestRichEditorPage() {
           className="text-center space-y-4"
         >
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            富文本編輯器測試
+            Rich Text Editor Test
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            這是 KCISLK ESID Info Hub 公告系統的富文本編輯器測試頁面。您可以在這裡測試編輯器的各種功能，包括格式化、自動儲存、內容驗證等。
+            This is the rich text editor testing page for the KCISLK ESID Info Hub announcement system. You can test various editor features here, including formatting, auto-save, content validation, and more.
           </p>
         </motion.div>
 
@@ -144,30 +144,30 @@ export default function TestRichEditorPage() {
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-blue-600">{stats.wordCount}</div>
-              <div className="text-sm text-gray-600">字數</div>
+              <div className="text-sm text-gray-600">Words</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">{stats.charCount}</div>
-              <div className="text-sm text-gray-600">字元數</div>
+              <div className="text-sm text-gray-600">Characters</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-purple-600">{stats.htmlLength}</div>
-              <div className="text-sm text-gray-600">HTML 長度</div>
+              <div className="text-sm text-gray-600">HTML Length</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="flex items-center justify-center gap-2">
-                {saveStatus === 'idle' && <Badge variant="outline">待機中</Badge>}
-                {saveStatus === 'saving' && <Badge variant="outline" className="text-blue-600">儲存中...</Badge>}
-                {saveStatus === 'saved' && <Badge variant="outline" className="text-green-600">已儲存</Badge>}
-                {saveStatus === 'error' && <Badge variant="destructive">儲存失敗</Badge>}
+                {saveStatus === 'idle' && <Badge variant="outline">Idle</Badge>}
+                {saveStatus === 'saving' && <Badge variant="outline" className="text-blue-600">Saving...</Badge>}
+                {saveStatus === 'saved' && <Badge variant="outline" className="text-green-600">Saved</Badge>}
+                {saveStatus === 'error' && <Badge variant="destructive">Save Failed</Badge>}
               </div>
-              <div className="text-sm text-gray-600">儲存狀態</div>
+              <div className="text-sm text-gray-600">Save Status</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -185,7 +185,7 @@ export default function TestRichEditorPage() {
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText className="w-5 h-5 text-blue-600" />
-                    富文本編輯器
+                    Rich Text Editor
                   </div>
                   <div className="flex items-center gap-2">
                     <label className="flex items-center gap-2 text-sm">
@@ -195,7 +195,7 @@ export default function TestRichEditorPage() {
                         onChange={(e) => setAutoSave(e.target.checked)}
                         className="rounded"
                       />
-                      自動儲存
+                      Auto Save
                     </label>
                   </div>
                 </CardTitle>
@@ -204,7 +204,7 @@ export default function TestRichEditorPage() {
                 <RichTextEditor
                   value={content}
                   onChange={handleContentChange}
-                  placeholder="開始輸入您的內容..."
+                  placeholder="Start typing your content..."
                   minHeight={400}
                   maxHeight={600}
                   showWordCount={true}
@@ -217,15 +217,15 @@ export default function TestRichEditorPage() {
                 <div className="flex flex-wrap gap-2">
                   <Button onClick={handleManualSave} size="sm" disabled={saveStatus === 'saving'}>
                     <Save className="w-4 h-4 mr-2" />
-                    手動儲存
+                    Manual Save
                   </Button>
                   <Button onClick={handleReset} variant="outline" size="sm">
                     <RefreshCw className="w-4 h-4 mr-2" />
-                    清空內容
+                    Clear Content
                   </Button>
                   <Button onClick={handleLoadSample} variant="outline" size="sm">
                     <Upload className="w-4 h-4 mr-2" />
-                    載入範例
+                    Load Sample
                   </Button>
                 </div>
               </CardContent>
@@ -243,15 +243,15 @@ export default function TestRichEditorPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Eye className="w-5 h-5 text-green-600" />
-                  預覽與原始碼
+                  Preview & Source Code
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="preview" className="w-full">
                   <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="preview">預覽</TabsTrigger>
+                    <TabsTrigger value="preview">Preview</TabsTrigger>
                     <TabsTrigger value="html">HTML</TabsTrigger>
-                    <TabsTrigger value="text">純文字</TabsTrigger>
+                    <TabsTrigger value="text">Plain Text</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="preview" className="mt-4">
@@ -269,7 +269,7 @@ export default function TestRichEditorPage() {
                   
                   <TabsContent value="text" className="mt-4">
                     <div className="bg-gray-50 p-4 rounded border text-sm min-h-[300px] max-h-[400px] overflow-y-auto whitespace-pre-wrap">
-                      {textContent || '暫無內容'}
+                      {textContent || 'No content'}
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -288,33 +288,33 @@ export default function TestRichEditorPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Code className="w-5 h-5 text-purple-600" />
-                使用說明
+                Usage Instructions
               </CardTitle>
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-semibold mb-2">編輯器功能</h3>
+                  <h3 className="font-semibold mb-2">Editor Features</h3>
                   <ul className="space-y-1 text-sm">
-                    <li>• 文字格式化（粗體、斜體、底線）</li>
-                    <li>• 多級標題（H1-H6）</li>
-                    <li>• 有序和無序列表</li>
-                    <li>• 連結插入和編輯</li>
-                    <li>• 引用區塊和程式碼</li>
-                    <li>• 表格插入和編輯</li>
-                    <li>• 文字對齊和縮排</li>
+                    <li>• Text formatting (bold, italic, underline)</li>
+                    <li>• Multi-level headers (H1-H6)</li>
+                    <li>• Ordered and unordered lists</li>
+                    <li>• Link insertion and editing</li>
+                    <li>• Blockquotes and code blocks</li>
+                    <li>• Table insertion and editing</li>
+                    <li>• Text alignment and indentation</li>
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">進階功能</h3>
+                  <h3 className="font-semibold mb-2">Advanced Features</h3>
                   <ul className="space-y-1 text-sm">
-                    <li>• 自動儲存（可設定間隔）</li>
-                    <li>• 即時字數和字元統計</li>
-                    <li>• HTML 內容清理和驗證</li>
-                    <li>• 響應式設計和暗色主題</li>
-                    <li>• 內容長度限制和警告</li>
-                    <li>• 快捷鍵支援</li>
-                    <li>• 無障礙功能</li>
+                    <li>• Auto-save (configurable interval)</li>
+                    <li>• Real-time word and character count</li>
+                    <li>• HTML content sanitization and validation</li>
+                    <li>• Responsive design and dark theme</li>
+                    <li>• Content length limits and warnings</li>
+                    <li>• Keyboard shortcut support</li>
+                    <li>• Accessibility features</li>
                   </ul>
                 </div>
               </div>

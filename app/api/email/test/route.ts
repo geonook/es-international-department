@@ -14,21 +14,21 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
-    // 驗證身份（僅管理員可測試）
+    // Authenticate user (only admins can test)
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
-    // 檢查管理員權限
+    // Check admin permissions
     const hasAdminAccess = await checkIsAdmin(user.id)
     if (!hasAdminAccess) {
       return NextResponse.json({ 
         error: AUTH_ERRORS.INSUFFICIENT_PERMISSIONS,
-        message: '需要管理員權限' 
+        message: 'Admin permissions required' 
       }, { status: 403 })
     }
 
@@ -50,21 +50,21 @@ export async function POST(request: NextRequest) {
       
       default:
         return NextResponse.json({ 
-          error: `不支持的測試類型: ${testType}` 
+          error: `Unsupported test type: ${testType}` 
         }, { status: 400 })
     }
 
   } catch (error) {
-    console.error('郵件測試API錯誤:', error)
+    console.error('Email test API error:', error)
     return NextResponse.json({ 
-      error: '測試失敗',
-      details: error instanceof Error ? error.message : '未知錯誤'
+      error: 'Test failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }
 
 /**
- * 測試郵件服務連接
+ * Test email service connection
  */
 async function testConnection() {
   try {
@@ -73,16 +73,16 @@ async function testConnection() {
 
     return NextResponse.json({
       success: true,
-      message: '連接測試完成',
+      message: 'Connection test completed',
       results: {
         connection: {
           status: connectionResult ? 'connected' : 'failed',
-          message: connectionResult ? '郵件服務連接正常' : '郵件服務連接失敗',
+          message: connectionResult ? 'Email service connected successfully' : 'Email service connection failed',
           timestamp: new Date().toISOString()
         },
         queue: {
           ...queueStats,
-          message: '佇列狀態正常'
+          message: 'Queue status normal'
         },
         configuration: {
           provider: process.env.EMAIL_PROVIDER || 'smtp',
@@ -96,28 +96,28 @@ async function testConnection() {
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '連接測試失敗'
+      error: error instanceof Error ? error.message : 'Connection test failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 測試郵件模板
+ * Test email template
  */
 async function testTemplate(templateType: string, templateData: any) {
   try {
     // 準備測試數據
     const testData = {
-      userName: '測試用戶',
-      title: '測試公告標題',
-      content: '這是一封測試郵件內容，用於驗證模板渲染功能。',
-      eventTitle: '測試活動',
+      userName: 'Test User',
+      title: 'Test Announcement Title',
+      content: 'This is test email content for verifying template rendering functionality.',
+      eventTitle: 'Test Event',
       eventDate: new Date(),
       priority: 'medium',
       ...templateData
     }
 
-    // 渲染模板
+    // Render template
     const rendered = await templateEngine.render(templateType as any, testData, {
       language: 'zh-TW',
       theme: 'default',
@@ -126,7 +126,7 @@ async function testTemplate(templateType: string, templateData: any) {
 
     return NextResponse.json({
       success: true,
-      message: '模板測試完成',
+      message: 'Template test completed',
       results: {
         templateType,
         rendered: {
@@ -144,13 +144,13 @@ async function testTemplate(templateType: string, templateData: any) {
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '模板測試失敗'
+      error: error instanceof Error ? error.message : 'Template test failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 測試發送郵件
+ * Test sending email
  */
 async function testSendEmail(recipient: string, templateType: string, templateData: any) {
   try {
@@ -160,10 +160,10 @@ async function testSendEmail(recipient: string, templateType: string, templateDa
 
     // 準備測試數據
     const testData = {
-      userName: '測試用戶',
-      title: '【測試】KCISLK ESID 郵件服務測試',
-      content: '這是一封測試郵件，用於驗證郵件發送功能。如果您收到此郵件，表示郵件服務工作正常。',
-      eventTitle: '測試活動',
+      userName: 'Test User',
+      title: '[TEST] KCISLK ESID Email Service Test',
+      content: 'This is a test email to verify email sending functionality. If you receive this email, the email service is working properly.',
+      eventTitle: 'Test Event',
       eventDate: new Date(),
       priority: 'medium',
       testInfo: {
@@ -174,7 +174,7 @@ async function testSendEmail(recipient: string, templateType: string, templateDa
       ...templateData
     }
 
-    // 發送測試郵件
+    // Send test email
     let success = false
     let details = {}
 
@@ -202,7 +202,7 @@ async function testSendEmail(recipient: string, templateType: string, templateDa
 
     return NextResponse.json({
       success,
-      message: success ? '測試郵件發送成功' : '測試郵件發送失敗',
+      message: success ? 'Test email sent successfully' : 'Test email sending failed',
       results: {
         recipient,
         templateType,
@@ -215,44 +215,44 @@ async function testSendEmail(recipient: string, templateType: string, templateDa
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '郵件發送測試失敗'
+      error: error instanceof Error ? error.message : 'Email sending test failed'
     }, { status: 500 })
   }
 }
 
 /**
- * 測試佇列系統
+ * Test queue system
  */
 async function testQueue() {
   try {
     const queueStats = emailService.getQueueStats()
     
-    // 添加幾封測試郵件到佇列
+    // Add several test emails to queue
     const testRecipient = process.env.EMAIL_TEST_RECIPIENT || 'test@example.com'
     const testEmails = [
       {
         to: testRecipient,
-        subject: '【佇列測試】高優先級測試郵件',
-        html: '<h1>高優先級測試郵件</h1><p>這是佇列系統測試郵件。</p>',
-        text: '高優先級測試郵件 - 這是佇列系統測試郵件。'
+        subject: '[Queue Test] High Priority Test Email',
+        html: '<h1>High Priority Test Email</h1><p>This is a queue system test email.</p>',
+        text: 'High Priority Test Email - This is a queue system test email.'
       },
       {
         to: testRecipient,
-        subject: '【佇列測試】普通優先級測試郵件',
-        html: '<h1>普通優先級測試郵件</h1><p>這是佇列系統測試郵件。</p>',
-        text: '普通優先級測試郵件 - 這是佇列系統測試郵件。'
+        subject: '[Queue Test] Normal Priority Test Email',
+        html: '<h1>Normal Priority Test Email</h1><p>This is a queue system test email.</p>',
+        text: 'Normal Priority Test Email - This is a queue system test email.'
       }
     ]
 
     const bulkResult = await emailService.sendBulkEmails(testEmails, 'normal')
     
-    // 等待一秒後獲取更新的佇列狀態
+    // Wait one second then get updated queue status
     await new Promise(resolve => setTimeout(resolve, 1000))
     const updatedStats = emailService.getQueueStats()
 
     return NextResponse.json({
       success: true,
-      message: '佇列測試完成',
+      message: 'Queue test completed',
       results: {
         initialStats: queueStats,
         bulkSendResult: bulkResult,
@@ -265,14 +265,14 @@ async function testQueue() {
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : '佇列測試失敗'
+      error: error instanceof Error ? error.message : 'Queue test failed'
     }, { status: 500 })
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    // 獲取測試概覽信息
+    // Get test overview information
     const connectionStatus = await emailService.testConnection()
     const queueStats = emailService.getQueueStats()
     const availableTemplates = templateEngine.getAvailableTemplates()
@@ -283,25 +283,25 @@ export async function GET(request: NextRequest) {
       availableTests: [
         {
           type: 'connection',
-          description: '測試郵件服務連接',
+          description: 'Test email service connection',
           method: 'POST',
           body: { testType: 'connection' }
         },
         {
           type: 'template',
-          description: '測試郵件模板渲染',
+          description: 'Test email template rendering',
           method: 'POST',
           body: { testType: 'template', templateType: 'welcome', templateData: {} }
         },
         {
           type: 'send',
-          description: '測試發送郵件',
+          description: 'Test sending email',
           method: 'POST',
           body: { testType: 'send', recipient: 'test@example.com', templateType: 'test' }
         },
         {
           type: 'queue',
-          description: '測試佇列系統',
+          description: 'Test queue system',
           method: 'POST',
           body: { testType: 'queue' }
         }
@@ -322,7 +322,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json({
       status: 'error',
-      error: error instanceof Error ? error.message : '未知錯誤'
+      error: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Forgot Password Page
- * 忘記密碼申請頁面
+ * Request password reset for forgotten passwords
  */
 
 'use client'
@@ -40,22 +40,22 @@ export default function ForgotPasswordPage() {
 
       if (data.success) {
         setSuccess(true)
-        // 開發環境中顯示 reset token
+        // Show reset token in development environment
         if (data.data?.development && data.data?.resetToken) {
           setResetToken(data.data.resetToken)
         }
       } else {
-        setError(data.message || '申請失敗，請稍後再試')
+        setError(data.message || 'Request failed, please try again later')
       }
     } catch (error) {
-      setError('網路錯誤，請檢查連線後再試')
+      setError('Network error, please check your connection and try again')
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleResetPassword = () => {
-    // 跳轉到重設密碼頁面
+    // Navigate to reset password page
     const params = new URLSearchParams()
     params.set('email', email)
     if (resetToken) {
@@ -73,32 +73,32 @@ export default function ForgotPasswordPage() {
               <CheckCircle className="h-6 w-6 text-green-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              申請成功
+              Request Successful
             </CardTitle>
             <CardDescription>
-              密碼重設申請已處理
+              Password reset request has been processed
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert>
               <Mail className="h-4 w-4" />
               <AlertDescription>
-                如果該 Email 存在於系統中，重設指示已發送至您的信箱。
-                請檢查您的郵件並按照指示重設密碼。
+                If this email exists in our system, reset instructions have been sent to your inbox.
+                Please check your email and follow the instructions to reset your password.
               </AlertDescription>
             </Alert>
 
-            {/* 開發環境顯示 reset token */}
+            {/* Display reset token in development environment */}
             {resetToken && (
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <div className="font-semibold mb-2">開發模式 - 重設碼:</div>
+                  <div className="font-semibold mb-2">Development Mode - Reset Code:</div>
                   <div className="font-mono text-lg bg-gray-100 p-2 rounded">
                     {resetToken}
                   </div>
                   <div className="text-sm text-gray-600 mt-2">
-                    此重設碼將在 15 分鐘後過期
+                    This reset code will expire in 15 minutes
                   </div>
                 </AlertDescription>
               </Alert>
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
                   onClick={handleResetPassword}
                   className="w-full"
                 >
-                  直接重設密碼
+                  Reset Password Directly
                 </Button>
               )}
               
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
                 onClick={() => router.push('/login')}
                 className="w-full"
               >
-                返回登入頁面
+                Back to Sign In
               </Button>
             </div>
           </CardContent>
@@ -136,10 +136,10 @@ export default function ForgotPasswordPage() {
             <Mail className="h-6 w-6 text-blue-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">
-            忘記密碼
+            Forgot Password
           </CardTitle>
           <CardDescription>
-            輸入您的 Email 地址，我們將發送重設密碼的指示給您
+            Enter your email address and we'll send you instructions to reset your password
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -153,7 +153,7 @@ export default function ForgotPasswordPage() {
 
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                Email 地址
+                Email Address
               </label>
               <Input
                 id="email"
@@ -172,7 +172,7 @@ export default function ForgotPasswordPage() {
               className="w-full" 
               disabled={isLoading || !email}
             >
-              {isLoading ? '處理中...' : '發送重設指示'}
+              {isLoading ? 'Processing...' : 'Send Reset Instructions'}
             </Button>
           </form>
 

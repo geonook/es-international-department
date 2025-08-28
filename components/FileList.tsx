@@ -1,6 +1,6 @@
 /**
  * File List Component for KCISLK ESID Info Hub
- * 檔案列表組件 - 顯示已上傳的檔案並提供管理功能
+ * File list component - displays uploaded files with management functionality
  */
 
 'use client'
@@ -79,24 +79,24 @@ export function FileList({
     const mimeType = file.mimeType || ''
     
     if (mimeType.startsWith('image/')) {
-      return <Badge variant="secondary" className="bg-blue-100 text-blue-800">圖片</Badge>
+      return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Image</Badge>
     } else if (mimeType === 'application/pdf') {
       return <Badge variant="secondary" className="bg-red-100 text-red-800">PDF</Badge>
     } else if (mimeType.includes('document') || mimeType.includes('word')) {
-      return <Badge variant="secondary" className="bg-green-100 text-green-800">文件</Badge>
+      return <Badge variant="secondary" className="bg-green-100 text-green-800">Document</Badge>
     }
     
-    return <Badge variant="outline">檔案</Badge>
+    return <Badge variant="outline">File</Badge>
   }
 
   const handleDownload = (file: FileMetadata) => {
-    // 直接下載檔案
+    // Download file directly
     window.open(`/api/files${file.publicUrl}?download=true`, '_blank')
     onDownload?.(file.id)
   }
 
   const handleView = (file: FileMetadata) => {
-    // 在新頁面中檢視檔案
+    // View file in new tab
     window.open(`/api/files${file.publicUrl}?inline=true`, '_blank')
   }
 
@@ -157,7 +157,7 @@ export function FileList({
       <Card>
         <CardContent className="p-8 text-center">
           <File className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <p className="text-gray-500">尚未上傳任何檔案</p>
+          <p className="text-gray-500">No files uploaded yet</p>
         </CardContent>
       </Card>
     )
@@ -182,7 +182,7 @@ export function FileList({
                     {getFileTypeBadge(file)}
                     {!file.fileExists && (
                       <Badge variant="destructive" className="text-xs">
-                        檔案不存在
+                        File not found
                       </Badge>
                     )}
                   </div>
@@ -190,14 +190,14 @@ export function FileList({
                     <span>{formatFileSize(file.fileSize)}</span>
                     <span>{format(file.createdAt, 'yyyy-MM-dd HH:mm')}</span>
                     {file.uploader && (
-                      <span>上傳者: {file.uploader.displayName || file.uploader.email}</span>
+                      <span>Uploaded by: {file.uploader.displayName || file.uploader.email}</span>
                     )}
                   </div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2">
-                {/* 圖片預覽 */}
+                {/* Image preview */}
                 {file.mimeType?.startsWith('image/') && file.fileExists && (
                   <img
                     src={`/api/files${file.publicUrl}`}
@@ -206,7 +206,7 @@ export function FileList({
                   />
                 )}
 
-                {/* 操作選單 */}
+                {/* Action menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -218,17 +218,17 @@ export function FileList({
                       <>
                         <DropdownMenuItem onClick={() => handleView(file)}>
                           <Eye className="mr-2 h-4 w-4" />
-                          檢視
+                          View
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDownload(file)}>
                           <Download className="mr-2 h-4 w-4" />
-                          下載
+                          Download
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/files${file.publicUrl}`)}
                         >
                           <ExternalLink className="mr-2 h-4 w-4" />
-                          複製連結
+                          Copy Link
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                       </>
@@ -238,7 +238,7 @@ export function FileList({
                       className="text-red-600 focus:text-red-600"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      刪除
+                      Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -248,24 +248,24 @@ export function FileList({
         </Card>
       ))}
 
-      {/* 刪除確認對話框 */}
+      {/* Delete confirmation dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>確認刪除檔案</AlertDialogTitle>
+            <AlertDialogTitle>Confirm File Deletion</AlertDialogTitle>
             <AlertDialogDescription>
-              您確定要刪除檔案 "{fileToDelete?.originalFilename}" 嗎？
-              此操作無法復原。
+              Are you sure you want to delete the file "{fileToDelete?.originalFilename}"?
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={deleting}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleting ? '刪除中...' : '刪除'}
+              {deleting ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -274,7 +274,7 @@ export function FileList({
   )
 }
 
-// 簡化版檔案卡片組件
+// Simplified file card component
 export function FileCard({ file, onDelete, onDownload }: {
   file: FileMetadata
   onDelete?: (fileId: number) => void

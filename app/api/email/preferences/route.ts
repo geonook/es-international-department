@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // 解析分類偏好
+    // Parse category preferences
     let categoryPreferences = {}
     if (typeof preferences.categoryPreferences === 'object') {
       categoryPreferences = preferences.categoryPreferences as any
@@ -73,9 +73,9 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('獲取郵件偏好失敗:', error)
+    console.error('Failed to get email preferences:', error)
     return NextResponse.json({
-      error: '獲取偏好設定失敗',
+      error: 'Failed to get preference settings',
       details: error instanceof Error ? error.message : '未知錯誤'
     }, { status: 500 })
   }
@@ -83,12 +83,12 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    // 驗證身份
+    // Authenticate user
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -103,22 +103,22 @@ export async function PUT(request: NextRequest) {
       categoryPreferences = {}
     } = requestData
 
-    // 驗證免打擾時間格式
+    // Validate do not disturb time format
     if (doNotDisturbEnabled && (doNotDisturbStart || doNotDisturbEnd)) {
       const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
       if (doNotDisturbStart && !timeRegex.test(doNotDisturbStart)) {
         return NextResponse.json({
-          error: '免打擾開始時間格式無效，應為 HH:MM 格式'
+          error: 'Do not disturb start time format is invalid, should be HH:MM format'
         }, { status: 400 })
       }
       if (doNotDisturbEnd && !timeRegex.test(doNotDisturbEnd)) {
         return NextResponse.json({
-          error: '免打擾結束時間格式無效，應為 HH:MM 格式'
+          error: 'Do not disturb end time format is invalid, should be HH:MM format'
         }, { status: 400 })
       }
     }
 
-    // 更新或創建偏好設定
+    // Update or create preference settings
     const preferences = await prisma.notificationPreference.upsert({
       where: { userId: user.id },
       create: {
@@ -145,7 +145,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '偏好設定更新成功',
+      message: 'Preference settings updated successfully',
       preferences: {
         userId: preferences.userId,
         email: preferences.email,
@@ -159,9 +159,9 @@ export async function PUT(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('更新郵件偏好失敗:', error)
+    console.error('Failed to update email preferences:', error)
     return NextResponse.json({
-      error: '更新偏好設定失敗',
+      error: 'Failed to update preference settings',
       details: error instanceof Error ? error.message : '未知錯誤'
     }, { status: 500 })
   }
@@ -169,12 +169,12 @@ export async function PUT(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // 驗證身份
+    // Authenticate user
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ 
         error: AUTH_ERRORS.TOKEN_REQUIRED,
-        message: '未授權訪問' 
+        message: 'Unauthorized access' 
       }, { status: 401 })
     }
 
@@ -193,25 +193,25 @@ export async function POST(request: NextRequest) {
       
       default:
         return NextResponse.json({
-          error: `不支持的操作: ${action}`
+          error: `Unsupported operation: ${action}`
         }, { status: 400 })
     }
 
   } catch (error) {
-    console.error('郵件偏好操作失敗:', error)
+    console.error('Email preferences operation failed:', error)
     return NextResponse.json({
-      error: '操作失敗',
+      error: 'Operation failed',
       details: error instanceof Error ? error.message : '未知錯誤'
     }, { status: 500 })
   }
 }
 
 /**
- * 切換分類偏好
+ * Toggle category preference
  */
 async function toggleCategoryPreference(userId: string, category: string, enabled: boolean) {
   try {
-    // 獲取現有偏好
+    // Get existing preferences
     const existing = await prisma.notificationPreference.findUnique({
       where: { userId }
     })
@@ -221,10 +221,10 @@ async function toggleCategoryPreference(userId: string, category: string, enable
       categoryPreferences = { ...existing.categoryPreferences as any }
     }
 
-    // 更新特定分類
+    // Update specific category
     (categoryPreferences as any)[category] = enabled
 
-    // 保存更新
+    // Save update
     const preferences = await prisma.notificationPreference.upsert({
       where: { userId },
       create: {
@@ -242,7 +242,7 @@ async function toggleCategoryPreference(userId: string, category: string, enable
 
     return NextResponse.json({
       success: true,
-      message: `${category} 偏好已${enabled ? '啟用' : '停用'}`,
+      message: `${category} preference ${enabled ? 'enabled' : 'disabled'}`,
       categoryPreferences: preferences.categoryPreferences
     })
 
@@ -252,7 +252,7 @@ async function toggleCategoryPreference(userId: string, category: string, enable
 }
 
 /**
- * 重置為默認設定
+ * Reset to default settings
  */
 async function resetToDefaults(userId: string) {
   try {
@@ -287,7 +287,7 @@ async function resetToDefaults(userId: string) {
 
     return NextResponse.json({
       success: true,
-      message: '偏好設定已重置為默認值',
+      message: 'Preference settings have been reset to default values',
       preferences: {
         userId: preferences.userId,
         email: preferences.email,
@@ -306,11 +306,11 @@ async function resetToDefaults(userId: string) {
 }
 
 /**
- * 批量更新分類設定
+ * Bulk update category settings
  */
 async function bulkUpdateCategories(userId: string, categories: Record<string, boolean>) {
   try {
-    // 獲取現有偏好
+    // Get existing preferences
     const existing = await prisma.notificationPreference.findUnique({
       where: { userId }
     })
@@ -320,12 +320,12 @@ async function bulkUpdateCategories(userId: string, categories: Record<string, b
       categoryPreferences = { ...existing.categoryPreferences as any }
     }
 
-    // 批量更新分類
+    // Bulk update categories
     Object.entries(categories).forEach(([category, enabled]) => {
       (categoryPreferences as any)[category] = enabled
     })
 
-    // 保存更新
+    // Save update
     const preferences = await prisma.notificationPreference.upsert({
       where: { userId },
       create: {
@@ -343,7 +343,7 @@ async function bulkUpdateCategories(userId: string, categories: Record<string, b
 
     return NextResponse.json({
       success: true,
-      message: '分類偏好批量更新成功',
+      message: 'Category preferences bulk updated successfully',
       updatedCategories: Object.keys(categories),
       categoryPreferences: preferences.categoryPreferences
     })

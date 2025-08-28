@@ -223,12 +223,12 @@ export async function POST(
 
     if (existingRegistration && existingRegistration.status !== 'cancelled') {
       return NextResponse.json(
-        { success: false, message: '您已報名此活動' },
+        { success: false, message: 'You have already registered for this event' },
         { status: 400 }
       )
     }
 
-    // 檢查報名人數限制
+    // Check registration limit
     const registrationCount = event._count.registrations
     let registrationStatus = 'confirmed'
 
@@ -236,7 +236,7 @@ export async function POST(
       registrationStatus = 'waiting_list'
     }
 
-    // 建立或更新報名記錄
+    // Create or update registration record
     const registrationData = {
       eventId,
       userId: currentUser.id,
@@ -250,7 +250,7 @@ export async function POST(
 
     let registration
     if (existingRegistration) {
-      // 重新啟用已取消的報名
+      // Re-enable cancelled registration
       registration = await prisma.eventRegistration.update({
         where: { id: existingRegistration.id },
         data: {
@@ -259,22 +259,22 @@ export async function POST(
         }
       })
     } else {
-      // 建立新報名
+      // Create new registration
       registration = await prisma.eventRegistration.create({
         data: registrationData
       })
     }
 
-    // 建立報名確認通知
+    // Create registration confirmation notification
     await prisma.eventNotification.create({
       data: {
         eventId,
         type: 'registration_confirmed',
         recipientType: 'specific_users',
-        title: `報名確認：${event.title}`,
+        title: `Registration Confirmed: ${event.title}`,
         message: registrationStatus === 'confirmed' 
-          ? `您已成功報名 ${event.title}。我們期待您的參與！`
-          : `您已加入 ${event.title} 的候補名單。如有名額空出，我們會立即通知您。`,
+          ? `You have successfully registered for ${event.title}. We look forward to your participation!`
+          : `You have been added to the waiting list for ${event.title}. We will notify you immediately if a spot becomes available.`,
         recipientCount: 1,
         createdBy: currentUser.id
       }
@@ -283,8 +283,8 @@ export async function POST(
     return NextResponse.json({
       success: true,
       message: registrationStatus === 'confirmed' 
-        ? '報名成功！' 
-        : '已加入候補名單',
+        ? 'Registration successful!' 
+        : 'Added to waiting list',
       data: {
         id: registration.id,
         status: registration.status,
@@ -297,7 +297,7 @@ export async function POST(
   } catch (error) {
     console.error('Create registration error:', error)
     return NextResponse.json(
-      { success: false, message: '報名失敗' },
+      { success: false, message: 'Registration failed' },
       { status: 500 }
     )
   }
@@ -305,7 +305,7 @@ export async function POST(
 
 /**
  * DELETE /api/events/[id]/registration
- * 取消活動報名
+ * Cancel event registration
  */
 export async function DELETE(
   request: NextRequest,
@@ -330,7 +330,7 @@ export async function DELETE(
       )
     }
 
-    // 檢查活動是否存在
+    // Check if event exists
     const event = await prisma.event.findFirst({
       where: { 
         id: eventId,
@@ -350,15 +350,15 @@ export async function DELETE(
       )
     }
 
-    // Check registration deadline（通常取消也要在期限內）
+    // Check registration deadline (cancellation also usually needs to be within deadline)
     if (event.registrationDeadline && new Date(event.registrationDeadline) <= new Date()) {
       return NextResponse.json(
-        { success: false, message: '已超過取消報名期限' },
+        { success: false, message: 'Registration cancellation deadline has passed' },
         { status: 400 }
       )
     }
 
-    // 查找用戶的報名記錄
+    // Find user's registration record
     const registration = await prisma.eventRegistration.findUnique({
       where: {
         eventId_userId: {
@@ -370,12 +370,12 @@ export async function DELETE(
 
     if (!registration || registration.status === 'cancelled') {
       return NextResponse.json(
-        { success: false, message: '您尚未報名此活動' },
+        { success: false, message: 'You have not registered for this event' },
         { status: 400 }
       )
     }
 
-    // 更新報名狀態為已取消
+    // Update registration status to cancelled
     await prisma.eventRegistration.update({
       where: { id: registration.id },
       data: { 
@@ -384,7 +384,7 @@ export async function DELETE(
       }
     })
 
-    // 如果原本是確認狀態，檢查候補名單
+    // If originally confirmed status, check waiting list
     if (registration.status === 'confirmed') {
       const waitingListRegistration = await prisma.eventRegistration.findFirst({
         where: {
@@ -396,21 +396,21 @@ export async function DELETE(
         }
       })
 
-      // 將候補名單第一人移至確認狀態
+      // Move first person from waiting list to confirmed status
       if (waitingListRegistration) {
         await prisma.eventRegistration.update({
           where: { id: waitingListRegistration.id },
           data: { status: 'confirmed' }
         })
 
-        // 發送候補轉正通知
+        // Send waiting list promotion notification
         await prisma.eventNotification.create({
           data: {
             eventId,
             type: 'registration_confirmed',
             recipientType: 'specific_users',
-            title: `候補轉正：${event.title}`,
-            message: `好消息！您已從候補名單轉為正式報名 ${event.title}。期待您的參與！`,
+            title: `Waiting List Promotion: ${event.title}`,
+            message: `Good news! You have been moved from the waiting list to confirmed registration for ${event.title}. We look forward to your participation!`,
             recipientCount: 1,
             createdBy: currentUser.id
           }
@@ -420,13 +420,13 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: '報名已取消'
+      message: 'Registration cancelled'
     })
 
   } catch (error) {
     console.error('Cancel registration error:', error)
     return NextResponse.json(
-      { success: false, message: '取消報名失敗' },
+      { success: false, message: 'Registration cancellation failed' },
       { status: 500 }
     )
   }

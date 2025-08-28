@@ -353,7 +353,7 @@ export default function AdminDashboard() {
         
         // Show success message
         setBulkOperationSuccess(
-          `批量操作完成！成功處理 ${totalSuccess}/${totalProcessed} 項，失敗 ${totalFailed} 項`
+          `Bulk operation completed! Successfully processed ${totalSuccess}/${totalProcessed} items, ${totalFailed} failed`
         )
         
         // Refresh the announcements list
@@ -362,12 +362,12 @@ export default function AdminDashboard() {
         // Clear success message after 5 seconds
         setTimeout(() => setBulkOperationSuccess(''), 5000)
       } else {
-        throw new Error(result.message || '批量操作失敗')
+        throw new Error(result.message || 'Bulk operation failed')
       }
     } catch (error) {
       console.error('Bulk operation error:', error)
       setBulkOperationError(
-        error instanceof Error ? error.message : '批量操作過程中發生錯誤'
+        error instanceof Error ? error.message : 'An error occurred during bulk operation'
       )
     } finally {
       setBulkOperationLoading(false)

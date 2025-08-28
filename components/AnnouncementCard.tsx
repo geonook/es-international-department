@@ -2,7 +2,7 @@
 
 /**
  * AnnouncementCard Component
- * 單一公告顯示卡片組件
+ * Single announcement display card component
  */
 
 import { useState, useCallback } from 'react'
@@ -65,21 +65,21 @@ export default function AnnouncementCard({
   const [lightboxImage, setLightboxImage] = useState<string | null>(null)
   const [imageError, setImageError] = useState<Set<string>>(new Set())
 
-  // 處理展開/收合
+  // Handle expand/collapse
   const handleToggleExpand = () => {
     const newExpanded = !localExpanded
     setLocalExpanded(newExpanded)
     onToggleExpand?.(announcement.id)
   }
 
-  // 處理編輯
+  // Handle edit
   const handleEdit = () => {
     onEdit?.(announcement)
   }
 
-  // 處理刪除
+  // Handle delete
   const handleDelete = async () => {
-    if (!confirm('確定要刪除這個公告嗎？此操作無法復原。')) {
+    if (!confirm('Are you sure you want to delete this announcement? This action cannot be undone.')) {
       return
     }
 
@@ -93,35 +93,35 @@ export default function AnnouncementCard({
     }
   }
 
-  // 處理選擇
+  // Handle selection
   const handleSelect = (checked: boolean) => {
     onSelect?.(announcement.id, checked)
   }
 
-  // 格式化日期
+  // Format date
   const formatDate = (date: Date | string | undefined) => {
     if (!date) return null
     const dateObj = typeof date === 'string' ? new Date(date) : date
     return format(dateObj, 'yyyy/MM/dd HH:mm', { locale: zhTW })
   }
 
-  // 格式化相對時間
+  // Format relative time
   const formatRelativeTime = (date: Date | string | undefined) => {
     if (!date) return null
     const dateObj = typeof date === 'string' ? new Date(date) : date
     return formatDistanceToNow(dateObj, { addSuffix: true, locale: zhTW })
   }
 
-  // 檢查是否過期
+  // Check if expired
   const isExpired = announcement.expiresAt ? 
     isAfter(new Date(), new Date(announcement.expiresAt)) : false
 
-  // 檢查是否即將到期（7天內）
+  // Check if expiring soon (within 7 days)
   const isExpiringSoon = announcement.expiresAt ? 
     isAfter(new Date(announcement.expiresAt), new Date()) && 
     isBefore(new Date(announcement.expiresAt), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) : false
 
-  // 取得目標對象圖示
+  // Get target audience icon
   const getTargetAudienceIcon = (audience: string) => {
     switch (audience) {
       case 'teachers':
@@ -135,7 +135,7 @@ export default function AnnouncementCard({
     }
   }
 
-  // 取得優先級圖示
+  // Get priority icon
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case 'high':
@@ -149,31 +149,31 @@ export default function AnnouncementCard({
     }
   }
 
-  // 處理圖片點擊放大
+  // Handle image click to enlarge
   const handleImageClick = useCallback((imageSrc: string) => {
     setLightboxImage(imageSrc)
   }, [])
 
-  // 關閉圖片燈箱
+  // Close image lightbox
   const handleCloseLightbox = useCallback(() => {
     setLightboxImage(null)
   }, [])
 
-  // 處理圖片載入錯誤
+  // Handle image load error
   const handleImageError = useCallback((imageSrc: string) => {
     setImageError(prev => new Set([...prev, imageSrc]))
   }, [])
 
-  // 檢查內容是否包含圖片
+  // Check if content contains images
   const hasImages = announcement.content.includes('<img')
   
-  // 提取圖片數量
+  // Extract image count
   const getImageCount = () => {
     const imgMatches = announcement.content.match(/<img[^>]*>/g)
     return imgMatches ? imgMatches.length : 0
   }
 
-  // 處理圖片內容渲染
+  // Handle image content rendering
   const renderContentWithClickableImages = (content: string) => {
     return content.replace(
       /<img([^>]*?)src=["']([^"']*)["']([^>]*?)>/g,
@@ -185,7 +185,7 @@ export default function AnnouncementCard({
     )
   }
 
-  // 設置全局圖片點擊處理器
+  // Set global image click handler
   if (typeof window !== 'undefined') {
     (window as any).handleAnnouncementImageClick = handleImageClick
   }
@@ -239,14 +239,14 @@ export default function AnnouncementCard({
       )}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-3">
-            {/* 選擇框 */}
+            {/* Selection checkbox */}
             {enableSelection && (
               <div className="flex items-start pt-1">
                 <Checkbox
                   checked={isSelected}
                   onCheckedChange={handleSelect}
                   className="mt-1"
-                  aria-label={`選擇公告: ${announcement.title}`}
+                  aria-label={`Select announcement: ${announcement.title}`}
                 />
               </div>
             )}
@@ -262,7 +262,7 @@ export default function AnnouncementCard({
                 {announcement.title}
               </CardTitle>
 
-              {/* 摘要 */}
+              {/* Summary */}
               {announcement.summary && (
                 <p className={cn(
                   "text-sm text-gray-600 mb-3 line-clamp-2",
@@ -272,9 +272,9 @@ export default function AnnouncementCard({
                 </p>
               )}
 
-              {/* 標籤和狀態 */}
+              {/* Tags and status */}
               <div className="flex flex-wrap items-center gap-2 mb-2">
-                {/* 狀態標籤 */}
+                {/* Status badge */}
                 <Badge 
                   variant={STATUS_COLORS[announcement.status] as any}
                   className="flex items-center gap-1"
@@ -284,7 +284,7 @@ export default function AnnouncementCard({
                   {STATUS_LABELS[announcement.status]}
                 </Badge>
 
-                {/* 優先級標籤 */}
+                {/* Priority badge */}
                 <Badge 
                   variant={PRIORITY_COLORS[announcement.priority] as any}
                   className="flex items-center gap-1"
@@ -293,38 +293,38 @@ export default function AnnouncementCard({
                   {PRIORITY_LABELS[announcement.priority]}
                 </Badge>
 
-                {/* 目標對象標籤 */}
+                {/* Target audience badge */}
                 <Badge variant="outline" className="flex items-center gap-1">
                   {getTargetAudienceIcon(announcement.targetAudience)}
                   {TARGET_AUDIENCE_LABELS[announcement.targetAudience]}
                 </Badge>
 
-                {/* 圖片標籤 */}
+                {/* Image badge */}
                 {hasImages && (
                   <Badge variant="outline" className="flex items-center gap-1">
                     <Image className="w-3 h-3" />
-                    {getImageCount()} 張圖片
+                    {getImageCount()} images
                   </Badge>
                 )}
 
-                {/* 過期警告 */}
+                {/* Expiration warning */}
                 {isExpired && (
                   <Badge variant="destructive" className="flex items-center gap-1">
                     <AlertTriangle className="w-3 h-3" />
-                    已過期
+                    Expired
                   </Badge>
                 )}
 
-                {/* 即將到期警告 */}
+                {/* Expiring soon warning */}
                 {isExpiringSoon && !isExpired && (
                   <Badge variant="secondary" className="flex items-center gap-1 bg-orange-100 text-orange-800">
                     <Clock className="w-3 h-3" />
-                    即將到期
+                    Expiring Soon
                   </Badge>
                 )}
               </div>
 
-              {/* 作者和時間資訊 */}
+              {/* Author and time information */}
               <div className="flex items-center text-xs text-gray-500 gap-4">
                 {announcement.author && (
                   <div className="flex items-center gap-1">
@@ -347,21 +347,21 @@ export default function AnnouncementCard({
                 {announcement.expiresAt && (
                   <div className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    <span>到期: {formatDate(announcement.expiresAt)}</span>
+                    <span>Expires: {formatDate(announcement.expiresAt)}</span>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* 操作按鈕 */}
+            {/* Action buttons */}
             <div className="flex items-center gap-1 shrink-0">
-              {/* 展開/收合按鈕 */}
+              {/* Expand/collapse button */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleToggleExpand}
                 className="h-8 w-8 p-0"
-                title={localExpanded ? "收合內容" : "展開內容"}
+                title={localExpanded ? "Collapse content" : "Expand content"}
               >
                 {localExpanded ? (
                   <ChevronUp className="w-4 h-4" />
@@ -370,7 +370,7 @@ export default function AnnouncementCard({
                 )}
               </Button>
 
-              {/* 編輯和刪除按鈕 */}
+              {/* Edit and delete buttons */}
               {showActions && (
                 <>
                   <Button
@@ -378,7 +378,7 @@ export default function AnnouncementCard({
                     size="sm"
                     onClick={handleEdit}
                     className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
-                    title="編輯公告"
+                    title="Edit announcement"
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -388,7 +388,7 @@ export default function AnnouncementCard({
                     onClick={handleDelete}
                     disabled={isDeleting}
                     className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
-                    title="刪除公告"
+                    title="Delete announcement"
                   >
                     <Trash2 className={cn(
                       "w-4 h-4",
@@ -401,7 +401,7 @@ export default function AnnouncementCard({
           </div>
         </CardHeader>
 
-        {/* 展開的內容 */}
+        {/* Expanded content */}
         <AnimatePresence>
           {localExpanded && (
             <motion.div
@@ -412,12 +412,12 @@ export default function AnnouncementCard({
               style={{ overflow: 'hidden' }}
             >
               <CardContent className="pt-0">
-                {/* 警告訊息 */}
+                {/* Warning messages */}
                 {isExpired && (
                   <Alert variant="destructive" className="mb-4">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
-                      此公告已於 {formatDate(announcement.expiresAt)} 過期
+                      This announcement expired on {formatDate(announcement.expiresAt)}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -426,12 +426,12 @@ export default function AnnouncementCard({
                   <Alert className="mb-4 border-orange-200 bg-orange-50">
                     <Clock className="h-4 w-4 text-orange-600" />
                     <AlertDescription className="text-orange-800">
-                      此公告將於 {formatDate(announcement.expiresAt)} 到期
+                      This announcement will expire on {formatDate(announcement.expiresAt)}
                     </AlertDescription>
                   </Alert>
                 )}
 
-                {/* 完整內容 */}
+                {/* Full content */}
                 <div className={cn(
                   "prose prose-sm max-w-none",
                   "[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:shadow-sm [&_img]:cursor-pointer",
@@ -450,23 +450,23 @@ export default function AnnouncementCard({
                   />
                 </div>
 
-                {/* 詳細資訊 */}
+                {/* Detailed information */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-500">
                     <div>
-                      <strong>建立時間:</strong> {formatDate(announcement.createdAt)}
+                      <strong>Created:</strong> {formatDate(announcement.createdAt)}
                     </div>
                     <div>
-                      <strong>更新時間:</strong> {formatDate(announcement.updatedAt)}
+                      <strong>Updated:</strong> {formatDate(announcement.updatedAt)}
                     </div>
                     {announcement.publishedAt && (
                       <div>
-                        <strong>發布時間:</strong> {formatDate(announcement.publishedAt)}
+                        <strong>Published:</strong> {formatDate(announcement.publishedAt)}
                       </div>
                     )}
                     {announcement.expiresAt && (
                       <div>
-                        <strong>到期時間:</strong> {formatDate(announcement.expiresAt)}
+                        <strong>Expires:</strong> {formatDate(announcement.expiresAt)}
                       </div>
                     )}
                   </div>
@@ -477,7 +477,7 @@ export default function AnnouncementCard({
         </AnimatePresence>
       </Card>
 
-      {/* 圖片燈箱 */}
+      {/* Image lightbox */}
       <AnimatePresence>
         {lightboxImage && (
           <motion.div
@@ -494,7 +494,7 @@ export default function AnnouncementCard({
               className="relative max-w-[90vw] max-h-[90vh] p-4"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* 關閉按鈕 */}
+              {/* Close button */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -504,7 +504,7 @@ export default function AnnouncementCard({
                 <X className="w-4 h-4" />
               </Button>
 
-              {/* 下載按鈕 */}
+              {/* Download button */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -515,15 +515,15 @@ export default function AnnouncementCard({
                   link.click()
                 }}
                 className="absolute -top-2 -right-12 z-10 h-8 w-8 p-0 bg-black/50 hover:bg-black/70 text-white border-none"
-                title="下載圖片"
+                title="Download image"
               >
                 <Download className="w-4 h-4" />
               </Button>
 
-              {/* 圖片 */}
+              {/* Image */}
               <img
                 src={lightboxImage}
-                alt="放大檢視"
+                alt="Enlarged view"
                 className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
                 onError={() => handleImageError(lightboxImage)}
               />
