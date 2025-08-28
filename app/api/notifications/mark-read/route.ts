@@ -15,15 +15,15 @@ import { BulkNotificationOperation } from '@/lib/types'
 
 /**
  * POST /api/notifications/mark-read
- * 批量標記通知為已讀
+ * Bulk mark notifications as read
  */
 export async function POST(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user identity
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const { action, notificationIds, markAll } = body
 
     if (markAll) {
-      // 標記所有未讀通知為已讀
+      // Mark all unread notifications as read
       const result = await prisma.notification.updateMany({
         where: {
           recipientId: userId,
@@ -51,34 +51,34 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: `已標記 ${result.count} 則通知為已讀`,
+        message: `Marked ${result.count} notifications as read`,
         data: { affectedCount: result.count }
       })
     }
 
-    // 驗證批量操作資料
+    // Validate bulk operation data
     if (!action || !notificationIds || !Array.isArray(notificationIds)) {
       return NextResponse.json(
-        { success: false, message: '無效的請求資料' },
+        { success: false, message: 'Invalid request data' },
         { status: 400 }
       )
     }
 
     if (notificationIds.length === 0) {
       return NextResponse.json(
-        { success: false, message: '未選擇任何通知' },
+        { success: false, message: 'No notifications selected' },
         { status: 400 }
       )
     }
 
     if (notificationIds.length > 100) {
       return NextResponse.json(
-        { success: false, message: '批量操作限制為100個通知' },
+        { success: false, message: 'Bulk operation limited to 100 notifications' },
         { status: 400 }
       )
     }
 
-    // 執行批量操作
+    // Execute bulk operation
     const operation: BulkNotificationOperation = {
       action,
       notificationIds
@@ -90,19 +90,19 @@ export async function POST(request: NextRequest) {
       let message = ''
       switch (action) {
         case 'mark_read':
-          message = `已標記 ${result.affectedCount} 則通知為已讀`
+          message = `Marked ${result.affectedCount} notifications as read`
           break
         case 'mark_unread':
-          message = `已標記 ${result.affectedCount} 則通知為未讀`
+          message = `Marked ${result.affectedCount} notifications as unread`
           break
         case 'archive':
-          message = `已封存 ${result.affectedCount} 則通知`
+          message = `Archived ${result.affectedCount} notifications`
           break
         case 'delete':
-          message = `已刪除 ${result.affectedCount} 則通知`
+          message = `Deleted ${result.affectedCount} notifications`
           break
         default:
-          message = `操作完成，影響 ${result.affectedCount} 則通知`
+          message = `Operation completed, affected ${result.affectedCount} notifications`
       }
 
       return NextResponse.json({
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json({
         success: false,
-        message: '批量操作失敗',
+        message: 'Bulk operation failed',
         data: result
       }, { status: 500 })
     }
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Bulk notification operation error:', error)
     return NextResponse.json(
-      { success: false, message: '批量操作失敗' },
+      { success: false, message: 'Bulk operation failed' },
       { status: 500 }
     )
   }
@@ -129,40 +129,40 @@ export async function POST(request: NextRequest) {
 
 /**
  * DELETE /api/notifications/mark-read
- * 清理過期通知（管理員功能）
+ * Clean up expired notifications (admin function)
  */
 export async function DELETE(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user identity
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
 
-    // 檢查管理員權限
+    // Check admin permissions
     if (!isAdmin(currentUser)) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.ACCESS_DENIED, message: '權限不足' },
+        { success: false, error: AUTH_ERRORS.ACCESS_DENIED, message: 'Insufficient permissions' },
         { status: 403 }
       )
     }
 
-    // 清理過期通知
+    // Clean up expired notifications
     const cleanedCount = await NotificationService.cleanupExpiredNotifications()
 
     return NextResponse.json({
       success: true,
-      message: `已清理 ${cleanedCount} 則過期通知`,
+      message: `Cleaned up ${cleanedCount} expired notifications`,
       data: { cleanedCount }
     })
 
   } catch (error) {
     console.error('Cleanup expired notifications error:', error)
     return NextResponse.json(
-      { success: false, message: '清理過期通知失敗' },
+      { success: false, message: 'Failed to clean up expired notifications' },
       { status: 500 }
     )
   }

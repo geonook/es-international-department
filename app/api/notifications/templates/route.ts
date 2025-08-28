@@ -15,36 +15,36 @@ import { NotificationTemplate } from '@/lib/types'
 
 /**
  * GET /api/notifications/templates
- * 獲取所有可用的通知模板（管理員功能）
+ * Get all available notification templates (admin function)
  */
 export async function GET(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user identity
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
 
-    // 檢查管理員權限
+    // Check admin permissions
     if (!isAdmin(currentUser)) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.ACCESS_DENIED, message: '權限不足' },
+        { success: false, error: AUTH_ERRORS.ACCESS_DENIED, message: 'Insufficient permissions' },
         { status: 403 }
       )
     }
 
-    // 獲取所有通知模板
+    // Get all notification templates
     const templates = NotificationService.getAllTemplates()
 
-    // 解析查詢參數
+    // Parse query parameters
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
     const search = searchParams.get('search')
 
-    // 篩選模板
+    // Filter templates
     let filteredTemplates = templates
 
     if (category && category !== 'all') {
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 按類別分組
+    // Group by category
     const groupedTemplates = filteredTemplates.reduce((acc, template) => {
       if (!acc[template.category]) {
         acc[template.category] = []
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get notification templates error:', error)
     return NextResponse.json(
-      { success: false, message: '獲取通知模板失敗' },
+      { success: false, message: 'Failed to get notification templates' },
       { status: 500 }
     )
   }
@@ -92,49 +92,49 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/notifications/templates
- * 預覽通知模板（管理員功能）
+ * Preview notification template (admin function)
  */
 export async function POST(request: NextRequest) {
   try {
-    // 驗證用戶身份
+    // Verify user identity
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: '未授權訪問' }, 
+        { success: false, error: AUTH_ERRORS.TOKEN_REQUIRED, message: 'Unauthorized access' }, 
         { status: 401 }
       )
     }
 
-    // 檢查管理員權限
+    // Check admin permissions
     if (!isAdmin(currentUser)) {
       return NextResponse.json(
-        { success: false, error: AUTH_ERRORS.ACCESS_DENIED, message: '權限不足' },
+        { success: false, error: AUTH_ERRORS.ACCESS_DENIED, message: 'Insufficient permissions' },
         { status: 403 }
       )
     }
 
-    // 解析請求資料
+    // Parse request data
     const body = await request.json()
     const { templateId, variables } = body
 
     if (!templateId) {
       return NextResponse.json(
-        { success: false, message: '缺少模板ID' },
+        { success: false, message: 'Missing template ID' },
         { status: 400 }
       )
     }
 
-    // 獲取模板
+    // Get template
     const template = NotificationService.getTemplate(templateId as NotificationTemplate)
     
     if (!template) {
       return NextResponse.json(
-        { success: false, message: '模板不存在' },
+        { success: false, message: 'Template does not exist' },
         { status: 404 }
       )
     }
 
-    // 應用變數生成預覽
+    // Apply variables to generate preview
     let previewSubject = template.subject
     let previewBody = template.body
 
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 為未替換的變數提供預設值
+    // Provide default values for unreplaced variables
     template.variables.forEach(variable => {
       const regex = new RegExp(`{{${variable}}}`, 'g')
       previewSubject = previewSubject.replace(regex, `[${variable}]`)
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Preview notification template error:', error)
     return NextResponse.json(
-      { success: false, message: '預覽通知模板失敗' },
+      { success: false, message: 'Failed to preview notification template' },
       { status: 500 }
     )
   }
