@@ -32,6 +32,7 @@ import {
   Pause,
   Play,
   UserCheck,
+  Plus,
 } from 'lucide-react'
 import {
   DropdownMenu,
