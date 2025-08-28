@@ -185,6 +185,7 @@ model Event {
   registrationRequired Boolean             @default(false) @map("registration_required")
   registrationDeadline DateTime?           @map("registration_deadline") @db.Date
   targetGrades         Json?               @map("target_grades")
+  targetAudience       Json?               @map("target_audience")
   createdBy            String?             @map("created_by")
   status               String              @default("draft") @db.VarChar(20)
   createdAt            DateTime            @default(now()) @map("created_at")

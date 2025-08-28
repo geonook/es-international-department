@@ -239,6 +239,7 @@ export async function POST(request: NextRequest) {
       registrationRequired: data.registrationRequired,
       registrationDeadline: data.registrationDeadline ? new Date(data.registrationDeadline) : null,
       targetGrades: data.targetGrades || [],
+      targetAudience: data.targetAudience || [],
       status: data.status,
       createdBy: currentUser.id
     }

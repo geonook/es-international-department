@@ -77,7 +77,7 @@ export default function EventForm({
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
     description: '',
-    eventType: 'meeting',
+    eventType: 'academic',
     startDate: defaultStartDate || '',
     endDate: '',
     startTime: '',
@@ -87,6 +87,7 @@ export default function EventForm({
     registrationRequired: false,
     registrationDeadline: '',
     targetGrades: [],
+    targetAudience: [],
     status: 'draft'
   })
 
@@ -115,6 +116,7 @@ export default function EventForm({
         registrationRequired: event.registrationRequired,
         registrationDeadline: event.registrationDeadline ? new Date(event.registrationDeadline).toISOString().split('T')[0] : '',
         targetGrades: event.targetGrades || [],
+        targetAudience: event.targetAudience || [],
         status: event.status
       })
     }
@@ -157,6 +159,15 @@ export default function EventForm({
       updateField('targetGrades', [...(formData.targetGrades || []), gradeValue])
     } else {
       updateField('targetGrades', (formData.targetGrades || []).filter(g => g !== gradeValue))
+    }
+  }
+
+  // Handle target audience selection
+  const handleAudienceToggle = (audienceValue: string, checked: boolean) => {
+    if (checked) {
+      updateField('targetAudience', [...(formData.targetAudience || []), audienceValue])
+    } else {
+      updateField('targetAudience', (formData.targetAudience || []).filter(a => a !== audienceValue))
     }
   }
 
@@ -253,6 +264,7 @@ export default function EventForm({
       registrationRequired: false,
       registrationDeadline: '',
       targetGrades: [],
+      targetAudience: [],
       status: 'draft'
     })
     setErrors({})
@@ -266,6 +278,23 @@ export default function EventForm({
             <Calendar className="w-5 h-5 mr-2 text-purple-600" />
             {mode === 'edit' ? 'Edit Event' : 'Add Event'}
           </CardTitle>
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <Info className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-semibold text-blue-900 mb-2">📋 Event Distribution Guide</h3>
+                <ul className="text-sm text-blue-800 space-y-1">
+                  <li>• <span className="font-medium">👥 Target Audience</span>: Select where this event will appear</li>
+                  <li>• <span className="font-medium">👨‍🏫 Teachers</span>: Event shows in Teachers Calendar for staff planning</li>
+                  <li>• <span className="font-medium">👪 Parents</span>: Event shows in Parent Portal for family planning</li>
+                  <li>• <span className="font-medium">🎓 Students</span>: Event shows in Student Portal for academic activities</li>
+                </ul>
+                <p className="text-xs text-blue-600 mt-2">
+                  💡 <strong>Tip:</strong> You can select multiple target audiences for events that involve everyone
+                </p>
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -478,6 +507,46 @@ export default function EventForm({
                   {errors.registrationDeadline && <p className="text-red-500 text-sm mt-1">{errors.registrationDeadline}</p>}
                 </div>
               )}
+            </div>
+
+            {/* Target Audience */}
+            <div>
+              <Label>Target Audience</Label>
+              <div className="mt-2 space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="target-teachers"
+                    checked={formData.targetAudience?.includes('teachers') || false}
+                    onCheckedChange={(checked) => handleAudienceToggle('teachers', checked as boolean)}
+                  />
+                  <Label htmlFor="target-teachers" className="text-sm font-medium">
+                    👨‍🏫 Teachers - This event will appear in Teachers Calendar
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="target-parents"
+                    checked={formData.targetAudience?.includes('parents') || false}
+                    onCheckedChange={(checked) => handleAudienceToggle('parents', checked as boolean)}
+                  />
+                  <Label htmlFor="target-parents" className="text-sm font-medium">
+                    👪 Parents - This event will appear in Parent Portal
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="target-students"
+                    checked={formData.targetAudience?.includes('students') || false}
+                    onCheckedChange={(checked) => handleAudienceToggle('students', checked as boolean)}
+                  />
+                  <Label htmlFor="target-students" className="text-sm font-medium">
+                    🎓 Students - This event will appear in Student Portal
+                  </Label>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Select where this event should be displayed. You can select multiple target audiences.
+                </p>
+              </div>
             </div>
 
             {/* 目標年級 */}

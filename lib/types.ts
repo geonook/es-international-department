@@ -304,16 +304,18 @@ export const STATUS_LABELS: Record<AnnouncementStatus, string> = {
 
 // 活動類型
 export type EventType = 
-  | 'meeting'         // 會議
-  | 'celebration'     // 慶典
-  | 'academic'        // 學術活動
-  | 'sports'          // 體育活動
-  | 'cultural'        // 文化活動
-  | 'workshop'        // 工作坊
-  | 'performance'     // 表演
-  | 'parent_meeting'  // 家長會
-  | 'coffee_session'  // 校長有約
-  | 'other'           // 其他
+  | 'academic'               // 學術活動
+  | 'sports'                 // 體育活動 
+  | 'cultural'               // 文化活動
+  | 'parent_meeting'         // 家長會
+  | 'professional_development' // 專業發展
+  | 'administrative'         // 行政事務
+  | 'meeting'                // 一般會議
+  | 'celebration'            // 慶典
+  | 'workshop'               // 工作坊
+  | 'performance'            // 表演
+  | 'coffee_session'         // 校長有約
+  | 'other'                  // 其他
 
 // 活動狀態
 export type EventStatus = 
@@ -346,6 +348,7 @@ export interface Event {
   registrationRequired: boolean
   registrationDeadline?: Date | string
   targetGrades?: string[] // JSON array from Prisma
+  targetAudience?: string[] // JSON array from Prisma
   createdBy: string
   creator?: {
     id: string
@@ -378,6 +381,7 @@ export interface EventFormData {
   registrationRequired: boolean
   registrationDeadline?: string
   targetGrades?: string[]
+  targetAudience?: string[]
   status: EventStatus
 }
 
@@ -667,16 +671,18 @@ export interface CalendarResponse extends ApiResponse {
 
 // 活動類型標籤映射
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
-  meeting: '會議',
-  celebration: '慶典',
-  academic: '學術活動',
-  sports: '體育活動',
-  cultural: '文化活動',
-  workshop: '工作坊',
-  performance: '表演',
-  parent_meeting: '家長會',
-  coffee_session: '校長有約',
-  other: '其他'
+  academic: 'Academic Activity',
+  sports: 'Sports Activity', 
+  cultural: 'Cultural Event',
+  parent_meeting: 'Parent Meeting',
+  professional_development: 'Professional Development',
+  administrative: 'Administrative',
+  meeting: 'Meeting',
+  celebration: 'Celebration',
+  workshop: 'Workshop',
+  performance: 'Performance',
+  coffee_session: 'Coffee Session',
+  other: 'Other'
 }
 
 // 活動狀態標籤映射
@@ -691,14 +697,16 @@ export const EVENT_STATUS_LABELS: Record<EventStatus, string> = {
 
 // 活動類型顏色映射
 export const EVENT_TYPE_COLORS: Record<EventType, string> = {
+  academic: 'blue',
+  sports: 'green', 
+  cultural: 'purple',
+  parent_meeting: 'orange',
+  professional_development: 'red',
+  administrative: 'gray',
   meeting: 'blue',
   celebration: 'purple',
-  academic: 'green',
-  sports: 'orange',
-  cultural: 'pink',
   workshop: 'cyan',
   performance: 'violet',
-  parent_meeting: 'amber',
   coffee_session: 'teal',
   other: 'gray'
 }

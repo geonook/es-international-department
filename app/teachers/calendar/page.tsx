@@ -87,12 +87,14 @@ const eventTypeColors = {
   sports: "bg-green-100 text-green-800 border-green-200",
   cultural: "bg-purple-100 text-purple-800 border-purple-200",
   parent_meeting: "bg-orange-100 text-orange-800 border-orange-200",
-  field_trip: "bg-red-100 text-red-800 border-red-200",
-  workshop: "bg-indigo-100 text-indigo-800 border-indigo-200",
+  professional_development: "bg-red-100 text-red-800 border-red-200",
+  administrative: "bg-gray-100 text-gray-800 border-gray-200",
+  meeting: "bg-slate-100 text-slate-800 border-slate-200",
   celebration: "bg-pink-100 text-pink-800 border-pink-200",
-  meeting: "bg-gray-100 text-gray-800 border-gray-200",
-  conference: "bg-emerald-100 text-emerald-800 border-emerald-200",
-  other: "bg-slate-100 text-slate-800 border-slate-200"
+  workshop: "bg-indigo-100 text-indigo-800 border-indigo-200",
+  performance: "bg-violet-100 text-violet-800 border-violet-200",
+  coffee_session: "bg-teal-100 text-teal-800 border-teal-200",
+  other: "bg-stone-100 text-stone-800 border-stone-200"
 }
 
 const eventTypeNames = {
@@ -100,11 +102,13 @@ const eventTypeNames = {
   sports: "Sports Activity", 
   cultural: "Cultural Event",
   parent_meeting: "Parent Meeting",
-  field_trip: "Field Trip",
-  workshop: "Workshop",
-  celebration: "Celebration",
+  professional_development: "Professional Development",
+  administrative: "Administrative",
   meeting: "Meeting",
-  conference: "Conference",
+  celebration: "Celebration",
+  workshop: "Workshop",
+  performance: "Performance",
+  coffee_session: "Coffee Session",
   other: "Other"
 }
 
