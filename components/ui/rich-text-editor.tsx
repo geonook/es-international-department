@@ -242,12 +242,12 @@ export function RichTextEditor({
 
   // 編輯器配置
   const editorConfig = {
-    license_key: 'g8m7eowhg5po3acger7lotjaqxqprxm2bikbp5fxmisbv4so',
+    license_key: 'gpl',
     height: minHeight,
     max_height: maxHeight,
     menubar: false,
-    branding: false,
-    promotion: false,
+    branding: true,
+    promotion: true,
     statusbar: false,
     resize: true,
     base_url: '/tinymce',

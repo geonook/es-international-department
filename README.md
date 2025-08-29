@@ -13,6 +13,7 @@
 - **📝 內容管理**: 公告、活動、資源管理系統 (100%)
 - **👥 用戶管理**: 動態權限控制、包容性管理介面 (100%)
 - **📁 檔案系統**: 安全檔案上傳、處理、服務 (100%)
+- **📄 富文本編輯器**: TinyMCE 8.0.1 + GPL 授權 + 圖片上傳 (100%)
 - **🎨 UI/UX**: shadcn/ui 組件、Framer Motion 動畫 (100%)
 - **⚙️ 基礎架構**: Next.js 14、TypeScript、Prisma + 性能優化 (100%)
 
@@ -234,6 +235,47 @@ git push origin main                # 推送到主分支（自動 GitHub 備份�
    # Visit: http://localhost:3000/test-oauth
    ```
 
+### 📄 TinyMCE Rich Text Editor | TinyMCE 富文本編輯器
+
+The system includes a fully-featured rich text editor powered by TinyMCE 8.0.1 with GPL licensing.
+
+**配置說明 | Configuration:**
+- **License**: GPL (Open Source)
+- **Features**: Text formatting, lists, links, tables, image upload
+- **Location**: `/components/ui/rich-text-editor.tsx`
+- **Test Page**: `http://localhost:3001/test-rich-editor`
+
+**環境變數 | Environment Variables:**
+```bash
+# TinyMCE Configuration (Optional - using GPL license)
+TINYMCE_API_KEY="your-api-key-here"          # Server-side (optional)
+NEXT_PUBLIC_TINYMCE_API_KEY="your-api-key"   # Client-side (optional)
+```
+
+**功能特色 | Features:**
+- ✅ Rich text formatting (bold, italic, underline)
+- ✅ Multi-level headers (H1-H6)
+- ✅ Lists (ordered and unordered)
+- ✅ Link insertion and management
+- ✅ Image upload with preview
+- ✅ Auto-save functionality
+- ✅ Word/character count
+- ✅ Dark theme support
+- ✅ Responsive design
+
+**使用方式 | Usage:**
+```typescript
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
+
+<RichTextEditor
+  value={content}
+  onChange={setContent}
+  enableImageUpload={true}
+  autoSave={true}
+  showWordCount={true}
+/>
+```
+
 ### 📚 Documentation | 文件
 - 📋 **Quick Start**: `docs/QUICK-START-OAUTH.md` - 5-minute setup guide
 - 📖 **Detailed Setup**: `docs/google-oauth-setup.md` - Complete configuration guide  
@@ -265,6 +307,7 @@ kcislk-esid-info-hub/
 │   └── teachers/              # Teachers section
 ├── components/                # UI components
 │   ├── ui/                    # shadcn/ui components
+│   │   └── rich-text-editor.tsx # TinyMCE富文本編輯器組件
 │   └── theme-provider.tsx     # Theme configuration
 ├── lib/                       # Utilities and Core Services
 │   ├── auth.ts                # JWT authentication core
