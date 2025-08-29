@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Home, Calendar, BookOpen, Settings, GraduationCap, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -27,13 +28,23 @@ const navItems: NavItem[] = [
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, isAdmin } = useAuth()
+  const pathname = usePathname()
 
   const toggleNav = () => setIsOpen(!isOpen)
   const closeNav = () => setIsOpen(false)
 
+  // Check if we're on the Parents page
+  const isParentsPage = pathname === '/parents'
+
   const filteredNavItems = navItems.filter(item => {
-    if (item.requiresAuth && !user) return false
-    if (item.adminOnly && !isAdmin) return false
+    // On Parents page, hide auth-required items completely
+    if (isParentsPage && item.requiresAuth) return false
+    
+    // On other pages, show based on auth status
+    if (!isParentsPage) {
+      if (item.requiresAuth && !user) return false
+      if (item.adminOnly && !isAdmin) return false
+    }
     return true
   })
 
@@ -102,8 +113,8 @@ export default function MobileNav() {
               </Button>
             </div>
 
-            {/* 用戶資訊區域 */}
-            {user && (
+            {/* 用戶資訊區域 - 在 Parents 頁面不顯示 */}
+            {user && !isParentsPage && (
               <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border-b dark:border-gray-600">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
@@ -143,22 +154,30 @@ export default function MobileNav() {
               </nav>
             </div>
 
-            {/* 底部區域 */}
+            {/* 底部區域 - 在 Parents 頁面不顯示登入按鈕 */}
             <div className="absolute bottom-0 left-0 right-0 p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              {!user ? (
-                <Link 
-                  href="/login" 
-                  onClick={closeNav}
-                  className="block w-full"
-                >
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                    登入系統
-                  </Button>
-                </Link>
-              ) : (
+              {isParentsPage ? (
+                // Parents 頁面只顯示版本資訊
                 <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                  KCISLK ESID Info Hub v1.0
+                  KCISLK Elementary School
                 </p>
+              ) : (
+                // 其他頁面顯示登入按鈕或版本資訊
+                !user ? (
+                  <Link 
+                    href="/login" 
+                    onClick={closeNav}
+                    className="block w-full"
+                  >
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                      登入系統
+                    </Button>
+                  </Link>
+                ) : (
+                  <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+                    KCISLK ESID Info Hub v1.0
+                  </p>
+                )
               )}
             </div>
           </motion.nav>

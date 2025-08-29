@@ -9,6 +9,7 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { Announcement } from "@/lib/types"
 import MobileNav from "@/components/ui/mobile-nav"
+import { useAuth } from "@/hooks/useAuth"
 
 /**
  * Portal Homepage Component - KCISLK ESID Info Hub
@@ -21,6 +22,9 @@ export default function PortalHomepage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [latestAnnouncements, setLatestAnnouncements] = useState<Announcement[]>([])
   
+  // Authentication check
+  const { user, isLoading: authLoading, redirectToLogin } = useAuth()
+  
   const { scrollY } = useScroll()
   const heroRef = useRef(null)
   
@@ -28,10 +32,19 @@ export default function PortalHomepage() {
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   const opacity = useTransform(scrollY, [0, 300], [1, 0.8])
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    setIsLoaded(true)
-    fetchLatestAnnouncements()
-  }, [])
+    if (!authLoading && !user) {
+      redirectToLogin('/')
+    }
+  }, [authLoading, user, redirectToLogin])
+
+  useEffect(() => {
+    if (user) {
+      setIsLoaded(true)
+      fetchLatestAnnouncements()
+    }
+  }, [user])
 
   // Fetch latest announcements for quick preview
   const fetchLatestAnnouncements = async () => {
@@ -76,6 +89,34 @@ export default function PortalHomepage() {
       scale: 1,
       transition: { duration: 0.6, ease: "easeOut" }
     },
+  }
+
+  // Loading state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <motion.div
+            className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          >
+            <Sparkles className="w-8 h-8 text-white" />
+          </motion.div>
+          <p className="text-lg text-gray-600">載入中...</p>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // Not authenticated - show nothing (will redirect)
+  if (!user) {
+    return null
   }
 
   return (
