@@ -247,7 +247,7 @@ export default function PortalHomepage() {
             >
               {/* Parents Portal */}
               <motion.div variants={cardVariants}>
-                <Link href="/parents" className="block h-full">
+                <a href={process.env.NEXT_PUBLIC_PARENTS_CORNER_URL || "https://parents.kcislk.ntpc.edu.tw"} target="_blank" rel="noopener noreferrer" className="block h-full">
                   <Card className="h-full bg-white/80 backdrop-blur-sm shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 cursor-pointer">
                     <CardHeader className="text-center pb-4 bg-gradient-to-br from-purple-50 to-pink-50 group-hover:from-purple-100 group-hover:to-pink-100 transition-all duration-500">
                       <motion.div
@@ -255,8 +255,9 @@ export default function PortalHomepage() {
                       >
                         <Users className="w-8 h-8 text-white" />
                       </motion.div>
-                      <CardTitle className="text-2xl text-purple-700 group-hover:text-purple-900 transition-colors">
+                      <CardTitle className="text-2xl text-purple-700 group-hover:text-purple-900 transition-colors flex items-center justify-center gap-2">
                         Parents Portal
+                        <ExternalLink className="w-5 h-5" />
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-6 flex-1">
@@ -281,6 +282,10 @@ export default function PortalHomepage() {
                           Squad Information
                         </div>
                       </div>
+                      <div className="flex items-center gap-2 text-xs text-purple-600 bg-purple-50 px-3 py-2 rounded-lg mb-4">
+                        <ExternalLink className="w-3 h-3" />
+                        Opens in New Window
+                      </div>
                       <motion.div 
                         className="flex items-center justify-center gap-2 text-purple-600 font-semibold group-hover:gap-3 transition-all duration-300"
                         whileHover={{ x: 5 }}
@@ -290,7 +295,7 @@ export default function PortalHomepage() {
                       </motion.div>
                     </CardContent>
                   </Card>
-                </Link>
+                </a>
               </motion.div>
 
               {/* Teachers Portal */}
@@ -470,15 +475,15 @@ export default function PortalHomepage() {
                         No recent announcements at this time.
                       </p>
                     )}
-                    <Link href="/parents">
+                    <a href={process.env.NEXT_PUBLIC_PARENTS_CORNER_URL || "https://parents.kcislk.ntpc.edu.tw"} target="_blank" rel="noopener noreferrer">
                       <motion.div 
                         className="flex items-center gap-2 text-purple-600 font-semibold hover:gap-3 transition-all duration-300"
                         whileHover={{ x: 5 }}
                       >
                         View All Announcements
-                        <ArrowRight className="w-4 h-4" />
+                        <ExternalLink className="w-4 h-4" />
                       </motion.div>
-                    </Link>
+                    </a>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -527,18 +532,30 @@ export default function PortalHomepage() {
               <h3 className="text-xl font-bold mb-4">Quick Navigation</h3>
               <div className="space-y-2">
                 {[
-                  { name: "Parents Portal", href: "/parents" },
+                  { name: "Parents Portal", href: process.env.NEXT_PUBLIC_PARENTS_CORNER_URL || "https://parents.kcislk.ntpc.edu.tw", external: true },
                   { name: "Teachers Portal", href: "/teachers" },
                   { name: "Resources Hub", href: "/resources" },
                   { name: "Events Calendar", href: "/events" }
                 ].map((link, index) => (
                   <motion.div key={link.name} whileHover={{ x: 5 }}>
-                    <Link
-                      href={link.href}
-                      className="block text-purple-200 hover:text-white transition-colors"
-                    >
-                      {link.name}
-                    </Link>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-purple-200 hover:text-white transition-colors"
+                      >
+                        {link.name}
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="block text-purple-200 hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    )}
                   </motion.div>
                 ))}
               </div>
