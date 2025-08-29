@@ -350,7 +350,7 @@ export default function TeachersPage() {
             </motion.div>
 
             <div className="flex items-center gap-4">
-              {/* Desktop Navigation */}}
+              {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-8">
                 {[
                   { name: "Home", href: "/teachers", active: true },
@@ -388,7 +388,7 @@ export default function TeachersPage() {
                 </motion.div>
               </nav>
 
-              {/* Mobile Navigation */}}
+              {/* Mobile Navigation */}
               <MobileNav />
             </div>
           </div>

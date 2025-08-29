@@ -419,6 +419,49 @@ export default function AdminDashboard() {
     }
   }, [isAuthenticated, activeTab, isAdmin, fetchAnnouncements, fetchEvents])
 
+  // Enhanced authentication check with Grace Period and retry logic
+  useEffect(() => {
+    const handleAuthCheck = async () => {
+      // Skip if still loading or already authenticated as admin
+      if (isLoading || (isAuthenticated && isAdmin())) {
+        setShowGracePeriod(false)
+        return
+      }
+
+      // If not authenticated, give it some grace period before redirecting
+      if (!isAuthenticated && authCheckAttempts < 2) {
+        setShowGracePeriod(true)
+        setAuthCheckAttempts(prev => prev + 1)
+        
+        // Wait a bit and try to re-check auth (maybe token refresh is in progress)
+        setTimeout(async () => {
+          const user = await checkAuth()
+          if (!user || !isAdmin()) {
+            // After grace period, redirect to login
+            redirectToLogin('/admin')
+          } else {
+            setShowGracePeriod(false)
+          }
+        }, 2000) // 2 second grace period
+        
+        return
+      }
+
+      // If authenticated but not admin, redirect immediately
+      if (isAuthenticated && !isAdmin()) {
+        redirectToLogin('/admin')
+        return
+      }
+
+      // Final fallback - redirect if not authenticated after retries
+      if (!isAuthenticated) {
+        redirectToLogin('/admin')
+      }
+    }
+
+    handleAuthCheck()
+  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin, checkAuth, authCheckAttempts])
+
   const [parentsData, setParentsData] = useState({
     newsletters: [
       {
@@ -467,48 +510,6 @@ export default function AdminDashboard() {
     )
   }
 
-  // Enhanced authentication check with Grace Period and retry logic
-  useEffect(() => {
-    const handleAuthCheck = async () => {
-      // Skip if still loading or already authenticated as admin
-      if (isLoading || (isAuthenticated && isAdmin())) {
-        setShowGracePeriod(false)
-        return
-      }
-
-      // If not authenticated, give it some grace period before redirecting
-      if (!isAuthenticated && authCheckAttempts < 2) {
-        setShowGracePeriod(true)
-        setAuthCheckAttempts(prev => prev + 1)
-        
-        // Wait a bit and try to re-check auth (maybe token refresh is in progress)
-        setTimeout(async () => {
-          const user = await checkAuth()
-          if (!user || !isAdmin()) {
-            // After grace period, redirect to login
-            redirectToLogin('/admin')
-          } else {
-            setShowGracePeriod(false)
-          }
-        }, 2000) // 2 second grace period
-        
-        return
-      }
-
-      // If authenticated but not admin, redirect immediately
-      if (isAuthenticated && !isAdmin()) {
-        redirectToLogin('/admin')
-        return
-      }
-
-      // Final fallback - redirect if not authenticated after retries
-      if (!isAuthenticated) {
-        redirectToLogin('/admin')
-      }
-    }
-
-    handleAuthCheck()
-  }, [isLoading, isAuthenticated, isAdmin, redirectToLogin, checkAuth, authCheckAttempts])
 
   // Not logged in or no administrator privileges - Show appropriate loading or grace period screen
   if (isLoading || (!isAuthenticated || !isAdmin())) {
@@ -1531,7 +1532,6 @@ export default function AdminDashboard() {
                           )}
                         </div>
                       )}
-                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>

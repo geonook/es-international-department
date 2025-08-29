@@ -43,7 +43,8 @@ import {
   List,
   RefreshCw,
   CheckCircle,
-  XCircle
+  XCircle,
+  X
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import ResourceCard from './ResourceCard'
