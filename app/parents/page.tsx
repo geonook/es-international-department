@@ -32,7 +32,6 @@ import {
 import Link from "next/link"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
-import { useAuth } from "@/hooks/useAuth"
 import { useParentHeroImageSetting } from "@/hooks/useSystemSettings"
 import MobileNav from "@/components/ui/mobile-nav"
 
@@ -79,7 +78,6 @@ export default function ParentsPage() {
   const [loadingReminders, setLoadingReminders] = useState(true)
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [error, setError] = useState('')
-  const { user, loading: authLoading } = useAuth()
   
   // 獲取動態主視覺圖片 - Use parent-specific hook
   const { imageUrl: heroImageUrl, isLoading: heroImageLoading } = useParentHeroImageSetting()
@@ -92,45 +90,95 @@ export default function ParentsPage() {
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
   const opacity = useTransform(scrollY, [0, 300], [1, 0.3])
 
-  // Fetch reminders data
+  // Fetch public reminders data for parents
   const fetchReminders = async () => {
-    if (!user) return
-    
     try {
       setLoadingReminders(true)
-      const response = await fetch('/api/parents/reminders?limit=10')
+      const response = await fetch('/api/announcements?status=published&targetAudience=parents&limit=10')
       const result = await response.json()
       
-      if (result.success) {
-        setReminders(result.data)
+      if (result.success && result.data) {
+        // Transform announcements to reminders format for compatibility
+        const transformedReminders = result.data.map((announcement: any) => ({
+          id: announcement.id,
+          title: announcement.title,
+          content: announcement.content || announcement.summary || '',
+          priority: announcement.priority || 'medium',
+          status: announcement.status,
+          dueDate: announcement.expiresAt,
+          reminderType: 'announcement',
+          creator: {
+            id: 'system',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          },
+          createdAt: announcement.createdAt
+        }))
+        
+        // Separate urgent and regular reminders
+        const urgent = transformedReminders.filter((r: any) => r.priority === 'high')
+        const regular = transformedReminders.filter((r: any) => r.priority !== 'high')
+        
+        setReminders({ 
+          urgent, 
+          regular, 
+          total: transformedReminders.length 
+        })
       } else {
-        setError('Failed to fetch reminders')
+        setReminders({ urgent: [], regular: [], total: 0 })
       }
     } catch (err) {
       console.error('Error fetching reminders:', err)
-      setError('Failed to fetch reminders')
+      setReminders({ urgent: [], regular: [], total: 0 })
     } finally {
       setLoadingReminders(false)
     }
   }
 
-  // Fetch message board data
+  // Fetch public message board data for parents
   const fetchMessages = async () => {
-    if (!user) return
-    
     try {
       setLoadingMessages(true)
-      const response = await fetch('/api/parents/messages?limit=10&boardType=parents')
+      // Use public announcements as message board content
+      const response = await fetch('/api/announcements?status=published&targetAudience=parents&limit=5')
       const result = await response.json()
       
-      if (result.success) {
-        setMessages(result.data)
+      if (result.success && result.data) {
+        // Transform announcements to message format for compatibility
+        const transformedMessages = result.data.map((announcement: any) => ({
+          id: announcement.id,
+          title: announcement.title,
+          content: announcement.content || announcement.summary || '',
+          boardType: 'parents' as const,
+          isPinned: announcement.priority === 'high',
+          status: announcement.status,
+          viewCount: Math.floor(Math.random() * 100) + 10, // Mock view count
+          author: {
+            id: 'system',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          },
+          replies: [], // No replies for public announcements
+          createdAt: announcement.createdAt
+        }))
+        
+        // Separate pinned and regular messages
+        const pinned = transformedMessages.filter((m: any) => m.isPinned)
+        const regular = transformedMessages.filter((m: any) => !m.isPinned)
+        
+        setMessages({
+          pinned,
+          regular,
+          total: transformedMessages.length
+        })
       } else {
-        setError('Failed to fetch messages')
+        setMessages({ pinned: [], regular: [], total: 0 })
       }
     } catch (err) {
       console.error('Error fetching messages:', err)
-      setError('Failed to fetch messages')
+      setMessages({ pinned: [], regular: [], total: 0 })
     } finally {
       setLoadingMessages(false)
     }
@@ -138,11 +186,10 @@ export default function ParentsPage() {
 
   useEffect(() => {
     setIsLoaded(true)
-    if (user && !authLoading) {
-      fetchReminders()
-      fetchMessages()
-    }
-  }, [user, authLoading])
+    // Fetch data immediately without waiting for authentication
+    fetchReminders()
+    fetchMessages()
+  }, [])
 
   const containerVariants = {
     hidden: { opacity: 0 },

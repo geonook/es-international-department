@@ -17,10 +17,10 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: '首頁', href: '/', icon: Home },
-  { name: '教師專區', href: '/teachers', icon: GraduationCap },
   { name: '活動資訊', href: '/events', icon: Calendar },
   { name: '學習資源', href: '/resources', icon: BookOpen },
   { name: '家長專區', href: '/parents', icon: Users },
+  { name: '教師專區', href: '/teachers', icon: GraduationCap, requiresAuth: true },
   { name: '管理後台', href: '/admin', icon: Settings, requiresAuth: true, adminOnly: true }
 ]
 
