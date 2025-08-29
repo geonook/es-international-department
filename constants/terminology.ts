@@ -23,7 +23,8 @@ export const MODULES = {
 // User Interface Sections
 export const UI_SECTIONS = {
   TEACHERS_DASHBOARD: 'Teachers Dashboard',
-  PARENTS_PORTAL: 'Parents Portal', 
+  PARENTS_CORNER: 'Parents\' Corner',
+  TEACHERS_CORNER: 'Teachers\' Corner',
   ADMIN_PANEL: 'Admin Panel',
   HOME: 'Home',
   PROFILE: 'Profile',

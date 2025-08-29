@@ -256,7 +256,7 @@ export default function PortalHomepage() {
                         <Users className="w-8 h-8 text-white" />
                       </motion.div>
                       <CardTitle className="text-2xl text-purple-700 group-hover:text-purple-900 transition-colors flex items-center justify-center gap-2">
-                        Parents Portal
+                        Parents' Corner
                         <ExternalLink className="w-5 h-5" />
                       </CardTitle>
                     </CardHeader>
@@ -309,7 +309,7 @@ export default function PortalHomepage() {
                         <GraduationCap className="w-8 h-8 text-white" />
                       </motion.div>
                       <CardTitle className="text-2xl text-blue-700 group-hover:text-blue-900 transition-colors">
-                        Teachers Portal
+                        Teachers' Corner
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-6 flex-1">
@@ -532,8 +532,8 @@ export default function PortalHomepage() {
               <h3 className="text-xl font-bold mb-4">Quick Navigation</h3>
               <div className="space-y-2">
                 {[
-                  { name: "Parents Portal", href: process.env.NEXT_PUBLIC_PARENTS_CORNER_URL || "https://parents.kcislk.ntpc.edu.tw", external: true },
-                  { name: "Teachers Portal", href: "/teachers" },
+                  { name: "Parents' Corner", href: process.env.NEXT_PUBLIC_PARENTS_CORNER_URL || "https://parents.kcislk.ntpc.edu.tw", external: true },
+                  { name: "Teachers' Corner", href: "/teachers" },
                   { name: "Resources Hub", href: "/resources" },
                   { name: "Events Calendar", href: "/events" }
                 ].map((link, index) => (

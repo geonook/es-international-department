@@ -20,8 +20,8 @@ This document provides the standardized terminology used throughout the KCISLK E
 
 | Term | Usage | Navigation |
 |------|-------|------------|
-| **Teachers Dashboard** | Main teacher interface | `/teachers` |
-| **Parents Portal** | Parent access area | `/parents` |
+| **Teachers' Corner** | Main teacher interface | `/teachers` |
+| **Parents' Corner** | Parent access area | External Link |
 | **Admin Panel** | Administrative controls | `/admin` |
 | **Home** | Landing page | `/` |
 | **Profile** | User account settings | `/profile` |
@@ -92,7 +92,7 @@ This document provides the standardized terminology used throughout the KCISLK E
 ### Breadcrumb Format:
 ```
 Home > Teachers Dashboard > Reminders
-Home > Parents Portal > Resources
+Home > Parents' Corner > Resources
 Home > Admin Panel > User Management
 ```
 
