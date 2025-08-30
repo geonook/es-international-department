@@ -286,8 +286,8 @@ export default function EventForm({
                 <ul className="text-sm text-blue-800 space-y-1">
                   <li>• <span className="font-medium">👥 Target Audience</span>: Select where this event will appear</li>
                   <li>• <span className="font-medium">👨‍🏫 Teachers</span>: Event shows in Teachers Calendar for staff planning</li>
-                  <li>• <span className="font-medium">👪 Parents</span>: Event shows in Parent Portal for family planning</li>
-                  <li>• <span className="font-medium">🎓 Students</span>: Event shows in Student Portal for academic activities</li>
+                  <li>• <span className="font-medium">👪 Parents</span>: Event shows in Parents' Corner for family planning</li>
+                  <li>• <span className="font-medium">🎓 Students</span>: Event shows in Students' Corner for academic activities</li>
                 </ul>
                 <p className="text-xs text-blue-600 mt-2">
                   💡 <strong>Tip:</strong> You can select multiple target audiences for events that involve everyone
@@ -530,7 +530,7 @@ export default function EventForm({
                     onCheckedChange={(checked) => handleAudienceToggle('parents', checked as boolean)}
                   />
                   <Label htmlFor="target-parents" className="text-sm font-medium">
-                    👪 Parents - This event will appear in Parent Portal
+                    👪 Parents - This event will appear in Parents' Corner
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -540,7 +540,7 @@ export default function EventForm({
                     onCheckedChange={(checked) => handleAudienceToggle('students', checked as boolean)}
                   />
                   <Label htmlFor="target-students" className="text-sm font-medium">
-                    🎓 Students - This event will appear in Student Portal
+                    🎓 Students - This event will appear in Students' Corner
                   </Label>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">

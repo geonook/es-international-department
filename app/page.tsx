@@ -12,13 +12,13 @@ import MobileNav from "@/components/ui/mobile-nav"
 import { useAuth } from "@/hooks/useAuth"
 
 /**
- * Portal Homepage Component - KCISLK ESID Info Hub
+ * Corner Homepage Component - KCISLK ESID Info Hub
  * 
  * @description Main entry point for KCISLK ESID Info Hub, providing role-based navigation and quick access
  * @features Modern portal design, role selection cards, responsive layout, smooth animations
  * @author Claude Code | Generated with love for KCISLK ESID Info Hub
  */
-export default function PortalHomepage() {
+export default function CornerHomepage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [latestAnnouncements, setLatestAnnouncements] = useState<Announcement[]>([])
   
@@ -170,7 +170,7 @@ export default function PortalHomepage() {
                 <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
                   KCISLK ESID
                 </h1>
-                <p className="text-xs text-gray-500">Info Hub Portal</p>
+                <p className="text-xs text-gray-500">Info Hub Corner</p>
               </div>
             </motion.div>
 
@@ -209,7 +209,7 @@ export default function PortalHomepage() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                Info Hub Portal
+                Info Hub Corner
               </motion.h2>
               <motion.p
                 className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
@@ -234,7 +234,7 @@ export default function PortalHomepage() {
           <div className="container mx-auto px-4">
             <motion.div variants={itemVariants} className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Choose Your Portal
+                Choose Your Corner
               </h2>
               <p className="text-lg text-gray-600">
                 Select your role to access personalized content and resources
@@ -245,7 +245,7 @@ export default function PortalHomepage() {
               className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
               variants={containerVariants}
             >
-              {/* Parents Portal */}
+              {/* Parents' Corner */}
               <motion.div variants={cardVariants}>
                 <a href={process.env.NEXT_PUBLIC_PARENTS_CORNER_URL || "https://parents.kcislk.ntpc.edu.tw"} target="_blank" rel="noopener noreferrer" className="block h-full">
                   <Card className="h-full bg-white/80 backdrop-blur-sm shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 cursor-pointer">
@@ -298,7 +298,7 @@ export default function PortalHomepage() {
                 </a>
               </motion.div>
 
-              {/* Teachers Portal */}
+              {/* Teachers' Corner */}
               <motion.div variants={cardVariants}>
                 <Link href="/teachers" className="block h-full">
                   <Card className="h-full bg-white/80 backdrop-blur-sm shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 cursor-pointer">

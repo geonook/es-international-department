@@ -364,8 +364,8 @@ async function main() {
             publishedAt: new Date()
           },
           {
-            title: 'Parent Portal System Launch',
-            content: 'We are excited to announce the launch of our new parent portal system. This platform will serve as your primary source for school announcements, event information, and educational resources.',
+            title: 'Parents\' Corner System Launch',
+            content: 'We are excited to announce the launch of our new Parents\' Corner system. This platform will serve as your primary source for school announcements, event information, and educational resources.',
             summary: 'System launch announcement',
             authorId: adminUser.id,
             targetAudience: 'parents',
