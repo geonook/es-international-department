@@ -83,6 +83,31 @@ export default function TeachersPage() {
   // Get dynamic hero background image
   const { imageUrl: heroImageUrl, isLoading: heroImageLoading } = useHeroImageSetting()
   
+  // Essential Documents Google Docs Links
+  const essentialDocuments = {
+    academic: {
+      title: "Academic Affairs",
+      description: "Curriculum guidelines, assessment tools, and academic policies",
+      googleDocUrl: "https://docs.google.com/document/d/[ACADEMIC_AFFAIRS_DOC_ID]",
+      icon: BookOpen,
+      color: "from-indigo-500 to-indigo-600"
+    },
+    foreign: {
+      title: "Foreign Affairs",
+      description: "International partnerships, exchange programs, and external communications",
+      googleDocUrl: "https://docs.google.com/document/d/[FOREIGN_AFFAIRS_DOC_ID]",
+      icon: Globe,
+      color: "from-teal-500 to-teal-600"
+    },
+    classroom: {
+      title: "Classroom Affairs",
+      description: "Classroom management, teaching resources, and student affairs",
+      googleDocUrl: "https://docs.google.com/document/d/[CLASSROOM_AFFAIRS_DOC_ID]",
+      icon: School,
+      color: "from-emerald-500 to-emerald-600"
+    }
+  }
+  
   const { scrollY } = useScroll()
   const heroRef = useRef(null)
   const isHeroInView = useInView(heroRef, { once: true })
@@ -488,9 +513,10 @@ export default function TeachersPage() {
                 <Button
                   variant="outline"
                   className="relative border-2 border-white/80 text-white hover:bg-white/25 hover:border-white px-10 py-4 rounded-full shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 bg-white/15 backdrop-blur-sm font-bold text-lg"
+                  onClick={() => window.open('https://forms.gle/7xWeZvdDHfAq9fbZ8', '_blank')}
                 >
                   <MessageSquare className="w-5 h-5 mr-2" />
-                  Feedback
+                  ESID Feedback
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               </motion.div>
@@ -608,27 +634,15 @@ export default function TeachersPage() {
                         <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg blur opacity-25"></div>
                         <Button 
                           className="relative w-full bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-4 text-lg border-2 border-white"
-                          onClick={async () => {
-                            // Create a new feedback submission
-                            const feedbackData = {
-                              title: 'Teacher Feedback - ' + new Date().toLocaleDateString(),
-                              content: '', // Will be filled by user
-                              category: 'general',
-                              priority: 'medium',
-                              isAnonymous: false,
-                              status: 'submitted'
-                            }
-                            
-                            // For now, redirect to a feedback form or open a modal
-                            // In a real implementation, you might want to show a modal form
-                            const mailto = 'mailto:admin@kcislk.ntpc.edu.tw?subject=Teacher Feedback&body=Please share your feedback, suggestions, or concerns...'
-                            window.open(mailto, '_blank')
+                          onClick={() => {
+                            // Open ESID Feedback Google Form
+                            window.open('https://forms.gle/7xWeZvdDHfAq9fbZ8', '_blank')
                           }}
                         >
                           <div className="flex items-center gap-2">
                             <MessageSquare className="w-5 h-5" />
-                            <span>Send Feedback</span>
-                            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                            <span>Open ESID Feedback Form</span>
+                            <ExternalLink className="w-4 h-4 ml-1" />
                           </div>
                         </Button>
                       </motion.div>
@@ -833,7 +847,7 @@ export default function TeachersPage() {
                   <CardHeader className="text-center pb-4 bg-gradient-to-r from-blue-50 to-cyan-50">
                     <CardTitle className="text-xl text-blue-700 flex items-center justify-center gap-2">
                       <MessageSquare className="w-6 h-6" />
-                      Message Board
+                      25-26 School Year Message Board
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -920,112 +934,35 @@ export default function TeachersPage() {
             </motion.div>
 
             <motion.div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto" variants={containerVariants}>
-              {/* Academic Affairs */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 h-full">
-                  <CardHeader className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white">
-                    <CardTitle className="flex items-center gap-3 text-2xl">
-                      <BookOpen className="h-7 w-7" />
-                      Academic Affairs
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <p className="text-gray-600 mb-6">Curriculum guidelines, assessment tools, and academic policies</p>
-                    <div className="space-y-3">
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Curriculum Standards
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Assessment Guidelines
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Academic Policies
-                        </Button>
-                      </motion.div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              {Object.entries(essentialDocuments).map(([key, doc]) => {
+                const IconComponent = doc.icon;
+                return (
+                  <motion.div key={key} variants={itemVariants}>
+                    <Card className="bg-white/90 backdrop-blur-lg shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 h-full">
+                      <CardHeader className={`bg-gradient-to-r ${doc.color} text-white`}>
+                        <CardTitle className="flex items-center gap-3 text-2xl">
+                          <IconComponent className="h-7 w-7" />
+                          {doc.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6">
+                        <p className="text-gray-600 mb-6">{doc.description}</p>
+                        <motion.div whileHover={{ scale: 1.02 }}>
+                          <Button 
+                            onClick={() => window.open(doc.googleDocUrl, '_blank')}
+                            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            Open Google Doc
+                            <ExternalLink className="w-4 h-4 ml-2" />
+                          </Button>
+                        </motion.div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
 
-              {/* Foreign Affairs */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 h-full">
-                  <CardHeader className="bg-gradient-to-r from-teal-500 to-teal-600 text-white">
-                    <CardTitle className="flex items-center gap-3 text-2xl">
-                      <Globe className="h-7 w-7" />
-                      Foreign Affairs
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <p className="text-gray-600 mb-6">
-                      International partnerships, exchange programs, and external communications
-                    </p>
-                    <div className="space-y-3">
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <Globe className="w-4 h-4 mr-2" />
-                          Partnership Programs
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <Users className="w-4 h-4 mr-2" />
-                          Exchange Guidelines
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <Mail className="w-4 h-4 mr-2" />
-                          Communication Templates
-                        </Button>
-                      </motion.div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* Classroom Affairs */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-500 h-full">
-                  <CardHeader className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white">
-                    <CardTitle className="flex items-center gap-3 text-2xl">
-                      <School className="h-7 w-7" />
-                      Classroom Affairs
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <p className="text-gray-600 mb-6">Classroom management, teaching resources, and student affairs</p>
-                    <div className="space-y-3">
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <School className="w-4 h-4 mr-2" />
-                          Management Guidelines
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <BookOpen className="w-4 h-4 mr-2" />
-                          Teaching Resources
-                        </Button>
-                      </motion.div>
-                      <motion.div whileHover={{ scale: 1.02 }}>
-                        <Button variant="outline" className="w-full justify-start bg-transparent">
-                          <Users className="w-4 h-4 mr-2" />
-                          Student Support
-                        </Button>
-                      </motion.div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
             </motion.div>
           </div>
         </motion.section>
