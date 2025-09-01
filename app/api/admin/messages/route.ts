@@ -48,15 +48,21 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const boardType = searchParams.get('boardType') // 'teachers', 'parents', 'general'
+    const sourceGroup = searchParams.get('sourceGroup') // '主任Vickie', 'Academic Team', etc.
     const status = searchParams.get('status')
     const search = searchParams.get('search')
     const isPinned = searchParams.get('pinned') // 'true', 'false', or null for all
+    const isImportant = searchParams.get('important') // 'true', 'false', or null for all
 
     // Build filter conditions
     const where: any = {}
 
     if (boardType) {
       where.boardType = boardType
+    }
+
+    if (sourceGroup) {
+      where.sourceGroup = sourceGroup
     }
 
     if (status) {
@@ -67,6 +73,12 @@ export async function GET(request: NextRequest) {
       where.isPinned = true
     } else if (isPinned === 'false') {
       where.isPinned = false
+    }
+
+    if (isImportant === 'true') {
+      where.isImportant = true
+    } else if (isImportant === 'false') {
+      where.isImportant = false
     }
 
     if (search) {
@@ -111,6 +123,7 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
+        { isImportant: 'desc' },
         { isPinned: 'desc' },
         { createdAt: 'desc' }
       ],
@@ -191,6 +204,8 @@ export async function POST(request: NextRequest) {
         title: data.title,
         content: data.content,
         boardType: data.boardType || 'general',
+        sourceGroup: data.sourceGroup || null,
+        isImportant: data.isImportant || false,
         isPinned: data.isPinned || false,
         status: data.status || 'active',
         authorId: currentUser.id

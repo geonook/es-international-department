@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const limit = parseInt(searchParams.get('limit') || '20')
     const boardType = searchParams.get('boardType') || 'teachers' // Default to teachers board
+    const sourceGroup = searchParams.get('sourceGroup') // Filter by source group
 
     // Build filter conditions - only show active posts
     const where: any = {
@@ -43,6 +44,11 @@ export async function GET(request: NextRequest) {
         { boardType: boardType },
         { boardType: 'general' } // Teachers can also see general posts
       ]
+    }
+
+    // Add source group filter if specified
+    if (sourceGroup) {
+      where.sourceGroup = sourceGroup
     }
 
     // Get active message board posts for teachers
@@ -75,22 +81,35 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
+        { isImportant: 'desc' },
         { isPinned: 'desc' },
         { createdAt: 'desc' }
       ],
       take: limit
     })
 
-    // Separate pinned and regular messages
-    const pinnedMessages = messages.filter(m => m.isPinned)
-    const regularMessages = messages.filter(m => !m.isPinned)
+    // Separate important, pinned and regular messages
+    const importantMessages = messages.filter(m => m.isImportant)
+    const pinnedMessages = messages.filter(m => m.isPinned && !m.isImportant)
+    const regularMessages = messages.filter(m => !m.isPinned && !m.isImportant)
+
+    // Group messages by source group
+    const messagesByGroup = messages.reduce((acc, message) => {
+      const group = message.sourceGroup || 'general'
+      if (!acc[group]) acc[group] = []
+      acc[group].push(message)
+      return acc
+    }, {} as Record<string, typeof messages>)
 
     return NextResponse.json({
       success: true,
       data: {
+        important: importantMessages,
         pinned: pinnedMessages,
         regular: regularMessages,
+        byGroup: messagesByGroup,
         total: messages.length,
+        totalImportant: importantMessages.length,
         totalPinned: pinnedMessages.length
       }
     })

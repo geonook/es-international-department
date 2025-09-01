@@ -56,6 +56,8 @@ interface MessageBoardPost {
   title: string
   content: string
   boardType: 'teachers' | 'parents' | 'general'
+  sourceGroup?: string // 主任Vickie, 副主任Matthew, Academic Team, Curriculum Team, Instructional Team
+  isImportant: boolean
   isPinned: boolean
   status: string
   viewCount: number
@@ -72,7 +74,25 @@ interface MessageBoardPost {
 export default function TeachersPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [reminders, setReminders] = useState<{ urgent: Reminder[], regular: Reminder[], total: number }>({ urgent: [], regular: [], total: 0 })
-  const [messages, setMessages] = useState<{ pinned: MessageBoardPost[], regular: MessageBoardPost[], total: number }>({ pinned: [], regular: [], total: 0 })
+  const [messages, setMessages] = useState<{ 
+    important: MessageBoardPost[], 
+    pinned: MessageBoardPost[], 
+    regular: MessageBoardPost[], 
+    byGroup: Record<string, MessageBoardPost[]>,
+    total: number,
+    totalImportant: number 
+  }>({ important: [], pinned: [], regular: [], byGroup: {}, total: 0, totalImportant: 0 })
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
+
+  // 組別顏色配置
+  const groupColors: Record<string, { bg: string, text: string, label: string }> = {
+    '主任Vickie': { bg: 'bg-purple-100', text: 'text-purple-700', label: '👩‍💼 主任 Vickie' },
+    '副主任Matthew': { bg: 'bg-indigo-100', text: 'text-indigo-700', label: '👨‍💼 副主任 Matthew' },
+    'Academic Team': { bg: 'bg-blue-100', text: 'text-blue-700', label: '📚 Academic Team' },
+    'Curriculum Team': { bg: 'bg-green-100', text: 'text-green-700', label: '📖 Curriculum Team' },
+    'Instructional Team': { bg: 'bg-orange-100', text: 'text-orange-700', label: '🎯 Instructional Team' },
+    'general': { bg: 'bg-gray-100', text: 'text-gray-700', label: '📢 General' }
+  }
   const [loadingReminders, setLoadingReminders] = useState(true)
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [error, setError] = useState('')
@@ -882,14 +902,80 @@ export default function TeachersPage() {
                             <span className="text-sm font-medium text-gray-700">Active Posts</span>
                             <span className="text-lg font-bold text-blue-600">{messages.total}</span>
                           </div>
+                          {messages.totalImportant > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-red-600">🚨 Important</span>
+                              <span className="text-sm font-semibold text-red-600">{messages.totalImportant}</span>
+                            </div>
+                          )}
                           {messages.pinned.length > 0 && (
                             <div className="flex items-center justify-between">
                               <span className="text-xs text-amber-600">📌 Pinned</span>
                               <span className="text-sm font-semibold text-amber-600">{messages.pinned.length}</span>
                             </div>
                           )}
+                          {Object.keys(messages.byGroup).length > 0 && (
+                            <div className="text-xs mt-3">
+                              <div className="space-y-2">
+                                {Object.entries(messages.byGroup).map(([group, posts]) => {
+                                  const colors = groupColors[group] || groupColors['general']
+                                  const isExpanded = expandedGroups[group] || false
+                                  
+                                  return (
+                                    <div key={group} className="border rounded-lg overflow-hidden">
+                                      <button
+                                        onClick={() => setExpandedGroups(prev => ({ ...prev, [group]: !isExpanded }))}
+                                        className={`w-full px-3 py-2 ${colors.bg} ${colors.text} flex items-center justify-between hover:opacity-80 transition-opacity`}
+                                      >
+                                        <span className="font-medium text-sm">{colors.label}</span>
+                                        <div className="flex items-center gap-2">
+                                          <span className="bg-white/80 px-2 py-1 rounded-full text-xs font-semibold">
+                                            {posts.length}
+                                          </span>
+                                          <span className="text-lg">
+                                            {isExpanded ? '▼' : '▶'}
+                                          </span>
+                                        </div>
+                                      </button>
+                                      {isExpanded && (
+                                        <div className="bg-white border-t">
+                                          {posts.slice(0, 3).map((post, index) => (
+                                            <div key={post.id} className="px-3 py-2 border-b last:border-b-0">
+                                              <div className="flex items-start gap-2">
+                                                {post.isImportant && (
+                                                  <span className="text-red-500 text-xs">🚨</span>
+                                                )}
+                                                {post.isPinned && (
+                                                  <span className="text-amber-500 text-xs">📌</span>
+                                                )}
+                                                <div className="flex-1">
+                                                  <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                                                    {post.title}
+                                                  </p>
+                                                  <p className="text-xs text-gray-500 mt-1">
+                                                    {post.author?.displayName || 'Anonymous'} • {new Date(post.createdAt).toLocaleDateString()}
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ))}
+                                          {posts.length > 3 && (
+                                            <div className="px-3 py-2 text-center">
+                                              <span className="text-xs text-gray-500">
+                                                +{posts.length - 3} more messages...
+                                              </span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
                           <p className="text-xs text-gray-500">
-                            {messages.total > 0 ? 'Staff discussions and announcements' : 'No active posts'}
+                            {messages.total > 0 ? 'Staff discussions and announcements from various teams' : 'No active posts'}
                           </p>
                         </div>
                       )}

@@ -175,6 +175,8 @@ export async function PUT(
     if (data.title !== undefined) updateData.title = data.title
     if (data.content !== undefined) updateData.content = data.content
     if (data.boardType !== undefined) updateData.boardType = data.boardType
+    if (data.sourceGroup !== undefined) updateData.sourceGroup = data.sourceGroup
+    if (data.isImportant !== undefined) updateData.isImportant = data.isImportant
     if (data.isPinned !== undefined) updateData.isPinned = data.isPinned
     if (data.status !== undefined) updateData.status = data.status
 
