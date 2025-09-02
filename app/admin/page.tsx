@@ -53,6 +53,7 @@ import { UserData } from '@/components/admin/UserCard'
 import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
+import AnnouncementForm from '@/components/AnnouncementForm'
 // Removed: Unified Communications system - replaced with separated Teachers' Corner & Parents' Corner
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
@@ -989,6 +990,18 @@ export default function AdminPage() {
     try {
       setDataLoading(true)
       
+      // Transform AnnouncementForm data to MessageBoard format
+      const messageData = {
+        title: formData.title,
+        content: formData.content,
+        boardType: formData.targetAudience === 'teachers' ? 'teachers' : 
+                   formData.targetAudience === 'parents' ? 'parents' : 'general',
+        sourceGroup: formData.sourceGroup || null,
+        isImportant: formData.priority === 'high',
+        isPinned: formData.isPinned || false,
+        status: formData.status || 'active'
+      }
+      
       const url = editingMessageBoard 
         ? `/api/admin/messages/${editingMessageBoard.id}` 
         : '/api/admin/messages'
@@ -1001,7 +1014,7 @@ export default function AdminPage() {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(formData)
+        body: JSON.stringify(messageData)
       })
 
       if (response.ok) {
@@ -2837,10 +2850,9 @@ export default function AdminPage() {
                 exit={{ scale: 0.95, opacity: 0 }}
                 className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
               >
-                <CommunicationForm
-                  communication={editingMessageBoard || undefined}
+                <AnnouncementForm
+                  announcement={editingMessageBoard || undefined}
                   mode={editingMessageBoard ? 'edit' : 'create'}
-                  defaultType="message"
                   onCancel={() => {
                     setShowMessageBoardForm(false)
                     setEditingMessageBoard(null)

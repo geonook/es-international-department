@@ -153,7 +153,28 @@ export function RichTextEditor({
 
   // 圖片上傳處理函式
   const handleImageUpload = useCallback(async (files: File[]) => {
-    if (!enableImageUpload || files.length === 0) {
+    if (!enableImageUpload) {
+      console.warn('Image upload is disabled')
+      return []
+    }
+    
+    if (!files || files.length === 0) {
+      console.warn('No files provided for upload')
+      return []
+    }
+
+    // Validate each file
+    const validFiles = files.filter(file => {
+      if (!file || file.size === 0) {
+        console.warn('Invalid file detected:', file)
+        return false
+      }
+      return true
+    })
+
+    if (validFiles.length === 0) {
+      console.error('No valid files to upload')
+      setImageUpload(prev => ({ ...prev, error: 'No valid files selected' }))
       return []
     }
 
@@ -161,7 +182,10 @@ export function RichTextEditor({
 
     try {
       const formData = new FormData()
-      files.forEach(file => formData.append('images', file))
+      validFiles.forEach(file => {
+        console.log('Appending file:', file.name, 'Size:', file.size, 'Type:', file.type)
+        formData.append('images', file)
+      })
       
       if (relatedType) formData.append('relatedType', relatedType)
       if (relatedId) formData.append('relatedId', relatedId.toString())
