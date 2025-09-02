@@ -1247,9 +1247,10 @@ export default function AdminPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-2 lg:block">
               {[
                 { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
-                // All users can see Communications Hub, User Management, Feedback and Message Board
+                // All users can see Teachers' Corner, Parents' Corner, User Management, Feedback and Message Board
                 ...(canViewContent ? [
-                  { id: 'communications', name: "Communications Hub", icon: MessageSquare },
+                  { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
+                  { id: 'parents', name: "Parents' Corner", icon: Sparkles },
                   { id: 'feedback', name: 'Feedback Management', icon: MessageCircle },
                   { id: 'messages', name: 'Message Board', icon: MessageCircle }
                 ] : []),
@@ -1310,7 +1311,7 @@ export default function AdminPage() {
               >
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
-                  <p className="text-gray-600">Monitor and manage the unified Communications Hub system</p>
+                  <p className="text-gray-600">Monitor and manage both Teachers' and Parents' Corner systems</p>
                   
                   {/* Permission upgrade request prompt - only shown to viewer users */}
                   {userIsViewer && (
@@ -1379,8 +1380,8 @@ export default function AdminPage() {
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5 text-blue-600" />
-                        Communications Hub
+                        <GraduationCap className="w-5 h-5 text-blue-600" />
+                        Teachers' Corner
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1391,15 +1392,15 @@ export default function AdminPage() {
                           onClick={() => setActiveTab('teachers')}
                         >
                           <Edit className="w-4 h-4 mr-2" />
-                          Manage Announcements
+                          Manage Message Board
                         </Button>
                         <Button 
                           className="w-full justify-start bg-transparent" 
                           variant="outline"
-                          onClick={() => window.location.href = '/admin/events'}
+                          onClick={() => window.location.href = '/teachers/reminders'}
                         >
-                          <Calendar className="w-4 h-4 mr-2" />
-                          Update Calendar
+                          <Bell className="w-4 h-4 mr-2" />
+                          Teacher Reminders
                         </Button>
                         <Button 
                           className="w-full justify-start bg-transparent" 
@@ -1407,7 +1408,7 @@ export default function AdminPage() {
                           onClick={() => window.location.href = '/admin/documents'}
                         >
                           <FileText className="w-4 h-4 mr-2" />
-                          Manage Documents
+                          Essential Documents
                         </Button>
                       </div>
                     </CardContent>
@@ -1416,8 +1417,8 @@ export default function AdminPage() {
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Users className="w-5 h-5 text-purple-600" />
-                        User Management
+                        <Sparkles className="w-5 h-5 text-purple-600" />
+                        Parents' Corner
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1428,7 +1429,7 @@ export default function AdminPage() {
                           onClick={() => setActiveTab('parents')}
                         >
                           <Edit className="w-4 h-4 mr-2" />
-                          Edit Newsletter
+                          Manage Announcements
                         </Button>
                         <Button 
                           className="w-full justify-start bg-transparent" 
@@ -1445,12 +1446,12 @@ export default function AdminPage() {
                           className="w-full justify-start bg-transparent" 
                           variant="outline"
                           onClick={() => {
-                            console.log('🔥 Update News Board button clicked!')
-                            setShowMessageBoardForm(true)
+                            console.log('🔥 Update Newsletter button clicked!')
+                            setShowNewsletterForm(true)
                           }}
                         >
-                          <MessageSquare className="w-4 h-4 mr-2" />
-                          Update News Board
+                          <FileText className="w-4 h-4 mr-2" />
+                          Edit Newsletter
                         </Button>
                       </div>
                     </CardContent>
@@ -1465,15 +1466,15 @@ export default function AdminPage() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Communications Hub</h4>
-                            <p className="text-gray-600 text-sm">Manage unified communications system</p>
+                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Teachers' Corner</h4>
+                            <p className="text-gray-600 text-sm">Manage teacher message board and resources</p>
                           </div>
-                          <MessageSquare className="w-8 h-8 text-blue-600" />
+                          <GraduationCap className="w-8 h-8 text-blue-600" />
                         </div>
                         <Link href="/teachers">
                           <Button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900">
                             <ExternalLink className="w-4 h-4 mr-2" />
-                            Open Communications Hub
+                            Open Teachers' Corner
                           </Button>
                         </Link>
                       </CardContent>
@@ -1501,7 +1502,7 @@ export default function AdminPage() {
               </motion.div>
             )}
 
-            {activeTab === 'communications' && (
+            {activeTab === 'teachers' && (
               <motion.div
                 key="teachers"
                 initial={{ opacity: 0, y: 20 }}
@@ -1510,27 +1511,27 @@ export default function AdminPage() {
                 transition={{ duration: 0.5 }}
               >
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Communications Hub</h2>
-                  <p className="text-gray-600">Manage unified communications for all audiences</p>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Teachers' Corner</h2>
+                  <p className="text-gray-600">Manage teacher message board, reminders and essential documents</p>
                 </div>
 
                 <div className="grid gap-4 lg:gap-8">
-                  {/* Announcements Management */}
+                  {/* Message Board Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">
                       <CardTitle className="flex items-center gap-2">
-                        <Bell className="w-5 h-5 text-orange-600" />
-                        Announcements
+                        <MessageSquare className="w-5 h-5 text-blue-600" />
+                        25-26 School Year Message Board
                       </CardTitle>
                       <Button 
                         size="sm" 
-                        className="bg-orange-600 hover:bg-orange-700"
+                        className="bg-blue-600 hover:bg-blue-700"
                         onClick={() => {
-                          setShowAnnouncementForm(true)
+                          setShowMessageBoardForm(true)
                         }}
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        Add New
+                        Add Message
                       </Button>
                     </CardHeader>
                     <CardContent>
@@ -1707,6 +1708,191 @@ export default function AdminPage() {
                             <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
                             <p>No teacher reminders found</p>
                             <p className="text-sm">Create your first reminder to get started</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'parents' && (
+              <motion.div
+                key="parents"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Parents' Corner</h2>
+                  <p className="text-gray-600">Manage parent announcements, events and newsletters</p>
+                </div>
+
+                <div className="grid gap-4 lg:gap-8">
+                  {/* Parent Announcements Management */}
+                  <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Bell className="w-5 h-5 text-purple-600" />
+                        School Announcements
+                      </CardTitle>
+                      <Button 
+                        size="sm" 
+                        className="bg-purple-600 hover:bg-purple-700"
+                        onClick={() => {
+                          setShowAnnouncementForm(true)
+                        }}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Announcement
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {dataLoading ? (
+                          Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+                              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                              <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                            </div>
+                          ))
+                        ) : announcements.filter(a => a.targetAudience === 'parents' || a.targetAudience === 'all').length > 0 ? (
+                          announcements
+                            .filter(a => a.targetAudience === 'parents' || a.targetAudience === 'all')
+                            .slice(0, 5)
+                            .map((announcement) => (
+                              <div
+                                key={announcement.id}
+                                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                              >
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-gray-900">{announcement.title}</h4>
+                                  <p className="text-sm text-gray-600">{announcement.summary || announcement.content.substring(0, 100) + '...'}</p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <Badge
+                                      variant={
+                                        announcement.priority === 'high'
+                                          ? 'destructive'
+                                          : announcement.priority === 'medium'
+                                          ? 'default'
+                                          : 'secondary'
+                                      }
+                                    >
+                                      {announcement.priority}
+                                    </Badge>
+                                    <Badge variant="outline">
+                                      {announcement.status}
+                                    </Badge>
+                                    <span className="text-xs text-gray-500">{formatDate(announcement.createdAt)}</span>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                      setEditingAnnouncement(announcement)
+                                      setShowAnnouncementForm(true)
+                                    }}
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </Button>
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                      setEditingAnnouncement(announcement)
+                                      setShowAnnouncementForm(true)
+                                    }}
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                  </Button>
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => handleAnnouncementDelete(announcement.id)}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No parent announcements found</p>
+                            <p className="text-sm">Create your first announcement to get started</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Newsletter Management */}
+                  <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-green-600" />
+                        Parent Newsletter
+                      </CardTitle>
+                      <Button 
+                        size="sm" 
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => {
+                          setShowNewsletterForm(true)
+                        }}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Newsletter
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {newsletters.length > 0 ? (
+                          newsletters.slice(0, 3).map((newsletter) => (
+                            <div
+                              key={newsletter.id}
+                              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-900">{newsletter.title}</h4>
+                                <p className="text-sm text-gray-600">Issue #{newsletter.issueNumber} - {newsletter.downloadCount} downloads</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge variant="outline">
+                                    {newsletter.status}
+                                  </Badge>
+                                  <span className="text-xs text-gray-500">{formatDate(newsletter.createdAt)}</span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingNewsletter(newsletter)
+                                    setShowNewsletterForm(true)
+                                  }}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleNewsletterDelete(newsletter.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No newsletters found</p>
+                            <p className="text-sm">Create your first newsletter to get started</p>
                           </div>
                         )}
                       </div>
