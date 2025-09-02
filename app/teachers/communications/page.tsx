@@ -63,7 +63,7 @@ interface MessageBoardPost {
   isImportant: boolean
   isPinned: boolean
   isFeatured: boolean
-  status: 'draft' | 'published' | 'archived'
+  status: 'active' | 'inactive' | 'archived'
   viewCount: number
   replyCount: number
   author: MessageAuthor
@@ -105,8 +105,8 @@ const groupColors: Record<string, { bg: string, text: string, label: string }> =
 }
 
 const statusColors = {
-  published: "bg-green-100 text-green-800 border-green-200",
-  draft: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  active: "bg-green-100 text-green-800 border-green-200",
+  inactive: "bg-yellow-100 text-yellow-800 border-yellow-200",
   archived: "bg-gray-100 text-gray-800 border-gray-200"
 }
 
@@ -556,8 +556,8 @@ export default function TeacherCommunicationsPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="published">📢 Published</SelectItem>
-                      <SelectItem value="draft">📝 Draft</SelectItem>
+                      <SelectItem value="active">📢 Active</SelectItem>
+                      <SelectItem value="inactive">📝 Inactive</SelectItem>
                       <SelectItem value="archived">📦 Archived</SelectItem>
                     </SelectContent>
                   </Select>
