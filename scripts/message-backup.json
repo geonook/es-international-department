@@ -1,0 +1,327 @@
+{
+  "backupDate": "2025-09-02T03:14:04.287Z",
+  "totalMessages": 16,
+  "firstWeekMessage": {
+    "id": 16,
+    "title": "25-26學年第一週：開學典禮及重要事項",
+    "sourceGroup": "Vickie",
+    "status": "KEEP - This is the important first week message"
+  },
+  "testMessagesToDelete": [
+    {
+      "id": 15,
+      "title": "Science Fair Project Guidelines",
+      "content": "The annual science fair is approaching! Guidelines for student projects are now available. Please review the criteria with your students and help them brainstorm innovative project ideas. Submission deadline is in 6 weeks.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:42:00.250Z",
+      "updatedAt": "2025-08-24T19:42:00.250Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 14,
+      "title": "Lunch Menu Updates",
+      "content": "The cafeteria has updated the lunch menu to include more healthy options and accommodate dietary restrictions. The new menu will be effective starting next week. Nutritional information is available at the front office.",
+      "sourceGroup": null,
+      "boardType": "general",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:42:00.235Z",
+      "updatedAt": "2025-08-24T19:42:00.235Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 13,
+      "title": "Professional Development Workshop Sign-up",
+      "content": "We are offering a professional development workshop on \"Integrating Technology in the Classroom\" next month. Limited spots available. Please sign up by replying to this message or contacting the administration office.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": true,
+      "status": "active",
+      "createdAt": "2025-08-24T19:42:00.204Z",
+      "updatedAt": "2025-08-24T19:42:00.204Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 12,
+      "title": "New Teaching Resources Available",
+      "content": "The library has acquired new teaching resources including interactive whiteboards, updated textbooks, and digital learning tools. Please schedule a time with the librarian to explore these new materials.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:42:00.187Z",
+      "updatedAt": "2025-08-24T19:42:00.187Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 11,
+      "title": "Welcome Back to School!",
+      "content": "Welcome back everyone! We hope you had a wonderful break. This semester brings exciting new opportunities and learning experiences. Please check your mailboxes for important updates and new curriculum materials.",
+      "sourceGroup": null,
+      "boardType": "general",
+      "isImportant": false,
+      "isPinned": true,
+      "status": "active",
+      "createdAt": "2025-08-24T19:42:00.143Z",
+      "updatedAt": "2025-08-24T19:42:00.143Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 10,
+      "title": "Science Fair Project Guidelines",
+      "content": "The annual science fair is approaching! Guidelines for student projects are now available. Please review the criteria with your students and help them brainstorm innovative project ideas. Submission deadline is in 6 weeks.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:53.421Z",
+      "updatedAt": "2025-08-24T19:40:53.421Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 9,
+      "title": "Lunch Menu Updates",
+      "content": "The cafeteria has updated the lunch menu to include more healthy options and accommodate dietary restrictions. The new menu will be effective starting next week. Nutritional information is available at the front office.",
+      "sourceGroup": null,
+      "boardType": "general",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:53.404Z",
+      "updatedAt": "2025-08-24T19:40:53.404Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 8,
+      "title": "Professional Development Workshop Sign-up",
+      "content": "We are offering a professional development workshop on \"Integrating Technology in the Classroom\" next month. Limited spots available. Please sign up by replying to this message or contacting the administration office.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": true,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:53.377Z",
+      "updatedAt": "2025-08-24T19:40:53.377Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 7,
+      "title": "New Teaching Resources Available",
+      "content": "The library has acquired new teaching resources including interactive whiteboards, updated textbooks, and digital learning tools. Please schedule a time with the librarian to explore these new materials.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:53.362Z",
+      "updatedAt": "2025-08-24T19:40:53.362Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 6,
+      "title": "Welcome Back to School!",
+      "content": "Welcome back everyone! We hope you had a wonderful break. This semester brings exciting new opportunities and learning experiences. Please check your mailboxes for important updates and new curriculum materials.",
+      "sourceGroup": null,
+      "boardType": "general",
+      "isImportant": false,
+      "isPinned": true,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:53.327Z",
+      "updatedAt": "2025-08-24T19:40:53.327Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 5,
+      "title": "Science Fair Project Guidelines",
+      "content": "The annual science fair is approaching! Guidelines for student projects are now available. Please review the criteria with your students and help them brainstorm innovative project ideas. Submission deadline is in 6 weeks.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:30.612Z",
+      "updatedAt": "2025-08-24T19:40:30.612Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 4,
+      "title": "Lunch Menu Updates",
+      "content": "The cafeteria has updated the lunch menu to include more healthy options and accommodate dietary restrictions. The new menu will be effective starting next week. Nutritional information is available at the front office.",
+      "sourceGroup": null,
+      "boardType": "general",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:30.563Z",
+      "updatedAt": "2025-08-24T19:40:30.563Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 3,
+      "title": "Professional Development Workshop Sign-up",
+      "content": "We are offering a professional development workshop on \"Integrating Technology in the Classroom\" next month. Limited spots available. Please sign up by replying to this message or contacting the administration office.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": true,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:30.519Z",
+      "updatedAt": "2025-08-24T19:40:30.519Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 2,
+      "title": "New Teaching Resources Available",
+      "content": "The library has acquired new teaching resources including interactive whiteboards, updated textbooks, and digital learning tools. Please schedule a time with the librarian to explore these new materials.",
+      "sourceGroup": null,
+      "boardType": "teachers",
+      "isImportant": false,
+      "isPinned": false,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:30.501Z",
+      "updatedAt": "2025-08-24T19:40:30.501Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    },
+    {
+      "id": 1,
+      "title": "Welcome Back to School!",
+      "content": "Welcome back everyone! We hope you had a wonderful break. This semester brings exciting new opportunities and learning experiences. Please check your mailboxes for important updates and new curriculum materials.",
+      "sourceGroup": null,
+      "boardType": "general",
+      "isImportant": false,
+      "isPinned": true,
+      "status": "active",
+      "createdAt": "2025-08-24T19:40:30.432Z",
+      "updatedAt": "2025-08-24T19:40:30.432Z",
+      "author": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": [],
+      "note": "TO BE DELETED - Test data"
+    }
+  ]
+}
