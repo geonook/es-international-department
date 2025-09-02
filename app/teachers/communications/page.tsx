@@ -11,7 +11,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import {
   MessageSquare,
   Search,
-  Filter,
   Pin,
   MessageCircle,
   User,
@@ -20,26 +19,23 @@ import {
   Eye,
   Calendar,
   Hash,
-  Users,
   BookOpen,
   AlertTriangle,
   Star,
   Reply,
   Target,
-  Plus,
   FileText,
   Bell,
-  Mail
+  Megaphone,
+  ExternalLink
 } from "lucide-react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/hooks/useAuth"
 import MobileNav from "@/components/ui/mobile-nav"
-// TODO: Refactor to use separated Teachers' Corner architecture instead of unified communications
-import CommunicationForm, { Communication, CommunicationType } from "@/components/ui/communication-form"
 
-// Define types for unified communication data (legacy)
-interface CommunicationAuthor {
+// Define types for Teachers Corner message board system
+interface MessageAuthor {
   id: string
   displayName?: string
   firstName?: string
@@ -47,52 +43,47 @@ interface CommunicationAuthor {
   email?: string
 }
 
-interface CommunicationReply {
+interface MessageReply {
   id: number
-  communicationId: number
+  messageId: number
   authorId: string
   content: string
   parentReplyId?: number
-  author: CommunicationAuthor
+  author: MessageAuthor
   createdAt: string
   updatedAt: string
 }
 
-interface CommunicationItem {
+interface MessageBoardPost {
   id: number
   title: string
   content: string
-  summary?: string
-  type: CommunicationType
-  sourceGroup?: string
-  targetAudience: 'teachers' | 'parents' | 'all'
   boardType: 'teachers' | 'parents' | 'general'
-  priority: 'low' | 'medium' | 'high'
-  status: 'draft' | 'published' | 'archived' | 'closed'
+  sourceGroup?: string // 主任Vickie, 副主任Matthew, Academic Team, Curriculum Team, Instructional Team
   isImportant: boolean
   isPinned: boolean
   isFeatured: boolean
+  status: 'draft' | 'published' | 'archived'
   viewCount: number
   replyCount: number
-  author: CommunicationAuthor
-  replies?: CommunicationReply[]
+  author: MessageAuthor
+  replies?: MessageReply[]
   publishedAt?: string
   expiresAt?: string
   createdAt: string
   updatedAt: string
 }
 
-interface CommunicationResponse {
+interface TeachersMessagesResponse {
   success: boolean
   data: {
-    communications: CommunicationItem[]
-    stats: {
-      total: number
-      byType: Record<CommunicationType, number>
-      byStatus: Record<string, number>
-      byPriority: Record<string, number>
-    }
-    pagination: {
+    important: MessageBoardPost[]
+    pinned: MessageBoardPost[]
+    regular: MessageBoardPost[]
+    byGroup: Record<string, MessageBoardPost[]>
+    total: number
+    totalImportant: number
+    pagination?: {
       page: number
       limit: number
       totalPages: number
@@ -100,46 +91,41 @@ interface CommunicationResponse {
       hasPrev: boolean
     }
   }
-  error?: string
+  message?: string
 }
 
-const typeColors = {
-  announcement: "bg-blue-100 text-blue-800 border-blue-200",
-  message: "bg-green-100 text-green-800 border-green-200",
-  reminder: "bg-amber-100 text-amber-800 border-amber-200",
-  newsletter: "bg-purple-100 text-purple-800 border-purple-200"
+// Group colors for Teachers Corner organization
+const groupColors: Record<string, { bg: string, text: string, label: string }> = {
+  'Vickie': { bg: 'bg-purple-100', text: 'text-purple-700', label: '👩‍💼 主任 Vickie' },
+  'Matthew': { bg: 'bg-indigo-100', text: 'text-indigo-700', label: '👨‍💼 副主任 Matthew' },
+  'Academic Team': { bg: 'bg-blue-100', text: 'text-blue-700', label: '📚 Academic Team' },
+  'Curriculum Team': { bg: 'bg-green-100', text: 'text-green-700', label: '📖 Curriculum Team' },
+  'Instructional Team': { bg: 'bg-orange-100', text: 'text-orange-700', label: '🎯 Instructional Team' },
+  'general': { bg: 'bg-gray-100', text: 'text-gray-700', label: '📢 General' }
 }
 
-const typeNames = {
-  announcement: "Announcement",
-  message: "Message", 
-  reminder: "Reminder",
-  newsletter: "Newsletter"
-}
-
-const priorityColors = {
-  high: "bg-red-100 text-red-800 border-red-200",
-  medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  low: "bg-green-100 text-green-800 border-green-200"
+const statusColors = {
+  published: "bg-green-100 text-green-800 border-green-200",
+  draft: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  archived: "bg-gray-100 text-gray-800 border-gray-200"
 }
 
 export default function TeacherCommunicationsPage() {
-  const [communications, setCommunications] = useState<CommunicationItem[]>([])
-  const [filteredCommunications, setFilteredCommunications] = useState<CommunicationItem[]>([])
+  const [messages, setMessages] = useState<MessageBoardPost[]>([])
+  const [filteredMessages, setFilteredMessages] = useState<MessageBoardPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedType, setSelectedType] = useState<string>('all')
-  const [selectedPriority, setSelectedPriority] = useState<string>('all')
+  const [selectedGroup, setSelectedGroup] = useState<string>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [showImportantOnly, setShowImportantOnly] = useState(false)
   const [showPinnedOnly, setShowPinnedOnly] = useState(false)
-  const [stats, setStats] = useState<any>(null)
-  const [showCreateForm, setShowCreateForm] = useState(false)
-  const [editingCommunication, setEditingCommunication] = useState<CommunicationItem | null>(null)
+  const [messageData, setMessageData] = useState<any>(null)
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
   const { user, loading: authLoading } = useAuth()
 
-  // Fetch communications data from unified API
-  const fetchCommunications = async () => {
+  // Fetch teachers messages data from Teachers Corner API
+  const fetchMessages = async () => {
     if (!user) {
       setLoading(false)
       return
@@ -151,19 +137,20 @@ export default function TeacherCommunicationsPage() {
       
       const params = new URLSearchParams({
         limit: '100',
+        boardType: 'teachers',
         sortBy: 'createdAt',
         sortOrder: 'desc'
       })
       
       // Add filters
-      if (selectedType !== 'all') {
-        params.append('type', selectedType)
+      if (selectedGroup !== 'all') {
+        params.append('sourceGroup', selectedGroup)
       }
-      if (selectedPriority !== 'all') {
-        params.append('priority', selectedPriority)
+      if (selectedStatus !== 'all') {
+        params.append('status', selectedStatus)
       }
       
-      const response = await fetch(`/api/v1/communications?${params}`, {
+      const response = await fetch(`/api/teachers/messages?${params}`, {
         headers: {
           'Cache-Control': 'no-cache',
         }
@@ -173,44 +160,60 @@ export default function TeacherCommunicationsPage() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
       
-      const result: CommunicationResponse = await response.json()
+      const result: TeachersMessagesResponse = await response.json()
       
       if (result.success) {
-        setCommunications(result.data.communications || [])
-        setStats(result.data.stats)
+        // Flatten all messages from different categories
+        const allMessages = [
+          ...result.data.important,
+          ...result.data.pinned,
+          ...result.data.regular
+        ]
+        setMessages(allMessages)
+        setMessageData(result.data)
       } else {
-        throw new Error(result.error || 'Failed to fetch communications')
+        throw new Error(result.message || 'Failed to fetch messages')
       }
     } catch (err) {
-      console.error('Error fetching communications:', err)
-      setError('Failed to fetch communications. Please try again.')
+      console.error('Error fetching messages:', err)
+      setError('Failed to fetch teachers messages. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  // Filter communications based on search and filters
+  // Filter messages based on search and filters
   useEffect(() => {
-    let filtered = communications
+    let filtered = messages
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(comm => 
-        comm.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        comm.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        getAuthorName(comm.author).toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (comm.sourceGroup && comm.sourceGroup.toLowerCase().includes(searchTerm.toLowerCase()))
+      filtered = filtered.filter(msg => 
+        msg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        msg.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        getAuthorName(msg.author).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (msg.sourceGroup && msg.sourceGroup.toLowerCase().includes(searchTerm.toLowerCase()))
       )
+    }
+
+    // Group filter
+    if (selectedGroup !== 'all') {
+      filtered = filtered.filter(msg => msg.sourceGroup === selectedGroup)
+    }
+
+    // Status filter
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(msg => msg.status === selectedStatus)
     }
 
     // Important only filter
     if (showImportantOnly) {
-      filtered = filtered.filter(comm => comm.isImportant)
+      filtered = filtered.filter(msg => msg.isImportant)
     }
 
     // Pinned only filter
     if (showPinnedOnly) {
-      filtered = filtered.filter(comm => comm.isPinned)
+      filtered = filtered.filter(msg => msg.isPinned)
     }
 
     // Sort by pinned status first, then by importance, then by creation date
@@ -222,21 +225,21 @@ export default function TeacherCommunicationsPage() {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
 
-    setFilteredCommunications(filtered)
-  }, [communications, searchTerm, showImportantOnly, showPinnedOnly])
+    setFilteredMessages(filtered)
+  }, [messages, searchTerm, selectedGroup, selectedStatus, showImportantOnly, showPinnedOnly])
 
-  // Load communications when component mounts or filters change
+  // Load messages when component mounts or filters change
   useEffect(() => {
     if (user && !authLoading) {
-      fetchCommunications()
+      fetchMessages()
     } else if (!user && !authLoading) {
       setLoading(false)
-      setError('Please log in to view communications')
+      setError('Please log in to view teachers messages')
     }
-  }, [user, authLoading, selectedType, selectedPriority])
+  }, [user, authLoading, selectedGroup, selectedStatus])
 
   // Get author display name
-  const getAuthorName = (author: CommunicationAuthor) => {
+  const getAuthorName = (author: MessageAuthor) => {
     return author.displayName || 
            `${author.firstName || ''} ${author.lastName || ''}`.trim() || 
            author.email || 
@@ -275,45 +278,30 @@ export default function TeacherCommunicationsPage() {
     return content.substring(0, maxLength) + '...'
   }
 
-  // Get type icon
-  const getTypeIcon = (type: CommunicationType) => {
-    switch (type) {
-      case 'announcement': return <FileText className="w-4 h-4" />
-      case 'message': return <MessageSquare className="w-4 h-4" />
-      case 'reminder': return <Bell className="w-4 h-4" />
-      case 'newsletter': return <Mail className="w-4 h-4" />
-      default: return <MessageSquare className="w-4 h-4" />
+  // Get group icon and color
+  const getGroupInfo = (sourceGroup?: string) => {
+    if (!sourceGroup) return { icon: <MessageSquare className="w-4 h-4" />, color: groupColors.general }
+    const groupInfo = groupColors[sourceGroup] || groupColors.general
+    
+    switch (sourceGroup) {
+      case 'Vickie': return { icon: <Star className="w-4 h-4" />, color: groupInfo }
+      case 'Matthew': return { icon: <Star className="w-4 h-4" />, color: groupInfo }
+      case 'Academic Team': return { icon: <BookOpen className="w-4 h-4" />, color: groupInfo }
+      case 'Curriculum Team': return { icon: <FileText className="w-4 h-4" />, color: groupInfo }
+      case 'Instructional Team': return { icon: <Target className="w-4 h-4" />, color: groupInfo }
+      default: return { icon: <MessageSquare className="w-4 h-4" />, color: groupInfo }
     }
   }
 
-  // Handle form submission
-  const handleFormSubmit = async (data: Communication) => {
-    try {
-      const method = editingCommunication ? 'PUT' : 'POST'
-      const url = editingCommunication 
-        ? `/api/v1/communications/${editingCommunication.id}`
-        : '/api/v1/communications'
+  // Handle creating new message (redirect to message board)
+  const handleCreateMessage = () => {
+    // Redirect to Teachers message board with create parameter
+    window.location.href = '/teachers/messages?create=true'
+  }
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Failed to ${editingCommunication ? 'update' : 'create'} communication`)
-      }
-
-      // Refresh the communications list
-      await fetchCommunications()
-      setShowCreateForm(false)
-      setEditingCommunication(null)
-    } catch (error) {
-      console.error('Form submission error:', error)
-      setError('Failed to save communication. Please try again.')
-    }
+  // Handle refresh
+  const handleRefresh = () => {
+    fetchMessages()
   }
 
   const containerVariants = {
@@ -408,29 +396,26 @@ export default function TeacherCommunicationsPage() {
               </Link>
               <div className="h-6 w-px bg-gray-300" />
               <motion.div className="flex items-center gap-3" whileHover={{ scale: 1.05 }}>
-                <div className="w-10 h-10 bg-gradient-to-br from-cyan-600 to-blue-800 rounded-lg flex items-center justify-center shadow-lg">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center shadow-lg">
                   <MessageSquare className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-800 bg-clip-text text-transparent">
-                    Communications Hub
+                  <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                    Teachers' Message Board
                   </h1>
-                  <p className="text-xs text-gray-500">Unified Communication Center</p>
+                  <p className="text-xs text-gray-500">25-26 School Year Communication Center</p>
                 </div>
               </motion.div>
             </div>
 
             <div className="flex items-center gap-4">
-              {/* Create Communication Button */}
+              {/* Create Message Button */}
               <Button
-                onClick={() => {
-                  setEditingCommunication(null)
-                  setShowCreateForm(true)
-                }}
+                onClick={handleCreateMessage}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                New Communication
+                <MessageSquare className="w-4 h-4 mr-2" />
+                View Message Board
               </Button>
 
               {/* Desktop Navigation */}
@@ -445,7 +430,7 @@ export default function TeacherCommunicationsPage() {
                   Calendar
                 </Link>
                 <Link href="/teachers/communications" className="text-cyan-600 font-medium">
-                  Communications
+                  Message Board
                 </Link>
               </nav>
 
@@ -459,7 +444,7 @@ export default function TeacherCommunicationsPage() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
-        {stats && (
+        {messageData && (
           <motion.div
             className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
             initial={{ y: 30, opacity: 0 }}
@@ -473,8 +458,24 @@ export default function TeacherCommunicationsPage() {
                     <MessageSquare className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Total Communications</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                    <p className="text-sm text-gray-600">Total Messages</p>
+                    <p className="text-2xl font-bold text-gray-900">{messageData.total}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="w-6 h-6 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Important</p>
+                    <p className="text-2xl font-bold text-red-600">
+                      {messageData.totalImportant}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -487,24 +488,10 @@ export default function TeacherCommunicationsPage() {
                     <Pin className="w-6 h-6 text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Important Items</p>
+                    <p className="text-sm text-gray-600">Pinned</p>
                     <p className="text-2xl font-bold text-amber-600">
-                      {filteredCommunications.filter(c => c.isImportant).length}
+                      {messageData.pinned.length}
                     </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center">
-                    <Target className="w-6 h-6 text-cyan-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Filtered Results</p>
-                    <p className="text-2xl font-bold text-cyan-600">{filteredCommunications.length}</p>
                   </div>
                 </div>
               </CardContent>
@@ -514,13 +501,11 @@ export default function TeacherCommunicationsPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6 text-green-600" />
+                    <Target className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Total Replies</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {filteredCommunications.reduce((sum, comm) => sum + comm.replyCount, 0)}
-                    </p>
+                    <p className="text-sm text-gray-600">Filtered Results</p>
+                    <p className="text-2xl font-bold text-green-600">{filteredMessages.length}</p>
                   </div>
                 </div>
               </CardContent>
@@ -542,7 +527,7 @@ export default function TeacherCommunicationsPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Search communications, content, authors, or source groups..."
+                    placeholder="Search messages, content, authors, or groups..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -551,29 +536,29 @@ export default function TeacherCommunicationsPage() {
 
                 {/* Filters Row */}
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                  {/* Type Filter */}
-                  <Select value={selectedType} onValueChange={setSelectedType}>
+                  {/* Group Filter */}
+                  <Select value={selectedGroup} onValueChange={setSelectedGroup}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Types" />
+                      <SelectValue placeholder="All Groups" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      {Object.entries(typeNames).map(([key, name]) => (
-                        <SelectItem key={key} value={key}>{name}</SelectItem>
+                      <SelectItem value="all">All Groups</SelectItem>
+                      {Object.entries(groupColors).map(([key, group]) => (
+                        <SelectItem key={key} value={key}>{group.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
 
-                  {/* Priority Filter */}
-                  <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+                  {/* Status Filter */}
+                  <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Priorities" />
+                      <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Priorities</SelectItem>
-                      <SelectItem value="high">🔴 High Priority</SelectItem>
-                      <SelectItem value="medium">🟡 Medium Priority</SelectItem>
-                      <SelectItem value="low">🟢 Low Priority</SelectItem>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="published">📢 Published</SelectItem>
+                      <SelectItem value="draft">📝 Draft</SelectItem>
+                      <SelectItem value="archived">📦 Archived</SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -599,7 +584,7 @@ export default function TeacherCommunicationsPage() {
 
                   {/* Refresh Button */}
                   <Button
-                    onClick={fetchCommunications}
+                    onClick={handleRefresh}
                     disabled={loading}
                     variant="outline"
                   >
@@ -616,8 +601,8 @@ export default function TeacherCommunicationsPage() {
                     variant="outline"
                     onClick={() => {
                       setSearchTerm('')
-                      setSelectedType('all')
-                      setSelectedPriority('all')
+                      setSelectedGroup('all')
+                      setSelectedStatus('all')
                       setShowImportantOnly(false)
                       setShowPinnedOnly(false)
                     }}
@@ -676,28 +661,37 @@ export default function TeacherCommunicationsPage() {
                 </Card>
               </motion.div>
             ))
-          ) : filteredCommunications.length === 0 ? (
+          ) : filteredMessages.length === 0 ? (
             <motion.div variants={itemVariants}>
               <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-lg">
                 <CardContent className="p-12 text-center">
-                  <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {communications.length === 0 ? 'No communications yet' : 'No matching communications'}
+                    {messages.length === 0 ? 'No messages yet' : 'No matching messages'}
                   </h3>
                   <p className="text-gray-600">
-                    {communications.length === 0 
-                      ? 'Currently no communication content available.' 
+                    {messages.length === 0 
+                      ? 'No messages available in the Teachers\' Message Board.' 
                       : 'Please try adjusting your search criteria or filter settings.'
                     }
                   </p>
+                  <div className="mt-6">
+                    <Button 
+                      onClick={() => window.location.href = '/teachers/messages'}
+                      className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Go to Message Board
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
           ) : (
             <AnimatePresence>
-              {filteredCommunications.map((communication, index) => (
+              {filteredMessages.map((message, index) => (
                 <motion.div
-                  key={communication.id}
+                  key={message.id}
                   variants={itemVariants}
                   initial="hidden"
                   animate="visible"
@@ -705,41 +699,42 @@ export default function TeacherCommunicationsPage() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Card className={`bg-white/90 backdrop-blur-lg border-0 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                    communication.isPinned ? 'ring-2 ring-amber-200' : ''
+                    message.isPinned ? 'ring-2 ring-amber-200' : ''
                   } ${
-                    communication.isImportant ? 'ring-2 ring-red-200' : ''
+                    message.isImportant ? 'ring-2 ring-red-200' : ''
                   }`}>
                     <CardContent className="p-6">
                       {/* Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1 min-w-0 pr-4">
                           <div className="flex items-center gap-2 mb-2">
-                            {communication.isPinned && (
+                            {message.isPinned && (
                               <Pin className="w-4 h-4 text-amber-500 flex-shrink-0" />
                             )}
-                            {communication.isImportant && (
+                            {message.isImportant && (
                               <Star className="w-4 h-4 text-red-500 flex-shrink-0" />
                             )}
                             <h3 className="text-xl font-semibold text-gray-900 truncate">
-                              {communication.title}
+                              {message.title}
                             </h3>
                           </div>
                           <div className="flex items-center gap-4 text-sm text-gray-600 flex-wrap">
                             <div className="flex items-center gap-1">
                               <User className="w-4 h-4" />
-                              <span>{getAuthorName(communication.author)}</span>
+                              <span>{getAuthorName(message.author)}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
-                              <span>{formatDate(communication.createdAt)}</span>
+                              <span>{formatDate(message.createdAt)}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Eye className="w-4 h-4" />
-                              <span>{communication.viewCount} views</span>
+                              <span>{message.viewCount} views</span>
                             </div>
-                            {communication.sourceGroup && (
+                            {message.sourceGroup && (
                               <div className="flex items-center gap-1">
-                                <span className="font-medium">Source: {communication.sourceGroup}</span>
+                                {getGroupInfo(message.sourceGroup).icon}
+                                <span className="font-medium">{getGroupInfo(message.sourceGroup).color.label}</span>
                               </div>
                             )}
                           </div>
@@ -747,41 +742,43 @@ export default function TeacherCommunicationsPage() {
                         
                         <div className="flex flex-col items-end gap-2">
                           <div className="flex gap-2 flex-wrap">
-                            <Badge className={typeColors[communication.type]}>
-                              <div className="flex items-center gap-1">
-                                {getTypeIcon(communication.type)}
-                                {typeNames[communication.type]}
-                              </div>
-                            </Badge>
-                            <Badge className={priorityColors[communication.priority]}>
-                              {communication.priority.charAt(0).toUpperCase() + communication.priority.slice(1)} Priority
+                            {message.sourceGroup && (
+                              <Badge className={`${getGroupInfo(message.sourceGroup).color.bg} ${getGroupInfo(message.sourceGroup).color.text} border-${getGroupInfo(message.sourceGroup).color.bg.split('-')[1]}-200`}>
+                                <div className="flex items-center gap-1">
+                                  {getGroupInfo(message.sourceGroup).icon}
+                                  {message.sourceGroup}
+                                </div>
+                              </Badge>
+                            )}
+                            <Badge className={statusColors[message.status]}>
+                              {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
                             </Badge>
                           </div>
-                          {communication.replyCount > 0 && (
+                          {message.replyCount > 0 && (
                             <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                               <MessageCircle className="w-3 h-3 mr-1" />
-                              {communication.replyCount} replies
+                              {message.replyCount} replies
                             </Badge>
                           )}
                         </div>
                       </div>
 
-                      {/* Summary or Content Preview */}
+                      {/* Content Preview */}
                       <div className="mb-4">
                         <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                          {truncateContent(communication.summary || communication.content)}
+                          {truncateContent(message.content)}
                         </p>
                       </div>
 
                       {/* Recent Replies Preview */}
-                      {communication.replies && communication.replies.length > 0 && (
+                      {message.replies && message.replies.length > 0 && (
                         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                           <div className="flex items-center gap-2 mb-2">
                             <Reply className="w-4 h-4 text-gray-500" />
                             <span className="text-sm font-medium text-gray-700">Recent Replies</span>
                           </div>
                           <div className="space-y-2">
-                            {communication.replies.slice(0, 2).map((reply) => (
+                            {message.replies.slice(0, 2).map((reply) => (
                               <div key={reply.id} className="text-sm">
                                 <div className="flex items-center gap-2 mb-1">
                                   <span className="font-medium text-gray-900">
@@ -796,9 +793,9 @@ export default function TeacherCommunicationsPage() {
                                 </p>
                               </div>
                             ))}
-                            {communication.replyCount > 2 && (
+                            {message.replyCount > 2 && (
                               <div className="text-sm text-gray-500">
-                                {communication.replyCount - 2} more replies...
+                                {message.replyCount - 2} more replies...
                               </div>
                             )}
                           </div>
@@ -810,11 +807,11 @@ export default function TeacherCommunicationsPage() {
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <div className="flex items-center gap-1">
                             <Hash className="w-4 h-4" />
-                            <span>#{communication.id}</span>
+                            <span>#{message.id}</span>
                           </div>
-                          {communication.updatedAt !== communication.createdAt && (
+                          {message.updatedAt !== message.createdAt && (
                             <div className="flex items-center gap-1">
-                              <span>Updated {formatDate(communication.updatedAt)}</span>
+                              <span>Updated {formatDate(message.updatedAt)}</span>
                             </div>
                           )}
                         </div>
@@ -823,13 +820,10 @@ export default function TeacherCommunicationsPage() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              setEditingCommunication(communication)
-                              setShowCreateForm(true)
-                            }}
+                            onClick={() => window.location.href = `/teachers/messages?id=${message.id}`}
                           >
-                            <FileText className="w-4 h-4 mr-2" />
-                            Edit
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            View in Message Board
                           </Button>
                         </div>
                       </div>
@@ -842,35 +836,32 @@ export default function TeacherCommunicationsPage() {
         </motion.div>
       </main>
 
-      {/* Communication Form Modal */}
-      <AnimatePresence>
-        {showCreateForm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-lg w-full max-w-6xl max-h-[95vh] overflow-y-auto"
+      {/* Legacy System Notice */}
+      <motion.div
+        className="fixed bottom-6 left-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 rounded-lg shadow-2xl max-w-sm z-50"
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1 }}
+      >
+        <div className="flex items-start gap-3">
+          <Megaphone className="w-5 h-5 mt-0.5 flex-shrink-0" />
+          <div>
+            <h4 className="font-semibold mb-1">New Message Board Available!</h4>
+            <p className="text-sm text-blue-100 mb-3">
+              This page now redirects to the Teachers' Message Board for better organization.
+            </p>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => window.location.href = '/teachers/messages'}
+              className="bg-white text-blue-600 hover:bg-blue-50"
             >
-              <CommunicationForm
-                communication={editingCommunication || undefined}
-                onSubmit={handleFormSubmit}
-                onCancel={() => {
-                  setShowCreateForm(false)
-                  setEditingCommunication(null)
-                }}
-                mode={editingCommunication ? 'edit' : 'create'}
-                defaultType="message"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <ExternalLink className="w-3 h-3 mr-1" />
+              Go to Message Board
+            </Button>
+          </div>
+        </div>
+      </motion.div>
     </div>
   )
 }

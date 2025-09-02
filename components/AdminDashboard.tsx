@@ -3,7 +3,7 @@
 /**
  * Admin Dashboard Component with Real Authentication
  * Administrator Dashboard Component - Using Real Authentication
- * Updated: 2025-09-02T06:05:00Z - Unified Communications System
+ * Updated: 2025-09-02T07:24:00Z - Separated Teachers' Corner & Parents' Corner System
  */
 
 import { useEffect, useState, useCallback } from 'react'
@@ -62,8 +62,7 @@ import {
   BulkAnnouncementResult
 } from '@/lib/types'
 
-// TODO: Remove unified communications legacy code when refactoring to separated architecture
-import CommunicationForm, { Communication, CommunicationType } from '@/components/ui/communication-form'
+// Using separated Teachers' Corner and Parents' Corner architecture
 
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin, checkAuth } = useAuth()
@@ -91,8 +90,7 @@ export default function AdminDashboard() {
     status: undefined,
     search: ''
   })
-  const [showCommunicationForm, setShowCommunicationForm] = useState(false)
-  const [editingCommunication, setEditingCommunication] = useState<Communication | null>(null)
+  // Removed: Unified Communications system state variables
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState<string>('')
   
@@ -186,79 +184,9 @@ export default function AdminDashboard() {
     setAnnouncementStats(stats)
   }
 
-  // Create communication
-  const createCommunication = async (data: Communication) => {
-    setFormLoading(true)
-    setFormError('')
-    
-    try {
-      const response = await fetch('/api/v1/communications', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const result: ApiResponse<Communication> = await response.json()
-      
-      if (result.success) {
-        setShowCommunicationForm(false)
-        setEditingCommunication(null)
-        await fetchAnnouncements() // Reload list
-      } else {
-        throw new Error(result.message || 'Failed to create communication')
-      }
-    } catch (error) {
-      console.error('Create announcement error:', error)
-      setFormError(error instanceof Error ? error.message : 'An error occurred while creating communication')
-      throw error
-    } finally {
-      setFormLoading(false)
-    }
-  }
+  // Removed: createCommunication - replaced with separated Teachers' Corner management
 
-  // Update communication
-  const updateCommunication = async (data: Communication) => {
-    if (!editingCommunication) return
-    
-    setFormLoading(true)
-    setFormError('')
-    
-    try {
-      const response = await fetch(`/api/v1/communications/${editingCommunication.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const result: ApiResponse<Communication> = await response.json()
-      
-      if (result.success) {
-        setShowCommunicationForm(false)
-        setEditingCommunication(null)
-        await fetchAnnouncements() // Reload list
-      } else {
-        throw new Error(result.message || 'Failed to update communication')
-      }
-    } catch (error) {
-      console.error('Update announcement error:', error)
-      setFormError(error instanceof Error ? error.message : 'An error occurred while updating communication')
-      throw error
-    } finally {
-      setFormLoading(false)
-    }
-  }
+  // Removed: updateCommunication - replaced with separated Teachers' Corner management
 
   // Delete announcement
   const deleteAnnouncement = async (announcementId: number) => {
@@ -291,55 +219,22 @@ export default function AdminDashboard() {
     }
   }
 
-  // Handle edit communication
+  // Redirect to separated message board management
   const handleEditCommunication = (announcement: Announcement) => {
-    // Convert Announcement to Communication format
-    const communication: Communication = {
-      id: announcement.id,
-      title: announcement.title,
-      content: announcement.content,
-      summary: announcement.summary,
-      type: 'announcement' as CommunicationType,
-      targetAudience: announcement.targetAudience,
-      boardType: announcement.targetAudience === 'teachers' ? 'teachers' : announcement.targetAudience === 'parents' ? 'parents' : 'general',
-      priority: announcement.priority,
-      status: announcement.status,
-      isImportant: announcement.priority === 'high',
-      isPinned: false,
-      isFeatured: false,
-      publishedAt: announcement.publishedAt,
-      expiresAt: announcement.expiresAt,
-      viewCount: announcement.viewCount,
-      createdAt: announcement.createdAt,
-      updatedAt: announcement.updatedAt
-    }
-    setEditingCommunication(communication)
-    setShowCommunicationForm(true)
-    setFormError('')
+    // Direct edit through announcement system instead of unified communications
+    console.log('Redirecting to announcement edit:', announcement.id)
+    // In a real implementation, this would redirect to the proper announcement edit page
   }
 
-  // Handle create communication
+  // Redirect to Teachers Corner for message creation
   const handleCreateCommunication = () => {
-    setEditingCommunication(null)
-    setShowCommunicationForm(true)
-    setFormError('')
+    // Redirect to Teachers' Message Board for creating new messages
+    window.location.href = '/teachers/messages?create=true'
   }
 
-  // Handle form cancel
-  const handleFormCancel = () => {
-    setShowCommunicationForm(false)
-    setEditingCommunication(null)
-    setFormError('')
-  }
+  // Removed: handleFormCancel - no longer needed with separated architecture
 
-  // Handle form submit
-  const handleFormSubmit = async (data: Communication) => {
-    if (editingCommunication) {
-      await updateCommunication(data)
-    } else {
-      await createCommunication(data)
-    }
-  }
+  // Removed: handleFormSubmit - replaced with separated Teachers' Corner management
 
   // Handle filters change
   const handleFiltersChange = (newFilters: AnnouncementFilters) => {
@@ -606,7 +501,7 @@ export default function AdminDashboard() {
 
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-    { id: "communications", label: "Communications Hub", icon: MessageSquare },
+    // Removed: Communications Hub - replaced with separated Teachers' Corner & Parents' Corner
     { id: "events", label: "Event Management", icon: Calendar },
     { id: "resources", label: "Resource Management", icon: FileText },
     { id: "users", label: "User Management", icon: Users },
@@ -796,7 +691,7 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <Button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600" onClick={() => setActiveTab('communications')}>
-                          Open Communications Hub
+                          Manage Teachers Corner
                         </Button>
                       </CardContent>
                     </Card>
@@ -855,7 +750,7 @@ export default function AdminDashboard() {
                           <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
                           <div>
                             <p className="font-medium">System Update Complete</p>
-                            <p className="text-sm text-gray-600">Communications Hub unified successfully - 15 minutes ago</p>
+                            <p className="text-sm text-gray-600">Teachers Corner & Parents Corner separated successfully - 15 minutes ago</p>
                           </div>
                         </div>
                         <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
@@ -880,59 +775,74 @@ export default function AdminDashboard() {
                   exit="hidden"
                   className="space-y-6"
                 >
-                  {/* Communication Form Modal */}
-                  {showCommunicationForm && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-                    >
-                      <motion.div
-                        initial={{ scale: 0.95, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.95, opacity: 0 }}
-                        className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
-                      >
-                        <CommunicationForm
-                          communication={editingCommunication || undefined}
-                          onSubmit={handleFormSubmit}
-                          onCancel={handleFormCancel}
-                          loading={formLoading}
-                          error={formError}
-                          mode={editingCommunication ? 'edit' : 'create'}
-                          defaultType="announcement"
-                        />
-                      </motion.div>
-                    </motion.div>
-                  )}
-
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">Communications Hub</h2>
-                      <p className="text-gray-600 mt-1">Unified management center for all announcements, messages, and reminders</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Communications Management</h2>
+                      <p className="text-gray-600 mt-1">Manage Teachers' Corner and Parents' Corner communication systems</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => fetchAnnouncements()}
-                        disabled={announcementsLoading}
-                        className="flex items-center gap-2"
-                      >
-                        <RefreshCw className={cn(
-                          "w-4 h-4",
-                          announcementsLoading && "animate-spin"
-                        )} />
-                        Reload
-                      </Button>
-                      <Button 
-                        onClick={handleCreateCommunication}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        New Communication
-                      </Button>
-                    </div>
+                  </div>
+
+                  {/* Separated Communications Systems */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200 hover:shadow-lg transition-all duration-300">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-3 text-blue-800">
+                          <MessageSquare className="w-6 h-6" />
+                          Teachers' Corner
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-gray-600">
+                          Manage teacher communications, messages, reminders, and announcements.
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => window.location.href = '/teachers/messages'}
+                            className="bg-gradient-to-r from-blue-600 to-blue-700"
+                          >
+                            <MessageSquare className="w-4 h-4 mr-2" />
+                            Message Board
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => window.location.href = '/teachers/reminders'}
+                          >
+                            <Bell className="w-4 h-4 mr-2" />
+                            Reminders
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200 hover:shadow-lg transition-all duration-300">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-3 text-purple-800">
+                          <Users className="w-6 h-6" />
+                          Parents' Corner
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-gray-600">
+                          Manage parent communications, newsletters, and community updates.
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => window.location.href = '/parents'}
+                            className="bg-gradient-to-r from-purple-600 to-purple-700"
+                          >
+                            <Users className="w-4 h-4 mr-2" />
+                            Parents Corner
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => setActiveTab('newsletters')}
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            Newsletters
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
 
                   {/* Announcement Statistics Cards */}
@@ -1008,20 +918,45 @@ export default function AdminDashboard() {
                   )}
 
                   {/* Announcement List */}
-                  <AnnouncementList
-                    announcements={announcements}
-                    loading={announcementsLoading || bulkOperationLoading}
-                    error={announcementsError}
-                    onEdit={handleEditCommunication}
-                    onDelete={deleteAnnouncement}
-                    onBulkOperation={handleBulkOperation}
-                    onFiltersChange={handleFiltersChange}
-                    onPageChange={handlePageChange}
-                    pagination={pagination}
-                    filters={filters}
-                    showActions={true}
-                    enableBulkActions={true}
-                  />
+                  {/* Migration Notice */}
+                  <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <AlertTriangle className="w-6 h-6 text-yellow-600 mt-1" />
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            System Architecture Updated
+                          </h3>
+                          <p className="text-gray-700 mb-4">
+                            The unified Communications Hub has been separated into specialized systems for better management and user experience.
+                          </p>
+                          <ul className="list-disc list-inside space-y-2 text-gray-600">
+                            <li><strong>Teachers' Corner:</strong> Dedicated message board and reminder system</li>
+                            <li><strong>Parents' Corner:</strong> Focused communication portal for families</li>
+                            <li><strong>Announcements:</strong> System-wide announcements via dedicated tab</li>
+                          </ul>
+                          <div className="mt-4 flex gap-2">
+                            <Button
+                              onClick={() => setActiveTab('announcements')}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <MessageSquare className="w-4 h-4 mr-2" />
+                              Manage Announcements
+                            </Button>
+                            <Button
+                              onClick={() => window.location.href = '/teachers'}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Users className="w-4 h-4 mr-2" />
+                              Visit Teachers Corner
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               )}
 

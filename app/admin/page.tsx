@@ -53,7 +53,7 @@ import { UserData } from '@/components/admin/UserCard'
 import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
-import CommunicationForm, { Communication, CommunicationType } from '@/components/ui/communication-form'
+// Removed: Unified Communications system - replaced with separated Teachers' Corner & Parents' Corner
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
 import ContactInfoManager from '@/components/admin/ContactInfoManager'
