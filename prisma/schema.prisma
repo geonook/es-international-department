@@ -407,7 +407,7 @@ model MessageBoard {
   content    String
   authorId   String?        @map("author_id")
   boardType  String         @default("general") @db.VarChar(20)
-  sourceGroup String?       @map("source_group") @db.VarChar(50) // 主任Vickie, 副主任Matthew, Academic Team, Curriculum Team, Instructional Team
+  sourceGroup String?       @map("source_group") @db.VarChar(50) // Vickie, Matthew, Academic Team, Curriculum Team, Instructional Team
   isImportant Boolean       @default(false) @map("is_important")
   isPinned   Boolean        @default(false) @map("is_pinned")
   replyCount Int            @default(0) @map("reply_count")

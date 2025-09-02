@@ -87,7 +87,7 @@ export default function TeachersPage() {
   // 組別顏色配置
   const groupColors: Record<string, { bg: string, text: string, label: string }> = {
     'Vickie': { bg: 'bg-purple-100', text: 'text-purple-700', label: '👩‍💼 Vickie' },
-    '副主任Matthew': { bg: 'bg-indigo-100', text: 'text-indigo-700', label: '👨‍💼 副主任 Matthew' },
+    'Matthew': { bg: 'bg-indigo-100', text: 'text-indigo-700', label: '👨‍💼 Matthew' },
     'Academic Team': { bg: 'bg-blue-100', text: 'text-blue-700', label: '📚 Academic Team' },
     'Curriculum Team': { bg: 'bg-green-100', text: 'text-green-700', label: '📖 Curriculum Team' },
     'Instructional Team': { bg: 'bg-orange-100', text: 'text-orange-700', label: '🎯 Instructional Team' },

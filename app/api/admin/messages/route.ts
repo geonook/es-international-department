@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const boardType = searchParams.get('boardType') // 'teachers', 'parents', 'general'
-    const sourceGroup = searchParams.get('sourceGroup') // '主任Vickie', 'Academic Team', etc.
+    const sourceGroup = searchParams.get('sourceGroup') // 'Vickie', 'Matthew', 'Academic Team', etc.
     const status = searchParams.get('status')
     const search = searchParams.get('search')
     const isPinned = searchParams.get('pinned') // 'true', 'false', or null for all

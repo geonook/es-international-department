@@ -27,6 +27,8 @@ interface MessageBoardData {
   title: string
   content: string
   boardType: 'teachers' | 'parents' | 'general'
+  sourceGroup?: string
+  isImportant: boolean
   isPinned: boolean
   status: 'active' | 'closed' | 'archived'
 }
@@ -52,6 +54,8 @@ export default function MessageBoardForm({
     title: '',
     content: '',
     boardType: 'general',
+    sourceGroup: '',
+    isImportant: false,
     isPinned: false,
     status: 'active'
   })
@@ -217,6 +221,57 @@ export default function MessageBoardForm({
                   </Select>
                 </div>
 
+                {/* Source Group Selection */}
+                <div className="space-y-2">
+                  <Label htmlFor="sourceGroup">Source Group</Label>
+                  <Select
+                    value={formData.sourceGroup || ''}
+                    onValueChange={(value) => handleInputChange('sourceGroup', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select source group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-gray-100 text-gray-700">General</Badge>
+                          <span className="text-xs text-gray-500">No specific source</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Vickie">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-purple-100 text-purple-700">👩‍💼 Vickie</Badge>
+                          <span className="text-xs text-gray-500">處室主任</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Matthew">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-indigo-100 text-indigo-700">👨‍💼 Matthew</Badge>
+                          <span className="text-xs text-gray-500">副主任</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Academic Team">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-blue-100 text-blue-700">📚 Academic Team</Badge>
+                          <span className="text-xs text-gray-500">Academic coordination</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Curriculum Team">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-green-100 text-green-700">📖 Curriculum Team</Badge>
+                          <span className="text-xs text-gray-500">Curriculum development</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Instructional Team">
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-orange-100 text-orange-700">🎯 Instructional Team</Badge>
+                          <span className="text-xs text-gray-500">Teaching support</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
                   <Select
@@ -250,17 +305,31 @@ export default function MessageBoardForm({
                 </div>
               </div>
 
-              {/* Pin Option */}
-              <div className="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
-                <Checkbox
-                  id="isPinned"
-                  checked={formData.isPinned}
-                  onCheckedChange={(checked) => handleInputChange('isPinned', checked)}
-                />
-                <Label htmlFor="isPinned" className="flex items-center gap-2">
-                  <Pin className="w-4 h-4" />
-                  Pin this post to the top of the board
-                </Label>
+              {/* Display Options */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2 p-4 bg-red-50 rounded-lg">
+                  <Checkbox
+                    id="isImportant"
+                    checked={formData.isImportant}
+                    onCheckedChange={(checked) => handleInputChange('isImportant', checked)}
+                  />
+                  <Label htmlFor="isImportant" className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-red-600" />
+                    Mark as Important (🚨)
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
+                  <Checkbox
+                    id="isPinned"
+                    checked={formData.isPinned}
+                    onCheckedChange={(checked) => handleInputChange('isPinned', checked)}
+                  />
+                  <Label htmlFor="isPinned" className="flex items-center gap-2">
+                    <Pin className="w-4 h-4" />
+                    Pin to top (📌)
+                  </Label>
+                </div>
               </div>
 
               {/* Preview Section */}
