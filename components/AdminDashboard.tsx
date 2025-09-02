@@ -131,7 +131,7 @@ export default function AdminDashboard() {
         searchParams.append('search', currentFilters.search)
       }
       
-      const response = await fetch(`/api/announcements?${searchParams}`, {
+      const response = await fetch(`/api/v1/communications?${searchParams}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
     }
     
     try {
-      const response = await fetch(`/api/announcements/${announcementId}`, {
+      const response = await fetch(`/api/v1/communications/${announcementId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
     setBulkOperationSuccess('')
     
     try {
-      const response = await fetch('/api/announcements/bulk', {
+      const response = await fetch('/api/v1/communications/bulk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -431,7 +431,7 @@ export default function AdminDashboard() {
   // Initial load announcements and events
   useEffect(() => {
     if (isAuthenticated && isAdmin()) {
-      if (activeTab === 'teachers') {
+      if (activeTab === 'communications') {
         fetchAnnouncements()
       } else if (activeTab === 'events') {
         fetchEvents()
@@ -603,10 +603,10 @@ export default function AdminDashboard() {
 
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-    { id: "teachers", label: "Teacher Management", icon: GraduationCap },
+    { id: "communications", label: "Communications Hub", icon: MessageSquare },
     { id: "events", label: "Event Management", icon: Calendar },
     { id: "resources", label: "Resource Management", icon: FileText },
-    { id: "parents", label: "Parent Information", icon: Users },
+    { id: "users", label: "User Management", icon: Users },
     { id: "settings", label: "System Settings", icon: Settings },
   ]
 
@@ -717,10 +717,12 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-blue-600 text-sm font-medium">Total Teachers</p>
-                            <p className="text-2xl font-bold text-blue-800">25</p>
+                            <p className="text-blue-600 text-sm font-medium">Total Communications</p>
+                            <p className="text-2xl font-bold text-blue-800">
+                              {announcementStats?.total || 0}
+                            </p>
                           </div>
-                          <GraduationCap className="w-8 h-8 text-blue-600" />
+                          <MessageSquare className="w-8 h-8 text-blue-600" />
                         </div>
                       </CardContent>
                     </Card>
@@ -729,8 +731,8 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-green-600 text-sm font-medium">Active Parents</p>
-                            <p className="text-2xl font-bold text-green-800">342</p>
+                            <p className="text-green-600 text-sm font-medium">Active Users</p>
+                            <p className="text-2xl font-bold text-green-800">367</p>
                           </div>
                           <Users className="w-8 h-8 text-green-600" />
                         </div>
@@ -753,77 +755,81 @@ export default function AdminDashboard() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-orange-600 text-sm font-medium">Total Announcements</p>
-                            <p className="text-2xl font-bold text-orange-800">
-                              {announcementStats?.total || 0}
-                            </p>
+                            <p className="text-orange-600 text-sm font-medium">System Health</p>
+                            <p className="text-2xl font-bold text-orange-800">98%</p>
                           </div>
-                          <MessageSquare className="w-8 h-8 text-orange-600" />
+                          <BarChart3 className="w-8 h-8 text-orange-600" />
                         </div>
                       </CardContent>
                     </Card>
                   </div>
 
-                  {/* Announcement Statistics */}
-                  {announcementStats && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100 border-cyan-200">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-cyan-600 text-sm font-medium">Published</p>
-                              <p className="text-2xl font-bold text-cyan-800">
-                                {announcementStats.published}
-                              </p>
-                            </div>
-                            <Send className="w-8 h-8 text-cyan-600" />
+                  {/* Quick Access Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Communications Management */}
+                    <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab('communications')}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <MessageSquare className="w-5 h-5 mr-2 text-blue-600" />
+                            Communications Management
                           </div>
-                        </CardContent>
-                      </Card>
+                          <Badge>Unified</Badge>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Manage Announcements</span>
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Update Messages</span>
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Send Reminders</span>
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          </div>
+                        </div>
+                        <Button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600" onClick={() => setActiveTab('communications')}>
+                          Open Communications Hub
+                        </Button>
+                      </CardContent>
+                    </Card>
 
-                      <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-amber-600 text-sm font-medium">Draft</p>
-                              <p className="text-2xl font-bold text-amber-800">
-                                {announcementStats.draft}
-                              </p>
-                            </div>
-                            <FileText className="w-8 h-8 text-amber-600" />
+                    {/* Event Management */}
+                    <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab('events')}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <Calendar className="w-5 h-5 mr-2 text-purple-600" />
+                            Event Management
                           </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-red-600 text-sm font-medium">High Priority</p>
-                              <p className="text-2xl font-bold text-red-800">
-                                {announcementStats.byPriority.high}
-                              </p>
-                            </div>
-                            <AlertTriangle className="w-8 h-8 text-red-600" />
+                          <Badge variant="outline">28 Active</Badge>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Manage Events</span>
+                            <CheckCircle className="w-4 h-4 text-green-500" />
                           </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-teal-600 text-sm font-medium">Archived</p>
-                              <p className="text-2xl font-bold text-teal-800">
-                                {announcementStats.archived}
-                              </p>
-                            </div>
-                            <Download className="w-8 h-8 text-teal-600" />
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Track Registrations</span>
+                            <CheckCircle className="w-4 h-4 text-green-500" />
                           </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  )}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Send Notifications</span>
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          </div>
+                        </div>
+                        <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600" onClick={() => setActiveTab('events')}>
+                          Open Event Management
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
 
                   {/* Recent Activities */}
                   <Card>
@@ -838,22 +844,22 @@ export default function AdminDashboard() {
                         <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
                           <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
                           <div>
-                            <p className="font-medium">New Teacher Announcement</p>
-                            <p className="text-sm text-gray-600">Staff Meeting Tomorrow - 2 minutes ago</p>
+                            <p className="font-medium">New Communication Posted</p>
+                            <p className="text-sm text-gray-600">Important announcement from Vickie - 2 minutes ago</p>
                           </div>
                         </div>
                         <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
                           <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
                           <div>
-                            <p className="font-medium">Parent Newsletter Published</p>
-                            <p className="text-sm text-gray-600">January Newsletter - 15 minutes ago</p>
+                            <p className="font-medium">System Update Complete</p>
+                            <p className="text-sm text-gray-600">Communications Hub unified successfully - 15 minutes ago</p>
                           </div>
                         </div>
                         <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
                           <div className="w-2 h-2 bg-purple-600 rounded-full mt-2"></div>
                           <div>
-                            <p className="font-medium">Event Management System</p>
-                            <p className="text-sm text-gray-600">Event management features online - 5 minutes ago</p>
+                            <p className="font-medium">Event Registration Open</p>
+                            <p className="text-sm text-gray-600">Coffee with Principal - Grades 1-2 - 5 minutes ago</p>
                           </div>
                         </div>
                       </div>
@@ -862,9 +868,9 @@ export default function AdminDashboard() {
                 </motion.div>
               )}
 
-              {activeTab === "teachers" && (
+              {activeTab === "communications" && (
                 <motion.div
-                  key="teachers"
+                  key="communications"
                   variants={itemVariants}
                   initial="hidden"
                   animate="visible"
@@ -900,8 +906,8 @@ export default function AdminDashboard() {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">Communication Management</h2>
-                      <p className="text-gray-600 mt-1">Manage all communications, announcements and notifications</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Communications Hub</h2>
+                      <p className="text-gray-600 mt-1">Unified management center for all announcements, messages, and reminders</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -1396,9 +1402,9 @@ export default function AdminDashboard() {
                 </motion.div>
               )}
 
-              {activeTab === "parents" && (
+              {activeTab === "users" && (
                 <motion.div
-                  key="parents"
+                  key="users"
                   variants={itemVariants}
                   initial="hidden"
                   animate="visible"
@@ -1407,152 +1413,120 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">Parent Information Management</h2>
-                      <p className="text-gray-600 mt-1">Manage parent communications and activity information</p>
+                      <h2 className="text-3xl font-bold text-gray-900">User Management</h2>
+                      <p className="text-gray-600 mt-1">Manage users, permissions, and access control</p>
                     </div>
                     <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
                       <Plus className="w-4 h-4 mr-2" />
-                      New Content
+                      Add User
                     </Button>
                   </div>
 
-                  {/* Parent Newsletters */}
+                  {/* User Statistics */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-blue-600 text-sm font-medium">Total Users</p>
+                            <p className="text-2xl font-bold text-blue-800">367</p>
+                          </div>
+                          <Users className="w-8 h-8 text-blue-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-green-600 text-sm font-medium">Administrators</p>
+                            <p className="text-2xl font-bold text-green-800">5</p>
+                          </div>
+                          <Shield className="w-8 h-8 text-green-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-purple-600 text-sm font-medium">Office Members</p>
+                            <p className="text-2xl font-bold text-purple-800">20</p>
+                          </div>
+                          <GraduationCap className="w-8 h-8 text-purple-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-orange-600 text-sm font-medium">Viewers</p>
+                            <p className="text-2xl font-bold text-orange-800">342</p>
+                          </div>
+                          <Eye className="w-8 h-8 text-orange-600" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* User Management Interface */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Users className="w-5 h-5 mr-2 text-blue-600" />
+                          User Directory
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Input placeholder="Search users..." className="w-64" />
+                          <Button variant="outline" size="sm">
+                            <Filter className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 text-center py-12">
+                        User management interface will be displayed here.
+                        <br />
+                        <Button className="mt-4" variant="outline">
+                          Load User List
+                        </Button>
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  {/* Permission Upgrade Requests */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center">
-                        <FileText className="w-5 h-5 mr-2 text-green-600" />
-                        Parent Newsletters
+                        <Shield className="w-5 h-5 mr-2 text-purple-600" />
+                        Permission Upgrade Requests
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {parentsData.newsletters.map((newsletter) => (
-                          <div key={newsletter.id} className="border rounded-lg p-4 bg-white">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <h3 className="font-semibold">{newsletter.title}</h3>
-                                  <Badge 
-                                    variant={newsletter.status === 'published' ? 'success' : newsletter.status === 'draft' ? 'warning' : 'outline'}
-                                  >
-                                    {newsletter.status === 'published' ? 'Published' : 'Draft'}
-                                  </Badge>
-                                </div>
-                                <p className="text-gray-600 mb-2">{newsletter.content}</p>
-                                <p className="text-sm text-gray-500">{newsletter.date}</p>
-                              </div>
-                              <div className="flex space-x-2">
-                                <Button variant="outline" size="sm">
-                                  <Eye className="w-4 h-4" />
-                                </Button>
-                                <Button variant="outline" size="sm">
-                                  <Edit className="w-4 h-4" />
-                                </Button>
-                                <Button variant="outline" size="sm">
-                                  <Download className="w-4 h-4" />
-                                </Button>
-                              </div>
+                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium">John Doe requested Office Member role</p>
+                              <p className="text-sm text-gray-600">Current role: Viewer • Requested: 2 days ago</p>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Parent Events */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <Calendar className="w-5 h-5 mr-2 text-purple-600" />
-                        Parent Events
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {/* Events loading state */}
-                      {eventsLoading && (
-                        <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                          <span className="ml-2 text-gray-600">Loading events...</span>
-                        </div>
-                      )}
-
-                      {/* Events error state */}
-                      {eventsError && (
-                        <Alert variant="destructive">
-                          <AlertTriangle className="h-4 w-4" />
-                          <AlertDescription>{eventsError}</AlertDescription>
-                        </Alert>
-                      )}
-
-                      {/* Events list */}
-                      {!eventsLoading && !eventsError && (
-                        <div className="space-y-4">
-                          {events.length > 0 ? (
-                            events.map((event) => (
-                              <div key={event.id} className="border rounded-lg p-4 bg-white">
-                                <div className="flex items-start justify-between">
-                                  <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-2">
-                                      <h3 className="font-semibold">{event.title}</h3>
-                                      <Badge variant="outline">
-                                        {event.eventType?.replace('_', ' ') || 'Event'}
-                                      </Badge>
-                                      <Badge variant={
-                                        event.status === 'published' ? 'success' :
-                                        event.status === 'completed' ? 'success' :
-                                        event.status === 'draft' ? 'warning' :
-                                        event.status === 'in_progress' ? 'info' :
-                                        event.status === 'cancelled' ? 'destructive' : 'outline'
-                                      }>
-                                        {event.status}
-                                      </Badge>
-                                      {event.isFeatured && (
-                                        <Badge variant="destructive">Featured</Badge>
-                                      )}
-                                    </div>
-                                    <p className="text-gray-600 mb-2">{event.description || 'No description available'}</p>
-                                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                      <span className="flex items-center">
-                                        <Calendar className="w-4 h-4 mr-1" />
-                                        {new Date(event.startDate).toLocaleDateString()}
-                                      </span>
-                                      {event.location && (
-                                        <span className="flex items-center">
-                                          <MapPin className="w-4 h-4 mr-1" />
-                                          {event.location}
-                                        </span>
-                                      )}
-                                      {event.registrationRequired && (
-                                        <span className="flex items-center">
-                                          <Users className="w-4 h-4 mr-1" />
-                                          Registration Required
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="flex space-x-2">
-                                    <Button variant="outline" size="sm" title="Edit Event">
-                                      <Edit className="w-4 h-4" />
-                                    </Button>
-                                    <Button variant="outline" size="sm" title="Delete Event">
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="text-center py-8 text-gray-500">
-                              <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                              <p>No events found</p>
-                              <Button variant="outline" className="mt-4">
-                                <Plus className="w-4 h-4 mr-2" />
-                                Create First Event
+                            <div className="flex gap-2">
+                              <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                                Approve
+                              </Button>
+                              <Button size="sm" variant="destructive">
+                                Reject
                               </Button>
                             </div>
-                          )}
+                          </div>
                         </div>
-                      )}
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
