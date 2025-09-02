@@ -53,12 +53,11 @@ import { UserData } from '@/components/admin/UserCard'
 import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
-import MessageBoardForm from '@/components/admin/MessageBoardForm'
+import { CommunicationForm, Communication, CommunicationType } from '@/components/ui/communication-form'
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
 import ContactInfoManager from '@/components/admin/ContactInfoManager'
 import NavigationMenuManager from '@/components/admin/NavigationMenuManager'
-import AnnouncementForm from '@/components/admin/AnnouncementForm'
 import EventForm from '@/components/admin/EventForm'
 
 interface Announcement {
@@ -2346,13 +2345,15 @@ export default function AdminPage() {
                 exit={{ scale: 0.95, opacity: 0 }}
                 className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
               >
-                <AnnouncementForm
-                  announcement={editingAnnouncement || undefined}
-                  onClose={() => {
+                <CommunicationForm
+                  communication={editingAnnouncement || undefined}
+                  mode={editingAnnouncement ? 'edit' : 'create'}
+                  defaultType="announcement"
+                  onCancel={() => {
                     setShowAnnouncementForm(false)
                     setEditingAnnouncement(null)
                   }}
-                  onSubmit={async (data) => {
+                  onSubmit={async (data: Communication) => {
                     const endpoint = editingAnnouncement 
                       ? `/api/admin/announcements/${editingAnnouncement.id}`
                       : '/api/admin/announcements'
@@ -2367,6 +2368,8 @@ export default function AdminPage() {
                     if (response.ok) {
                       alert(editingAnnouncement ? 'Announcement updated!' : 'Announcement created!')
                       fetchAnnouncements()
+                      setShowAnnouncementForm(false)
+                      setEditingAnnouncement(null)
                     } else {
                       throw new Error('Failed to save announcement')
                     }
@@ -2557,16 +2560,15 @@ export default function AdminPage() {
                 exit={{ scale: 0.95, opacity: 0 }}
                 className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
               >
-                <MessageBoardForm
-                  message={editingMessageBoard}
-                  onSubmit={handleMessageBoardFormSubmit}
+                <CommunicationForm
+                  communication={editingMessageBoard || undefined}
+                  mode={editingMessageBoard ? 'edit' : 'create'}
+                  defaultType="message"
                   onCancel={() => {
                     setShowMessageBoardForm(false)
                     setEditingMessageBoard(null)
                   }}
-                  loading={dataLoading}
-                  error={error}
-                  mode={editingMessageBoard ? 'edit' : 'create'}
+                  onSubmit={handleMessageBoardFormSubmit}
                 />
               </motion.div>
             </motion.div>
