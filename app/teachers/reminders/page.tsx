@@ -311,7 +311,7 @@ export default function TeacherRemindersPage() {
                 <Link href="/teachers/calendar" className="text-gray-600 hover:text-green-600 transition-colors">
                   Calendar
                 </Link>
-                <Link href="/teachers/messages" className="text-gray-600 hover:text-green-600 transition-colors">
+                <Link href="/teachers/communications" className="text-gray-600 hover:text-green-600 transition-colors">
                   Messages
                 </Link>
               </nav>

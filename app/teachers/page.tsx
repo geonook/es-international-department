@@ -981,7 +981,7 @@ export default function TeachersPage() {
                       )}
                     </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Link href="/teachers/messages">
+                      <Link href="/teachers/communications">
                         <Button 
                           className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                         >

@@ -387,7 +387,7 @@ export default function TeacherCalendarPage() {
                 <Link href="/teachers/calendar" className="text-purple-600 font-medium">
                   Calendar
                 </Link>
-                <Link href="/teachers/messages" className="text-gray-600 hover:text-purple-600 transition-colors">
+                <Link href="/teachers/communications" className="text-gray-600 hover:text-purple-600 transition-colors">
                   Messages
                 </Link>
               </nav>

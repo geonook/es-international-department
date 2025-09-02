@@ -295,8 +295,8 @@ export default function TeacherCommunicationsPage() {
 
   // Handle creating new message (redirect to message board)
   const handleCreateMessage = () => {
-    // Redirect to Teachers message board with create parameter
-    window.location.href = '/teachers/messages?create=true'
+    // Stay on current page with create parameter
+    window.location.href = '/teachers/communications?create=true'
   }
 
   // Handle refresh
@@ -677,11 +677,11 @@ export default function TeacherCommunicationsPage() {
                   </p>
                   <div className="mt-6">
                     <Button 
-                      onClick={() => window.location.href = '/teachers/messages'}
+                      onClick={() => window.location.reload()}
                       className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900"
                     >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Go to Message Board
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Refresh Messages
                     </Button>
                   </div>
                 </CardContent>
@@ -820,10 +820,13 @@ export default function TeacherCommunicationsPage() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => window.location.href = `/teachers/messages?id=${message.id}`}
+                            onClick={() => {
+                              // Expand message details inline
+                              console.log('Show message details:', message.id)
+                            }}
                           >
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            View in Message Board
+                            <Eye className="w-4 h-4 mr-2" />
+                            View Details
                           </Button>
                         </div>
                       </div>
@@ -836,32 +839,7 @@ export default function TeacherCommunicationsPage() {
         </motion.div>
       </main>
 
-      {/* Legacy System Notice */}
-      <motion.div
-        className="fixed bottom-6 left-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 rounded-lg shadow-2xl max-w-sm z-50"
-        initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1 }}
-      >
-        <div className="flex items-start gap-3">
-          <Megaphone className="w-5 h-5 mt-0.5 flex-shrink-0" />
-          <div>
-            <h4 className="font-semibold mb-1">New Message Board Available!</h4>
-            <p className="text-sm text-blue-100 mb-3">
-              This page now redirects to the Teachers' Message Board for better organization.
-            </p>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => window.location.href = '/teachers/messages'}
-              className="bg-white text-blue-600 hover:bg-blue-50"
-            >
-              <ExternalLink className="w-3 h-3 mr-1" />
-              Go to Message Board
-            </Button>
-          </div>
-        </div>
-      </motion.div>
+      {/* Removed: Legacy system notice - users are now on the unified page */}
     </div>
   )
 }

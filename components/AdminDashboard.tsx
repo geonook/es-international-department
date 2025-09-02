@@ -229,7 +229,7 @@ export default function AdminDashboard() {
   // Redirect to Teachers Corner for message creation
   const handleCreateCommunication = () => {
     // Redirect to Teachers' Message Board for creating new messages
-    window.location.href = '/teachers/messages?create=true'
+    window.location.href = '/teachers/communications?create=true'
   }
 
   // Removed: handleFormCancel - no longer needed with separated architecture
@@ -797,7 +797,7 @@ export default function AdminDashboard() {
                         </p>
                         <div className="flex gap-2">
                           <Button
-                            onClick={() => window.location.href = '/teachers/messages'}
+                            onClick={() => window.location.href = '/teachers/communications'}
                             className="bg-gradient-to-r from-blue-600 to-blue-700"
                           >
                             <MessageSquare className="w-4 h-4 mr-2" />
