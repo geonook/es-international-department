@@ -50,7 +50,6 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import AnnouncementList from '@/components/AnnouncementList'
-import CommunicationForm, { Communication, CommunicationType } from '@/components/ui/communication-form'
 import { 
   Announcement, 
   AnnouncementFormData, 
