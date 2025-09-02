@@ -27,6 +27,8 @@ model User {
   providerAccountId                 String?                    @map("provider_account_id")
   accounts                          Account[]
   announcements                     Announcement[]
+  communications                    Communication[]
+  communicationReplies              CommunicationReply[]
   eventNotifications                EventNotification[]        @relation("EventNotificationCreator")
   eventRegistrations                EventRegistration[]        @relation("UserEventRegistrations")
   events                            Event[]
@@ -549,4 +551,80 @@ model TeacherReminder {
   @@index([createdBy, status])
   @@index([priority, dueDate])
   @@map("teacher_reminders")
+}
+
+// Unified Communication Model - replaces Announcement and MessageBoard
+model Communication {
+  id             Int      @id @default(autoincrement())
+  title          String   @db.VarChar(255)
+  content        String
+  summary        String?
+  
+  // Type and categorization
+  type           String   @default("message") @db.VarChar(20) // 'announcement', 'message', 'reminder', 'newsletter'
+  sourceGroup    String?  @map("source_group") @db.VarChar(50) // 'Vickie', 'Matthew', 'Academic Team', etc.
+  
+  // Audience targeting
+  targetAudience String   @default("all") @map("target_audience") @db.VarChar(20) // 'teachers', 'parents', 'all'
+  boardType      String   @default("general") @db.VarChar(20) // 'teachers', 'parents', 'general'
+  
+  // Status and priority
+  status         String   @default("published") @db.VarChar(20) // 'draft', 'published', 'archived', 'closed'
+  priority       String   @default("medium") @db.VarChar(10) // 'low', 'medium', 'high', 'critical'
+  
+  // Flags
+  isImportant    Boolean  @default(false) @map("is_important")
+  isPinned       Boolean  @default(false) @map("is_pinned")
+  isFeatured     Boolean  @default(false) @map("is_featured")
+  
+  // Timing
+  publishedAt    DateTime? @map("published_at")
+  expiresAt      DateTime? @map("expires_at")
+  
+  // Metadata
+  authorId       String?  @map("author_id")
+  viewCount      Int      @default(0) @map("view_count")
+  replyCount     Int      @default(0) @map("reply_count")
+  
+  // Timestamps
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  author         User?                 @relation(fields: [authorId], references: [id])
+  replies        CommunicationReply[]
+
+  @@index([type])
+  @@index([sourceGroup])
+  @@index([boardType])
+  @@index([status])
+  @@index([priority])
+  @@index([isImportant, isPinned, isFeatured])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([publishedAt])
+  @@map("communications")
+}
+
+// Communication Replies Model
+model CommunicationReply {
+  id               Int               @id @default(autoincrement())
+  communicationId  Int               @map("communication_id")
+  authorId         String?           @map("author_id")
+  content          String
+  parentReplyId    Int?              @map("parent_reply_id")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  
+  // Relations
+  communication    Communication     @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+  author           User?             @relation(fields: [authorId], references: [id])
+  parentReply      CommunicationReply? @relation("ReplyToReply", fields: [parentReplyId], references: [id])
+  childReplies     CommunicationReply[] @relation("ReplyToReply")
+
+  @@index([communicationId])
+  @@index([authorId])
+  @@index([parentReplyId])
+  @@index([createdAt])
+  @@map("communication_replies")
 }

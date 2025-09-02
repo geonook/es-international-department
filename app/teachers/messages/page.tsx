@@ -109,10 +109,11 @@ export default function TeacherMessagesPage() {
       
       const params = new URLSearchParams({
         limit: '100',
+        type: 'message', // Only get messages for the teachers message board
         ...(selectedBoardType !== 'all' && { boardType: selectedBoardType })
       })
       
-      const response = await fetch(`/api/teachers/messages?${params}`, {
+      const response = await fetch(`/api/v1/communications?${params}`, {
         headers: {
           'Cache-Control': 'no-cache',
         }
@@ -125,9 +126,19 @@ export default function TeacherMessagesPage() {
       const result = await response.json()
       
       if (result.success) {
-        setMessages(result.data)
+        // Transform the unified API response to match the old format
+        const communications = result.data.communications || []
+        const pinnedComms = communications.filter((c: any) => c.isPinned)
+        const regularComms = communications.filter((c: any) => !c.isPinned)
+        
+        setMessages({
+          pinned: pinnedComms,
+          regular: regularComms,
+          total: result.data.stats?.total || communications.length,
+          totalPinned: pinnedComms.length
+        })
       } else {
-        throw new Error(result.message || 'Failed to fetch messages')
+        throw new Error(result.error || 'Failed to fetch communications')
       }
     } catch (err) {
       console.error('Error fetching messages:', err)

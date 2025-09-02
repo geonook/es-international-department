@@ -49,7 +49,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import AnnouncementList from '@/components/AnnouncementList'
-import AnnouncementForm from '@/components/AnnouncementForm'
+import CommunicationForm, { Communication, CommunicationType } from '@/components/ui/communication-form'
 import { 
   Announcement, 
   AnnouncementFormData, 
@@ -88,8 +88,8 @@ export default function AdminDashboard() {
     status: undefined,
     search: ''
   })
-  const [showAnnouncementForm, setShowAnnouncementForm] = useState(false)
-  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null)
+  const [showCommunicationForm, setShowCommunicationForm] = useState(false)
+  const [editingCommunication, setEditingCommunication] = useState<Communication | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState<string>('')
   
@@ -183,13 +183,13 @@ export default function AdminDashboard() {
     setAnnouncementStats(stats)
   }
 
-  // Create announcement
-  const createAnnouncement = async (data: AnnouncementFormData) => {
+  // Create communication
+  const createCommunication = async (data: Communication) => {
     setFormLoading(true)
     setFormError('')
     
     try {
-      const response = await fetch('/api/announcements', {
+      const response = await fetch('/api/v1/communications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -201,33 +201,33 @@ export default function AdminDashboard() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       
-      const result: ApiResponse<Announcement> = await response.json()
+      const result: ApiResponse<Communication> = await response.json()
       
       if (result.success) {
-        setShowAnnouncementForm(false)
-        setEditingAnnouncement(null)
+        setShowCommunicationForm(false)
+        setEditingCommunication(null)
         await fetchAnnouncements() // Reload list
       } else {
-        throw new Error(result.message || 'Failed to create announcement')
+        throw new Error(result.message || 'Failed to create communication')
       }
     } catch (error) {
       console.error('Create announcement error:', error)
-      setFormError(error instanceof Error ? error.message : 'An error occurred while creating announcement')
+      setFormError(error instanceof Error ? error.message : 'An error occurred while creating communication')
       throw error
     } finally {
       setFormLoading(false)
     }
   }
 
-  // Update announcement
-  const updateAnnouncement = async (data: AnnouncementFormData) => {
-    if (!editingAnnouncement) return
+  // Update communication
+  const updateCommunication = async (data: Communication) => {
+    if (!editingCommunication) return
     
     setFormLoading(true)
     setFormError('')
     
     try {
-      const response = await fetch(`/api/announcements/${editingAnnouncement.id}`, {
+      const response = await fetch(`/api/v1/communications/${editingCommunication.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -239,18 +239,18 @@ export default function AdminDashboard() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       
-      const result: ApiResponse<Announcement> = await response.json()
+      const result: ApiResponse<Communication> = await response.json()
       
       if (result.success) {
-        setShowAnnouncementForm(false)
-        setEditingAnnouncement(null)
+        setShowCommunicationForm(false)
+        setEditingCommunication(null)
         await fetchAnnouncements() // Reload list
       } else {
-        throw new Error(result.message || 'Failed to update announcement')
+        throw new Error(result.message || 'Failed to update communication')
       }
     } catch (error) {
       console.error('Update announcement error:', error)
-      setFormError(error instanceof Error ? error.message : 'An error occurred while updating announcement')
+      setFormError(error instanceof Error ? error.message : 'An error occurred while updating communication')
       throw error
     } finally {
       setFormLoading(false)
@@ -288,33 +288,53 @@ export default function AdminDashboard() {
     }
   }
 
-  // Handle edit announcement
-  const handleEditAnnouncement = (announcement: Announcement) => {
-    setEditingAnnouncement(announcement)
-    setShowAnnouncementForm(true)
+  // Handle edit communication
+  const handleEditCommunication = (announcement: Announcement) => {
+    // Convert Announcement to Communication format
+    const communication: Communication = {
+      id: announcement.id,
+      title: announcement.title,
+      content: announcement.content,
+      summary: announcement.summary,
+      type: 'announcement' as CommunicationType,
+      targetAudience: announcement.targetAudience,
+      boardType: announcement.targetAudience === 'teachers' ? 'teachers' : announcement.targetAudience === 'parents' ? 'parents' : 'general',
+      priority: announcement.priority,
+      status: announcement.status,
+      isImportant: announcement.priority === 'high',
+      isPinned: false,
+      isFeatured: false,
+      publishedAt: announcement.publishedAt,
+      expiresAt: announcement.expiresAt,
+      viewCount: announcement.viewCount,
+      createdAt: announcement.createdAt,
+      updatedAt: announcement.updatedAt
+    }
+    setEditingCommunication(communication)
+    setShowCommunicationForm(true)
     setFormError('')
   }
 
-  // Handle create announcement
-  const handleCreateAnnouncement = () => {
-    setEditingAnnouncement(null)
-    setShowAnnouncementForm(true)
+  // Handle create communication
+  const handleCreateCommunication = () => {
+    setEditingCommunication(null)
+    setShowCommunicationForm(true)
     setFormError('')
   }
 
   // Handle form cancel
   const handleFormCancel = () => {
-    setShowAnnouncementForm(false)
-    setEditingAnnouncement(null)
+    setShowCommunicationForm(false)
+    setEditingCommunication(null)
     setFormError('')
   }
 
   // Handle form submit
-  const handleFormSubmit = async (data: AnnouncementFormData) => {
-    if (editingAnnouncement) {
-      await updateAnnouncement(data)
+  const handleFormSubmit = async (data: Communication) => {
+    if (editingCommunication) {
+      await updateCommunication(data)
     } else {
-      await createAnnouncement(data)
+      await createCommunication(data)
     }
   }
 
@@ -851,8 +871,8 @@ export default function AdminDashboard() {
                   exit="hidden"
                   className="space-y-6"
                 >
-                  {/* Announcement Form Modal */}
-                  {showAnnouncementForm && (
+                  {/* Communication Form Modal */}
+                  {showCommunicationForm && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -865,13 +885,14 @@ export default function AdminDashboard() {
                         exit={{ scale: 0.95, opacity: 0 }}
                         className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
                       >
-                        <AnnouncementForm
-                          announcement={editingAnnouncement || undefined}
+                        <CommunicationForm
+                          communication={editingCommunication || undefined}
                           onSubmit={handleFormSubmit}
                           onCancel={handleFormCancel}
                           loading={formLoading}
                           error={formError}
-                          mode={editingAnnouncement ? 'edit' : 'create'}
+                          mode={editingCommunication ? 'edit' : 'create'}
+                          defaultType="announcement"
                         />
                       </motion.div>
                     </motion.div>
@@ -879,8 +900,8 @@ export default function AdminDashboard() {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900">Announcement Management</h2>
-                      <p className="text-gray-600 mt-1">Manage all announcements and notifications</p>
+                      <h2 className="text-3xl font-bold text-gray-900">Communication Management</h2>
+                      <p className="text-gray-600 mt-1">Manage all communications, announcements and notifications</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -896,11 +917,11 @@ export default function AdminDashboard() {
                         Reload
                       </Button>
                       <Button 
-                        onClick={handleCreateAnnouncement}
+                        onClick={handleCreateCommunication}
                         className="bg-gradient-to-r from-blue-600 to-purple-600"
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        New Announcement
+                        New Communication
                       </Button>
                     </div>
                   </div>
@@ -982,7 +1003,7 @@ export default function AdminDashboard() {
                     announcements={announcements}
                     loading={announcementsLoading || bulkOperationLoading}
                     error={announcementsError}
-                    onEdit={handleEditAnnouncement}
+                    onEdit={handleEditCommunication}
                     onDelete={deleteAnnouncement}
                     onBulkOperation={handleBulkOperation}
                     onFiltersChange={handleFiltersChange}
