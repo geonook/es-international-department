@@ -1247,11 +1247,10 @@ export default function AdminPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2 lg:space-y-2 lg:block">
               {[
                 { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
-                // All users can see Teachers' Corner, Parents' Corner, Feedback and Message Board
+                // All users can see Communications Hub, User Management, Feedback and Message Board
                 ...(canViewContent ? [
-                  { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
-                  { id: 'parents', name: "Parents' Corner", icon: Sparkles },
-                  { id: 'feedback', name: 'Feedback Management', icon: MessageSquare },
+                  { id: 'communications', name: "Communications Hub", icon: MessageSquare },
+                  { id: 'feedback', name: 'Feedback Management', icon: MessageCircle },
                   { id: 'messages', name: 'Message Board', icon: MessageCircle }
                 ] : []),
                 // Only administrators can see content management and user management
@@ -1311,7 +1310,7 @@ export default function AdminPage() {
               >
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
-                  <p className="text-gray-600">Monitor and manage both Teachers' and Parents' Corner systems</p>
+                  <p className="text-gray-600">Monitor and manage the unified Communications Hub system</p>
                   
                   {/* Permission upgrade request prompt - only shown to viewer users */}
                   {userIsViewer && (
@@ -1380,8 +1379,8 @@ export default function AdminPage() {
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <GraduationCap className="w-5 h-5 text-blue-600" />
-                        Teachers' Corner Management
+                        <MessageSquare className="w-5 h-5 text-blue-600" />
+                        Communications Hub
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1417,8 +1416,8 @@ export default function AdminPage() {
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-purple-600" />
-                        Parents' Corner Management
+                        <Users className="w-5 h-5 text-purple-600" />
+                        User Management
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -1466,15 +1465,15 @@ export default function AdminPage() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Teachers' Corner</h4>
-                            <p className="text-gray-600 text-sm">Access the teachers' platform</p>
+                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Communications Hub</h4>
+                            <p className="text-gray-600 text-sm">Manage unified communications system</p>
                           </div>
-                          <GraduationCap className="w-8 h-8 text-blue-600" />
+                          <MessageSquare className="w-8 h-8 text-blue-600" />
                         </div>
                         <Link href="/teachers">
                           <Button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900">
                             <ExternalLink className="w-4 h-4 mr-2" />
-                            Open Teachers' Corner
+                            Open Communications Hub
                           </Button>
                         </Link>
                       </CardContent>
@@ -1484,15 +1483,15 @@ export default function AdminPage() {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Parents' Corner</h4>
-                            <p className="text-gray-600 text-sm">Access the parents' platform</p>
+                            <h4 className="text-lg font-semibold text-gray-900 mb-2">User Management</h4>
+                            <p className="text-gray-600 text-sm">Manage users and permissions</p>
                           </div>
-                          <Sparkles className="w-8 h-8 text-purple-600" />
+                          <Users className="w-8 h-8 text-purple-600" />
                         </div>
                         <Link href="/">
                           <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900">
                             <ExternalLink className="w-4 h-4 mr-2" />
-                            Open Parents' Corner
+                            Open User Management
                           </Button>
                         </Link>
                       </CardContent>
@@ -1502,7 +1501,7 @@ export default function AdminPage() {
               </motion.div>
             )}
 
-            {activeTab === 'teachers' && (
+            {activeTab === 'communications' && (
               <motion.div
                 key="teachers"
                 initial={{ opacity: 0, y: 20 }}
@@ -1511,8 +1510,8 @@ export default function AdminPage() {
                 transition={{ duration: 0.5 }}
               >
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Teachers' Corner Management</h2>
-                  <p className="text-gray-600">Manage content for the teachers' platform</p>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Communications Hub</h2>
+                  <p className="text-gray-600">Manage unified communications for all audiences</p>
                 </div>
 
                 <div className="grid gap-4 lg:gap-8">
@@ -1717,7 +1716,7 @@ export default function AdminPage() {
               </motion.div>
             )}
 
-            {activeTab === 'parents' && (
+            {activeTab === 'parent-content' && (
               <motion.div
                 key="parents"
                 initial={{ opacity: 0, y: 20 }}
@@ -1726,8 +1725,8 @@ export default function AdminPage() {
                 transition={{ duration: 0.5 }}
               >
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Parents' Corner Management</h2>
-                  <p className="text-gray-600">Manage content for the parents' platform</p>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">User Management</h2>
+                  <p className="text-gray-600">Manage users, roles, and permissions</p>
                 </div>
 
                 <div className="grid gap-4 lg:gap-8">
