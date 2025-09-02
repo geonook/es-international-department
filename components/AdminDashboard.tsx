@@ -63,20 +63,7 @@ import {
 } from '@/lib/types'
 
 // TODO: Remove unified communications legacy code when refactoring to separated architecture
-// Temporary local type definitions to fix compilation errors
-type CommunicationType = 'announcement' | 'message' | 'reminder' | 'newsletter'
-
-interface Communication {
-  id?: number
-  title: string
-  content: string
-  summary?: string
-  type: CommunicationType
-  targetAudience: 'teachers' | 'parents' | 'all'
-  boardType: 'teachers' | 'parents' | 'general'
-  priority: 'low' | 'medium' | 'high'
-  status: 'draft' | 'published' | 'archived'
-}
+import CommunicationForm, { Communication, CommunicationType } from '@/components/ui/communication-form'
 
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated, logout, isAdmin, redirectToLogin, checkAuth } = useAuth()

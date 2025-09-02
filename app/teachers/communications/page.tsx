@@ -36,21 +36,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/hooks/useAuth"
 import MobileNav from "@/components/ui/mobile-nav"
 // TODO: Refactor to use separated Teachers' Corner architecture instead of unified communications
-
-// Temporary local type definitions to fix compilation errors
-type CommunicationType = 'announcement' | 'message' | 'reminder' | 'newsletter'
-
-interface Communication {
-  id?: number
-  title: string
-  content: string
-  summary?: string
-  type: CommunicationType
-  targetAudience: 'teachers' | 'parents' | 'all'
-  boardType: 'teachers' | 'parents' | 'general'
-  priority: 'low' | 'medium' | 'high'
-  status: 'draft' | 'published' | 'archived'
-}
+import CommunicationForm, { Communication, CommunicationType } from "@/components/ui/communication-form"
 
 // Define types for unified communication data (legacy)
 interface CommunicationAuthor {
