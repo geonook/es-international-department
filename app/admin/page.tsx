@@ -1616,12 +1616,104 @@ export default function AdminPage() {
                     </CardContent>
                   </Card>
 
-                  {/* Reminders Management */}
+                  {/* Essential Documents Management - aligned with Google Sites */}
+                  <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-orange-600" />
+                        Essential Documents and Sites
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Academic Affairs */}
+                        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                          <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                            <GraduationCap className="w-4 h-4" />
+                            Academic Affairs
+                          </h4>
+                          <p className="text-sm text-blue-600 mb-3">學務相關文件與資源</p>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full border-blue-300 text-blue-700 hover:bg-blue-100"
+                            onClick={() => window.location.href = '/admin/documents?category=academic'}
+                          >
+                            <FileText className="w-3 h-3 mr-2" />
+                            Manage Documents
+                          </Button>
+                        </div>
+
+                        {/* Foreign Affairs */}
+                        <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                          <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                            <Navigation className="w-4 h-4" />
+                            Foreign Affairs
+                          </h4>
+                          <p className="text-sm text-green-600 mb-3">外務相關文件與資源</p>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full border-green-300 text-green-700 hover:bg-green-100"
+                            onClick={() => window.location.href = '/admin/documents?category=foreign'}
+                          >
+                            <FileText className="w-3 h-3 mr-2" />
+                            Manage Documents
+                          </Button>
+                        </div>
+
+                        {/* Classroom Affairs */}
+                        <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                          <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-2">
+                            <Users className="w-4 h-4" />
+                            Classroom Affairs
+                          </h4>
+                          <p className="text-sm text-purple-600 mb-3">班級事務相關文件</p>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full border-purple-300 text-purple-700 hover:bg-purple-100"
+                            onClick={() => window.location.href = '/admin/documents?category=classroom'}
+                          >
+                            <FileText className="w-3 h-3 mr-2" />
+                            Manage Documents
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* ESID Feedback Management */}
+                  <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <MessageCircle className="w-5 h-5 text-orange-600" />
+                        ESID Feedback
+                      </CardTitle>
+                      <Button 
+                        size="sm" 
+                        className="bg-orange-600 hover:bg-orange-700"
+                        onClick={() => setShowFeedbackForm(true)}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        View Feedback
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-center py-6">
+                        <MessageCircle className="w-12 h-12 mx-auto mb-4 text-orange-400" />
+                        <p className="text-gray-600 mb-2">Teacher Feedback System</p>
+                        <p className="text-sm text-gray-500">Collect and manage feedback from teaching staff</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Teacher Reminders Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">
                       <CardTitle className="flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-green-600" />
-                        Reminders
+                        Teacher Reminders
                       </CardTitle>
                       <Button 
                         size="sm" 
