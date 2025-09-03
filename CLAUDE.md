@@ -1,8 +1,8 @@
 # CLAUDE.md - KCISLK ESID Info Hub
 # KCISLK ESID Info Hub - Claude Code 開發指導文件
 
-> **Documentation Version**: 1.1 | **文件版本**: 1.1  
-> **Last Updated**: 2025-08-23 | **最後更新**: 2025-08-23  
+> **Documentation Version**: 1.2 | **文件版本**: 1.2  
+> **Last Updated**: 2025-09-03 | **最後更新**: 2025-09-03  
 > **Project**: KCISLK ESID Info Hub | **專案**: KCISLK ESID Info Hub  
 > **Description**: KCISLK ESID Info Hub - Information service website for parents and teachers of KCISLK Elementary School International Department, providing the latest educational resources, event information, and communication tools.  
 > **專案描述**: KCISLK ESID Info Hub - 為林口康橋國際學校的家長和老師提供最新教育資源、活動資訊和溝通工具的資訊服務網站。  
