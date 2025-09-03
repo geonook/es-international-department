@@ -97,7 +97,7 @@ function showCurrentEnvironment(env: Environment) {
     development: {
       description: '開發環境 Development',
       port: '32718',
-      url: 'http://localhost:3000',
+      url: 'http://localhost:3001',
       features: ['Debug logging', 'Hot reload', 'Sample data']
     },
     staging: {
@@ -125,8 +125,9 @@ function showCurrentEnvironment(env: Environment) {
   console.log('📋 Next Steps:')
   if (env === 'development') {
     console.log('  1. Run: npm run dev')
-    console.log('  2. Open: http://localhost:3000')
+    console.log('  2. Open: http://localhost:3001')
     console.log('  3. Test database: npm run test:db')
+    console.log('  4. Test OAuth: npm run test:oauth-config')
   } else if (env === 'staging') {
     console.log('  1. Deploy to staging: npm run zeabur:build')
     console.log('  2. Run migrations: npm run deploy:staging')
