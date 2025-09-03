@@ -52,6 +52,8 @@
     "db:health": "tsx scripts/database-health-check.ts",
     "db:n-plus-one": "tsx scripts/n-plus-one-detector.ts",
     "health:dashboard": "tsx scripts/system-health-dashboard.ts",
+    "docs:api": "tsx scripts/generate-api-documentation.ts",
+    "verify:deployment": "tsx scripts/deployment-verification.ts",
     "test:zeabur": "tsx scripts/test-zeabur-connections.ts",
     "test:oauth-config": "tsx scripts/test-oauth-config.ts",
     "validate:oauth-production": "tsx scripts/validate-production-oauth.ts",
