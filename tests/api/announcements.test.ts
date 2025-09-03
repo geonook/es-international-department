@@ -1,8 +1,8 @@
 /**
- * Authentication API Tests
- * Authentication API 測試
+ * Announcements API Tests
+ * Announcements API 測試
  * 
- * Auto-generated comprehensive tests for authentication endpoints
+ * Auto-generated comprehensive tests for announcements endpoints
  */
 
 import { NextRequest } from 'next/server'
@@ -13,17 +13,17 @@ import {
   TestValidationHelpers 
 } from '../utils/test-helpers'
 
-describe('Authentication API Endpoints', () => {
+describe('Announcements API Endpoints', () => {
   
-  describe('GET /api/auth/callback/google', () => {
-    test('should retrieve google', async () => {
+  describe('GET /api/announcements/:id', () => {
+    test('should retrieve announcements', async () => {
       // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/callback/google/route')
+      // const handler = require('@/app/apiannouncements/[id]/route')
       
       // This endpoint requires authentication
       const user = mockUsers.admin
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/callback/google',
+        'http://localhost:3000/api/announcements/:id',
         'GET',
         user
       )
@@ -37,7 +37,7 @@ describe('Authentication API Endpoints', () => {
     })
     
     test('should reject unauthorized access', async () => {
-      const request = new NextRequest('http://localhost:3000/api/auth/callback/google', {
+      const request = new NextRequest('http://localhost:3000/api/announcements/:id', {
         method: 'GET'
       })
       
@@ -49,7 +49,7 @@ describe('Authentication API Endpoints', () => {
     test('should reject insufficient permissions', async () => {
       const user = mockUsers.viewer // Lower permission user
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/callback/google',
+        'http://localhost:3000/api/announcements/:id',
         'GET',
         user
       )
@@ -60,78 +60,15 @@ describe('Authentication API Endpoints', () => {
     })
   })
 
-  describe('POST /api/auth/forgot-password', () => {
-    test('should create forgot-password', async () => {
+  describe('POST /api/announcements/:id', () => {
+    test('should create announcements', async () => {
       // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/forgot-password/route')
-      
-      // This endpoint is public
-      const request = new NextRequest('http://localhost:3000/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ /* Add test data here */ })
-      })
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.POST(request)
-      // expect(response.status).toBe(200)
-    })
-  })
-
-  describe('GET /api/auth/google', () => {
-    test('should retrieve google', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/google/route')
+      // const handler = require('@/app/apiannouncements/[id]/route')
       
       // This endpoint requires authentication
       const user = mockUsers.admin
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/google',
-        'GET',
-        user
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-    
-    test('should reject unauthorized access', async () => {
-      const request = new NextRequest('http://localhost:3000/api/auth/google', {
-        method: 'GET'
-      })
-      
-      // TODO: Test without authentication
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(401)
-    })
-    
-    test('should reject insufficient permissions', async () => {
-      const user = mockUsers.viewer // Lower permission user
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/google',
-        'GET',
-        user
-      )
-      
-      // TODO: Test with insufficient permissions
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(403)
-    })
-  })
-
-  describe('POST /api/auth/google', () => {
-    test('should create google', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/google/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.admin
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/google',
+        'http://localhost:3000/api/announcements/:id',
         'POST',
         user,
         { /* Add test data here */ }
@@ -146,7 +83,7 @@ describe('Authentication API Endpoints', () => {
     })
     
     test('should reject unauthorized access', async () => {
-      const request = new NextRequest('http://localhost:3000/api/auth/google', {
+      const request = new NextRequest('http://localhost:3000/api/announcements/:id', {
         method: 'POST'
       })
       
@@ -158,7 +95,7 @@ describe('Authentication API Endpoints', () => {
     test('should reject insufficient permissions', async () => {
       const user = mockUsers.viewer // Lower permission user
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/google',
+        'http://localhost:3000/api/announcements/:id',
         'POST',
         user
       )
@@ -169,106 +106,15 @@ describe('Authentication API Endpoints', () => {
     })
   })
 
-  describe('GET /api/auth/login', () => {
-    test('should retrieve login', async () => {
+  describe('PUT /api/announcements/:id', () => {
+    test('should update announcements', async () => {
       // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/login/route')
+      // const handler = require('@/app/apiannouncements/[id]/route')
       
       // This endpoint requires authentication
       const user = mockUsers.admin
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
-        'GET',
-        user
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-    
-    test('should reject unauthorized access', async () => {
-      const request = new NextRequest('http://localhost:3000/api/auth/login', {
-        method: 'GET'
-      })
-      
-      // TODO: Test without authentication
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(401)
-    })
-    
-    test('should reject insufficient permissions', async () => {
-      const user = mockUsers.viewer // Lower permission user
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
-        'GET',
-        user
-      )
-      
-      // TODO: Test with insufficient permissions
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(403)
-    })
-  })
-
-  describe('POST /api/auth/login', () => {
-    test('should create login', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/login/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.admin
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
-        'POST',
-        user,
-        { /* Add test data here */ }
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.POST(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-    
-    test('should reject unauthorized access', async () => {
-      const request = new NextRequest('http://localhost:3000/api/auth/login', {
-        method: 'POST'
-      })
-      
-      // TODO: Test without authentication
-      // const response = await handler.POST(request)
-      // expect(response.status).toBe(401)
-    })
-    
-    test('should reject insufficient permissions', async () => {
-      const user = mockUsers.viewer // Lower permission user
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
-        'POST',
-        user
-      )
-      
-      // TODO: Test with insufficient permissions
-      // const response = await handler.POST(request)
-      // expect(response.status).toBe(403)
-    })
-  })
-
-  describe('PUT /api/auth/login', () => {
-    test('should update login', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/login/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.admin
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
+        'http://localhost:3000/api/announcements/:id',
         'PUT',
         user,
         { /* Add test data here */ }
@@ -283,7 +129,7 @@ describe('Authentication API Endpoints', () => {
     })
     
     test('should reject unauthorized access', async () => {
-      const request = new NextRequest('http://localhost:3000/api/auth/login', {
+      const request = new NextRequest('http://localhost:3000/api/announcements/:id', {
         method: 'PUT'
       })
       
@@ -295,7 +141,7 @@ describe('Authentication API Endpoints', () => {
     test('should reject insufficient permissions', async () => {
       const user = mockUsers.viewer // Lower permission user
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
+        'http://localhost:3000/api/announcements/:id',
         'PUT',
         user
       )
@@ -306,15 +152,15 @@ describe('Authentication API Endpoints', () => {
     })
   })
 
-  describe('DELETE /api/auth/login', () => {
-    test('should delete login', async () => {
+  describe('DELETE /api/announcements/:id', () => {
+    test('should delete announcements', async () => {
       // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/login/route')
+      // const handler = require('@/app/apiannouncements/[id]/route')
       
       // This endpoint requires authentication
       const user = mockUsers.admin
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
+        'http://localhost:3000/api/announcements/:id',
         'DELETE',
         user
       )
@@ -328,7 +174,7 @@ describe('Authentication API Endpoints', () => {
     })
     
     test('should reject unauthorized access', async () => {
-      const request = new NextRequest('http://localhost:3000/api/auth/login', {
+      const request = new NextRequest('http://localhost:3000/api/announcements/:id', {
         method: 'DELETE'
       })
       
@@ -340,7 +186,7 @@ describe('Authentication API Endpoints', () => {
     test('should reject insufficient permissions', async () => {
       const user = mockUsers.viewer // Lower permission user
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/login',
+        'http://localhost:3000/api/announcements/:id',
         'DELETE',
         user
       )
@@ -351,15 +197,15 @@ describe('Authentication API Endpoints', () => {
     })
   })
 
-  describe('GET /api/auth/logout', () => {
-    test('should retrieve logout', async () => {
+  describe('GET /api/announcements/bulk', () => {
+    test('should retrieve bulk', async () => {
       // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/logout/route')
+      // const handler = require('@/app/apiannouncements/bulk/route')
       
       // This endpoint requires authentication
-      const user = mockUsers.officeMember
+      const user = mockUsers.admin
       const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/logout',
+        'http://localhost:3000/api/announcements/bulk',
         'GET',
         user
       )
@@ -371,242 +217,347 @@ describe('Authentication API Endpoints', () => {
       // const data = await response.json()
       // expect(data.success).toBe(true)
     })
-  })
-
-  describe('POST /api/auth/logout', () => {
-    test('should create logout', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/logout/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/logout',
-        'POST',
-        user,
-        { /* Add test data here */ }
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.POST(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('PUT /api/auth/logout', () => {
-    test('should update logout', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/logout/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/logout',
-        'PUT',
-        user,
-        { /* Add test data here */ }
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.PUT(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('DELETE /api/auth/logout', () => {
-    test('should delete logout', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/logout/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/logout',
-        'DELETE',
-        user
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.DELETE(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('GET /api/auth/me', () => {
-    test('should retrieve me', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/me/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/me',
-        'GET',
-        user
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('POST /api/auth/me', () => {
-    test('should create me', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/me/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/me',
-        'POST',
-        user,
-        { /* Add test data here */ }
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.POST(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('PUT /api/auth/me', () => {
-    test('should update me', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/me/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/me',
-        'PUT',
-        user,
-        { /* Add test data here */ }
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.PUT(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('DELETE /api/auth/me', () => {
-    test('should delete me', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/me/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/me',
-        'DELETE',
-        user
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.DELETE(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('GET /api/auth/refresh', () => {
-    test('should retrieve refresh', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/refresh/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/refresh',
-        'GET',
-        user
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.GET(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('POST /api/auth/refresh', () => {
-    test('should create refresh', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/refresh/route')
-      
-      // This endpoint requires authentication
-      const user = mockUsers.officeMember
-      const request = await TestAuthHelpers.createAuthenticatedRequest(
-        'http://localhost:3000/api/auth/refresh',
-        'POST',
-        user,
-        { /* Add test data here */ }
-      )
-      
-      // TODO: Call the handler and test response
-      // const response = await handler.POST(request)
-      // expect(response.status).toBe(200)
-      // 
-      // const data = await response.json()
-      // expect(data.success).toBe(true)
-    })
-  })
-
-  describe('GET /api/auth/reset-password', () => {
-    test('should retrieve reset-password', async () => {
-      // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/reset-password/route')
-      
-      // This endpoint is public
-      const request = new NextRequest('http://localhost:3000/api/auth/reset-password', {
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements/bulk', {
         method: 'GET'
       })
       
-      // TODO: Call the handler and test response
+      // TODO: Test without authentication
       // const response = await handler.GET(request)
-      // expect(response.status).toBe(200)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements/bulk',
+        'GET',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.GET(request)
+      // expect(response.status).toBe(403)
     })
   })
 
-  describe('POST /api/auth/reset-password', () => {
-    test('should create reset-password', async () => {
+  describe('POST /api/announcements/bulk', () => {
+    test('should create bulk', async () => {
       // TODO: Import the actual handler
-      // const handler = require('@/app/apiauth/reset-password/route')
+      // const handler = require('@/app/apiannouncements/bulk/route')
       
-      // This endpoint is public
-      const request = new NextRequest('http://localhost:3000/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ /* Add test data here */ })
-      })
+      // This endpoint requires authentication
+      const user = mockUsers.admin
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements/bulk',
+        'POST',
+        user,
+        { /* Add test data here */ }
+      )
       
       // TODO: Call the handler and test response
       // const response = await handler.POST(request)
       // expect(response.status).toBe(200)
+      // 
+      // const data = await response.json()
+      // expect(data.success).toBe(true)
+    })
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements/bulk', {
+        method: 'POST'
+      })
+      
+      // TODO: Test without authentication
+      // const response = await handler.POST(request)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements/bulk',
+        'POST',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.POST(request)
+      // expect(response.status).toBe(403)
+    })
+  })
+
+  describe('PUT /api/announcements/bulk', () => {
+    test('should update bulk', async () => {
+      // TODO: Import the actual handler
+      // const handler = require('@/app/apiannouncements/bulk/route')
+      
+      // This endpoint requires authentication
+      const user = mockUsers.admin
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements/bulk',
+        'PUT',
+        user,
+        { /* Add test data here */ }
+      )
+      
+      // TODO: Call the handler and test response
+      // const response = await handler.PUT(request)
+      // expect(response.status).toBe(200)
+      // 
+      // const data = await response.json()
+      // expect(data.success).toBe(true)
+    })
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements/bulk', {
+        method: 'PUT'
+      })
+      
+      // TODO: Test without authentication
+      // const response = await handler.PUT(request)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements/bulk',
+        'PUT',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.PUT(request)
+      // expect(response.status).toBe(403)
+    })
+  })
+
+  describe('DELETE /api/announcements/bulk', () => {
+    test('should delete bulk', async () => {
+      // TODO: Import the actual handler
+      // const handler = require('@/app/apiannouncements/bulk/route')
+      
+      // This endpoint requires authentication
+      const user = mockUsers.admin
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements/bulk',
+        'DELETE',
+        user
+      )
+      
+      // TODO: Call the handler and test response
+      // const response = await handler.DELETE(request)
+      // expect(response.status).toBe(200)
+      // 
+      // const data = await response.json()
+      // expect(data.success).toBe(true)
+    })
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements/bulk', {
+        method: 'DELETE'
+      })
+      
+      // TODO: Test without authentication
+      // const response = await handler.DELETE(request)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements/bulk',
+        'DELETE',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.DELETE(request)
+      // expect(response.status).toBe(403)
+    })
+  })
+
+  describe('GET /api/announcements', () => {
+    test('should retrieve announcements', async () => {
+      // TODO: Import the actual handler
+      // const handler = require('@/app/apiannouncements/route')
+      
+      // This endpoint requires authentication
+      const user = mockUsers.admin
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'GET',
+        user
+      )
+      
+      // TODO: Call the handler and test response
+      // const response = await handler.GET(request)
+      // expect(response.status).toBe(200)
+      // 
+      // const data = await response.json()
+      // expect(data.success).toBe(true)
+    })
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements', {
+        method: 'GET'
+      })
+      
+      // TODO: Test without authentication
+      // const response = await handler.GET(request)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'GET',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.GET(request)
+      // expect(response.status).toBe(403)
+    })
+  })
+
+  describe('POST /api/announcements', () => {
+    test('should create announcements', async () => {
+      // TODO: Import the actual handler
+      // const handler = require('@/app/apiannouncements/route')
+      
+      // This endpoint requires authentication
+      const user = mockUsers.admin
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'POST',
+        user,
+        { /* Add test data here */ }
+      )
+      
+      // TODO: Call the handler and test response
+      // const response = await handler.POST(request)
+      // expect(response.status).toBe(200)
+      // 
+      // const data = await response.json()
+      // expect(data.success).toBe(true)
+    })
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements', {
+        method: 'POST'
+      })
+      
+      // TODO: Test without authentication
+      // const response = await handler.POST(request)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'POST',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.POST(request)
+      // expect(response.status).toBe(403)
+    })
+  })
+
+  describe('PUT /api/announcements', () => {
+    test('should update announcements', async () => {
+      // TODO: Import the actual handler
+      // const handler = require('@/app/apiannouncements/route')
+      
+      // This endpoint requires authentication
+      const user = mockUsers.admin
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'PUT',
+        user,
+        { /* Add test data here */ }
+      )
+      
+      // TODO: Call the handler and test response
+      // const response = await handler.PUT(request)
+      // expect(response.status).toBe(200)
+      // 
+      // const data = await response.json()
+      // expect(data.success).toBe(true)
+    })
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements', {
+        method: 'PUT'
+      })
+      
+      // TODO: Test without authentication
+      // const response = await handler.PUT(request)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'PUT',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.PUT(request)
+      // expect(response.status).toBe(403)
+    })
+  })
+
+  describe('DELETE /api/announcements', () => {
+    test('should delete announcements', async () => {
+      // TODO: Import the actual handler
+      // const handler = require('@/app/apiannouncements/route')
+      
+      // This endpoint requires authentication
+      const user = mockUsers.admin
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'DELETE',
+        user
+      )
+      
+      // TODO: Call the handler and test response
+      // const response = await handler.DELETE(request)
+      // expect(response.status).toBe(200)
+      // 
+      // const data = await response.json()
+      // expect(data.success).toBe(true)
+    })
+    
+    test('should reject unauthorized access', async () => {
+      const request = new NextRequest('http://localhost:3000/api/announcements', {
+        method: 'DELETE'
+      })
+      
+      // TODO: Test without authentication
+      // const response = await handler.DELETE(request)
+      // expect(response.status).toBe(401)
+    })
+    
+    test('should reject insufficient permissions', async () => {
+      const user = mockUsers.viewer // Lower permission user
+      const request = await TestAuthHelpers.createAuthenticatedRequest(
+        'http://localhost:3000/api/announcements',
+        'DELETE',
+        user
+      )
+      
+      // TODO: Test with insufficient permissions
+      // const response = await handler.DELETE(request)
+      // expect(response.status).toBe(403)
     })
   })
 })

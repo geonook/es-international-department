@@ -11,7 +11,7 @@ const customJestConfig = {
   displayName: 'KCISLK ESID Info Hub Tests',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jsdom',
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^@/lib/(.*)$': '<rootDir>/lib/$1',
     '^@/components/(.*)$': '<rootDir>/components/$1',
@@ -55,9 +55,6 @@ const customJestConfig = {
       statements: 70
     }
   },
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }]
-  },
   transformIgnorePatterns: [
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$'
@@ -83,6 +80,10 @@ const customJestConfig = {
     {
       displayName: 'api',
       testMatch: ['<rootDir>/tests/api/**/*.test.{js,jsx,ts,tsx}'],
+    },
+    {
+      displayName: 'security',
+      testMatch: ['<rootDir>/tests/security/**/*.test.{js,jsx,ts,tsx}'],
     }
   ]
 }

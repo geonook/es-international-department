@@ -69,7 +69,7 @@ describe('Authentication System', () => {
       expect(payload).toHaveProperty('exp')
       
       // Verify expiration is in the future
-      expect(payload!.exp * 1000).toBeGreaterThan(Date.now())
+      expect(payload?.exp && payload.exp * 1000).toBeGreaterThan(Date.now())
     })
   })
   
