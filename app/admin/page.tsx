@@ -497,7 +497,7 @@ export default function AdminPage() {
     try {
       setIsMessageBoardLoading(true)
       setDataLoading(true)
-      const response = await fetch('/api/admin/messages?limit=20', {
+      const response = await fetch('/api/admin/communications?type=message_board&limit=20', {
         credentials: 'include'
       })
       
@@ -1025,7 +1025,7 @@ export default function AdminPage() {
 
     try {
       setDataLoading(true)
-      const response = await fetch(`/api/admin/messages/${messageBoardId}`, {
+      const response = await fetch(`/api/admin/communications/${messageBoardId}`, {
         method: 'DELETE',
         credentials: 'include'
       })
@@ -1047,21 +1047,22 @@ export default function AdminPage() {
     try {
       setDataLoading(true)
       
-      // Transform AnnouncementForm data to MessageBoard format
+      // Transform AnnouncementForm data to unified Communication format
       const messageData = {
         title: formData.title,
         content: formData.content,
-        boardType: formData.targetAudience === 'teachers' ? 'teachers' : 
-                   formData.targetAudience === 'parents' ? 'parents' : 'general',
+        type: 'message_board', // Required field for unified Communication API
+        targetAudience: formData.targetAudience || 'all',
         sourceGroup: formData.sourceGroup || null,
+        priority: formData.priority || 'medium',
         isImportant: formData.priority === 'high',
         isPinned: formData.isPinned || false,
-        status: formData.status || 'active'
+        status: formData.status || 'published'
       }
       
       const url = editingMessageBoard 
-        ? `/api/admin/messages/${editingMessageBoard.id}` 
-        : '/api/admin/messages'
+        ? `/api/admin/communications/${editingMessageBoard.id}` 
+        : '/api/admin/communications'
       
       const method = editingMessageBoard ? 'PUT' : 'POST'
       
@@ -1706,10 +1707,10 @@ export default function AdminPage() {
                             size="sm" 
                             variant="outline" 
                             className="w-full border-blue-300 text-blue-700 hover:bg-blue-100"
-                            onClick={() => window.location.href = '/admin/documents?category=academic'}
+                            onClick={() => window.open('https://sites.google.com/kcislk.ntpc.edu.tw/esid-teachers/academic-affairs', '_blank')}
                           >
-                            <FileText className="w-3 h-3 mr-2" />
-                            Manage Documents
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            View on Google Sites
                           </Button>
                         </div>
 
@@ -1724,10 +1725,10 @@ export default function AdminPage() {
                             size="sm" 
                             variant="outline" 
                             className="w-full border-green-300 text-green-700 hover:bg-green-100"
-                            onClick={() => window.location.href = '/admin/documents?category=foreign'}
+                            onClick={() => window.open('https://sites.google.com/kcislk.ntpc.edu.tw/esid-teachers/foreign-affairs', '_blank')}
                           >
-                            <FileText className="w-3 h-3 mr-2" />
-                            Manage Documents
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            View on Google Sites
                           </Button>
                         </div>
 
@@ -1742,10 +1743,10 @@ export default function AdminPage() {
                             size="sm" 
                             variant="outline" 
                             className="w-full border-purple-300 text-purple-700 hover:bg-purple-100"
-                            onClick={() => window.location.href = '/admin/documents?category=classroom'}
+                            onClick={() => window.open('https://sites.google.com/kcislk.ntpc.edu.tw/esid-teachers/classroom-affairs', '_blank')}
                           >
-                            <FileText className="w-3 h-3 mr-2" />
-                            Manage Documents
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            View on Google Sites
                           </Button>
                         </div>
                       </div>
