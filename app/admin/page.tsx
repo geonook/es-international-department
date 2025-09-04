@@ -1606,7 +1606,7 @@ export default function AdminPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {dataLoading ? (
+                        {isMessageBoardLoading ? (
                           Array.from({ length: 3 }).map((_, index) => (
                             <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
                               <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
@@ -1614,34 +1614,33 @@ export default function AdminPage() {
                               <div className="h-3 bg-gray-300 rounded w-1/4"></div>
                             </div>
                           ))
-                        ) : announcements.filter(a => a.targetAudience === 'teachers' || a.targetAudience === 'all').length > 0 ? (
-                          announcements
-                            .filter(a => a.targetAudience === 'teachers' || a.targetAudience === 'all')
+                        ) : messageBoardPosts.length > 0 ? (
+                          messageBoardPosts
                             .slice(0, 5)
-                            .map((announcement) => (
+                            .map((post) => (
                               <div
-                                key={announcement.id}
+                                key={post.id}
                                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                               >
                                 <div className="flex-1">
-                                  <h4 className="font-semibold text-gray-900">{announcement.title}</h4>
-                                  <p className="text-sm text-gray-600">{announcement.summary || announcement.content.substring(0, 100) + '...'}</p>
+                                  <h4 className="font-semibold text-gray-900">{post.title}</h4>
+                                  <p className="text-sm text-gray-600">{post.summary || post.content.substring(0, 100) + '...'}</p>
                                   <div className="flex items-center gap-2 mt-2">
                                     <Badge
                                       variant={
-                                        announcement.priority === 'high'
+                                        post.priority === 'high'
                                           ? 'destructive'
-                                          : announcement.priority === 'medium'
+                                          : post.priority === 'medium'
                                           ? 'default'
                                           : 'secondary'
                                       }
                                     >
-                                      {announcement.priority}
+                                      {post.priority}
                                     </Badge>
                                     <Badge variant="outline">
-                                      {announcement.status}
+                                      {post.status}
                                     </Badge>
-                                    <span className="text-xs text-gray-500">{formatDate(announcement.createdAt)}</span>
+                                    <span className="text-xs text-gray-500">{formatDate(post.createdAt)}</span>
                                   </div>
                                 </div>
                                 <div className="flex gap-2">
@@ -1649,8 +1648,8 @@ export default function AdminPage() {
                                     size="sm" 
                                     variant="outline"
                                     onClick={() => {
-                                      setEditingAnnouncement(announcement)
-                                      setShowAnnouncementForm(true)
+                                      setEditingMessageBoard(post)
+                                      setShowMessageBoardForm(true)
                                     }}
                                   >
                                     <Eye className="w-4 h-4" />
@@ -1659,8 +1658,8 @@ export default function AdminPage() {
                                     size="sm" 
                                     variant="outline"
                                     onClick={() => {
-                                      setEditingAnnouncement(announcement)
-                                      setShowAnnouncementForm(true)
+                                      setEditingMessageBoard(post)
+                                      setShowMessageBoardForm(true)
                                     }}
                                   >
                                     <Edit className="w-4 h-4" />
@@ -1668,7 +1667,7 @@ export default function AdminPage() {
                                   <Button 
                                     size="sm" 
                                     variant="outline"
-                                    onClick={() => handleAnnouncementDelete(announcement.id)}
+                                    onClick={() => handleDeleteMessageBoard(post.id)}
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </Button>
@@ -1677,9 +1676,9 @@ export default function AdminPage() {
                             ))
                         ) : (
                           <div className="text-center py-8 text-gray-500">
-                            <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p>No teacher announcements found</p>
-                            <p className="text-sm">Create your first announcement to get started</p>
+                            <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No message board posts found</p>
+                            <p className="text-sm">Create your first message board post to get started</p>
                           </div>
                         )}
                       </div>
