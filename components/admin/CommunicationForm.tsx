@@ -15,7 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { X, Save, AlertTriangle, Eye, Edit, List, FileText, Link, Bold, Italic, Underline } from 'lucide-react'
+import { X, Save, AlertTriangle, Eye, Edit, List, FileText, Link, Bold, Italic, Underline, Star, Pin, Users, Target, BookOpen } from 'lucide-react'
+import EnhancedRichTextEditor from '@/components/ui/enhanced-rich-text-editor'
 
 interface Communication {
   id?: string | number
@@ -31,6 +32,9 @@ interface Communication {
   isPinned?: boolean
   publishedAt?: string
   expiresAt?: string
+  // Teacher-specific message board properties
+  boardType?: 'teachers' | 'parents' | 'general'
+  isFeatured?: boolean
 }
 
 interface CommunicationFormProps {
@@ -58,12 +62,13 @@ export default function CommunicationForm({
     status: communication?.status || 'draft',
     sourceGroup: communication?.sourceGroup || '',
     isImportant: communication?.isImportant || false,
-    isPinned: communication?.isPinned || false
+    isPinned: communication?.isPinned || false,
+    boardType: communication?.boardType || 'general',
+    isFeatured: communication?.isFeatured || false
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [previewMode, setPreviewMode] = useState(false)
-  const [activeTab, setActiveTab] = useState('form')
+  const [useEnhancedEditor, setUseEnhancedEditor] = useState(true)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -95,6 +100,16 @@ export default function CommunicationForm({
     }))
   }
 
+  // Source group options for teachers
+  const sourceGroupOptions = [
+    { value: '', label: 'General', icon: Users, color: 'bg-gray-100 text-gray-700' },
+    { value: 'Vickie', label: 'Principal Vickie', icon: Star, color: 'bg-purple-100 text-purple-700' },
+    { value: 'Matthew', label: 'Vice Principal Matthew', icon: Star, color: 'bg-indigo-100 text-indigo-700' },
+    { value: 'Academic Team', label: 'Academic Team', icon: BookOpen, color: 'bg-blue-100 text-blue-700' },
+    { value: 'Curriculum Team', label: 'Curriculum Team', icon: FileText, color: 'bg-green-100 text-green-700' },
+    { value: 'Instructional Team', label: 'Instructional Team', icon: Target, color: 'bg-orange-100 text-orange-700' }
+  ]
+
   const getContentPlaceholder = (type?: string) => {
     switch (type) {
       case 'message':
@@ -121,19 +136,9 @@ Supports links to Google Sheets, documents, and other resources.`
     }
   }
 
-  const renderPreviewContent = (content: string) => {
-    if (!content) return <p className="text-gray-500">No content to preview</p>
-    
-    // Convert markdown-like formatting to HTML
-    let processed = content
-      // Convert bold text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      // Convert links
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 underline" target="_blank" rel="noopener noreferrer">$1</a>')
-      // Convert line breaks
-      .replace(/\n/g, '<br/>')
-    
-    return <div dangerouslySetInnerHTML={{ __html: processed }} />
+  // Get source group info
+  const getSourceGroupInfo = (value: string) => {
+    return sourceGroupOptions.find(option => option.value === value) || sourceGroupOptions[0]
   }
 
   return (
@@ -195,46 +200,43 @@ Supports links to Google Sheets, documents, and other resources.`
         </div>
 
         <div>
-          <Label htmlFor="content">Content *</Label>
-          <div className="space-y-2">
+          <div className="flex items-center justify-between mb-2">
+            <Label htmlFor="content">Content *</Label>
             <div className="flex items-center gap-2">
               <Button
                 type="button"
-                variant="outline"
+                variant={useEnhancedEditor ? "default" : "outline"}
                 size="sm"
-                onClick={() => setPreviewMode(!previewMode)}
+                onClick={() => setUseEnhancedEditor(!useEnhancedEditor)}
               >
-                {previewMode ? <Edit className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
-                {previewMode ? 'Edit' : 'Preview'}
+                {useEnhancedEditor ? '🚀 Enhanced' : '📝 Simple'}
               </Button>
-              {formData.type === 'message' && (
-                <div className="text-xs text-gray-500 ml-2">
-                  💡 Tip: Use numbered lists (1. 2. 3.) for structured content like opening ceremony instructions
-                </div>
-              )}
             </div>
-            {previewMode ? (
-              <Card>
-                <CardContent className="p-4">
-                  <div className="prose prose-sm max-w-none">
-                    {renderPreviewContent(formData.content)}
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Textarea
-                id="content"
-                value={formData.content}
-                onChange={(e) => handleChange('content', e.target.value)}
-                placeholder={getContentPlaceholder(formData.type)}
-                className="min-h-40 font-mono text-sm"
-                required
-              />
-            )}
           </div>
+          
+          {useEnhancedEditor ? (
+            <EnhancedRichTextEditor
+              value={formData.content}
+              onChange={(content) => handleChange('content', content)}
+              contentType={formData.type}
+              sourceGroup={formData.sourceGroup}
+              isTeacherMessage={formData.targetAudience === 'teachers' || formData.type === 'message'}
+              showPreview={true}
+              showTableOfContents={true}
+            />
+          ) : (
+            <Textarea
+              id="content"
+              value={formData.content}
+              onChange={(e) => handleChange('content', e.target.value)}
+              placeholder={getContentPlaceholder(formData.type)}
+              className="min-h-40 font-mono text-sm"
+              required
+            />
+          )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label htmlFor="targetAudience">Target Audience</Label>
             <Select 
@@ -262,32 +264,161 @@ Supports links to Google Sheets, documents, and other resources.`
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="low">📘 Low Priority</SelectItem>
+                <SelectItem value="medium">📙 Medium Priority</SelectItem>
+                <SelectItem value="high">📕 High Priority</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="sourceGroup">Source Group</Label>
+            <Select 
+              value={formData.sourceGroup} 
+              onValueChange={(value) => handleChange('sourceGroup', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select source group" />
+              </SelectTrigger>
+              <SelectContent>
+                {sourceGroupOptions.map((option) => {
+                  const IconComponent = option.icon
+                  return (
+                    <SelectItem key={option.value} value={option.value}>
+                      <div className="flex items-center gap-2">
+                        <IconComponent className="w-4 h-4" />
+                        <span>{option.label}</span>
+                      </div>
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        <div>
-          <Label htmlFor="status">Status</Label>
-          <Select 
-            value={formData.status} 
-            onValueChange={(value) => handleChange('status', value)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="status">Status</Label>
+            <Select 
+              value={formData.status} 
+              onValueChange={(value) => handleChange('status', value)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">📝 Draft</SelectItem>
+                <SelectItem value="published">📢 Published</SelectItem>
+                <SelectItem value="archived">📦 Archived</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Special Options for Teachers */}
+          {formData.targetAudience === 'teachers' && (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isImportant"
+                    checked={formData.isImportant}
+                    onChange={(e) => handleChange('isImportant', e.target.checked)}
+                    className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                  />
+                  <Label htmlFor="isImportant" className="flex items-center gap-2 text-sm">
+                    <Star className="w-4 h-4 text-red-500" />
+                    High Importance
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isPinned"
+                    checked={formData.isPinned}
+                    onChange={(e) => handleChange('isPinned', e.target.checked)}
+                    className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                  />
+                  <Label htmlFor="isPinned" className="flex items-center gap-2 text-sm">
+                    <Pin className="w-4 h-4 text-amber-500" />
+                    Pin to Top
+                  </Label>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex justify-end space-x-2 pt-4">
+        {/* Parents' Corner Sync Configuration */}
+        {showParentsSync && formData.syncToParents && (
+          <div className="space-y-4 p-4 bg-pink-50 rounded-lg border border-pink-200">
+            <div className="flex items-center gap-2 mb-3">
+              <Heart className="w-5 h-5 text-pink-600" />
+              <h4 className="font-medium text-pink-800">Parents' Corner Sync Settings</h4>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="parentsCategory">Parents' Corner Category</Label>
+                <Select 
+                  value={formData.parentsCategory} 
+                  onValueChange={(value) => handleChange('parentsCategory', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="general">📢 General Information</SelectItem>
+                    <SelectItem value="events">🎉 Events & Activities</SelectItem>
+                    <SelectItem value="academic">📚 Academic Updates</SelectItem>
+                    <SelectItem value="safety">🛡️ Safety & Health</SelectItem>
+                    <SelectItem value="calendar">📅 Schedule & Calendar</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Parents Preview */}
+            {parentsPreview && (
+              <div>
+                <Label className="text-sm font-medium text-pink-800 mb-2 block">
+                  Preview for Parents' Corner
+                </Label>
+                <div className="p-3 bg-white rounded border border-pink-200 max-h-32 overflow-y-auto">
+                  <div 
+                    className="text-sm text-gray-700 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: parentsPreview.replace(/\n/g, '<br/>') }}
+                  />
+                </div>
+                <p className="text-xs text-pink-600 mt-1">
+                  ✨ Content automatically formatted for family viewing
+                </p>
+              </div>
+            )}
+
+            <div className="text-sm text-pink-700">
+              <p>When published, this message will also appear in Parents' Corner with:</p>
+              <ul className="list-disc list-inside mt-1 space-y-1">
+                <li>Family-friendly language adjustments</li>
+                <li>Removal of teacher-specific internal references</li>
+                <li>Addition of parent-focused context and notes</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-between items-center pt-6 border-t">
+          <div className="text-sm text-gray-600">
+            {formData.syncToParents && (
+              <div className="flex items-center gap-2 text-pink-600">
+                <Heart className="w-4 h-4" />
+                <span>Will sync to Parents' Corner</span>
+              </div>
+            )}
+          </div>
+          <div className="flex space-x-2">
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
@@ -295,6 +426,7 @@ Supports links to Google Sheets, documents, and other resources.`
             <Save className="w-4 h-4 mr-2" />
             {isSubmitting ? 'Saving...' : mode === 'edit' ? 'Update' : 'Create'}
           </Button>
+          </div>
         </div>
       </form>
     </div>

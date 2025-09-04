@@ -272,10 +272,75 @@ export default function TeacherCommunicationsPage() {
     }
   }
 
-  // Truncate content for preview
-  const truncateContent = (content: string, maxLength: number = 200) => {
-    if (content.length <= maxLength) return content
-    return content.substring(0, maxLength) + '...'
+  // Enhanced content processing for rich text
+  const processRichContent = (content: string): string => {
+    if (!content) return ''
+    
+    let processed = content
+      // Convert bold text: **text** -> <strong>text</strong>
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+      
+      // Convert links: [text](url) -> clickable links
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, 
+        '<a href="$2" class="text-blue-600 hover:text-blue-800 underline font-medium inline-flex items-center gap-1" target="_blank" rel="noopener noreferrer">$1<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>')
+      
+      // Convert numbered lists with enhanced styling
+      .replace(/^(\s*)(\d+)\.\s*\*\*(.*?)\*\*(.*)$/gm, (match, indent, number, boldText, restText) => {
+        const level = Math.floor(indent.length / 2)
+        const marginLeft = level * 16
+        const isHighPriority = parseInt(number) <= 3
+        return `<div class="numbered-item flex items-start gap-3 mb-3 p-3 ${isHighPriority ? 'bg-blue-50 border-l-4 border-blue-400' : 'bg-gray-50 border-l-4 border-gray-300'} rounded" style="margin-left: ${marginLeft}px">
+          <div class="flex-shrink-0 w-6 h-6 ${isHighPriority ? 'bg-blue-600' : 'bg-gray-600'} text-white rounded-full flex items-center justify-center text-xs font-bold">${number}</div>
+          <div class="flex-1">
+            <h5 class="font-semibold text-gray-900 text-sm">${boldText}</h5>
+            ${restText.trim() ? `<p class="text-gray-700 text-xs mt-1">${restText.trim()}</p>` : ''}
+          </div>
+        </div>`
+      })
+      
+      // Convert line breaks
+      .replace(/\n/g, '<br/>')
+    
+    return processed
+  }
+
+  // Truncate content for preview with rich text support
+  const truncateContent = (content: string, maxLength: number = 300) => {
+    const processed = processRichContent(content)
+    if (processed.length <= maxLength) return processed
+    
+    // Find a good break point
+    let truncated = processed.substring(0, maxLength)
+    const lastSpace = truncated.lastIndexOf(' ')
+    const lastBreak = truncated.lastIndexOf('<br/>')
+    const breakPoint = Math.max(lastSpace, lastBreak)
+    
+    if (breakPoint > maxLength * 0.8) {
+      truncated = processed.substring(0, breakPoint)
+    }
+    
+    return truncated + '...'
+  }
+
+  // Check if content needs "Read More"
+  const needsReadMore = (content: string) => {
+    const processed = processRichContent(content)
+    return processed.length > 300 || (content.match(/\d+\./g) || []).length > 5
+  }
+
+  // Extract table of contents from message
+  const extractTableOfContents = (content: string) => {
+    const lines = content.split('\n')
+    const toc: Array<{ number: string, title: string }> = []
+    
+    lines.forEach((line) => {
+      const match = line.match(/^\s*(\d+)\.\s*\*\*(.*?)\*\*/)
+      if (match) {
+        toc.push({ number: match[1], title: match[2] })
+      }
+    })
+    
+    return toc
   }
 
   // Get group icon and color
@@ -763,11 +828,50 @@ export default function TeacherCommunicationsPage() {
                         </div>
                       </div>
 
-                      {/* Content Preview */}
+                      {/* Enhanced Content Preview */}
                       <div className="mb-4">
-                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                          {truncateContent(message.content)}
-                        </p>
+                        {needsReadMore(message.content) ? (
+                          <div>
+                            {/* Table of Contents for Structured Messages */}
+                            {extractTableOfContents(message.content).length > 3 && (
+                              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Hash className="w-4 h-4 text-blue-600" />
+                                  <span className="text-sm font-medium text-blue-800">Contents ({extractTableOfContents(message.content).length} items)</span>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                                  {extractTableOfContents(message.content).slice(0, 6).map((item, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 text-xs text-blue-700">
+                                      <span className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center text-xs font-medium">
+                                        {item.number}
+                                      </span>
+                                      <span className="truncate">{item.title}</span>
+                                    </div>
+                                  ))}
+                                  {extractTableOfContents(message.content).length > 6 && (
+                                    <div className="text-xs text-blue-600 italic">...and {extractTableOfContents(message.content).length - 6} more</div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Truncated Content */}
+                            <div 
+                              className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                              dangerouslySetInnerHTML={{ __html: truncateContent(message.content) }}
+                            />
+                            
+                            {/* Read More Indicator */}
+                            <div className="mt-3 text-sm text-blue-600 font-medium">
+                              Click "View Details" to read the full {extractTableOfContents(message.content).length > 0 ? `${extractTableOfContents(message.content).length}-point` : ''} message with all links and formatting
+                            </div>
+                          </div>
+                        ) : (
+                          <div 
+                            className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                            dangerouslySetInnerHTML={{ __html: processRichContent(message.content) }}
+                          />
+                        )}
                       </div>
 
                       {/* Recent Replies Preview */}
@@ -821,13 +925,27 @@ export default function TeacherCommunicationsPage() {
                             variant="outline" 
                             size="sm"
                             onClick={() => {
-                              // Expand message details inline
+                              // TODO: Implement expandable message details
                               console.log('Show message details:', message.id)
                             }}
                           >
                             <Eye className="w-4 h-4 mr-2" />
-                            View Details
+                            {needsReadMore(message.content) ? 'Read Full Message' : 'View Details'}
                           </Button>
+                          
+                          {/* Quick Actions for Teachers */}
+                          {extractTableOfContents(message.content).length > 0 && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => {
+                                console.log('Show table of contents:', message.id)
+                              }}
+                            >
+                              <FileText className="w-4 h-4 mr-2" />
+                              {extractTableOfContents(message.content).length} Points
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>
