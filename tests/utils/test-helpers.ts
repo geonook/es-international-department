@@ -347,11 +347,4 @@ export class TestPerformanceHelpers {
 }
 
 // Export all helpers
-export {
-  TestAuthHelpers,
-  TestDatabaseHelpers,
-  TestAPIHelpers,
-  TestComponentHelpers,
-  TestValidationHelpers,
-  TestPerformanceHelpers
-}
+// Classes are already exported above, no need for additional export statement

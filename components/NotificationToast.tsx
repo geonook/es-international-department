@@ -214,7 +214,7 @@ export default function NotificationToast({
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 300, scale: 0.5 }}
           transition={{ 
-            type: "spring", 
+            type: "spring" as const, 
             stiffness: 300, 
             damping: 30,
             duration: 0.3 

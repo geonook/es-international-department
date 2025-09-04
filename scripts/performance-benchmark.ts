@@ -57,6 +57,28 @@ class PerformanceBenchmark {
   private baseUrl: string
   private results: BenchmarkResult[] = []
   private baselines = new Map<string, number>()
+
+  /**
+   * Fetch with timeout using AbortController
+   */
+  private async fetchWithTimeout(url: string, options: RequestInit & { timeout?: number } = {}): Promise<Response> {
+    const { timeout = 5000, ...fetchOptions } = options
+    
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeout)
+    
+    try {
+      const response = await fetch(url, {
+        ...fetchOptions,
+        signal: controller.signal
+      })
+      clearTimeout(timeoutId)
+      return response
+    } catch (error) {
+      clearTimeout(timeoutId)
+      throw error
+    }
+  }
   
   // Define performance thresholds
   private metrics: BenchmarkMetric[] = [
@@ -338,7 +360,7 @@ class PerformanceBenchmark {
     await this.runBenchmark('api_health_check_time', async () => {
       const start = performance.now()
       try {
-        const response = await fetch(`${this.baseUrl}/api/health`, {
+        const response = await this.fetchWithTimeout(`${this.baseUrl}/api/health`, {
           method: 'GET',
           timeout: 5000
         })
@@ -353,7 +375,7 @@ class PerformanceBenchmark {
     await this.runBenchmark('api_resource_list_time', async () => {
       const start = performance.now()
       try {
-        const response = await fetch(`${this.baseUrl}/api/admin/resources`, {
+        const response = await this.fetchWithTimeout(`${this.baseUrl}/api/admin/resources`, {
           method: 'GET',
           timeout: 10000,
           headers: {
@@ -371,13 +393,18 @@ class PerformanceBenchmark {
     await this.runBenchmark('api_event_list_time', async () => {
       const start = performance.now()
       try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 8000)
+        
         const response = await fetch(`${this.baseUrl}/api/admin/events`, {
           method: 'GET',
-          timeout: 8000,
+          signal: controller.signal,
           headers: {
             'Authorization': 'Bearer test-token-for-benchmark'
           }
         })
+        
+        clearTimeout(timeoutId)
         await response.text()
         return performance.now() - start
       } catch (error) {
@@ -389,7 +416,7 @@ class PerformanceBenchmark {
     await this.runBenchmark('api_user_management_time', async () => {
       const start = performance.now()
       try {
-        const response = await fetch(`${this.baseUrl}/api/admin/users`, {
+        const response = await this.fetchWithTimeout(`${this.baseUrl}/api/admin/users`, {
           method: 'GET',
           timeout: 6000,
           headers: {
@@ -411,7 +438,7 @@ class PerformanceBenchmark {
       
       const makeRequest = async () => {
         try {
-          await fetch(`${this.baseUrl}/api/health`, { timeout: 1000 })
+          await this.fetchWithTimeout(`${this.baseUrl}/api/health`, { timeout: 1000 })
           requestCount++
         } catch (error) {
           // Ignore errors for throughput test

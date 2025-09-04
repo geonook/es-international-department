@@ -11,6 +11,28 @@ import fetch from 'node-fetch'
 
 const execAsync = promisify(exec)
 
+/**
+ * Fetch with timeout using AbortController
+ */
+async function fetchWithTimeout(url: string, options: any = {}) {
+  const { timeout = 5000, ...fetchOptions } = options
+  
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+  
+  try {
+    const response = await fetch(url, {
+      ...fetchOptions,
+      signal: controller.signal
+    })
+    clearTimeout(timeoutId)
+    return response
+  } catch (error) {
+    clearTimeout(timeoutId)
+    throw error
+  }
+}
+
 // Configuration
 const BASE_URL = 'http://localhost:3000'
 const ENDPOINTS_TO_CHECK = [
@@ -23,7 +45,7 @@ const ENDPOINTS_TO_CHECK = [
 
 async function checkServerStatus(): Promise<boolean> {
   try {
-    const response = await fetch(`${BASE_URL}/api/health`, {
+    const response = await fetchWithTimeout(`${BASE_URL}/api/health`, {
       method: 'GET',
       timeout: 5000
     })
@@ -31,7 +53,7 @@ async function checkServerStatus(): Promise<boolean> {
   } catch {
     try {
       // Try root endpoint if health endpoint doesn't exist
-      const response = await fetch(BASE_URL, {
+      const response = await fetchWithTimeout(BASE_URL, {
         method: 'GET',
         timeout: 5000
       })
@@ -44,7 +66,7 @@ async function checkServerStatus(): Promise<boolean> {
 
 async function quickEndpointCheck(endpoint: string): Promise<{endpoint: string, status: string, statusCode?: number, error?: string}> {
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const response = await fetchWithTimeout(`${BASE_URL}${endpoint}`, {
       method: 'GET',
       timeout: 5000,
       headers: {
