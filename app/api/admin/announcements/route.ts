@@ -70,7 +70,6 @@ export async function GET(request: NextRequest) {
         const [announcements, totalCount] = await Promise.all([
           prisma.communication.findMany({
             where: announcementWhere,
-            where: whereClause,
             skip,
             take: limit,
             include: {

@@ -13,7 +13,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { X, Save, AlertTriangle } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { X, Save, AlertTriangle, Eye, Edit, List, FileText, Link, Bold, Italic, Underline } from 'lucide-react'
 
 interface Communication {
   id?: string | number
@@ -60,6 +62,8 @@ export default function CommunicationForm({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [previewMode, setPreviewMode] = useState(false)
+  const [activeTab, setActiveTab] = useState('form')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,6 +93,47 @@ export default function CommunicationForm({
       ...prev,
       [field]: value
     }))
+  }
+
+  const getContentPlaceholder = (type?: string) => {
+    switch (type) {
+      case 'message':
+        return `Enter your message board content here. You can use:
+
+1. Numbered lists for structured instructions
+2. Links: [Link text](https://example.com)
+3. Bold text: **important text**
+
+Example structure:
+1. Opening Ceremony - Important announcements
+2. Pick-up Arrangements - Location and time details
+3. Weekly Schedule - Links to Google Sheets or documents
+
+Supports links to Google Sheets, documents, and other resources.`
+      case 'announcement':
+        return 'Enter announcement content here...'
+      case 'newsletter':
+        return 'Enter newsletter content here...'
+      case 'reminder':
+        return 'Enter reminder content here...'
+      default:
+        return 'Enter content here...'
+    }
+  }
+
+  const renderPreviewContent = (content: string) => {
+    if (!content) return <p className="text-gray-500">No content to preview</p>
+    
+    // Convert markdown-like formatting to HTML
+    let processed = content
+      // Convert bold text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Convert links
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 underline" target="_blank" rel="noopener noreferrer">$1</a>')
+      // Convert line breaks
+      .replace(/\n/g, '<br/>')
+    
+    return <div dangerouslySetInnerHTML={{ __html: processed }} />
   }
 
   return (
@@ -151,14 +196,42 @@ export default function CommunicationForm({
 
         <div>
           <Label htmlFor="content">Content *</Label>
-          <Textarea
-            id="content"
-            value={formData.content}
-            onChange={(e) => handleChange('content', e.target.value)}
-            placeholder="Enter communication content"
-            className="min-h-32"
-            required
-          />
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setPreviewMode(!previewMode)}
+              >
+                {previewMode ? <Edit className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+                {previewMode ? 'Edit' : 'Preview'}
+              </Button>
+              {formData.type === 'message' && (
+                <div className="text-xs text-gray-500 ml-2">
+                  💡 Tip: Use numbered lists (1. 2. 3.) for structured content like opening ceremony instructions
+                </div>
+              )}
+            </div>
+            {previewMode ? (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="prose prose-sm max-w-none">
+                    {renderPreviewContent(formData.content)}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Textarea
+                id="content"
+                value={formData.content}
+                onChange={(e) => handleChange('content', e.target.value)}
+                placeholder={getContentPlaceholder(formData.type)}
+                className="min-h-40 font-mono text-sm"
+                required
+              />
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
