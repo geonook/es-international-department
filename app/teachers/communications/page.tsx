@@ -49,7 +49,7 @@ interface MessageReply {
   authorId: string
   content: string
   parentReplyId?: number
-  author: MessageAuthor
+  author: MessageAuthor | null  // 修復: author 可能為 null
   createdAt: string
   updatedAt: string
 }
@@ -66,7 +66,7 @@ interface MessageBoardPost {
   status: 'active' | 'inactive' | 'archived'
   viewCount: number
   replyCount: number
-  author: MessageAuthor
+  author: MessageAuthor | null  // 修復: author 可能為 null
   replies?: MessageReply[]
   publishedAt?: string
   expiresAt?: string
@@ -238,8 +238,14 @@ export default function TeacherCommunicationsPage() {
     }
   }, [user, authLoading, selectedGroup, selectedStatus])
 
-  // Get author display name
-  const getAuthorName = (author: MessageAuthor) => {
+  // Get author display name - 修復 null 安全檢查
+  const getAuthorName = (author: MessageAuthor | null) => {
+    // 處理 null 或 undefined author
+    if (!author) {
+      return 'System Message'  // 系統訊息或已刪除的用戶
+    }
+    
+    // 安全地存取 author 屬性
     return author.displayName || 
            `${author.firstName || ''} ${author.lastName || ''}`.trim() || 
            author.email || 
