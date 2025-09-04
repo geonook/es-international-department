@@ -74,42 +74,58 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    // Calculate total count and pagination
-    const totalCount = await prisma.teacherReminder.count({ where })
-    const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // Get reminders list
-    const reminders = await prisma.teacherReminder.findMany({
-      where,
-      include: {
-        creator: {
-          select: {
-            id: true,
-            email: true,
-            displayName: true,
-            firstName: true,
-            lastName: true
+    // PERFORMANCE OPTIMIZED: Batch queries and use select for minimal data transfer
+    const [reminders, totalCount] = await Promise.all([
+      prisma.teacherReminder.findMany({
+        where,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          priority: true,
+          status: true,
+          dueDate: true,
+          dueTime: true,
+          targetAudience: true,
+          reminderType: true,
+          isRecurring: true,
+          recurringPattern: true,
+          completedAt: true,
+          createdAt: true,
+          updatedAt: true,
+          creator: {
+            select: {
+              id: true,
+              email: true,
+              displayName: true,
+              firstName: true,
+              lastName: true
+            }
+          },
+          completer: {
+            select: {
+              id: true,
+              email: true,
+              displayName: true,
+              firstName: true,
+              lastName: true
+            }
           }
         },
-        completer: {
-          select: {
-            id: true,
-            email: true,
-            displayName: true,
-            firstName: true,
-            lastName: true
-          }
-        }
-      },
-      orderBy: [
-        { priority: 'desc' },
-        { dueDate: 'asc' },
-        { createdAt: 'desc' }
-      ],
-      skip,
-      take: limit
-    })
+        orderBy: [
+          { priority: 'desc' },
+          { dueDate: 'asc' },
+          { createdAt: 'desc' }
+        ],
+        skip,
+        take: limit
+      }),
+      prisma.teacherReminder.count({ where })
+    ])
+    
+    const totalPages = Math.ceil(totalCount / limit)
 
     // Build pagination info
     const pagination = {

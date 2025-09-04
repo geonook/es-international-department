@@ -61,7 +61,8 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    // 獲取使用者列表
+    // 獲取使用者列表 - PERFORMANCE OPTIMIZED
+    // Batch queries to prevent N+1 issues and minimize data transfer
     const [users, totalCount] = await Promise.all([
       prisma.user.findMany({
         where: whereClause,
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
           createdAt: true,
           updatedAt: true,
           userRoles: {
-            include: {
+            select: {
               role: {
                 select: {
                   id: true,

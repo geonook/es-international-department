@@ -77,74 +77,129 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Calculate total count
-    const totalCount = await prisma.event.count({ where })
-    const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // Get event list
-    const events = await prisma.event.findMany({
-      where,
-      include: {
-        creator: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            displayName: true
+    // PERFORMANCE OPTIMIZED: Batch all queries to prevent sequential execution
+    const [events, totalCount, statusStats, typeStats, monthlyStats, registrationStats] = await Promise.all([
+      // Get event list with optimized selection
+      prisma.event.findMany({
+        where,
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          eventType: true,
+          startDate: true,
+          endDate: true,
+          startTime: true,
+          endTime: true,
+          location: true,
+          maxParticipants: true,
+          registrationRequired: true,
+          registrationDeadline: true,
+          targetGrades: true,
+          targetAudience: true,
+          status: true,
+          isFeatured: true,
+          createdAt: true,
+          updatedAt: true,
+          creator: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              displayName: true
+            }
           }
+        },
+        orderBy: [
+          { startDate: 'desc' },
+          { createdAt: 'desc' }
+        ],
+        skip,
+        take: limit
+      }),
+      // Get total count
+      prisma.event.count({ where }),
+      // Get status counts in single aggregation query
+      prisma.event.groupBy({
+        by: ['status'],
+        _count: {
+          status: true
         }
-      },
-      orderBy: [
-        { startDate: 'desc' },
-        { createdAt: 'desc' }
-      ],
-      skip,
-      take: limit
-    })
+      }),
+      // Get type statistics
+      prisma.event.groupBy({
+        by: ['eventType'],
+        _count: {
+          eventType: true
+        }
+      }),
+      // Get monthly statistics for current year
+      prisma.event.groupBy({
+        by: ['startDate'],
+        where: {
+          startDate: {
+            gte: new Date(`${new Date().getFullYear()}-01-01`),
+            lt: new Date(`${new Date().getFullYear() + 1}-01-01`)
+          }
+        },
+        _count: {
+          startDate: true
+        }
+      }),
+      // Get registration statistics
+      prisma.eventRegistration.aggregate({
+        _count: {
+          id: true
+        },
+        _avg: {
+          eventId: true
+        }
+      })
+    ])
 
-    // Calculate statistics
-    const stats: EventStats = {
+    const totalPages = Math.ceil(totalCount / limit)
+
+    // Process status statistics from grouped results
+    const processedStatusStats = {
       total: totalCount,
-      published: await prisma.event.count({ where: { status: 'published' } }),
-      draft: await prisma.event.count({ where: { status: 'draft' } }),
-      inProgress: await prisma.event.count({ where: { status: 'in_progress' } }),
-      completed: await prisma.event.count({ where: { status: 'completed' } }),
-      cancelled: await prisma.event.count({ where: { status: 'cancelled' } }),
-      byType: {},
-      byMonth: {},
-      totalRegistrations: 0,
-      averageParticipants: 0
+      published: 0,
+      draft: 0,
+      in_progress: 0,
+      completed: 0,
+      cancelled: 0
     }
-
-    // Statistics by type
-    const typeStats = await prisma.event.groupBy({
-      by: ['eventType'],
-      _count: true
-    })
     
-    for (const stat of typeStats) {
-      stats.byType[stat.eventType] = stat._count
-    }
-
-    // Monthly statistics (current year)
-    const currentYear = new Date().getFullYear()
-    const monthlyStats = await prisma.event.groupBy({
-      by: ['startDate'],
-      where: {
-        startDate: {
-          gte: new Date(`${currentYear}-01-01`),
-          lt: new Date(`${currentYear + 1}-01-01`)
-        }
-      },
-      _count: true
+    statusStats.forEach(stat => {
+      const key = stat.status as keyof typeof processedStatusStats
+      if (key in processedStatusStats) {
+        processedStatusStats[key] = stat._count.status
+      }
     })
 
-    for (const stat of monthlyStats) {
+    // Process type statistics
+    const byType: { [key: string]: number } = {}
+    typeStats.forEach(stat => {
+      byType[stat.eventType] = stat._count.eventType
+    })
+
+    // Process monthly statistics
+    const byMonth: { [key: string]: number } = {}
+    monthlyStats.forEach(stat => {
       const month = new Date(stat.startDate).toLocaleDateString('zh-TW', { month: 'long' })
-      stats.byMonth[month] = (stats.byMonth[month] || 0) + stat._count
+      byMonth[month] = (byMonth[month] || 0) + stat._count.startDate
+    })
+
+    const stats: EventStats = {
+      ...processedStatusStats,
+      byType,
+      byMonth,
+      totalRegistrations: registrationStats._count.id || 0,
+      averageParticipants: Math.round(registrationStats._avg.eventId || 0)
     }
+
 
     // Build pagination info
     const pagination = {
