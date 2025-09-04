@@ -54,6 +54,7 @@ import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
 import AnnouncementForm from '@/components/AnnouncementForm'
+import CommunicationForm from '@/components/admin/CommunicationForm'
 // Removed: Unified Communications system - replaced with separated Teachers' Corner & Parents' Corner
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
@@ -80,6 +81,22 @@ interface Announcement {
     firstName?: string
     lastName?: string
   }
+}
+
+interface Communication {
+  id: string | number
+  title: string
+  content: string
+  summary?: string
+  type?: 'announcement' | 'message' | 'newsletter' | 'reminder'
+  targetAudience?: 'teachers' | 'parents' | 'all'
+  priority?: 'high' | 'medium' | 'low'
+  status?: 'draft' | 'published' | 'archived'
+  sourceGroup?: string
+  isImportant?: boolean
+  isPinned?: boolean
+  publishedAt?: string
+  expiresAt?: string
 }
 
 interface Event {
@@ -778,6 +795,26 @@ export default function AdminPage() {
     setEditingNewsletter(newsletter)
     setShowNewsletterForm(true)
   }
+
+  const handleNewsletterDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this newsletter?')) return
+    try {
+      const response = await fetch(`/api/admin/newsletters/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      if (response.ok) {
+        alert('Newsletter deleted successfully')
+        fetchNewsletters()
+      } else {
+        const error = await response.text()
+        alert(`Failed to delete newsletter: ${error}`)
+      }
+    } catch (error) {
+      console.error('Error deleting newsletter:', error)
+      alert('Failed to delete newsletter')
+    }
+  }
   
   // Announcement handlers
   const handleAnnouncementDelete = async (id: string) => {
@@ -1135,7 +1172,7 @@ export default function AdminPage() {
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: 'easeOut',
+        ease: 'easeOut' as const,
       },
     },
   }
