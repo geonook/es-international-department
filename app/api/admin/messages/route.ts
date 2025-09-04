@@ -88,13 +88,16 @@ export async function GET(request: NextRequest) {
       ]
     }
 
+    // Add type filter for message board communications
+    where.type = 'message_board'
+
     // Calculate total count and pagination
-    const totalCount = await prisma.messageBoard.count({ where })
+    const totalCount = await prisma.communication.count({ where })
     const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // Get message board posts
-    const messages = await prisma.messageBoard.findMany({
+    // Get message board posts from unified Communication table
+    const messages = await prisma.communication.findMany({
       where,
       include: {
         author: {
@@ -198,16 +201,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create message board post
-    const message = await prisma.messageBoard.create({
+    // Create message board post in unified Communication table
+    const message = await prisma.communication.create({
       data: {
         title: data.title,
         content: data.content,
+        type: 'message_board', // Set type for message board
         boardType: data.boardType || 'general',
         sourceGroup: data.sourceGroup || null,
         isImportant: data.isImportant || false,
         isPinned: data.isPinned || false,
-        status: data.status || 'active',
+        status: data.status || 'published', // Use 'published' instead of 'active'
         authorId: currentUser.id
       },
       include: {

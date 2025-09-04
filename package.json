@@ -149,6 +149,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@babel/plugin-transform-private-methods": "^7.27.1",
     "@babel/plugin-transform-typescript": "^7.28.0",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-typescript": "^7.27.1",
