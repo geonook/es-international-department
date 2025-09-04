@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "backupDate": "2025-09-04T03:12:13.406Z",
+    "backupVersion": "1.0.0",
+    "purpose": "Pre-migration backup for Communication system unification",
+    "tablesIncluded": [
+      "message_board",
+      "announcements",
+      "teacher_reminders"
+    ],
+    "recordCounts": {
+      "messageBoard": 1,
+      "announcements": 2,
+      "teacherReminders": 9,
+      "total": 12
+    }
+  },
+  "data": [
+    {
+      "id": 2,
+      "title": "Staff Meeting Next Week",
+      "content": "Please attend the monthly staff meeting next Tuesday at 3:00 PM in the conference room.",
+      "summary": "Monthly staff meeting reminder",
+      "authorId": "cmdr0g1k80000ctfisb2pd3ks",
+      "targetAudience": "teachers",
+      "priority": "medium",
+      "status": "published",
+      "publishedAt": "2025-07-31T06:25:16.039Z",
+      "expiresAt": null,
+      "createdAt": "2025-07-31T06:25:16.124Z",
+      "updatedAt": "2025-07-31T06:25:16.124Z",
+      "author": {
+        "id": "cmdr0g1k80000ctfisb2pd3ks",
+        "email": "admin@kcislk.ntpc.edu.tw",
+        "displayName": "System Administrator",
+        "firstName": "System",
+        "lastName": "Administrator"
+      }
+    },
+    {
+      "id": 1,
+      "title": "Welcome to ES International Department",
+      "content": "Welcome to our new parent portal! Here you can access important announcements, events, and resources.",
+      "summary": "Welcome message for parents",
+      "authorId": "cmdr0g1k80000ctfisb2pd3ks",
+      "targetAudience": "parents",
+      "priority": "high",
+      "status": "published",
+      "publishedAt": "2025-07-31T06:25:16.039Z",
+      "expiresAt": null,
+      "createdAt": "2025-07-31T06:25:16.041Z",
+      "updatedAt": "2025-07-31T06:25:16.041Z",
+      "author": {
+        "id": "cmdr0g1k80000ctfisb2pd3ks",
+        "email": "admin@kcislk.ntpc.edu.tw",
+        "displayName": "System Administrator",
+        "firstName": "System",
+        "lastName": "Administrator"
+      }
+    }
+  ]
+}

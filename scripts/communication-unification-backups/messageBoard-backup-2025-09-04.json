@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "backupDate": "2025-09-04T03:12:13.406Z",
+    "backupVersion": "1.0.0",
+    "purpose": "Pre-migration backup for Communication system unification",
+    "tablesIncluded": [
+      "message_board",
+      "announcements",
+      "teacher_reminders"
+    ],
+    "recordCounts": {
+      "messageBoard": 1,
+      "announcements": 2,
+      "teacherReminders": 9,
+      "total": 12
+    }
+  },
+  "data": [
+    {
+      "id": 16,
+      "title": "25-26學年第一週：開學典禮及重要事項",
+      "content": "<h2>🎉 開學典禮 Opening Ceremony</h2>\n<p><strong>時間：10:05-10:55（全體教師參加）</strong></p>\n<p>校長將介紹新教師以及擔任新行政職務的同事。</p>\n<h3>📋 典禮流程</h3>\n<ul>\n<li>新教師/行政人員請聚集在舞台右側</li>\n<li>請依辦公室分成三排：DSA、DAA、ID</li>\n<li>聽到姓名時，請走到舞台前方向學生揮手致意</li>\n<li>結束後從右側退場，前往教師座位區</li>\n</ul>\n<h3>📢 上台順序</h3>\n<p>Harry, Peko, Bryce, Natacha, Aleks, Samatha, Elena, Adeelena, Richmond, Caseylyn, Russell, Jade</p>\n<hr>\n<h2>📚 Academic Team</h2>\n<h3>🚌 接送安排 Pick-up Arrangements</h3>\n<ul>\n<li><strong>一年級教師</strong>：每堂課第一天請親自接學生</li>\n<li><strong>EV &amp; myReading教師</strong>：第一堂課也請親自接學生</li>\n<li><strong>KCFS班級</strong>：學生可能會走錯教室，請提醒正確位置</li>\n<li><strong>2-6年級</strong>：聯絡簿已發至導師班，導師會分發並指導學生仔細閱讀課表</li>\n</ul>\n<h3>👥 學生分班 Student Placement</h3>\n<ul>\n<li>請仔細觀察學生是否適合目前程度</li>\n<li>辦公室人員可能會進教室觀察特定學生</li>\n<li>提醒學生保持書本整潔，前兩週可能會調整班級安排</li>\n</ul>\n<h3>📝 點名 Attendance</h3>\n<ul>\n<li>每天記得點名</li>\n<li>如有學生缺席，請先查看iSchool，再聯絡Nydia</li>\n</ul>\n<h3>👨&zwj;👩&zwj;👧&zwj;👦 大使招募 Ambassador Recruitment</h3>\n<p>我們將向家長發送新學年大使計劃報名表，透過電子郵件和Google Classroom通知。</p>\n<h3>🎯 學生行為管理三層介入流程</h3>\n<p>請參閱附件連結了解學生行為管理和諮詢三層介入流程詳細資訊。由於這是新制度，實施過程中仍有調整空間。</p>\n<hr>\n<h2>📖 Curriculum Team</h2>\n<h3>📋 聯絡簿 Communication Book</h3>\n<ul>\n<li>每週一（或該課程第一天）下午4:35前上傳聯絡簿頁面至E-Communication</li>\n</ul>\n<h3>📊 週報告 Weekly Report (Summary)</h3>\n<p><strong>每週五上傳週報告至E-Communication聯絡簿</strong></p>\n<p>報告應包含：</p>\n<ul>\n<li>週次和日期</li>\n<li>班級名稱（例：G2 Inventors）</li>\n<li>以家長友善語言撰寫的週摘要</li>\n<li>使用條列式</li>\n<li>註明教科書/練習簿頁數</li>\n<li>學習目標使用\"我能夠...\"的陳述</li>\n<li>幫助家長和學生複習下週形成性評量重點</li>\n<li>下週內容預覽</li>\n<li>形成性評量公告（註明測驗類型，如Reading Test Unit 1）</li>\n<li>重要提醒事項</li>\n</ul>\n<p><strong>命名格式</strong>：WR: G1 Achievers LT W2</p>\n<p>詳細說明請參閱<a href=\"#\" target=\"_blank\" rel=\"noopener\">此連結</a>。</p>\n<h3>⭐ STAR測驗 (LT教師)</h3>\n<ul>\n<li><strong>截止日期</strong>：請在第二週完成STAR測驗</li>\n<li>查看iPad時程安排測驗時間</li>\n<li>完成追蹤表格記錄進度，註記無法在第1-2週完成測驗的學生（如需第3週完成請告知我們）</li>\n<li>Renaissance系統會顯示兩個班級（今年+去年）</li>\n<li>去年資料將在下週安全移除（夏季閱讀積分會保留至9/12）</li>\n<li>1-2年級教師的學生登入資訊已放在信箱</li>\n<li>3-6年級學生如忘記密碼，可輸入學號查詢</li>\n</ul>\n<p><strong>STAR測驗密碼：cat</strong></p>\n<h3>📚 課程計劃 Unit Plans</h3>\n<ul>\n<li>請提前完成課程計劃並複習目標準備課程</li>\n<li>請假時必須提供代課教師課程計劃</li>\n<li>建議建立個人系統定期更新計劃，避免臨時準備</li>\n</ul>\n<h3>🏢 ID辦公室會議</h3>\n<p><strong>時間</strong>：下週三第7節</p>\n<p><strong>議程</strong>：</p>\n<ul>\n<li>PTC簡報檢討</li>\n<li>分年段小組討論</li>\n</ul>\n<hr>\n<h2>🎯 Instructional Team</h2>\n<h3>👥 一對一會議預約 1-on-1 Meeting Sign up</h3>\n<p>Natacha將在第1-3週開始安排一對一會議，請使用報名表預約方便的時段。2025年8月新進教師可預約2個時段。</p>\n<p><strong>報名表連結</strong>：<a href=\"https://docs.google.com/spreadsheets/d/1mIH5-LyUb69RnF5MfbVBkiB3Gkv4qrpbuOivJoEO8pU/edit?usp=sharing\" target=\"_blank\" rel=\"noopener\">點此預約</a></p>\n<h3>🏆 班級積分系統重新介紹 Squad Points Re-introduction</h3>\n<p>本週三Aleksandra將分享班級積分系統的精彩更新！她會向大家說明如何將班級週積分添加到Google表單的簡單流程。</p>\n<p>就像去年一樣，我們會每週更新ID辦公室外的瑪利歐主題積分榜，讓學生看到進度。我們很興奮與大家合作，感謝大家協助建立我們的絕佳校園社群！</p>\n<hr>\n<p><em>📅 發布日期：25-26學年第一週</em><br><em>📧 如有任何問題，請聯絡相關組別負責人</em></p>",
+      "authorId": "cmdr0g1k80000ctfisb2pd3ks",
+      "boardType": "teachers",
+      "sourceGroup": "Vickie",
+      "isImportant": true,
+      "isPinned": false,
+      "replyCount": 0,
+      "viewCount": 0,
+      "status": "draft",
+      "createdAt": "2025-09-02T03:07:29.794Z",
+      "updatedAt": "2025-09-02T04:39:36.944Z",
+      "author": {
+        "id": "cmdr0g1k80000ctfisb2pd3ks",
+        "email": "admin@kcislk.ntpc.edu.tw",
+        "displayName": "System Administrator",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "replies": []
+    }
+  ]
+}
