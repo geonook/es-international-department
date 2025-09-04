@@ -16,7 +16,7 @@ export async function GET(
 ) {
   try {
     const communication = await prisma.communication.findUnique({
-      where: { id: params.id }
+      where: { id: parseInt(params.id) }
     });
 
     if (!communication) {
@@ -46,7 +46,7 @@ export async function PUT(
 
     // Check if communication exists
     const existing = await prisma.communication.findUnique({
-      where: { id: params.id }
+      where: { id: parseInt(params.id) }
     });
 
     if (!existing) {
@@ -68,7 +68,7 @@ export async function PUT(
     }
 
     const updatedCommunication = await prisma.communication.update({
-      where: { id: params.id },
+      where: { id: parseInt(params.id) },
       data: {
         ...(title && { title: title.trim() }),
         ...(content && { content: content.trim() }),
@@ -98,7 +98,7 @@ export async function DELETE(
   try {
     // Check if communication exists
     const existing = await prisma.communication.findUnique({
-      where: { id: params.id }
+      where: { id: parseInt(params.id) }
     });
 
     if (!existing) {
@@ -109,7 +109,7 @@ export async function DELETE(
     }
 
     await prisma.communication.delete({
-      where: { id: params.id }
+      where: { id: parseInt(params.id) }
     });
 
     return NextResponse.json({ message: 'Communication deleted successfully' });

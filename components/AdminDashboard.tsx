@@ -137,7 +137,7 @@ export default function AdminDashboard() {
         searchParams.append('search', currentFilters.search)
       }
       
-      const response = await fetch(`/api/admin/announcements?${searchParams}`, {
+      const response = await fetch(`/api/admin/communications?${searchParams}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -150,9 +150,9 @@ export default function AdminDashboard() {
       
       const data = await response.json()
       
-      if (data.success) {
-        setAnnouncements(data.data?.announcements || [])
-        setPagination(data.data?.pagination || {
+      if (data.success || data.data) {
+        setAnnouncements(data.data || [])
+        setPagination(data.pagination || {
           page: 1,
           limit: 10,
           totalCount: 0,
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
         setFilters(currentFilters)
         
         // Calculate statistics
-        calculateStats(data.data?.announcements || [])
+        calculateStats(data.data || [])
       } else {
         throw new Error(data.message || 'Failed to fetch announcements')
       }
@@ -207,7 +207,7 @@ export default function AdminDashboard() {
     }
     
     try {
-      const response = await fetch(`/api/announcements/${announcementId}`, {
+      const response = await fetch(`/api/admin/communications/${announcementId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -252,8 +252,8 @@ export default function AdminDashboard() {
   const handleCommunicationSubmit = async (data: any) => {
     try {
       const endpoint = communicationMode === 'create' 
-        ? '/api/admin/announcements'
-        : `/api/announcements/${editingCommunication?.id}`
+        ? '/api/admin/communications'
+        : `/api/admin/communications/${editingCommunication?.id}`
       
       const method = communicationMode === 'create' ? 'POST' : 'PUT'
       
@@ -312,7 +312,7 @@ export default function AdminDashboard() {
     setBulkOperationSuccess('')
     
     try {
-      const response = await fetch('/api/announcements/bulk', {
+      const response = await fetch('/api/admin/communications/bulk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -855,11 +855,11 @@ export default function AdminDashboard() {
                         </p>
                         <div className="flex gap-2">
                           <Button
-                            onClick={() => window.location.href = '/teachers/communications'}
+                            onClick={() => handleCreateCommunication('message')}
                             className="bg-gradient-to-r from-blue-600 to-blue-700"
                           >
                             <MessageSquare className="w-4 h-4 mr-2" />
-                            Message Board
+                            Manage Message Board
                           </Button>
                           <Button
                             variant="outline"
