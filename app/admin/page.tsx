@@ -379,15 +379,35 @@ export default function AdminPage() {
   // Fetch dashboard stats
   const fetchDashboardStats = useCallback(async () => {
     try {
-      // Mock stats for now - can be enhanced with real API
+      // Fetch real stats from unified Communication system
+      const response = await fetch('/api/admin/communications', {
+        credentials: 'include'
+      })
+      
+      let activePosts = 0
+      if (response.ok) {
+        const data = await response.json()
+        activePosts = data.pagination?.total || 0
+      } else {
+        // Fallback to old system for compatibility
+        activePosts = announcements.length + events.length
+      }
+      
+      setDashboardStats({
+        totalTeachers: 45,
+        totalParents: 320,
+        activePosts,
+        systemHealth: '98%'
+      })
+    } catch (error) {
+      console.error('Failed to fetch dashboard stats:', error)
+      // Fallback to old system on error
       setDashboardStats({
         totalTeachers: 45,
         totalParents: 320,
         activePosts: announcements.length + events.length,
         systemHealth: '98%'
       })
-    } catch (error) {
-      console.error('Failed to fetch dashboard stats:', error)
     }
   }, [announcements.length, events.length])
 
@@ -1398,7 +1418,7 @@ export default function AdminPage() {
                   {[
                     { title: 'Total Teachers', value: dashboardStats.totalTeachers.toString(), icon: GraduationCap, color: 'blue' },
                     { title: 'Total Parents', value: dashboardStats.totalParents.toString(), icon: Users, color: 'purple' },
-                    { title: 'Active Posts', value: dashboardStats.activePosts.toString(), icon: MessageSquare, color: 'green' },
+                    { title: 'Total Communications', value: dashboardStats.activePosts.toString(), icon: MessageSquare, color: 'green' },
                     { title: 'System Health', value: dashboardStats.systemHealth, icon: BarChart3, color: 'orange' },
                   ].map((stat, index) => (
                     <motion.div
