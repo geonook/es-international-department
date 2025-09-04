@@ -145,22 +145,25 @@ kcislk_esid_prod
 # 在 Zeabur 控制台建立三個 PostgreSQL 資料庫實例
 
 # 1. Development Database
-名稱: es-international-dev
+服務名稱: postgresql-noce
+端口: 32718
+資料庫名稱: kcislk_esid_dev
 版本: PostgreSQL 15
-規格: Starter (免費額度)
-區域: ap-east (亞太地區)
+位置: tpe1.clusters.zeabur.com
 
 # 2. Staging Database  
-名稱: es-international-staging
+服務名稱: postgresql-prouse
+端口: 30592
+資料庫名稱: kcislk_esid_staging
 版本: PostgreSQL 15
-規格: Pro (付費，較大資源)
-區域: ap-east (亞太地區)
+位置: tpe1.clusters.zeabur.com
 
 # 3. Production Database
-名稱: es-international-prod
+服務名稱: postgresql
+端口: 32312
+資料庫名稱: kcislk_esid_prod
 版本: PostgreSQL 15
-規格: Team (高可用性)
-區域: ap-east (亞太地區)
+位置: tpe1.clusters.zeabur.com
 ```
 
 ### 步驟 3: 環境變數配置
@@ -168,14 +171,14 @@ kcislk_esid_prod
 # 從 Zeabur 控制台取得資料庫連接字串
 # Database → Connection → Connection String
 
-# Development Environment
-DATABASE_URL="postgresql://dev_user:dev_pass@dev-db.zeabur.com:5432/kcislk_esid_dev"
+# Development Environment (Port 32718)
+DATABASE_URL="postgresql://root:[DEV_PASSWORD]@tpe1.clusters.zeabur.com:32718/kcislk_esid_dev"
 
-# Staging Environment
-DATABASE_URL="postgresql://stage_user:stage_pass@stage-db.zeabur.com:5432/kcislk_esid_staging"
+# Staging Environment (Port 30592)
+DATABASE_URL="postgresql://root:[STAGING_PASSWORD]@tpe1.clusters.zeabur.com:30592/kcislk_esid_staging"
 
-# Production Environment  
-DATABASE_URL="postgresql://prod_user:prod_pass@prod-db.zeabur.com:5432/kcislk_esid_prod"
+# Production Environment (Port 32312)
+DATABASE_URL="postgresql://root:[PROD_PASSWORD]@tpe1.clusters.zeabur.com:32312/kcislk_esid_prod"
 ```
 
 ### 步驟 4: 本地開發環境設定
