@@ -118,6 +118,12 @@ This file provides essential guidance to Claude Code (claude.ai/code) when worki
   **權限升級系統**: ✅ 完成 - 請求/審核/批准工作流程
 - **Authentication**: ✅ Complete - Google OAuth 2.0 + JWT + auto viewer assignment  
   **認證系統**: ✅ 完成 - Google OAuth 2.0 + JWT + 自動 viewer 角色分配
+- **OAuth Multi-Environment**: ✅ Complete - Fixed localhost redirect issues, staging/production deployed  
+  **OAuth 多環境**: ✅ 完成 - 修復localhost重定向問題，staging/production已部署
+- **API Routes**: ✅ Complete - 32 routes with dynamic rendering, /api/auth/providers endpoint added  
+  **API 路由**: ✅ 完成 - 32個路由支持動態渲染，新增/api/auth/providers端點
+- **Docker Deployment**: ✅ Complete - Dynamic PORT configuration for Zeabur cloud deployment  
+  **Docker 部署**: ✅ 完成 - 動態PORT配置支持Zeabur雲端部署
 - **Core Features**: ✅ Complete - Home, Events, Resources pages  
   **核心功能**: ✅ 完成 - 首頁、活動、資源頁面
 - **UI Components**: ✅ Complete - shadcn/ui component library  
@@ -144,8 +150,9 @@ kcislk-esid-info-hub/
 ├── app/                       # Next.js App Router | Next.js 應用路由
 │   ├── layout.tsx             # Root layout | 根布局
 │   ├── page.tsx               # Home page | 首頁
-│   ├── api/                   # API routes | API 路由
+│   ├── api/                   # API routes (32 routes with dynamic rendering) | API 路由（32個路由支持動態渲染）
 │   │   ├── auth/              # Authentication endpoints | 認證端點
+│   │   │   ├── providers/     # OAuth providers configuration | OAuth 提供商配置
 │   │   │   ├── google/        # Google OAuth initialization | Google OAuth 初始化
 │   │   │   └── callback/      # OAuth callback handler | OAuth 回調處理
 │   │   ├── admin/             # Admin API endpoints | 管理員 API 端點
