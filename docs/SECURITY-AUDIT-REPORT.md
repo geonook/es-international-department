@@ -83,7 +83,7 @@ GOOGLE_CLIENT_SECRET="GOCSPX-[REDACTED]"
 1. **HTTPS Enforcement | HTTPS 強制執行:**
    - ✅ All redirect URIs use HTTPS only
    - ✅ No HTTP endpoints in production configuration
-   - ✅ Secure domain: `https://kcislk-esid.zeabur.app`
+   - ✅ Secure domain: `https://kcislk-infohub.zeabur.app`
 
 2. **Domain Restrictions | 域名限制:**
    - ✅ Authorized JavaScript origins properly configured
@@ -98,9 +98,9 @@ GOOGLE_CLIENT_SECRET="GOCSPX-[REDACTED]"
 **OAuth Configuration Validation:**
 ```json
 {
-  "authorized_domains": ["kcislk-esid.zeabur.app"],
-  "authorized_origins": ["https://kcislk-esid.zeabur.app"],
-  "redirect_uris": ["https://kcislk-esid.zeabur.app/api/auth/callback/google"],
+  "authorized_domains": ["kcislk-infohub.zeabur.app"],
+  "authorized_origins": ["https://kcislk-infohub.zeabur.app"],
+  "redirect_uris": ["https://kcislk-infohub.zeabur.app/api/auth/callback/google"],
   "scopes": ["openid", "email", "profile"]
 }
 ```
@@ -151,7 +151,7 @@ const assignUserRole = (email: string): UserRole => {
 **Application Security:**
 ```env
 # Security Configuration
-ALLOWED_ORIGINS="https://kcislk-esid.zeabur.app"
+ALLOWED_ORIGINS="https://kcislk-infohub.zeabur.app"
 RATE_LIMIT_MAX_REQUESTS="100"
 RATE_LIMIT_WINDOW_MS="900000"  # 15 minutes
 SKIP_ENV_VALIDATION="0"  # Enable validation

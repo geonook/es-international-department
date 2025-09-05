@@ -32,12 +32,12 @@ These dummy values cause the **401 invalid_client** error when users try to logi
 
 **Authorized JavaScript origins:**
 ```
-https://landing-app-v2.zeabur.app
+https://next14-landing.zeabur.app
 ```
 
 **Authorized redirect URIs:**
 ```
-https://landing-app-v2.zeabur.app/api/auth/callback/google
+https://next14-landing.zeabur.app/api/auth/callback/google
 ```
 
 ### **Step 4: Copy Credentials**
@@ -56,7 +56,7 @@ GOOGLE_CLIENT_ID=your-actual-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-actual-client-secret
 
 # Ensure these are correct
-NEXTAUTH_URL=https://landing-app-v2.zeabur.app
+NEXTAUTH_URL=https://next14-landing.zeabur.app
 NEXTAUTH_SECRET=your-nextauth-secret-32-chars-long
 ```
 
@@ -64,14 +64,14 @@ NEXTAUTH_SECRET=your-nextauth-secret-32-chars-long
 
 ### **Test Pages**
 
-1. **OAuth Test Page**: https://landing-app-v2.zeabur.app/test-oauth
+1. **OAuth Test Page**: https://next14-landing.zeabur.app/test-oauth
    - Shows detailed OAuth configuration
    - Tests Google authentication flow
 
-2. **Login Page**: https://landing-app-v2.zeabur.app/login
+2. **Login Page**: https://next14-landing.zeabur.app/login
    - Production login interface
 
-3. **Admin Dashboard**: https://landing-app-v2.zeabur.app/admin
+3. **Admin Dashboard**: https://next14-landing.zeabur.app/admin
    - Requires successful OAuth login + admin permissions
 
 ### **Expected Flow**
@@ -91,7 +91,7 @@ NEXTAUTH_SECRET=your-nextauth-secret-32-chars-long
 
 ### **400 Redirect URI Mismatch**
 - **Cause**: Redirect URI not added to Google OAuth app
-- **Fix**: Add `https://landing-app-v2.zeabur.app/api/auth/callback/google` to authorized redirect URIs
+- **Fix**: Add `https://next14-landing.zeabur.app/api/auth/callback/google` to authorized redirect URIs
 
 ### **403 Access Blocked**
 - **Cause**: Google OAuth app not published or in testing mode

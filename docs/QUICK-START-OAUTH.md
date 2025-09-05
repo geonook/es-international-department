@@ -51,7 +51,7 @@
 http://localhost:3000/api/auth/callback/google
 
 生產環境：
-https://kcislk-esid.zeabur.app/api/auth/callback/google
+https://kcislk-infohub.zeabur.app/api/auth/callback/google
 ```
 
 ---

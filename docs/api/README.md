@@ -19,8 +19,8 @@ Welcome to the KCISLK ESID Info Hub API documentation.
 ### Base URL | 基礎 URL
 ```
 Development:  http://localhost:3000/api
-Staging:      https://staging.kcislk-esid.zeabur.app/api
-Production:   https://kcislk-esid.zeabur.app/api
+Staging:      https://next14-landing.zeabur.app/api
+Production:   https://kcislk-infohub.zeabur.app/api
 ```
 
 ### Authentication | 身份驗證

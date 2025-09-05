@@ -50,7 +50,7 @@ A comprehensive double-check of the Google OAuth production configuration has be
 
 ### Key Findings:
 - 🚨 **CRITICAL: Production domain mismatch**
-  - Expected: `kcislk-esid.zeabur.app`
+  - Expected: `kcislk-infohub.zeabur.app`
   - Reality: Multiple conflicting domains found
 - 🚨 **CRITICAL: OAuth credentials need actual setup**
   - Currently contains placeholders

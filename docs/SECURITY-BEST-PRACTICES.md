@@ -66,7 +66,7 @@ const oauthConsentConfig = {
     "profile"
   ], // Minimal scopes only
   authorizedDomains: [
-    "kcislk-esid.zeabur.app"
+    "kcislk-infohub.zeabur.app"
   ], // Exact domain only
   testUsers: [
     // Add specific test users during development
@@ -78,10 +78,10 @@ const oauthConsentConfig = {
 const oauthClientConfig = {
   applicationType: "Web application",
   authorizedJavaScriptOrigins: [
-    "https://kcislk-esid.zeabur.app" // HTTPS only
+    "https://kcislk-infohub.zeabur.app" // HTTPS only
   ],
   authorizedRedirectURIs: [
-    "https://kcislk-esid.zeabur.app/api/auth/callback/google" // Exact match
+    "https://kcislk-infohub.zeabur.app/api/auth/callback/google" // Exact match
   ]
 };
 ```
@@ -235,12 +235,12 @@ const getUserByEmail = async (email: string) => {
 ```bash
 # Production environment security checklist
 export NODE_ENV="production"
-export NEXTAUTH_URL="https://kcislk-esid.zeabur.app"
+export NEXTAUTH_URL="https://kcislk-infohub.zeabur.app"
 export JWT_SECRET="$(openssl rand -base64 32)"
 export NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 
 # Security configurations
-export ALLOWED_ORIGINS="https://kcislk-esid.zeabur.app"
+export ALLOWED_ORIGINS="https://kcislk-infohub.zeabur.app"
 export RATE_LIMIT_MAX_REQUESTS="100"
 export RATE_LIMIT_WINDOW_MS="900000"
 export SKIP_ENV_VALIDATION="0"

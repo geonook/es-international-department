@@ -3,7 +3,7 @@
 
 > **🚀 PRODUCTION DEPLOYMENT READY**  
 > **完整的 OAuth 生產環境部署指南**  
-> **Current deployment**: https://kcislk-esid.zeabur.app
+> **Current deployment**: https://kcislk-infohub.zeabur.app
 
 ## 🎯 Setup Overview | 設定概述
 
@@ -23,7 +23,7 @@ This guide provides step-by-step instructions for configuring Google OAuth for p
 
 ### 🔧 Required Information
 Before starting, gather the following:
-- **Production Domain**: `https://kcislk-esid.zeabur.app`
+- **Production Domain**: `https://kcislk-infohub.zeabur.app`
 - **Google Account** with access to Google Cloud Console
 - **Zeabur Account** with deployment access
 - **Email Domain** for user role assignment
@@ -77,7 +77,7 @@ Before starting, gather the following:
 4. **Authorized Domains** (CRITICAL)
    ```
    Add these domains:
-   - kcislk-esid.zeabur.app
+   - kcislk-infohub.zeabur.app
    - zeabur.app (if using Zeabur subdomains)
    ```
 
@@ -107,12 +107,12 @@ Before starting, gather the following:
 
 3. **Authorized JavaScript Origins** (CRITICAL)
    ```
-   https://kcislk-esid.zeabur.app
+   https://kcislk-infohub.zeabur.app
    ```
 
 4. **Authorized Redirect URIs** (CRITICAL)
    ```
-   https://kcislk-esid.zeabur.app/api/auth/callback/google
+   https://kcislk-infohub.zeabur.app/api/auth/callback/google
    ```
 
 5. **Save Credentials**
@@ -141,14 +141,14 @@ DATABASE_URL="postgresql://root:YOUR_DB_PASSWORD@tpe1.clusters.zeabur.com:PORT/z
 # Authentication Secrets (GENERATE NEW FOR PRODUCTION)
 JWT_SECRET="GENERATE_32_CHAR_SECRET_FOR_PRODUCTION"
 NEXTAUTH_SECRET="GENERATE_32_CHAR_SECRET_FOR_PRODUCTION"
-NEXTAUTH_URL="https://kcislk-esid.zeabur.app"
+NEXTAUTH_URL="https://kcislk-infohub.zeabur.app"
 
 # Google OAuth (From Google Cloud Console)
 GOOGLE_CLIENT_ID="your-production-client-id.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET="GOCSPX-your-production-client-secret"
 
 # Security Configuration
-ALLOWED_ORIGINS="https://kcislk-esid.zeabur.app"
+ALLOWED_ORIGINS="https://kcislk-infohub.zeabur.app"
 RATE_LIMIT_MAX_REQUESTS="100"
 RATE_LIMIT_WINDOW_MS="900000"
 
@@ -226,7 +226,7 @@ Update allowed origins for production:
 
 ```typescript
 // Environment variable should be set to:
-ALLOWED_ORIGINS="https://kcislk-esid.zeabur.app"
+ALLOWED_ORIGINS="https://kcislk-infohub.zeabur.app"
 ```
 
 ### Step 3.3: Cookie Security
@@ -246,7 +246,7 @@ Before deploying, verify configuration locally:
 # Set environment variables
 export GOOGLE_CLIENT_ID="your-prod-client-id"
 export GOOGLE_CLIENT_SECRET="your-prod-secret"
-export NEXTAUTH_URL="https://kcislk-esid.zeabur.app"
+export NEXTAUTH_URL="https://kcislk-infohub.zeabur.app"
 
 # Run configuration test
 npm run test:oauth-config
@@ -263,14 +263,14 @@ npm run test:oauth-config
 
 2. **Verify Deployment**
    ```
-   URL: https://kcislk-esid.zeabur.app
+   URL: https://kcislk-infohub.zeabur.app
    Check: Application loads without errors
    ```
 
 3. **Test OAuth Flow**
    ```
    Steps:
-   1. Visit: https://kcislk-esid.zeabur.app/login
+   1. Visit: https://kcislk-infohub.zeabur.app/login
    2. Click "Login with Google"
    3. Complete Google OAuth flow
    4. Verify redirect to application
@@ -296,7 +296,7 @@ The application includes automatic environment validation:
 Error: The redirect URI in the request does not match
 Solution: 
 1. Check Google Console authorized redirect URIs
-2. Ensure exact match: https://kcislk-esid.zeabur.app/api/auth/callback/google
+2. Ensure exact match: https://kcislk-infohub.zeabur.app/api/auth/callback/google
 3. No trailing slash, exact case match
 ```
 
@@ -335,7 +335,7 @@ The application provides health check endpoints:
 
 ```bash
 # Application health
-curl https://kcislk-esid.zeabur.app/api/health
+curl https://kcislk-infohub.zeabur.app/api/health
 
 # Environment configuration status
 # Check logs in Zeabur console for configuration warnings
@@ -428,4 +428,4 @@ Before going live, verify all items:
 
 *Last Updated: 2025-08-06*  
 *Version: 1.0.0*  
-*Deployment Target: https://kcislk-esid.zeabur.app*
+*Deployment Target: https://kcislk-infohub.zeabur.app*

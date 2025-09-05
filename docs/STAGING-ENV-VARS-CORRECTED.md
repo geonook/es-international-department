@@ -18,7 +18,7 @@ JWT_SECRET=staging_1234567890abcdefghijklmnopqrstuvwxyz
 SMTP_USER=test@example.com          # ❌ 問題：假的示例值
 SMTP_PASS=testpassword              # ❌ 問題：假的示例值  
 SMTP_HOST=smtp.example.com          # ❌ 問題：假的示例值
-NEXTAUTH_URL=https://staging.your-domain.com
+NEXTAUTH_URL=https://next14-landing.zeabur.app
 NODE_ENV=staging
 ```
 
@@ -39,8 +39,8 @@ NODE_ENV=staging
 # 核心環境配置
 # ==========================================
 NODE_ENV=staging
-NEXTAUTH_URL=https://staging.your-domain.com
-ALLOWED_ORIGINS=https://staging.your-domain.com
+NEXTAUTH_URL=https://next14-landing.zeabur.app
+ALLOWED_ORIGINS=https://next14-landing.zeabur.app
 
 # ==========================================
 # 資料庫配置 (保持您的設定)
@@ -100,7 +100,7 @@ ENABLE_TEST_FEATURES=true
 **添加以下缺失的變數**:
 ```env
 NEXTAUTH_SECRET=QIXalhOBH2bn4i22VC4Pc2e8wg/6mkBh0tRuKsO7hiE=
-ALLOWED_ORIGINS=https://staging.your-domain.com
+ALLOWED_ORIGINS=https://next14-landing.zeabur.app
 EMAIL_PROVIDER=disabled
 RATE_LIMIT_MAX_REQUESTS=500
 RATE_LIMIT_WINDOW_MS=900000
@@ -125,7 +125,7 @@ ENABLE_TEST_FEATURES=true
 | `SMTP_PASS` | testpassword | **刪除** | 移除假值避免驗證錯誤 |
 | `SMTP_HOST` | smtp.example.com | **刪除** | 移除假值避免驗證錯誤 |
 | `NEXTAUTH_SECRET` | **缺失** | QIXalhOBH2bn4i22VC4Pc2e8wg... | 新增必需變數 |
-| `ALLOWED_ORIGINS` | **缺失** | https://staging.your-domain.com | 新增 CORS 設定 |
+| `ALLOWED_ORIGINS` | **缺失** | https://next14-landing.zeabur.app | 新增 CORS 設定 |
 | `EMAIL_PROVIDER` | **缺失** | disabled | 避免 SMTP 驗證錯誤 |
 
 ---
@@ -135,13 +135,13 @@ ENABLE_TEST_FEATURES=true
 ### **基本驗證**:
 ```bash
 # 檢查 staging 網站存取
-curl -I https://staging.your-domain.com
+curl -I https://next14-landing.zeabur.app
 
 # 檢查 API 健康狀態
-curl https://staging.your-domain.com/api/health
+curl https://next14-landing.zeabur.app/api/health
 
 # 檢查 OAuth providers
-curl https://staging.your-domain.com/api/auth/providers
+curl https://next14-landing.zeabur.app/api/auth/providers
 ```
 
 ### **預期結果**:

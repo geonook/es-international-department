@@ -3,7 +3,7 @@
 
 > **🚀 READY FOR IMMEDIATE DEPLOYMENT**  
 > **準備好立即部署**  
-> **All OAuth credentials configured for: https://kcislk-esid.zeabur.app**
+> **All OAuth credentials configured for: https://kcislk-infohub.zeabur.app**
 
 ## 📋 Quick Deployment Overview | 快速部署概覽
 
@@ -27,7 +27,7 @@ Navigate to: Your Project > Environment Variables
 
 ```env
 NODE_ENV=production
-NEXTAUTH_URL=https://kcislk-esid.zeabur.app
+NEXTAUTH_URL=https://kcislk-infohub.zeabur.app
 JWT_SECRET=HzBlFAYu3gIhtbWzFhpDf+U5rDoKoIQbWv+JUquPF4s=
 NEXTAUTH_SECRET=jijpSBnevnLZE9k6BlXhTL5GT2zubmXDAIh2AOVM9OQ=
 GOOGLE_CLIENT_ID=316204460450-[REDACTED].apps.googleusercontent.com
@@ -43,7 +43,7 @@ DATABASE_URL=your_zeabur_postgresql_connection_string_here
 
 **🔒 SECURITY CONFIGURATION | 安全配置:**
 ```env
-ALLOWED_ORIGINS=https://kcislk-esid.zeabur.app
+ALLOWED_ORIGINS=https://kcislk-infohub.zeabur.app
 RATE_LIMIT_MAX_REQUESTS=100
 RATE_LIMIT_WINDOW_MS=900000
 ```
@@ -280,7 +280,7 @@ git push origin feature/new-announcement-system
 # Zeabur 自動部署到開發環境
 
 # 7. 開發環境驗證
-# 在 https://dev.kcislk-esid.zeabur.app 驗證功能
+# 在 https://dev.kcislk-infohub.zeabur.app 驗證功能
 
 # 8. 提升到 Staging 環境
 git checkout staging
@@ -290,7 +290,7 @@ git push origin staging
 # Zeabur 自動部署到預備環境
 
 # 9. Staging 環境驗證
-# 在 https://staging.kcislk-esid.zeabur.app 進行完整測試
+# 在 https://staging.kcislk-infohub.zeabur.app 進行完整測試
 
 # 10. 部署到正式環境
 git checkout main
@@ -340,21 +340,21 @@ environments:
     branch: dev
     auto_deploy: true
     database: es-international-dev
-    domain: dev.kcislk-esid.zeabur.app
+    domain: dev.kcislk-infohub.zeabur.app
     port: 8080
     
   staging:
     branch: staging
     auto_deploy: true
     database: es-international-staging
-    domain: staging.kcislk-esid.zeabur.app
+    domain: staging.kcislk-infohub.zeabur.app
     port: 8080
     
   production:
     branch: main
     auto_deploy: false
     database: es-international-prod
-    domain: kcislk-esid.zeabur.app
+    domain: kcislk-infohub.zeabur.app
     port: 8080
 ```
 
@@ -420,22 +420,22 @@ zeabur rollback --env production --version previous
 ```bash
 # 1. Docker 健康檢查 (自動執行)
 # Zeabur 會自動監控 Docker HEALTHCHECK 狀態
-curl https://kcislk-esid.zeabur.app/api/health
+curl https://kcislk-infohub.zeabur.app/api/health
 
 # 2. 應用程式健康檢查
-curl -I https://kcislk-esid.zeabur.app/api/health
+curl -I https://kcislk-infohub.zeabur.app/api/health
 # 預期回應: HTTP/2 200 + JSON 回應包含服務狀態
 
 # 3. 資料庫連接驗證
 # 透過健康檢查端點驗證資料庫連接狀態
-curl https://kcislk-esid.zeabur.app/api/health | jq '.database'
+curl https://kcislk-infohub.zeabur.app/api/health | jq '.database'
 
 # 4. 環境變數驗證
-curl https://kcislk-esid.zeabur.app/api/health | jq '.environment'
+curl https://kcislk-infohub.zeabur.app/api/health | jq '.environment'
 
 # 5. 功能驗證測試
 # 透過 Zeabur 控制台或本地測試腳本
-npm run test:integration -- --baseURL=https://kcislk-esid.zeabur.app
+npm run test:integration -- --baseURL=https://kcislk-infohub.zeabur.app
 
 # 6. 效能監控檢查
 # 透過 Zeabur 控制台監控面板檢查
@@ -465,13 +465,13 @@ DEBUG=true
 # 預備環境配置 (.env.staging)
 NODE_ENV=staging  
 DATABASE_URL=postgresql://stage_user:pass@stage-db.zeabur.com:5432/kcislk_esid_staging
-NEXTAUTH_URL=https://staging.kcislk-esid.zeabur.app
+NEXTAUTH_URL=https://staging.kcislk-infohub.zeabur.app
 DEBUG=false
 
 # 正式環境配置 (.env.production)
 NODE_ENV=production
 DATABASE_URL=postgresql://prod_user:pass@prod-db.zeabur.com:5432/kcislk_esid_prod
-NEXTAUTH_URL=https://kcislk-esid.zeabur.app
+NEXTAUTH_URL=https://kcislk-infohub.zeabur.app
 DEBUG=false
 SENTRY_DSN=https://your-sentry-dsn
 ```
@@ -640,7 +640,7 @@ zeabur logs --follow --env production --service web
 
 # 3. 健康檢查監控
 # Zeabur 自動監控 Docker HEALTHCHECK
-curl -f https://kcislk-esid.zeabur.app/api/health
+curl -f https://kcislk-infohub.zeabur.app/api/health
 
 # 4. 應用程式效能監控
 # CPU 使用率監控
@@ -650,7 +650,7 @@ curl -f https://kcislk-esid.zeabur.app/api/health
 
 # 5. 資料庫連接監控
 # 透過健康檢查端點監控資料庫狀態
-curl https://kcislk-esid.zeabur.app/api/health | jq '.database'
+curl https://kcislk-infohub.zeabur.app/api/health | jq '.database'
 
 # 6. 資料庫查詢分析
 # 在本地環境執行 Prisma Studio

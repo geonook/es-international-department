@@ -2,7 +2,7 @@
 
 ## 🎯 **Phase 1: Basic Page Testing**
 
-### **✅ Landing Page (https://landing-app-v2.zeabur.app/)**
+### **✅ Landing Page (https://next14-landing.zeabur.app/)**
 - [ ] Page loads successfully
 - [ ] Title shows "Parents' Corner"  
 - [ ] Subtitle shows "KCISLK ESID"
@@ -12,7 +12,7 @@
 - [ ] Responsive design works on mobile/tablet
 - [ ] Announcements section loads (if any)
 
-### **✅ Events Page (https://landing-app-v2.zeabur.app/events)**
+### **✅ Events Page (https://next14-landing.zeabur.app/events)**
 - [ ] Page loads successfully
 - [ ] All text is in English
 - [ ] Event listings display correctly
@@ -20,13 +20,13 @@
 - [ ] Date formatting is in English
 - [ ] No Chinese characters visible
 
-### **✅ Resources Page (https://landing-app-v2.zeabur.app/resources)**
+### **✅ Resources Page (https://next14-landing.zeabur.app/resources)**
 - [ ] Page loads successfully
 - [ ] All content is in English
 - [ ] Resource listings work correctly
 - [ ] Download links functional
 
-### **✅ Notifications Page (https://landing-app-v2.zeabur.app/notifications)**
+### **✅ Notifications Page (https://next14-landing.zeabur.app/notifications)**
 - [ ] Page loads successfully
 - [ ] English interface
 - [ ] Notification system works
@@ -39,13 +39,13 @@ Before testing authentication, you must:
 2. **Update Zeabur environment variables** with real credentials
 3. **Redeploy the application**
 
-### **🧪 OAuth Test Page (https://landing-app-v2.zeabur.app/test-oauth)**
+### **🧪 OAuth Test Page (https://next14-landing.zeabur.app/test-oauth)**
 - [ ] Page loads successfully
 - [ ] Shows current OAuth configuration
 - [ ] "Test Google OAuth" button present
 - [ ] No 401 errors when clicking OAuth test
 
-### **🔑 Login Page (https://landing-app-v2.zeabur.app/login)**
+### **🔑 Login Page (https://next14-landing.zeabur.app/login)**
 - [ ] Page loads successfully
 - [ ] "Login with Google" button present
 - [ ] Clicking button redirects to Google OAuth
@@ -53,7 +53,7 @@ Before testing authentication, you must:
 - [ ] Successful login redirects back to app
 - [ ] User session is established
 
-### **👑 Admin Dashboard (https://landing-app-v2.zeabur.app/admin)**
+### **👑 Admin Dashboard (https://next14-landing.zeabur.app/admin)**
 - [ ] Requires authentication (redirects to login if not logged in)
 - [ ] After login, loads successfully OR shows permission error
 - [ ] If accessible, all admin functions work
@@ -94,7 +94,7 @@ Before testing authentication, you must:
 ### **🔧 OAuth 401 Error (NEEDS MANUAL FIX)**
 - [ ] Google OAuth credentials set up in Google Cloud Console
 - [ ] Real GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Zeabur
-- [ ] Authorized redirect URI configured: `https://landing-app-v2.zeabur.app/api/auth/callback/google`
+- [ ] Authorized redirect URI configured: `https://next14-landing.zeabur.app/api/auth/callback/google`
 - [ ] OAuth login flow works without 401 errors
 
 ## 📊 **Testing Results Template**

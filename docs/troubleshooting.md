@@ -13,7 +13,7 @@ This comprehensive troubleshooting guide covers common issues you might encounte
 
 ```bash
 # 1. Check application health | 檢查應用程式健康狀態
-curl -f https://kcislk-esid.zeabur.app/api/health
+curl -f https://kcislk-infohub.zeabur.app/api/health
 
 # 2. Verify database connection | 驗證資料庫連接
 npm run test:db

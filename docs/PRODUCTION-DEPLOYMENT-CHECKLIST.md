@@ -3,7 +3,7 @@
 
 > **🚀 FINAL DEPLOYMENT CHECKLIST**  
 > **最終部署檢查清單**  
-> **For KCISLK ESID Info Hub production deployment to: https://kcislk-esid.zeabur.app**
+> **For KCISLK ESID Info Hub production deployment to: https://kcislk-infohub.zeabur.app**
 
 ## 📋 Overview | 概覽
 
@@ -23,7 +23,7 @@ This checklist ensures all components are properly configured for production dep
   - [ ] App logo uploaded (school logo recommended)
 
 - [ ] **Domain Configuration**
-  - [ ] Authorized domain added: `kcislk-esid.zeabur.app`
+  - [ ] Authorized domain added: `kcislk-infohub.zeabur.app`
   - [ ] Domain verification completed (if required)
 
 - [ ] **Scopes Configured**
@@ -43,12 +43,12 @@ This checklist ensures all components are properly configured for production dep
   - [ ] Name: `KCISLK ESID Production OAuth`
 
 - [ ] **JavaScript Origins**
-  - [ ] Added: `https://kcislk-esid.zeabur.app`
+  - [ ] Added: `https://kcislk-infohub.zeabur.app`
   - [ ] No HTTP origins (security)
   - [ ] No localhost origins in production
 
 - [ ] **Redirect URIs**
-  - [ ] Added: `https://kcislk-esid.zeabur.app/api/auth/callback/google`
+  - [ ] Added: `https://kcislk-infohub.zeabur.app/api/auth/callback/google`
   - [ ] Exact match (no trailing slash)
   - [ ] HTTPS enforced
 
@@ -71,7 +71,7 @@ Copy-paste these exact values into Zeabur console:
 
 ```env
 NODE_ENV=production
-NEXTAUTH_URL=https://kcislk-esid.zeabur.app
+NEXTAUTH_URL=https://kcislk-infohub.zeabur.app
 JWT_SECRET=HzBlFAYu3gIhtbWzFhpDf+U5rDoKoIQbWv+JUquPF4s=
 NEXTAUTH_SECRET=jijpSBnevnLZE9k6BlXhTL5GT2zubmXDAIh2AOVM9OQ=
 GOOGLE_CLIENT_ID=316204460450-[REDACTED].apps.googleusercontent.com
@@ -79,7 +79,7 @@ GOOGLE_CLIENT_SECRET=GOCSPX-[REDACTED]
 ```
 
 - [ ] **NODE_ENV** set to `production`
-- [ ] **NEXTAUTH_URL** set to `https://kcislk-esid.zeabur.app`
+- [ ] **NEXTAUTH_URL** set to `https://kcislk-infohub.zeabur.app`
 - [ ] **JWT_SECRET** set to generated secret
 - [ ] **NEXTAUTH_SECRET** set to generated secret
 - [ ] **GOOGLE_CLIENT_ID** set to actual OAuth client ID
@@ -98,7 +98,7 @@ GOOGLE_CLIENT_SECRET=GOCSPX-[REDACTED]
 
 ### ✅ Security Configuration
 ```env
-ALLOWED_ORIGINS=https://kcislk-esid.zeabur.app
+ALLOWED_ORIGINS=https://kcislk-infohub.zeabur.app
 RATE_LIMIT_MAX_REQUESTS=100
 RATE_LIMIT_WINDOW_MS=900000
 ```
@@ -208,14 +208,14 @@ GOOGLE_ANALYTICS_ID=your-ga-id
 
 ### ✅ Application Access
 - [ ] **Domain Access**
-  - [ ] https://kcislk-esid.zeabur.app loads successfully
+  - [ ] https://kcislk-infohub.zeabur.app loads successfully
   - [ ] SSL certificate valid
   - [ ] No security warnings
   - [ ] Application renders correctly
 
 - [ ] **Health Checks**
   ```bash
-  curl https://kcislk-esid.zeabur.app/api/health
+  curl https://kcislk-infohub.zeabur.app/api/health
   ```
   - [ ] Health endpoint returns 200 OK
   - [ ] Database status: connected
@@ -223,7 +223,7 @@ GOOGLE_ANALYTICS_ID=your-ga-id
 
 ### ✅ OAuth Flow Testing
 - [ ] **Login Process**
-  - [ ] Navigate to: https://kcislk-esid.zeabur.app/login
+  - [ ] Navigate to: https://kcislk-infohub.zeabur.app/login
   - [ ] "Login with Google" button visible and functional
   - [ ] Click triggers redirect to Google OAuth
 
@@ -355,7 +355,7 @@ GOOGLE_ANALYTICS_ID=your-ga-id
 
 **✅ Deployment is successful when all these conditions are met:**
 
-1. **Accessibility**: https://kcislk-esid.zeabur.app is fully accessible to users
+1. **Accessibility**: https://kcislk-infohub.zeabur.app is fully accessible to users
 2. **Authentication**: Google OAuth login works without errors for school community
 3. **User Management**: New users are automatically created with correct role assignment
 4. **Core Features**: All main features (Events, Resources, Admin) are functional
@@ -392,5 +392,5 @@ ___________________________________________________
 
 *Checklist Version: 1.0*  
 *Last Updated: 2025-08-07*  
-*Target Domain: https://kcislk-esid.zeabur.app*  
+*Target Domain: https://kcislk-infohub.zeabur.app*  
 *Project: KCISLK ESID Info Hub*

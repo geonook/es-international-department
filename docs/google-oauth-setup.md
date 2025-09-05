@@ -54,7 +54,7 @@ http://localhost:3000/api/auth/callback/google
 **生產環境**
 ```
 https://your-domain.com/api/auth/callback/google
-https://kcislk-esid.zeabur.app/api/auth/callback/google
+https://kcislk-infohub.zeabur.app/api/auth/callback/google
 ```
 
 ### 4. 環境變數配置
@@ -68,7 +68,7 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
 # 確保設定正確的 URL
 NEXTAUTH_URL="http://localhost:3000"  # 開發環境
-# NEXTAUTH_URL="https://kcislk-esid.zeabur.app"  # 生產環境
+# NEXTAUTH_URL="https://kcislk-infohub.zeabur.app"  # 生產環境
 ```
 
 ## 🧪 測試流程 | Testing Workflow
@@ -165,7 +165,7 @@ NEXTAUTH_URL=http://localhost:3000
 # 生產環境
 GOOGLE_CLIENT_ID=your-prod-client-id
 GOOGLE_CLIENT_SECRET=your-prod-client-secret
-NEXTAUTH_URL=https://kcislk-esid.zeabur.app
+NEXTAUTH_URL=https://kcislk-infohub.zeabur.app
 ```
 
 ---

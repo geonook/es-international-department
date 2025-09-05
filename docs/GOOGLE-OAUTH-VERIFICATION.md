@@ -18,7 +18,7 @@
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_secret": "GOCSPX-[REDACTED]",
     "redirect_uris": [
-      "https://kcislk-esid.zeabur.app/api/auth/callback/google"
+      "https://kcislk-infohub.zeabur.app/api/auth/callback/google"
     ]
   }
 }
@@ -30,7 +30,7 @@
 - [x] **Client ID Format**: ✅ Valid Google format ending with `.apps.googleusercontent.com`
 - [x] **Client Secret Format**: ✅ Valid GOCSPX- format
 - [x] **Project ID**: ✅ `kcislk-esid-info-hub` matches our project
-- [x] **Redirect URI**: ✅ `https://kcislk-esid.zeabur.app/api/auth/callback/google` matches deployment domain
+- [x] **Redirect URI**: ✅ `https://kcislk-infohub.zeabur.app/api/auth/callback/google` matches deployment domain
 
 ### 2. Google Cloud Console Requirements | Google Cloud Console 要求
 
@@ -43,7 +43,7 @@ App Information:
 ✅ App logo: (School logo recommended)
 
 Authorized Domains:
-✅ kcislk-esid.zeabur.app
+✅ kcislk-infohub.zeabur.app
 
 Scopes:
 ✅ openid
@@ -62,10 +62,10 @@ Name:
 ✅ KCISLK ESID Production OAuth
 
 Authorized JavaScript Origins:
-✅ https://kcislk-esid.zeabur.app
+✅ https://kcislk-infohub.zeabur.app
 
 Authorized Redirect URIs:
-✅ https://kcislk-esid.zeabur.app/api/auth/callback/google
+✅ https://kcislk-infohub.zeabur.app/api/auth/callback/google
 ```
 
 ### 3. Security Verification | 安全驗證
@@ -105,15 +105,15 @@ APIs Enabled: ✅ Google+ API, Google People API
 # Check consent screen configuration
 User Type: External (for public access)
 Publishing Status: Should be "Published" for production use
-Domain Verification: kcislk-esid.zeabur.app should be verified
+Domain Verification: kcislk-infohub.zeabur.app should be verified
 ```
 
 ### Step 3: OAuth Client Verification
 ```bash
 # Verify OAuth 2.0 Client ID configuration
 Client Type: Web application
-Authorized Origins: https://kcislk-esid.zeabur.app
-Authorized Redirect URIs: https://kcislk-esid.zeabur.app/api/auth/callback/google
+Authorized Origins: https://kcislk-infohub.zeabur.app
+Authorized Redirect URIs: https://kcislk-infohub.zeabur.app/api/auth/callback/google
 ```
 
 ## 🧪 Testing Checklist | 測試檢查清單
@@ -136,9 +136,9 @@ Authorized Redirect URIs: https://kcislk-esid.zeabur.app/api/auth/callback/googl
 ```
 Error: The redirect URI in the request does not match
 Solution: Ensure exact match in Google Console:
-✅ https://kcislk-esid.zeabur.app/api/auth/callback/google
-❌ https://kcislk-esid.zeabur.app/api/auth/callback/google/
-❌ http://kcislk-esid.zeabur.app/api/auth/callback/google
+✅ https://kcislk-infohub.zeabur.app/api/auth/callback/google
+❌ https://kcislk-infohub.zeabur.app/api/auth/callback/google/
+❌ http://kcislk-infohub.zeabur.app/api/auth/callback/google
 ```
 
 ### Issue: invalid_client
@@ -154,7 +154,7 @@ Solution: Verify environment variables are set correctly:
 Error: User denied access or consent screen issues
 Solution: Check OAuth consent screen configuration:
 - Ensure app is published (not in testing)
-- Verify authorized domains include kcislk-esid.zeabur.app
+- Verify authorized domains include kcislk-infohub.zeabur.app
 - Check scopes are properly configured
 ```
 
@@ -213,4 +213,4 @@ The OAuth configuration is complete and ready for production use. All security r
 
 *Verification completed: 2025-08-07*  
 *OAuth Status: ✅ Production Ready*  
-*Domain: https://kcislk-esid.zeabur.app*
+*Domain: https://kcislk-infohub.zeabur.app*

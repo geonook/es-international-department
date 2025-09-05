@@ -3,7 +3,7 @@
 
 > **⚡ QUICK START - Get production OAuth running in 15 minutes**  
 > **快速開始 - 15分鐘內讓生產環境 OAuth 運行**  
-> **Target**: https://landing-app-v2.zeabur.app
+> **Target**: https://next14-landing.zeabur.app
 
 ## 🚀 5-Step Quick Setup
 
@@ -25,10 +25,10 @@ openssl rand -base64 32
 4. **OAuth Consent Screen**: 
    - App name: `KCISLK ESID Info Hub`
    - User support email: `esid@kcislk.ntpc.edu.tw`
-   - Authorized domains: `landing-app-v2.zeabur.app`
+   - Authorized domains: `next14-landing.zeabur.app`
 5. **Create OAuth Client**:
    - Type: Web application
-   - Authorized redirect URIs: `https://landing-app-v2.zeabur.app/api/auth/callback/google`
+   - Authorized redirect URIs: `https://next14-landing.zeabur.app/api/auth/callback/google`
    - **Save Client ID and Secret**
 
 ### Step 3: Zeabur Environment Variables (3 minutes)
@@ -37,12 +37,12 @@ openssl rand -base64 32
 **Add these variables**:
 ```bash
 NODE_ENV=production
-NEXTAUTH_URL=https://landing-app-v2.zeabur.app
+NEXTAUTH_URL=https://next14-landing.zeabur.app
 JWT_SECRET=<your-generated-jwt-secret>
 NEXTAUTH_SECRET=<your-generated-nextauth-secret>
 GOOGLE_CLIENT_ID=<your-google-client-id.apps.googleusercontent.com>
 GOOGLE_CLIENT_SECRET=<GOCSPX-your-google-client-secret>
-ALLOWED_ORIGINS=https://landing-app-v2.zeabur.app
+ALLOWED_ORIGINS=https://next14-landing.zeabur.app
 ```
 
 ### Step 4: Deploy and Test (3 minutes)
@@ -56,7 +56,7 @@ git push origin main
 ```
 
 ### Step 5: Verify OAuth Works (2 minutes)
-1. **Visit**: https://landing-app-v2.zeabur.app/login
+1. **Visit**: https://next14-landing.zeabur.app/login
 2. **Click**: "Login with Google"
 3. **Complete**: Google OAuth flow
 4. **Verify**: Successfully logged in and redirected
@@ -75,10 +75,10 @@ npm run verify:production
 ### Manual Test
 ```bash
 # Test HTTPS connection
-curl -I https://landing-app-v2.zeabur.app
+curl -I https://next14-landing.zeabur.app
 
 # Test OAuth endpoint
-curl -I https://landing-app-v2.zeabur.app/api/auth/google
+curl -I https://next14-landing.zeabur.app/api/auth/google
 ```
 
 ## 🚨 Troubleshooting Quick Fixes
@@ -86,7 +86,7 @@ curl -I https://landing-app-v2.zeabur.app/api/auth/google
 ### Issue: "redirect_uri_mismatch"
 **Fix**: In Google Console, ensure redirect URI is exactly:
 ```
-https://landing-app-v2.zeabur.app/api/auth/callback/google
+https://next14-landing.zeabur.app/api/auth/callback/google
 ```
 
 ### Issue: "invalid_client"
@@ -95,7 +95,7 @@ https://landing-app-v2.zeabur.app/api/auth/callback/google
 - `GOOGLE_CLIENT_SECRET` (starts with GOCSPX-)
 
 ### Issue: "HTTPS required"
-**Fix**: Ensure `NEXTAUTH_URL=https://landing-app-v2.zeabur.app` (with https://)
+**Fix**: Ensure `NEXTAUTH_URL=https://next14-landing.zeabur.app` (with https://)
 
 ### Issue: "Configuration invalid"
 **Fix**: Run validation script:
@@ -106,7 +106,7 @@ npm run validate:oauth-production
 ## ✅ Success Checklist
 
 **Your OAuth is working when**:
-- [ ] ✅ Login page loads: https://landing-app-v2.zeabur.app/login
+- [ ] ✅ Login page loads: https://next14-landing.zeabur.app/login
 - [ ] ✅ Google OAuth button works
 - [ ] ✅ OAuth redirects to Google successfully  
 - [ ] ✅ After Google login, redirects back to app

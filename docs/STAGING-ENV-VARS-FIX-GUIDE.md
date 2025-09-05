@@ -8,8 +8,8 @@
 ## 🚨 問題診斷
 
 ### 當前問題：
-1. ❌ **NEXTAUTH_URL**: `https://staging.your-domain.com` (錯誤的佔位符域名)
-2. ❌ **ALLOWED_ORIGINS**: `https://staging.your-domain.com` (錯誤的佔位符域名)  
+1. ❌ **NEXTAUTH_URL**: `https://next14-landing.zeabur.app` (錯誤的佔位符域名)
+2. ❌ **ALLOWED_ORIGINS**: `https://next14-landing.zeabur.app` (錯誤的佔位符域名)  
 3. ❌ **DATABASE_URL**: `postgres://user:password@zeabur-db.com:5432/db?schema=es_staging` (錯誤的佔位符連線)
 
 ### 實際需要：
@@ -76,13 +76,13 @@ PARENTS_CORNER_HOST=service-68b855cbfac0a26fd56c4596
 
    **NEXTAUTH_URL:**
    ```
-   從: https://staging.your-domain.com  
+   從: https://next14-landing.zeabur.app  
    改為: https://next14-landing.zeabur.app
    ```
 
    **ALLOWED_ORIGINS:**
    ```
-   從: https://staging.your-domain.com
+   從: https://next14-landing.zeabur.app
    改為: https://next14-landing.zeabur.app  
    ```
 
@@ -168,8 +168,8 @@ curl https://next14-landing.zeabur.app/api/health
 
 | 變數名稱 | 原始值 | 修正值 | 狀態 |
 |---------|-------|-------|------|
-| NEXTAUTH_URL | `https://staging.your-domain.com` | `https://next14-landing.zeabur.app` | 🔧 必須修改 |
-| ALLOWED_ORIGINS | `https://staging.your-domain.com` | `https://next14-landing.zeabur.app` | 🔧 必須修改 |  
+| NEXTAUTH_URL | `https://next14-landing.zeabur.app` | `https://next14-landing.zeabur.app` | 🔧 必須修改 |
+| ALLOWED_ORIGINS | `https://next14-landing.zeabur.app` | `https://next14-landing.zeabur.app` | 🔧 必須修改 |  
 | DATABASE_URL | 佔位符連線字串 | 實際 PostgreSQL 連線 | 🔧 必須修改 |
 | NODE_ENV | `staging` | `staging` | ✅ 保持不變 |
 | EMAIL_PROVIDER | `disabled` | `disabled` | ✅ 保持不變 |

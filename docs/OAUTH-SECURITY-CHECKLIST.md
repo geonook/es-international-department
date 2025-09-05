@@ -3,8 +3,8 @@
 
 > **🔒 SECURITY-FIRST DEPLOYMENT GUIDE**  
 > **以安全為優先的部署指南**  
-> **Production Domain**: https://kcislk-esid.zeabur.app  
-> **OAuth Callback**: https://kcislk-esid.zeabur.app/api/auth/callback/google
+> **Production Domain**: https://kcislk-infohub.zeabur.app  
+> **OAuth Callback**: https://kcislk-infohub.zeabur.app/api/auth/callback/google
 
 ## 🎯 Overview | 概述
 
@@ -19,8 +19,8 @@ This checklist ensures that your Google OAuth implementation meets enterprise-le
 #### Google Cloud Console Security
 - [ ] **Separate Production Project**: Created dedicated Google Cloud project for production
 - [ ] **OAuth Consent Screen**: Configured with correct domain and contact information
-- [ ] **Authorized Domains**: Only `kcislk-esid.zeabur.app` listed in authorized domains
-- [ ] **Exact Redirect URIs**: Only `https://kcislk-esid.zeabur.app/api/auth/callback/google` configured
+- [ ] **Authorized Domains**: Only `kcislk-infohub.zeabur.app` listed in authorized domains
+- [ ] **Exact Redirect URIs**: Only `https://kcislk-infohub.zeabur.app/api/auth/callback/google` configured
 - [ ] **No Development URLs**: Removed all localhost and development URLs from production OAuth app
 - [ ] **API Quotas**: Verified sufficient quotas for expected production load
 - [ ] **App Verification**: OAuth consent screen approved for public use (if external)
@@ -37,7 +37,7 @@ This checklist ensures that your Google OAuth implementation meets enterprise-le
 #### HTTPS and Transport Security
 - [ ] **HTTPS Enforced**: All production traffic uses HTTPS
 - [ ] **HTTP Redirects**: HTTP traffic automatically redirects to HTTPS
-- [ ] **NEXTAUTH_URL**: Set to `https://kcislk-esid.zeabur.app` (no trailing slash)
+- [ ] **NEXTAUTH_URL**: Set to `https://kcislk-infohub.zeabur.app` (no trailing slash)
 - [ ] **Secure Cookies**: Cookies marked as secure and httpOnly
 - [ ] **HSTS Headers**: HTTP Strict Transport Security enabled
 - [ ] **Valid SSL Certificate**: SSL certificate is valid and trusted
@@ -123,7 +123,7 @@ npm run test:env-validation
 
 #### OAuth Flow Testing
 1. **Test Normal Flow**
-   - Visit: https://kcislk-esid.zeabur.app/login
+   - Visit: https://kcislk-infohub.zeabur.app/login
    - Complete Google OAuth
    - Verify proper redirect and session creation
 
@@ -140,7 +140,7 @@ npm run test:env-validation
 #### Security Headers Testing
 ```bash
 # Test security headers
-curl -I https://kcislk-esid.zeabur.app
+curl -I https://kcislk-infohub.zeabur.app
 
 # Check for required headers:
 # - Strict-Transport-Security

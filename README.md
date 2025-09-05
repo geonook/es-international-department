@@ -97,7 +97,7 @@ KCISLK ESID Info Hub 是一個全面的微服務架構應用程式生態系統�
 ```
 KCISLK ESID Ecosystem
 ├── 🏢 Main Application (This Repository)
-│   ├── URL: https://kcislk-esid.zeabur.app
+│   ├── URL: https://kcislk-infohub.zeabur.app
 │   ├── Port: 3001 (Development)
 │   └── Features: Admin system, OAuth, User management
 ├── 🌍 Parents' Corner (Separate Repository)
