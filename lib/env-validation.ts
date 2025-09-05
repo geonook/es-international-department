@@ -38,7 +38,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1, 'GOOGLE_CLIENT_SECRET is required for OAuth authentication'),
   
   // Email Service configuration (choose one)
-  EMAIL_PROVIDER: z.enum(['smtp', 'gmail', 'sendgrid', 'aws-ses']).default('smtp'),
+  EMAIL_PROVIDER: z.enum(['smtp', 'gmail', 'sendgrid', 'aws-ses', 'disabled']).default('disabled'),
   
   // SMTP configuration (required when EMAIL_PROVIDER = 'smtp')
   SMTP_HOST: z.string().optional(),
@@ -90,6 +90,11 @@ const envSchema = z.object({
 // Custom validation rules
 const validateEmailProvider = (data: any) => {
   const provider = data.EMAIL_PROVIDER
+  
+  // Skip validation when email service is disabled
+  if (provider === 'disabled') {
+    return true
+  }
   
   switch (provider) {
     case 'smtp':
