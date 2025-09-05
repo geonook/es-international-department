@@ -7,6 +7,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/settings
  * 獲取系統設定 - 支援前綴過濾和管理員存取

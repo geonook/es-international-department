@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Feedback Forms Management API - /api/admin/feedback
  * 回饋表單管理系統 API

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+
 /**
  * Teacher Reminders Public API - /api/teachers/reminders
  * 教師提醒公開 API

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireApiAuth, getSearchParams, parsePaginationParams, createApiErrorResponse, createApiSuccessResponse } from '@/lib/auth-utils'
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+
 /**
  * Events Calendar API - GET /api/events/calendar
  * Events Calendar API - Get calendar formatted event data

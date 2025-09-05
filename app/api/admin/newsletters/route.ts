@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Newsletter Management API - /api/admin/newsletters
  * 新聞簡報管理系統 API

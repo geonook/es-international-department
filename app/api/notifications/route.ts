@@ -10,6 +10,8 @@ import {
   NotificationPriority 
 } from '@/lib/types'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Notifications API - /api/notifications
  * Notification System API

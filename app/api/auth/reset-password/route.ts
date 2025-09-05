@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { hashPassword } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * POST /api/auth/reset-password
  * Reset user password with token

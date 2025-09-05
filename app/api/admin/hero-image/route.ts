@@ -10,6 +10,8 @@ import { uploadFile } from '@/lib/fileUpload'
 import fs from 'fs'
 import path from 'path'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/admin/hero-image
  * 獲取當前主視覺圖片設定

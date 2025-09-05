@@ -8,6 +8,8 @@ import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
+export const dynamic = 'force-dynamic'
+
 // Resource creation/update schema
 const resourceSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255),

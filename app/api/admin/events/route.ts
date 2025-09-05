@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
 import { EventFormData, EventStats } from '@/lib/types'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Admin Events API - GET /api/admin/events
  * Administrator event API - Get event list

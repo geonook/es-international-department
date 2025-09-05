@@ -10,6 +10,8 @@ import { prisma } from '@/lib/prisma'
 import { withCache, cacheInvalidation, CACHE_TTL } from '@/lib/cache'
 import { performance } from 'perf_hooks'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/admin/announcements
  * Get all announcements (including drafts) - Admin only

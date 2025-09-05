@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/middleware'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/admin/users
  * 獲取所有使用者列表 (管理員專用)

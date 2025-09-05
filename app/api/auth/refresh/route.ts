@@ -11,6 +11,8 @@ import {
   AUTH_ERRORS 
 } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * POST /api/auth/refresh
  * Use refresh token to get new access token

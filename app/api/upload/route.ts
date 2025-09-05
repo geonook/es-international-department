@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { uploadFile, UploadOptions } from '@/lib/fileUpload'
 
+export const dynamic = 'force-dynamic'
+
 // API 設定
 const MAX_FILES_PER_REQUEST = 10
 const MAX_REQUEST_SIZE = 50 * 1024 * 1024 // 50MB

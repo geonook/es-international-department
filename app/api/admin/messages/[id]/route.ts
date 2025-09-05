@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Message Board Post Details API - /api/admin/messages/[id]
  * 訊息公告板詳情 API

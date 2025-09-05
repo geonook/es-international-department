@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/middleware'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/admin/users/[id]
  * 獲取單一使用者詳細資訊 (管理員專用)

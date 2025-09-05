@@ -8,6 +8,8 @@ import { verifyJWT } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { hasPermission } from '@/lib/rbac'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/admin/upgrade-requests
  * Get all permission upgrade requests (admin only)
