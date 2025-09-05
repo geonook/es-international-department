@@ -10,8 +10,8 @@ RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /src
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
+# Copy package files and pnpm config
+COPY package.json pnpm-lock.yaml* .pnpmrc ./
 
 # Install pnpm and dependencies
 RUN npm install -g pnpm && pnpm install
@@ -20,7 +20,8 @@ RUN npm install -g pnpm && pnpm install
 COPY . .
 
 # Generate Prisma client without database connection
-RUN pnpm run db:generate
+# Use verbose flag for debugging
+RUN pnpm run db:generate --verbose
 
 # Build the application
 RUN pnpm run build
@@ -43,6 +44,7 @@ RUN chown -R nextjs:nodejs /src
 # Copy built application and dependencies with correct ownership
 COPY --from=builder --chown=nextjs:nodejs /src/package.json ./
 COPY --from=builder --chown=nextjs:nodejs /src/pnpm-lock.yaml* ./
+COPY --from=builder --chown=nextjs:nodejs /src/.pnpmrc ./
 COPY --from=builder --chown=nextjs:nodejs /src/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /src/public ./public
 COPY --from=builder --chown=nextjs:nodejs /src/prisma ./prisma

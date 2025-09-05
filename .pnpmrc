@@ -1,0 +1,20 @@
+# PNPM Configuration for KCISLK ESID Info Hub
+# 允許必要的建置腳本執行以支援 Prisma 和其他工具
+
+# Enable build scripts for essential packages
+enable-pre-post-scripts=true
+
+# Allow build scripts for Prisma (critical for client generation)
+@prisma:registry=https://registry.npmjs.org/
+@prisma/client:registry=https://registry.npmjs.org/
+@prisma/engines:registry=https://registry.npmjs.org/
+
+# Allow build scripts for other essential packages
+enable-build-script-for=@prisma/client,@prisma/engines,prisma,puppeteer,sharp,esbuild
+
+# Performance optimizations
+strict-peer-dependencies=false
+auto-install-peers=true
+
+# Security settings - only allow build scripts for trusted packages
+unsafe-perm=false
