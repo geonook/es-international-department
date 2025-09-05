@@ -27,25 +27,36 @@ export const GOOGLE_OAUTH_CONFIG = {
     return getEnvVar('GOOGLE_CLIENT_SECRET')
   },
   get redirectUri() {
-    // 更強健的環境檢測 - 防止 localhost 重定向問題
+    // 強化的環境檢測 - 優先使用環境變數，防止 localhost 重定向問題
     let nextAuthUrl = process.env.NEXTAUTH_URL
     
-    // 如果沒有設定環境變數，根據環境推斷正確的 URL
+    // 如果設定了環境變數，直接使用（最高優先級）
+    if (nextAuthUrl) {
+      // 確保不是意外的 localhost URL（除非是開發環境）
+      if (nextAuthUrl.includes('localhost') && process.env.NODE_ENV !== 'development') {
+        console.warn('⚠️ NEXTAUTH_URL contains localhost in non-development environment:', nextAuthUrl)
+        nextAuthUrl = null // 強制使用fallback邏輯
+      }
+    }
+    
+    // 如果沒有設定環境變數或需要fallback，根據環境推斷正確的 URL
     if (!nextAuthUrl) {
-      if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
-        // 生產和 staging 環境域名檢測
-        if (process.env.VERCEL_URL) {
-          nextAuthUrl = `https://${process.env.VERCEL_URL}`
-        } else {
-          // Zeabur staging 環境 - 防止回退到 localhost
-          nextAuthUrl = 'https://next14-landing.zeabur.app'
-        }
+      if (process.env.NODE_ENV === 'production') {
+        // 生產環境 - 使用生產域名
+        nextAuthUrl = 'https://kcislk-infohub.zeabur.app'
+      } else if (process.env.NODE_ENV === 'staging') {
+        // Staging 環境 - 使用staging域名
+        nextAuthUrl = 'https://next14-landing.zeabur.app'
+      } else if (process.env.VERCEL_URL) {
+        // Vercel 部署環境
+        nextAuthUrl = `https://${process.env.VERCEL_URL}`
       } else {
-        // 僅在開發環境使用 localhost
+        // 開發環境使用 localhost
         nextAuthUrl = 'http://localhost:3001'
       }
     }
     
+    console.log(`🔍 OAuth Redirect URI resolved to: ${nextAuthUrl}/api/auth/callback/google`)
     return `${nextAuthUrl}/api/auth/callback/google`
   },
   scopes: [

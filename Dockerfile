@@ -56,11 +56,11 @@ RUN npm install -g pnpm
 # Switch to non-root user
 USER nextjs
 
-EXPOSE 8080
+EXPOSE ${PORT:-8080}
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/api/health || exit 1
+  CMD curl -f http://localhost:${PORT:-8080}/api/health || exit 1
 
 # Runtime command - generate Prisma client and start
 CMD ["sh", "-c", "pnpm run db:generate && pnpm run start"]
