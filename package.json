@@ -77,7 +77,10 @@
     "test:api-health": "tsx scripts/api-health-test.ts",
     "test:api-quick": "tsx scripts/quick-health-check.ts",
     "test:api-summary": "tsx scripts/api-health-summary.ts",
-    "create:test-data": "node scripts/create-test-data.js"
+    "create:test-data": "node scripts/create-test-data.js",
+    "env:monitor": "tsx scripts/environment-monitor.ts",
+    "env:monitor:start": "tsx scripts/environment-monitor.ts --interval=30000",
+    "env:monitor:fast": "tsx scripts/environment-monitor.ts --interval=10000"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
