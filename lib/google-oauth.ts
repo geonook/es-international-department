@@ -27,7 +27,25 @@ export const GOOGLE_OAUTH_CONFIG = {
     return getEnvVar('GOOGLE_CLIENT_SECRET')
   },
   get redirectUri() {
-    const nextAuthUrl = process.env.NEXTAUTH_URL || 'http://localhost:3001'
+    // 更強健的環境檢測 - 防止 localhost 重定向問題
+    let nextAuthUrl = process.env.NEXTAUTH_URL
+    
+    // 如果沒有設定環境變數，根據環境推斷正確的 URL
+    if (!nextAuthUrl) {
+      if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
+        // 生產和 staging 環境域名檢測
+        if (process.env.VERCEL_URL) {
+          nextAuthUrl = `https://${process.env.VERCEL_URL}`
+        } else {
+          // Zeabur staging 環境 - 防止回退到 localhost
+          nextAuthUrl = 'https://next14-landing.zeabur.app'
+        }
+      } else {
+        // 僅在開發環境使用 localhost
+        nextAuthUrl = 'http://localhost:3001'
+      }
+    }
+    
     return `${nextAuthUrl}/api/auth/callback/google`
   },
   scopes: [
