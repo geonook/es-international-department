@@ -1,7 +1,7 @@
 # CLAUDE.md - KCISLK ESID Info Hub
 # KCISLK ESID Info Hub - Claude Code 開發指導文件
 
-> **Documentation Version**: 1.4 | **文件版本**: 1.4  
+> **Documentation Version**: 1.5 | **文件版本**: 1.5  
 > **Last Updated**: 2025-09-05 | **最後更新**: 2025-09-05  
 > **Project**: KCISLK ESID Info Hub | **專案**: KCISLK ESID Info Hub  
 > **Description**: KCISLK ESID Info Hub - Information service website for parents and teachers of KCISLK Elementary School International Department, providing the latest educational resources, event information, and communication tools.  
@@ -231,9 +231,12 @@ npm run env:monitor:start       # Start monitoring (30s interval) | 啟動監控
 npm run env:monitor:fast        # Start monitoring (10s interval) | 啟動監控（10秒間隔）
 
 # Zeabur Cloud Testing | Zeabur 雲端測試
-# Current deployment: https://landing-app-v2.zeabur.app
-# Google OAuth system ready for configuration and testing
-# OAuth testing interface: http://localhost:3000/test-oauth (dev)
+
+# Multi-Environment Deployments | 多環境部署
+# Staging Environment: https://next14-landing.zeabur.app
+# Production Environment: https://kcislk-infohub.zeabur.app  
+# Google OAuth system configured for both environments
+# OAuth testing interface: http://localhost:3001/test-oauth (dev)
 
 # Git workflow | Git 工作流程
 git add .                           # 暫存所有變更

@@ -1,0 +1,246 @@
+# 🚨 緊急 Production 環境修復指南
+## Emergency Production Environment Fix Guide
+
+**狀態**: CRITICAL - 需要立即處理  
+**影響**: Production 環境資料庫連接失敗  
+**預估修復時間**: 15-30分鐘  
+**風險等級**: HIGH - 影響正式用戶  
+
+---
+
+## 📊 **問題分析總結**
+
+### **🔍 根本原因確認**
+1. **資料庫配置錯誤**: Zeabur production 環境變數中的 `DATABASE_URL` 可能指向錯誤的資料庫名稱
+2. **資料庫結構缺失**: Production 資料庫 (`zeabur`) 缺少應用程式所需的表格結構
+3. **遷移未執行**: 需要運行 `prisma migrate deploy` 來建立資料庫結構
+
+### **🚨 當前狀況**
+- ✅ Production 網站首頁可訪問 (https://kcislk-infohub.zeabur.app)  
+- ❌ API 健康檢查失敗 (503 Service Unavailable)
+- ❌ 資料庫連接失敗 (Database connection unhealthy)
+- ⚠️ 所有需要資料庫的功能都無法正常運作
+
+---
+
+## 🎯 **立即修復步驟**
+
+### **Step 1: 檢查 Zeabur 控制台配置**
+
+**1.1 登入 Zeabur 控制台**
+```
+1. 前往 https://zeabur.com
+2. 登入您的帳戶
+3. 找到 production 服務 (landing-app-v2 或類似名稱)
+```
+
+**1.2 當前錯誤配置確認**
+```env
+❌ 當前錯誤的 Production 環境變數:
+DATABASE_URL=postgres://user:password@localhost:5432/db
+JWT_SECRET=1234567890abcdefghijklmnopqrstuvwxyz123456
+SMTP_HOST=smtp.example.com
+SMTP_USER=test@example.com
+SMTP_PASS=testpassword
+GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET=YOUR_GOOGLE_CLIENT_SECRET
+```
+
+**🚨 問題分析**:
+- `DATABASE_URL` 指向 localhost，在 Zeabur 上無法存取
+- `JWT_SECRET` 使用測試用假密鑰，安全性極差
+- `SMTP_*` 都是示例配置，無法發送郵件
+- 缺少必要的 `NEXTAUTH_*` 配置
+
+### **Step 2: 更新 Zeabur 環境變數**
+
+**2.1 完整的正確環境變數列表**
+```env
+# ==========================================
+# 基礎配置 (CRITICAL)
+# ==========================================
+NODE_ENV=production
+NEXTAUTH_URL=https://kcislk-infohub.zeabur.app
+NEXTAUTH_SECRET=WtDE420rcUJjy7S1Fz6i2+Sksp/gHDq1v7wzkGSRqsE=
+
+# ==========================================
+# 資料庫配置 (CRITICAL FIX)
+# ==========================================
+DATABASE_URL=postgresql://root:p356lGH1k4Kd7zefirJ0YSV8MC29ygON@tpe1.clusters.zeabur.com:32312/zeabur
+
+# ==========================================
+# 安全配置 (CRITICAL FIX)
+# ==========================================
+JWT_SECRET=yVVJWVI6c3VjLKY0X6vNnaTRJVxHHu1zEvYaYWvwAAI=
+ALLOWED_ORIGINS=https://kcislk-infohub.zeabur.app
+RATE_LIMIT_MAX_REQUESTS=100
+RATE_LIMIT_WINDOW_MS=900000
+
+# ==========================================
+# OAuth 配置 (使用您現有的)
+# ==========================================
+GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET=YOUR_GOOGLE_CLIENT_SECRET
+
+# ==========================================
+# 系統配置
+# ==========================================
+PRISMA_CLI_TELEMETRY_DISABLED=1
+```
+
+**2.2 在 Zeabur 控制台中逐一更新**:
+1. 進入 production 服務設定
+2. 找到 "Environment Variables" 或"環境變數" 設定
+3. **刪除或更新錯誤的變數**:
+   - 更新 `DATABASE_URL`
+   - 更新 `JWT_SECRET`  
+   - 移除錯誤的 `SMTP_*` 變數 (暫時)
+4. **添加缺失的變數**:
+   - `NEXTAUTH_URL`
+   - `NEXTAUTH_SECRET`
+   - `ALLOWED_ORIGINS`
+   - `RATE_LIMIT_*`
+   - `NODE_ENV`
+   - `PRISMA_CLI_TELEMETRY_DISABLED`
+5. 儲存所有變更
+
+**2.3 重啟服務**:
+1. 在 Zeabur 控制台重啟 production 服務
+2. 等待重新部署完成 (約 2-3 分鐘)
+
+### **Step 3: 執行資料庫遷移**
+
+**⚠️ CRITICAL WARNING**: 以下操作會修改 production 資料庫結構
+
+**選項 A: 使用 Zeabur 控制台 (推薦)**
+```bash
+1. 在 Zeabur 服務的 "Console" 或 "終端" 中執行:
+npx prisma migrate deploy
+
+2. 如果成功，應該看到:
+✅ Applied migration 20250731062256_init
+✅ Applied migration performance-indexes
+```
+
+**選項 B: 從本地執行 (需要確認安全)**
+```bash
+# 僅在確認本地 .env 配置正確後執行
+npm run db:migrate:production
+```
+
+### **Step 4: 驗證修復結果**
+
+**4.1 檢查 API 健康狀態**
+```bash
+curl https://kcislk-infohub.zeabur.app/api/health
+
+# 預期結果:
+{
+  "status": "HEALTHY",
+  "checks": {
+    "database": "✅",
+    "cache": "✅",
+    "memory": "✅"
+  }
+}
+```
+
+**4.2 測試主要功能**
+1. 訪問 https://kcislk-infohub.zeabur.app
+2. 測試登入功能
+3. 檢查資料載入是否正常
+4. 驗證後台管理功能
+
+---
+
+## 🛡️ **安全檢查清單**
+
+### **修復前檢查**
+- [ ] 確認正在修改正確的 production 服務
+- [ ] 備份當前 Zeabur 環境變數設定 (截圖)
+- [ ] 確認有權限進行 production 變更
+- [ ] 通知相關人員即將進行緊急修復
+
+### **修復後驗證**
+- [ ] API 健康檢查返回 "HEALTHY"
+- [ ] 網站主要功能正常運作
+- [ ] 登入/登出功能正常
+- [ ] 資料庫查詢無錯誤
+- [ ] 無新的錯誤日誌產生
+
+---
+
+## 🚀 **預期修復時間表**
+
+| 步驟 | 預估時間 | 累計時間 |
+|------|---------|----------|
+| 檢查 Zeabur 配置 | 3-5 分鐘 | 5 分鐘 |
+| 更新環境變數 | 2-3 分鐘 | 8 分鐘 |
+| 服務重啟 | 2-3 分鐘 | 11 分鐘 |
+| 資料庫遷移 | 3-5 分鐘 | 16 分鐘 |
+| 驗證修復結果 | 5-10 分鐘 | 26 分鐘 |
+
+**總預估時間**: 15-30 分鐘
+
+---
+
+## 🔄 **回滾計劃 (如果修復失敗)**
+
+### **如果環境變數更新導致更嚴重問題**:
+1. 立即恢復原來的 `DATABASE_URL` 設定
+2. 重啟服務回到修復前狀態
+3. 聯繫技術支援進行深入診斷
+
+### **如果資料庫遷移失敗**:
+1. 檢查 Zeabur 服務日誌中的具體錯誤訊息
+2. 確認資料庫權限和連接是否正確
+3. 考慮手動建立資料庫結構
+
+---
+
+## 📞 **緊急聯絡與支援**
+
+### **如果遇到問題時的檢查項目**:
+1. **Zeabur 服務日誌**: 查看詳細錯誤訊息
+2. **資料庫連接**: 確認憑證和網路存取
+3. **環境變數**: 再次確認所有變數正確設定
+4. **服務狀態**: 確認所有相關服務運行中
+
+### **技術支援資源**:
+- Zeabur 官方文檔: https://zeabur.com/docs
+- Prisma 遷移文檔: https://www.prisma.io/docs/concepts/components/prisma-migrate
+- 本專案 `docs/` 資料夾中的其他故障排除指南
+
+---
+
+## 🎯 **修復完成後的後續步驟**
+
+### **立即執行**:
+1. 監控 production 環境 30 分鐘確保穩定
+2. 通知相關人員修復完成
+3. 更新本地 production 配置文檔
+
+### **1週內執行**:
+1. 建立自動化健康檢查和告警系統
+2. 設定資料庫備份和恢復流程
+3. 文檔化這次事件的學習經驗
+
+### **長期優化**:
+1. 實施更嚴格的部署前檢查流程
+2. 建立 staging 環境完整測試程序
+3. 加強 production 環境監控
+
+---
+
+## 📋 **事件記錄**
+
+**問題發現時間**: 2025-09-05 02:14 GMT  
+**問題類型**: 資料庫配置錯誤 + 遷移缺失  
+**影響範圍**: Production 環境所有需要資料庫的功能  
+**根本原因**: 環境變數 `DATABASE_URL` 指向不存在的資料庫名稱  
+
+---
+
+**🚨 URGENT**: 此修復關係到正式營運環境，請謹慎執行每個步驟並確實驗證結果！
+
+*Generated by Claude Code - Emergency Production Fix Guide v1.0*
