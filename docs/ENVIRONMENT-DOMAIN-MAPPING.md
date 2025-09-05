@@ -1,7 +1,7 @@
 # Environment Domain Mapping
 # 環境域名映射表
 
-> **Version**: v1.5.0-stable  
+> **Version**: v1.6.0-stable  
 > **Date**: 2025-09-05  
 > **Purpose**: Unified domain mapping for all environments  
 > **目的**: 統一所有環境的域名映射

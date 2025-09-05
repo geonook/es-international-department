@@ -1,6 +1,6 @@
 {
   "name": "kcislk-esid-info-hub",
-  "version": "0.1.0",
+  "version": "1.6.0",
   "description": "KCISLK ESID Info Hub - Information service website for parents and teachers of KCISLK Elementary School International Department",
   "private": true,
   "scripts": {
