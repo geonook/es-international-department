@@ -12,6 +12,9 @@ import { performHealthCheck } from '@/lib/prisma'
 import { cache } from '@/lib/cache'
 import { performance } from 'perf_hooks'
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const startTime = performance.now()
   
