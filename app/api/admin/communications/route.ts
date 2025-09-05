@@ -64,6 +64,7 @@ export async function GET(request: NextRequest) {
     
     // Query parameters
     const type = searchParams.get('type');
+    const boardType = searchParams.get('boardType'); // 'teachers', 'parents', 'general'
     const search = searchParams.get('search');
     const priority = searchParams.get('priority');
     const isPublic = searchParams.get('isPublic');
@@ -88,6 +89,10 @@ export async function GET(request: NextRequest) {
 
     if (priority) {
       where.priority = priority;
+    }
+
+    if (boardType) {
+      where.boardType = boardType;
     }
 
     if (isPublic !== null) {
@@ -134,6 +139,7 @@ export async function GET(request: NextRequest) {
     const total = await prisma.communication.count({ where });
 
     return NextResponse.json({
+      success: true,
       data: communications,
       pagination: {
         page,
@@ -145,7 +151,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching communications:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch communications' },
+      { success: false, message: 'Failed to fetch communications' },
       { status: 500 }
     );
   }
