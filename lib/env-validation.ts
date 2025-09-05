@@ -13,7 +13,7 @@ import { z } from 'zod'
 // Environment variable validation schema
 const envSchema = z.object({
   // Node environment configuration
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z.enum(['development', 'staging', 'production', 'test']).default('development'),
   PORT: z.string().transform((val) => parseInt(val, 10)).pipe(z.number().min(1).max(65535)).optional(),
   
   // Next.js configuration
@@ -226,8 +226,12 @@ export const env = {
   
   // Check environment
   get isDevelopment() { return this.NODE_ENV === 'development' },
+  get isStaging() { return this.NODE_ENV === 'staging' },
   get isProduction() { return this.NODE_ENV === 'production' },
   get isTest() { return this.NODE_ENV === 'test' },
+  
+  // Production-like environments (staging and production)
+  get isProductionLike() { return this.NODE_ENV === 'staging' || this.NODE_ENV === 'production' },
 }
 
 // Environment variable type export
