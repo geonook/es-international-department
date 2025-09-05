@@ -562,8 +562,8 @@ export type NotificationRecipientType =
   | 'target_audience'       // 目標對象
   | 'grade_level'           // 特定年級
 
-// 通知狀態
-export type NotificationStatus = 'pending' | 'sent' | 'failed' | 'cancelled'
+// 活動通知狀態
+export type EventNotificationStatus = 'pending' | 'sent' | 'failed' | 'cancelled'
 
 // 活動通知介面
 export interface EventNotification {
@@ -575,7 +575,7 @@ export interface EventNotification {
   message: string
   scheduledFor?: Date | string
   sentAt?: Date | string
-  status: NotificationStatus
+  status: EventNotificationStatus
   recipientCount: number
   deliveredCount: number
   errorMessage?: string

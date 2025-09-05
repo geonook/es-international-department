@@ -54,6 +54,7 @@ import TeacherReminderForm from '@/components/admin/TeacherReminderForm'
 import NewsletterForm from '@/components/admin/NewsletterForm'
 import FeedbackForm from '@/components/admin/FeedbackForm'
 import AnnouncementForm from '@/components/AnnouncementForm'
+import CommunicationForm from '@/components/admin/CommunicationForm'
 // Removed: Unified Communications system - replaced with separated Teachers' Corner & Parents' Corner
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
@@ -80,6 +81,22 @@ interface Announcement {
     firstName?: string
     lastName?: string
   }
+}
+
+interface Communication {
+  id: string | number
+  title: string
+  content: string
+  summary?: string
+  type?: 'announcement' | 'message' | 'newsletter' | 'reminder'
+  targetAudience?: 'teachers' | 'parents' | 'all'
+  priority?: 'high' | 'medium' | 'low'
+  status?: 'draft' | 'published' | 'archived'
+  sourceGroup?: string
+  isImportant?: boolean
+  isPinned?: boolean
+  publishedAt?: string
+  expiresAt?: string
 }
 
 interface Event {
@@ -362,15 +379,35 @@ export default function AdminPage() {
   // Fetch dashboard stats
   const fetchDashboardStats = useCallback(async () => {
     try {
-      // Mock stats for now - can be enhanced with real API
+      // Fetch real stats from unified Communication system
+      const response = await fetch('/api/admin/communications', {
+        credentials: 'include'
+      })
+      
+      let activePosts = 0
+      if (response.ok) {
+        const data = await response.json()
+        activePosts = data.pagination?.total || 0
+      } else {
+        // Fallback to old system for compatibility
+        activePosts = announcements.length + events.length
+      }
+      
+      setDashboardStats({
+        totalTeachers: 45,
+        totalParents: 320,
+        activePosts,
+        systemHealth: '98%'
+      })
+    } catch (error) {
+      console.error('Failed to fetch dashboard stats:', error)
+      // Fallback to old system on error
       setDashboardStats({
         totalTeachers: 45,
         totalParents: 320,
         activePosts: announcements.length + events.length,
         systemHealth: '98%'
       })
-    } catch (error) {
-      console.error('Failed to fetch dashboard stats:', error)
     }
   }, [announcements.length, events.length])
 
@@ -460,7 +497,7 @@ export default function AdminPage() {
     try {
       setIsMessageBoardLoading(true)
       setDataLoading(true)
-      const response = await fetch('/api/admin/messages?limit=20', {
+      const response = await fetch('/api/admin/communications?type=message_board&limit=20', {
         credentials: 'include'
       })
       
@@ -778,6 +815,26 @@ export default function AdminPage() {
     setEditingNewsletter(newsletter)
     setShowNewsletterForm(true)
   }
+
+  const handleNewsletterDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this newsletter?')) return
+    try {
+      const response = await fetch(`/api/admin/newsletters/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      if (response.ok) {
+        alert('Newsletter deleted successfully')
+        fetchNewsletters()
+      } else {
+        const error = await response.text()
+        alert(`Failed to delete newsletter: ${error}`)
+      }
+    } catch (error) {
+      console.error('Error deleting newsletter:', error)
+      alert('Failed to delete newsletter')
+    }
+  }
   
   // Announcement handlers
   const handleAnnouncementDelete = async (id: string) => {
@@ -968,7 +1025,7 @@ export default function AdminPage() {
 
     try {
       setDataLoading(true)
-      const response = await fetch(`/api/admin/messages/${messageBoardId}`, {
+      const response = await fetch(`/api/admin/communications/${messageBoardId}`, {
         method: 'DELETE',
         credentials: 'include'
       })
@@ -990,21 +1047,22 @@ export default function AdminPage() {
     try {
       setDataLoading(true)
       
-      // Transform AnnouncementForm data to MessageBoard format
+      // Transform AnnouncementForm data to unified Communication format
       const messageData = {
         title: formData.title,
         content: formData.content,
-        boardType: formData.targetAudience === 'teachers' ? 'teachers' : 
-                   formData.targetAudience === 'parents' ? 'parents' : 'general',
+        type: 'message_board', // Required field for unified Communication API
+        targetAudience: formData.targetAudience || 'all',
         sourceGroup: formData.sourceGroup || null,
+        priority: formData.priority || 'medium',
         isImportant: formData.priority === 'high',
         isPinned: formData.isPinned || false,
-        status: formData.status || 'active'
+        status: formData.status || 'published'
       }
       
       const url = editingMessageBoard 
-        ? `/api/admin/messages/${editingMessageBoard.id}` 
-        : '/api/admin/messages'
+        ? `/api/admin/communications/${editingMessageBoard.id}` 
+        : '/api/admin/communications'
       
       const method = editingMessageBoard ? 'PUT' : 'POST'
       
@@ -1135,7 +1193,7 @@ export default function AdminPage() {
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: 'easeOut',
+        ease: 'easeOut' as const,
       },
     },
   }
@@ -1361,7 +1419,7 @@ export default function AdminPage() {
                   {[
                     { title: 'Total Teachers', value: dashboardStats.totalTeachers.toString(), icon: GraduationCap, color: 'blue' },
                     { title: 'Total Parents', value: dashboardStats.totalParents.toString(), icon: Users, color: 'purple' },
-                    { title: 'Active Posts', value: dashboardStats.activePosts.toString(), icon: MessageSquare, color: 'green' },
+                    { title: 'Total Communications', value: dashboardStats.activePosts.toString(), icon: MessageSquare, color: 'green' },
                     { title: 'System Health', value: dashboardStats.systemHealth, icon: BarChart3, color: 'orange' },
                   ].map((stat, index) => (
                     <motion.div
@@ -1549,7 +1607,7 @@ export default function AdminPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {dataLoading ? (
+                        {isMessageBoardLoading ? (
                           Array.from({ length: 3 }).map((_, index) => (
                             <div key={index} className="p-4 bg-gray-50 rounded-lg animate-pulse">
                               <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
@@ -1557,34 +1615,33 @@ export default function AdminPage() {
                               <div className="h-3 bg-gray-300 rounded w-1/4"></div>
                             </div>
                           ))
-                        ) : announcements.filter(a => a.targetAudience === 'teachers' || a.targetAudience === 'all').length > 0 ? (
-                          announcements
-                            .filter(a => a.targetAudience === 'teachers' || a.targetAudience === 'all')
+                        ) : messageBoardPosts.length > 0 ? (
+                          messageBoardPosts
                             .slice(0, 5)
-                            .map((announcement) => (
+                            .map((post) => (
                               <div
-                                key={announcement.id}
+                                key={post.id}
                                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                               >
                                 <div className="flex-1">
-                                  <h4 className="font-semibold text-gray-900">{announcement.title}</h4>
-                                  <p className="text-sm text-gray-600">{announcement.summary || announcement.content.substring(0, 100) + '...'}</p>
+                                  <h4 className="font-semibold text-gray-900">{post.title}</h4>
+                                  <p className="text-sm text-gray-600">{post.summary || post.content.substring(0, 100) + '...'}</p>
                                   <div className="flex items-center gap-2 mt-2">
                                     <Badge
                                       variant={
-                                        announcement.priority === 'high'
+                                        post.priority === 'high'
                                           ? 'destructive'
-                                          : announcement.priority === 'medium'
+                                          : post.priority === 'medium'
                                           ? 'default'
                                           : 'secondary'
                                       }
                                     >
-                                      {announcement.priority}
+                                      {post.priority}
                                     </Badge>
                                     <Badge variant="outline">
-                                      {announcement.status}
+                                      {post.status}
                                     </Badge>
-                                    <span className="text-xs text-gray-500">{formatDate(announcement.createdAt)}</span>
+                                    <span className="text-xs text-gray-500">{formatDate(post.createdAt)}</span>
                                   </div>
                                 </div>
                                 <div className="flex gap-2">
@@ -1592,8 +1649,8 @@ export default function AdminPage() {
                                     size="sm" 
                                     variant="outline"
                                     onClick={() => {
-                                      setEditingAnnouncement(announcement)
-                                      setShowAnnouncementForm(true)
+                                      setEditingMessageBoard(post)
+                                      setShowMessageBoardForm(true)
                                     }}
                                   >
                                     <Eye className="w-4 h-4" />
@@ -1602,8 +1659,8 @@ export default function AdminPage() {
                                     size="sm" 
                                     variant="outline"
                                     onClick={() => {
-                                      setEditingAnnouncement(announcement)
-                                      setShowAnnouncementForm(true)
+                                      setEditingMessageBoard(post)
+                                      setShowMessageBoardForm(true)
                                     }}
                                   >
                                     <Edit className="w-4 h-4" />
@@ -1611,7 +1668,7 @@ export default function AdminPage() {
                                   <Button 
                                     size="sm" 
                                     variant="outline"
-                                    onClick={() => handleAnnouncementDelete(announcement.id)}
+                                    onClick={() => handleDeleteMessageBoard(post.id)}
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </Button>
@@ -1620,9 +1677,9 @@ export default function AdminPage() {
                             ))
                         ) : (
                           <div className="text-center py-8 text-gray-500">
-                            <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p>No teacher announcements found</p>
-                            <p className="text-sm">Create your first announcement to get started</p>
+                            <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>No message board posts found</p>
+                            <p className="text-sm">Create your first message board post to get started</p>
                           </div>
                         )}
                       </div>
@@ -1650,10 +1707,10 @@ export default function AdminPage() {
                             size="sm" 
                             variant="outline" 
                             className="w-full border-blue-300 text-blue-700 hover:bg-blue-100"
-                            onClick={() => window.location.href = '/admin/documents?category=academic'}
+                            onClick={() => window.open('https://sites.google.com/kcislk.ntpc.edu.tw/esid-teachers/academic-affairs', '_blank')}
                           >
-                            <FileText className="w-3 h-3 mr-2" />
-                            Manage Documents
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            View on Google Sites
                           </Button>
                         </div>
 
@@ -1668,10 +1725,10 @@ export default function AdminPage() {
                             size="sm" 
                             variant="outline" 
                             className="w-full border-green-300 text-green-700 hover:bg-green-100"
-                            onClick={() => window.location.href = '/admin/documents?category=foreign'}
+                            onClick={() => window.open('https://sites.google.com/kcislk.ntpc.edu.tw/esid-teachers/foreign-affairs', '_blank')}
                           >
-                            <FileText className="w-3 h-3 mr-2" />
-                            Manage Documents
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            View on Google Sites
                           </Button>
                         </div>
 
@@ -1686,10 +1743,10 @@ export default function AdminPage() {
                             size="sm" 
                             variant="outline" 
                             className="w-full border-purple-300 text-purple-700 hover:bg-purple-100"
-                            onClick={() => window.location.href = '/admin/documents?category=classroom'}
+                            onClick={() => window.open('https://sites.google.com/kcislk.ntpc.edu.tw/esid-teachers/classroom-affairs', '_blank')}
                           >
-                            <FileText className="w-3 h-3 mr-2" />
-                            Manage Documents
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            View on Google Sites
                           </Button>
                         </div>
                       </div>

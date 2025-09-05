@@ -37,9 +37,10 @@ export async function GET(request: NextRequest) {
     const boardType = searchParams.get('boardType') || 'teachers' // Default to teachers board
     const sourceGroup = searchParams.get('sourceGroup') // Filter by source group
 
-    // Build filter conditions - only show active posts
+    // Build filter conditions - only show published posts
     const where: any = {
-      status: 'active',
+      type: 'message_board', // Filter for message board type
+      status: 'published', // Use 'published' instead of 'active'
       OR: [
         { boardType: boardType },
         { boardType: 'general' } // Teachers can also see general posts
@@ -51,8 +52,8 @@ export async function GET(request: NextRequest) {
       where.sourceGroup = sourceGroup
     }
 
-    // Get active message board posts for teachers
-    const messages = await prisma.messageBoard.findMany({
+    // Get published message board posts for teachers from unified Communication table
+    const messages = await prisma.communication.findMany({
       where,
       include: {
         author: {

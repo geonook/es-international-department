@@ -40,16 +40,31 @@ next-env.d.ts
 # Optional eslint cache
 .eslintcache
 
-# dotenv environment variables file - Zeabur 多環境配置
-# CRITICAL: These files contain sensitive Zeabur database credentials
-.env*
+# Environment Variables - 環境變數配置
+# CRITICAL: These files contain sensitive credentials - DO NOT COMMIT!
+# 重要：這些檔案包含敏感憑證 - 絕對不要提交！
+
+# Active environment file
+.env
+
+# Environment-specific configurations (contain real credentials)
 .env.local
 .env.development
-.env.staging
+.env.staging 
 .env.production
+.env.test
+
+# Next.js local environment files
 .env.development.local
+.env.staging.local
 .env.test.local
 .env.production.local
+
+# Environment backup files
+.env.backup
+.env.*.backup
+
+# Note: .env.example is tracked and should contain only template values
 
 # Zeabur specific configurations
 zeabur.json

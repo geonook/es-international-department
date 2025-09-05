@@ -64,9 +64,12 @@ export async function GET(request: NextRequest) {
       async () => {
         const startTime = performance.now()
         
+        // Add type filter for announcements
+        const announcementWhere = { ...whereClause, type: 'announcement' }
+        
         const [announcements, totalCount] = await Promise.all([
-          prisma.announcement.findMany({
-            where: whereClause,
+          prisma.communication.findMany({
+            where: announcementWhere,
             skip,
             take: limit,
             include: {
@@ -82,7 +85,7 @@ export async function GET(request: NextRequest) {
             },
             orderBy: { createdAt: 'desc' }
           }),
-          prisma.announcement.count({ where: whereClause })
+          prisma.communication.count({ where: announcementWhere })
         ])
         
         const queryTime = performance.now() - startTime
@@ -201,11 +204,12 @@ export async function POST(request: NextRequest) {
     // Create announcement
     const startTime = performance.now()
     
-    const newAnnouncement = await prisma.announcement.create({
+    const newAnnouncement = await prisma.communication.create({
       data: {
         title,
         content,
         summary,
+        type: 'announcement', // Set type for announcements
         targetAudience,
         priority,
         status,

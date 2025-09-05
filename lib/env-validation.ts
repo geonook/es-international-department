@@ -123,8 +123,13 @@ export function validateEnv() {
     // Basic validation
     const parsed = envSchema.parse(process.env)
     
-    // Custom validation
-    validateEmailProvider(parsed)
+    // Skip custom validation if SKIP_ENV_VALIDATION is set
+    if (!process.env.SKIP_ENV_VALIDATION) {
+      // Custom validation
+      validateEmailProvider(parsed)
+    } else {
+      console.log('⏭️  Environment validation skipped (SKIP_ENV_VALIDATION=1)')
+    }
     
     console.log('✅ Environment variables validation passed')
     return parsed

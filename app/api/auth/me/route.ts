@@ -4,10 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import { getCurrentUser, AUTH_ERRORS } from '@/lib/auth'
-
-const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,13 +23,29 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get complete user information from database
+    // Get complete user information from database - OPTIMIZED
+    // Using select to minimize data transfer and prevent N+1 queries
     const user = await prisma.user.findUnique({
       where: { id: currentUser.id },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        displayName: true,
+        phone: true,
+        avatarUrl: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+        lastLoginAt: true,
         userRoles: {
-          include: {
-            role: true
+          select: {
+            role: {
+              select: {
+                name: true
+              }
+            }
           }
         }
       }
@@ -84,8 +98,6 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -114,7 +126,7 @@ export async function PUT(request: NextRequest) {
       phone
     } = body
 
-    // Update user information
+    // Update user information - OPTIMIZED
     const updatedUser = await prisma.user.update({
       where: { id: currentUser.id },
       data: {
@@ -124,10 +136,25 @@ export async function PUT(request: NextRequest) {
         phone: phone || undefined,
         updatedAt: new Date()
       },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        displayName: true,
+        phone: true,
+        avatarUrl: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+        lastLoginAt: true,
         userRoles: {
-          include: {
-            role: true
+          select: {
+            role: {
+              select: {
+                name: true
+              }
+            }
           }
         }
       }
@@ -166,8 +193,6 @@ export async function PUT(request: NextRequest) {
       },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

@@ -16,8 +16,9 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0')
 
     // Fetch public announcements for parents
-    const announcements = await prisma.announcement.findMany({
+    const announcements = await prisma.communication.findMany({
       where: {
+        type: 'announcement', // Filter for announcement type
         status: 'published',
         targetAudience: 'parents',
         OR: [
@@ -30,9 +31,12 @@ export async function GET(request: NextRequest) {
         title: true,
         content: true,
         summary: true,
+        type: true, // Include type for validation
         priority: true,
         publishedAt: true,
         expiresAt: true,
+        createdAt: true, // Include for validation
+        updatedAt: true, // Include for validation
         author: {
           select: {
             displayName: true,
@@ -50,8 +54,9 @@ export async function GET(request: NextRequest) {
     })
 
     // Get total count for pagination
-    const total = await prisma.announcement.count({
+    const total = await prisma.communication.count({
       where: {
+        type: 'announcement', // Filter for announcement type
         status: 'published',
         targetAudience: 'parents',
         OR: [

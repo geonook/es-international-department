@@ -50,6 +50,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import AnnouncementList from '@/components/AnnouncementList'
+import CommunicationForm from '@/components/admin/CommunicationForm'
 import { 
   Announcement, 
   AnnouncementFormData, 
@@ -93,6 +94,10 @@ export default function AdminDashboard() {
   // Removed: Unified Communications system state variables
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState<string>('')
+  const [showCommunicationForm, setShowCommunicationForm] = useState(false)
+  const [editingCommunication, setEditingCommunication] = useState<Announcement | null>(null)
+  const [communicationMode, setCommunicationMode] = useState<'create' | 'edit'>('create')
+  const [communicationType, setCommunicationType] = useState<'announcement' | 'message' | 'newsletter' | 'reminder'>('announcement')
   
   // Batch operations state
   const [bulkOperationLoading, setBulkOperationLoading] = useState(false)
@@ -132,7 +137,7 @@ export default function AdminDashboard() {
         searchParams.append('search', currentFilters.search)
       }
       
-      const response = await fetch(`/api/v1/communications?${searchParams}`, {
+      const response = await fetch(`/api/admin/communications?${searchParams}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -143,15 +148,22 @@ export default function AdminDashboard() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       
-      const data: AnnouncementListResponse = await response.json()
+      const data = await response.json()
       
-      if (data.success) {
-        setAnnouncements(data.data)
-        setPagination(data.pagination)
+      if (data.success || data.data) {
+        setAnnouncements(data.data || [])
+        setPagination(data.pagination || {
+          page: 1,
+          limit: 10,
+          totalCount: 0,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPrevPage: false
+        })
         setFilters(currentFilters)
         
         // Calculate statistics
-        calculateStats(data.data)
+        calculateStats(data.data || [])
       } else {
         throw new Error(data.message || 'Failed to fetch announcements')
       }
@@ -195,7 +207,7 @@ export default function AdminDashboard() {
     }
     
     try {
-      const response = await fetch(`/api/v1/communications/${announcementId}`, {
+      const response = await fetch(`/api/admin/communications/${announcementId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -219,17 +231,63 @@ export default function AdminDashboard() {
     }
   }
 
-  // Redirect to separated message board management
-  const handleEditCommunication = (announcement: Announcement) => {
-    // Direct edit through announcement system instead of unified communications
-    console.log('Redirecting to announcement edit:', announcement.id)
-    // In a real implementation, this would redirect to the proper announcement edit page
+
+  // Handle creating new communication
+  const handleCreateCommunication = (type: 'announcement' | 'message' | 'newsletter' | 'reminder' = 'announcement') => {
+    setCommunicationType(type)
+    setCommunicationMode('create')
+    setEditingCommunication(null)
+    setShowCommunicationForm(true)
   }
 
-  // Redirect to Teachers Corner for message creation
-  const handleCreateCommunication = () => {
-    // Redirect to Teachers' Message Board for creating new messages
-    window.location.href = '/teachers/communications?create=true'
+  // Handle editing communication
+  const handleEditCommunication = (announcement: Announcement) => {
+    setEditingCommunication(announcement)
+    setCommunicationMode('edit')
+    setCommunicationType((announcement as any).type || 'announcement')
+    setShowCommunicationForm(true)
+  }
+
+  // Handle form submission
+  const handleCommunicationSubmit = async (data: any) => {
+    try {
+      const endpoint = communicationMode === 'create' 
+        ? '/api/admin/communications'
+        : `/api/admin/communications/${editingCommunication?.id}`
+      
+      const method = communicationMode === 'create' ? 'POST' : 'PUT'
+      
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        // Refresh the announcements list
+        await fetchAnnouncements()
+        setShowCommunicationForm(false)
+      } else {
+        throw new Error(result.message || 'Failed to save communication')
+      }
+    } catch (error) {
+      console.error('Communication submit error:', error)
+      throw error // Re-throw to let form handle the error
+    }
+  }
+
+  // Handle form cancel
+  const handleCommunicationCancel = () => {
+    setShowCommunicationForm(false)
+    setEditingCommunication(null)
   }
 
   // Removed: handleFormCancel - no longer needed with separated architecture
@@ -254,7 +312,7 @@ export default function AdminDashboard() {
     setBulkOperationSuccess('')
     
     try {
-      const response = await fetch('/api/v1/communications/bulk', {
+      const response = await fetch('/api/admin/communications/bulk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -797,11 +855,11 @@ export default function AdminDashboard() {
                         </p>
                         <div className="flex gap-2">
                           <Button
-                            onClick={() => window.location.href = '/teachers/communications'}
+                            onClick={() => handleCreateCommunication('message')}
                             className="bg-gradient-to-r from-blue-600 to-blue-700"
                           >
                             <MessageSquare className="w-4 h-4 mr-2" />
-                            Message Board
+                            Manage Message Board
                           </Button>
                           <Button
                             variant="outline"
@@ -845,58 +903,6 @@ export default function AdminDashboard() {
                     </Card>
                   </div>
 
-                  {/* Announcement Statistics Cards */}
-                  {announcementStats && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-blue-600 text-sm font-medium">Total Announcements</p>
-                              <p className="text-xl font-bold text-blue-800">{announcementStats.total}</p>
-                            </div>
-                            <MessageSquare className="w-6 h-6 text-blue-600" />
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-green-600 text-sm font-medium">Published</p>
-                              <p className="text-xl font-bold text-green-800">{announcementStats.published}</p>
-                            </div>
-                            <Send className="w-6 h-6 text-green-600" />
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-amber-600 text-sm font-medium">Draft</p>
-                              <p className="text-xl font-bold text-amber-800">{announcementStats.draft}</p>
-                            </div>
-                            <FileText className="w-6 h-6 text-amber-600" />
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-red-600 text-sm font-medium">High Priority</p>
-                              <p className="text-xl font-bold text-red-800">{announcementStats.byPriority.high}</p>
-                            </div>
-                            <AlertTriangle className="w-6 h-6 text-red-600" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  )}
 
                   {/* Bulk Operation Status Messages */}
                   {bulkOperationSuccess && (
@@ -917,46 +923,101 @@ export default function AdminDashboard() {
                     </Alert>
                   )}
 
-                  {/* Announcement List */}
-                  {/* Migration Notice */}
-                  <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <AlertTriangle className="w-6 h-6 text-yellow-600 mt-1" />
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            System Architecture Updated
-                          </h3>
-                          <p className="text-gray-700 mb-4">
-                            The unified Communications Hub has been separated into specialized systems for better management and user experience.
-                          </p>
-                          <ul className="list-disc list-inside space-y-2 text-gray-600">
-                            <li><strong>Teachers' Corner:</strong> Dedicated message board and reminder system</li>
-                            <li><strong>Parents' Corner:</strong> Focused communication portal for families</li>
-                            <li><strong>Announcements:</strong> System-wide announcements via dedicated tab</li>
-                          </ul>
-                          <div className="mt-4 flex gap-2">
-                            <Button
-                              onClick={() => setActiveTab('announcements')}
-                              variant="outline"
-                              size="sm"
-                            >
-                              <MessageSquare className="w-4 h-4 mr-2" />
-                              Manage Announcements
-                            </Button>
-                            <Button
-                              onClick={() => window.location.href = '/teachers'}
-                              variant="outline"
-                              size="sm"
-                            >
-                              <Users className="w-4 h-4 mr-2" />
-                              Visit Teachers Corner
-                            </Button>
-                          </div>
+                  {/* Communication Management Tabs */}
+                  <div className="bg-white rounded-lg border">
+                    <div className="border-b border-gray-200">
+                      <div className="flex items-center justify-between p-4">
+                        <h3 className="text-lg font-semibold">Communication Management</h3>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => handleCreateCommunication('announcement')}
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            New Announcement
+                          </Button>
+                          <Button
+                            onClick={() => handleCreateCommunication('message')}
+                            variant="outline"
+                          >
+                            <MessageSquare className="w-4 h-4 mr-2" />
+                            New Message Board
+                          </Button>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                    
+                    <div className="p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                          <CardContent className="p-4 text-center">
+                            <h4 className="font-semibold text-blue-800 mb-1">Announcements</h4>
+                            <p className="text-2xl font-bold text-blue-600">{announcementStats?.total || 0}</p>
+                            <p className="text-xs text-blue-500">System announcements</p>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                          <CardContent className="p-4 text-center">
+                            <h4 className="font-semibold text-green-800 mb-1">Published</h4>
+                            <p className="text-2xl font-bold text-green-600">{announcementStats?.published || 0}</p>
+                            <p className="text-xs text-green-500">Live communications</p>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+                          <CardContent className="p-4 text-center">
+                            <h4 className="font-semibold text-amber-800 mb-1">Drafts</h4>
+                            <p className="text-2xl font-bold text-amber-600">{announcementStats?.draft || 0}</p>
+                            <p className="text-xs text-amber-500">Work in progress</p>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+                          <CardContent className="p-4 text-center">
+                            <h4 className="font-semibold text-red-800 mb-1">High Priority</h4>
+                            <p className="text-2xl font-bold text-red-600">{announcementStats?.byPriority.high || 0}</p>
+                            <p className="text-xs text-red-500">Urgent items</p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                      
+                      {/* Communication List */}
+                      {announcementsLoading ? (
+                        <div className="flex justify-center py-8">
+                          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                        </div>
+                      ) : (
+                        <AnnouncementList
+                          announcements={announcements}
+                          onEdit={handleEditCommunication}
+                          onDelete={deleteAnnouncement}
+                          filters={filters}
+                          onFiltersChange={handleFiltersChange}
+                          pagination={pagination}
+                          onPageChange={handlePageChange}
+                          onBulkOperation={handleBulkOperation}
+                          bulkOperationLoading={bulkOperationLoading}
+                          isAdmin={true}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Communication Form Modal */}
+                  {showCommunicationForm && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4">
+                        <CommunicationForm
+                          communication={editingCommunication}
+                          mode={communicationMode}
+                          defaultType={communicationType}
+                          onCancel={handleCommunicationCancel}
+                          onSubmit={handleCommunicationSubmit}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
               )}
 

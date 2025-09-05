@@ -439,11 +439,19 @@ async function validateRefreshToken(userId: string, tokenId: string): Promise<bo
   try {
     const { prisma } = await import('@/lib/prisma')
     
-    const session = await prisma.userSession.findUnique({
-      where: { sessionToken: tokenId }
+    // Optimized query: Check existence with specific conditions in single query
+    const session = await prisma.userSession.findFirst({
+      where: {
+        sessionToken: tokenId,
+        userId: userId,
+        expiresAt: {
+          gt: new Date()
+        }
+      },
+      select: { id: true } // Only select minimal data needed
     })
 
-    return !!(session && session.userId === userId && session.expiresAt > new Date())
+    return !!session
   } catch (error) {
     console.error('Error validating refresh token:', error)
     return false
@@ -466,12 +474,22 @@ async function getUserById(userId: string): Promise<User | null> {
   try {
     const { prisma } = await import('@/lib/prisma')
     
+    // Optimized query: Use select to minimize data transfer and include for efficiency
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        displayName: true,
         userRoles: {
-          include: {
-            role: true
+          select: {
+            role: {
+              select: {
+                name: true
+              }
+            }
           }
         }
       }

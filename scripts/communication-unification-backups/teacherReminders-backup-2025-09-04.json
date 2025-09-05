@@ -1,0 +1,274 @@
+{
+  "metadata": {
+    "backupDate": "2025-09-04T03:12:13.406Z",
+    "backupVersion": "1.0.0",
+    "purpose": "Pre-migration backup for Communication system unification",
+    "tablesIncluded": [
+      "message_board",
+      "announcements",
+      "teacher_reminders"
+    ],
+    "recordCounts": {
+      "messageBoard": 1,
+      "announcements": 2,
+      "teacherReminders": 9,
+      "total": 12
+    }
+  },
+  "data": [
+    {
+      "id": 15,
+      "title": "Update Digital Learning Platforms",
+      "content": "Please update your classroom materials on the digital learning platform. Upload new assignments and ensure all links are working properly.",
+      "priority": "low",
+      "status": "completed",
+      "dueDate": null,
+      "dueTime": null,
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "departments",
+      "reminderType": "task",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": "2025-08-22T19:41:59.891Z",
+      "completedBy": "cmds1rthi0000j1uq1aejyegk",
+      "createdAt": "2025-08-24T19:42:00.100Z",
+      "updatedAt": "2025-08-24T19:42:00.100Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員"
+      }
+    },
+    {
+      "id": 13,
+      "title": "Parent-Teacher Conference Preparation",
+      "content": "Prepare materials for upcoming parent-teacher conferences. Update student portfolios, prepare talking points, and schedule individual meeting slots.",
+      "priority": "",
+      "status": "completed",
+      "dueDate": "2025-09-07T00:00:00.000Z",
+      "dueTime": null,
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "",
+      "reminderType": "",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": "2025-08-26T23:38:54.031Z",
+      "completedBy": "cmeh7evg60001sx9qf49ewrgy",
+      "createdAt": "2025-08-24T19:42:00.050Z",
+      "updatedAt": "2025-08-27T00:38:25.831Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": {
+        "id": "cmeh7evg60001sx9qf49ewrgy",
+        "email": "tsehungchen@kcislk.ntpc.edu.tw",
+        "displayName": "陳則宏tsehungchen"
+      }
+    },
+    {
+      "id": 11,
+      "title": "Submit Quarterly Progress Reports",
+      "content": "Please submit all student progress reports for Q1 by Friday. Include assessment rubrics and parent communication notes. Remember to double-check grades before submission.",
+      "priority": "high",
+      "status": "active",
+      "dueDate": "2025-08-31T00:00:00.000Z",
+      "dueTime": "1970-01-01T14:00:00.000Z",
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "all",
+      "reminderType": "deadline",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": null,
+      "completedBy": null,
+      "createdAt": "2025-08-24T19:41:59.893Z",
+      "updatedAt": "2025-08-24T19:41:59.893Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": null
+    },
+    {
+      "id": 10,
+      "title": "Update Digital Learning Platforms",
+      "content": "Please update your classroom materials on the digital learning platform. Upload new assignments and ensure all links are working properly.",
+      "priority": "low",
+      "status": "completed",
+      "dueDate": null,
+      "dueTime": null,
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "departments",
+      "reminderType": "task",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": "2025-08-22T19:40:53.129Z",
+      "completedBy": "cmds1rthi0000j1uq1aejyegk",
+      "createdAt": "2025-08-24T19:40:53.271Z",
+      "updatedAt": "2025-08-24T19:40:53.271Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員"
+      }
+    },
+    {
+      "id": 8,
+      "title": "Parent-Teacher Conference Preparation",
+      "content": "Prepare materials for upcoming parent-teacher conferences. Update student portfolios, prepare talking points, and schedule individual meeting slots.",
+      "priority": "high",
+      "status": "active",
+      "dueDate": "2025-09-07T00:00:00.000Z",
+      "dueTime": null,
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "",
+      "reminderType": "",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": null,
+      "completedBy": null,
+      "createdAt": "2025-08-24T19:40:53.180Z",
+      "updatedAt": "2025-08-26T23:38:38.982Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": null
+    },
+    {
+      "id": 6,
+      "title": "Submit Quarterly Progress Reports",
+      "content": "Please submit all student progress reports for Q1 by Friday. Include assessment rubrics and parent communication notes. Remember to double-check grades before submission.",
+      "priority": "high",
+      "status": "active",
+      "dueDate": "2025-08-31T00:00:00.000Z",
+      "dueTime": "1970-01-01T14:00:00.000Z",
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "all",
+      "reminderType": "deadline",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": null,
+      "completedBy": null,
+      "createdAt": "2025-08-24T19:40:53.130Z",
+      "updatedAt": "2025-08-24T19:40:53.130Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": null
+    },
+    {
+      "id": 5,
+      "title": "Update Digital Learning Platforms",
+      "content": "Please update your classroom materials on the digital learning platform. Upload new assignments and ensure all links are working properly.",
+      "priority": "low",
+      "status": "completed",
+      "dueDate": null,
+      "dueTime": null,
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "departments",
+      "reminderType": "task",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": "2025-08-22T19:40:30.083Z",
+      "completedBy": "cmds1rthi0000j1uq1aejyegk",
+      "createdAt": "2025-08-24T19:40:30.349Z",
+      "updatedAt": "2025-08-24T19:40:30.349Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Parent-Teacher Conference Preparation",
+      "content": "Prepare materials for upcoming parent-teacher conferences. Update student portfolios, prepare talking points, and schedule individual meeting slots.",
+      "priority": "medium",
+      "status": "completed",
+      "dueDate": "2025-09-07T00:00:00.000Z",
+      "dueTime": null,
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "",
+      "reminderType": "",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": "2025-08-27T00:38:35.017Z",
+      "completedBy": "cmeh7evg60001sx9qf49ewrgy",
+      "createdAt": "2025-08-24T19:40:30.222Z",
+      "updatedAt": "2025-08-27T00:38:35.019Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": {
+        "id": "cmeh7evg60001sx9qf49ewrgy",
+        "email": "tsehungchen@kcislk.ntpc.edu.tw",
+        "displayName": "陳則宏tsehungchen"
+      }
+    },
+    {
+      "id": 1,
+      "title": "Submit Quarterly Progress Reports",
+      "content": "Please submit all student progress reports for Q1 by Friday. Include assessment rubrics and parent communication notes. Remember to double-check grades before submission.",
+      "priority": "high",
+      "status": "active",
+      "dueDate": "2025-08-31T00:00:00.000Z",
+      "dueTime": "1970-01-01T14:00:00.000Z",
+      "createdBy": "cmds1rthi0000j1uq1aejyegk",
+      "targetAudience": "all",
+      "reminderType": "deadline",
+      "isRecurring": false,
+      "recurringPattern": null,
+      "completedAt": null,
+      "completedBy": null,
+      "createdAt": "2025-08-24T19:40:30.086Z",
+      "updatedAt": "2025-08-24T19:40:30.086Z",
+      "creator": {
+        "id": "cmds1rthi0000j1uq1aejyegk",
+        "email": "admin@es-international.com",
+        "displayName": "系統管理員",
+        "firstName": "System",
+        "lastName": "Administrator"
+      },
+      "completer": null
+    }
+  ]
+}
