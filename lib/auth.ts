@@ -422,11 +422,21 @@ export function getRefreshTokenFromRequest(): string | null {
 
 // Database operation functions (implementation required)
 async function storeRefreshToken(userId: string, tokenId: string, token: string): Promise<void> {
-  // Database storage logic implementation required here
-  // Can store in UserSession table
   try {
     const { prisma } = await import('@/lib/prisma')
     
+    // First, verify the user exists to avoid foreign key constraint errors
+    const userExists = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true }
+    })
+    
+    if (!userExists) {
+      console.error(`User ${userId} not found when storing refresh token`)
+      throw new Error(`User ${userId} not found`)
+    }
+    
+    // Create the session record
     await prisma.userSession.create({
       data: {
         userId,
@@ -436,8 +446,14 @@ async function storeRefreshToken(userId: string, tokenId: string, token: string)
         ipAddress: '0.0.0.0'
       }
     })
+    
+    console.log(`Successfully stored refresh token for user ${userId}`)
   } catch (error) {
-    console.error('Error storing refresh token:', error)
+    console.error('Error storing refresh token:', {
+      userId,
+      tokenId,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    })
     throw error
   }
 }
