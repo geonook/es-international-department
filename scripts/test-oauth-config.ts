@@ -213,11 +213,13 @@ class OAuthConfigTester {
       const { assignRoleByEmailDomain } = await import('../lib/google-oauth')
       
       const testCases = [
-        { email: 'teacher@school.edu', expectedRole: 'teacher' },
-        { email: 'prof@university.edu', expectedRole: 'teacher' },
-        { email: 'parent@gmail.com', expectedRole: 'parent' },
-        { email: 'user@yahoo.com', expectedRole: 'parent' },
-        { email: 'unknown@example.com', expectedRole: 'parent' }
+        { email: 'teacher@school.edu', expectedRole: 'office_member' },
+        { email: 'prof@university.edu', expectedRole: 'office_member' },
+        { email: 'parent@gmail.com', expectedRole: 'viewer' },
+        { email: 'user@yahoo.com', expectedRole: 'viewer' },
+        { email: 'unknown@example.com', expectedRole: 'viewer' },
+        { email: 'tsehungchen@kcislk.ntpc.edu.tw', expectedRole: 'admin' },
+        { email: 'staff@kcislk.ntpc.edu.tw', expectedRole: 'office_member' }
       ]
 
       let allPassed = true
