@@ -21,6 +21,21 @@ import { prisma } from '@/lib/prisma'
  * Handle Google OAuth callback
  */
 export async function GET(request: NextRequest) {
+  // Get the correct base URL from environment variable to avoid localhost:8080 issues
+  const getBaseUrl = () => {
+    const nextAuthUrl = process.env.NEXTAUTH_URL
+    if (nextAuthUrl) {
+      return nextAuthUrl
+    }
+    // Fallback based on environment
+    if (process.env.NODE_ENV === 'production') {
+      return 'https://kcislk-infohub.zeabur.app'
+    }
+    return 'http://localhost:3001'
+  }
+  
+  const baseUrl = getBaseUrl()
+  
   try {
     const { searchParams } = new URL(request.url)
     const code = searchParams.get('code')
@@ -30,12 +45,12 @@ export async function GET(request: NextRequest) {
     // Check for errors
     if (error) {
       console.error('Google OAuth error:', error)
-      return NextResponse.redirect(new URL('/login?error=oauth_error', request.url))
+      return NextResponse.redirect(new URL('/login?error=oauth_error', baseUrl))
     }
 
     // Check required parameters
     if (!code || !state) {
-      return NextResponse.redirect(new URL('/login?error=missing_parameters', request.url))
+      return NextResponse.redirect(new URL('/login?error=missing_parameters', baseUrl))
     }
 
     // Verify CSRF state parameter
@@ -44,21 +59,21 @@ export async function GET(request: NextRequest) {
     
     if (!storedState || storedState !== state) {
       console.error('OAuth state mismatch:', { stored: storedState, received: state })
-      return NextResponse.redirect(new URL('/login?error=state_mismatch', request.url))
+      return NextResponse.redirect(new URL('/login?error=state_mismatch', baseUrl))
     }
 
     // Exchange authorization code for tokens
     const tokens = await exchangeCodeForTokens(code)
     
     if (!tokens.idToken) {
-      return NextResponse.redirect(new URL('/login?error=no_id_token', request.url))
+      return NextResponse.redirect(new URL('/login?error=no_id_token', baseUrl))
     }
 
     // Verify ID Token and get user info
     const googleUser = await verifyGoogleToken(tokens.idToken)
     
     if (!googleUser || !googleUser.email || !googleUser.verified_email) {
-      return NextResponse.redirect(new URL('/login?error=invalid_user_info', request.url))
+      return NextResponse.redirect(new URL('/login?error=invalid_user_info', baseUrl))
     }
 
     // Check if user already exists
@@ -225,7 +240,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (!user) {
-      return NextResponse.redirect(new URL('/login?error=user_creation_failed', request.url))
+      return NextResponse.redirect(new URL('/login?error=user_creation_failed', baseUrl))
     }
 
     // Prepare JWT payload
@@ -238,9 +253,39 @@ export async function GET(request: NextRequest) {
       roles: user.userRoles.map(ur => ur.role.name)
     }
 
-    // Generate JWT token pair
-    const tokenPair = await generateTokenPair(userForJWT)
-    setAuthCookies(tokenPair)
+    // Generate JWT token pair with enhanced fallback mechanism
+    console.log(`🔐 Starting authentication token generation for user: ${user.email}`)
+    try {
+      const tokenPair = await generateTokenPair(userForJWT)
+      setAuthCookies(tokenPair)
+      console.log('✅ Token pair authentication successful')
+    } catch (tokenError) {
+      console.error('❌ Token pair generation failed, using fallback JWT:', {
+        error: tokenError instanceof Error ? tokenError.message : 'Unknown error',
+        userId: user.id,
+        userEmail: user.email,
+        stack: tokenError instanceof Error ? tokenError.stack : undefined
+      })
+      
+      try {
+        // Fallback to simple JWT if refresh token generation fails
+        const { generateJWT, setAuthCookie } = await import('@/lib/auth')
+        console.log('🔄 Attempting fallback JWT generation...')
+        const simpleToken = await generateJWT(userForJWT)
+        setAuthCookie(simpleToken)
+        console.log('✅ Fallback JWT authentication successful')
+      } catch (fallbackError) {
+        console.error('💥 Complete authentication failure - both token pair and fallback failed:', {
+          tokenError: tokenError instanceof Error ? tokenError.message : 'Unknown token error',
+          fallbackError: fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback error',
+          userId: user.id,
+          userEmail: user.email
+        })
+        
+        // Return error instead of crashing
+        return NextResponse.redirect(new URL('/login?error=authentication_failed&detail=token_generation', baseUrl))
+      }
+    }
 
     // Determine redirect URL - 所有已認證用戶都可進入 admin
     let redirectUrl = '/admin' // 預設重定向到 admin
@@ -255,7 +300,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Clear OAuth-related cookies
-    const response = NextResponse.redirect(new URL(redirectUrl, request.url))
+    const response = NextResponse.redirect(new URL(redirectUrl, baseUrl))
     
     response.cookies.delete('oauth-state')
     response.cookies.delete('oauth-redirect')
@@ -264,6 +309,8 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Google OAuth callback error:', error)
-    return NextResponse.redirect(new URL('/login?error=oauth_callback_failed', request.url))
+    // Use baseUrl to avoid localhost:8080 redirect issue
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://kcislk-infohub.zeabur.app'
+    return NextResponse.redirect(new URL('/login?error=oauth_callback_failed', baseUrl))
   }
 }

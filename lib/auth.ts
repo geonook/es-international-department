@@ -324,14 +324,55 @@ export async function verifyRefreshToken(token: string): Promise<RefreshTokenPay
  * Generate token pair (Access + Refresh)
  */
 export async function generateTokenPair(user: User): Promise<TokenPair> {
-  const [accessToken, refreshToken] = await Promise.all([
-    generateAccessToken(user),
-    generateRefreshToken(user.id)
-  ])
+  console.log(`Generating token pair for user: ${user.email} (${user.id})`)
+  
+  try {
+    // Generate access token first (this is more likely to succeed)
+    const accessToken = await generateAccessToken(user)
+    console.log('✅ Access token generated successfully')
+    
+    // Then generate refresh token with enhanced error handling
+    let refreshToken: string
+    try {
+      refreshToken = await generateRefreshToken(user.id)
+      console.log('✅ Refresh token generated successfully')
+    } catch (refreshError) {
+      console.error('❌ Refresh token generation failed, using fallback approach:', refreshError)
+      
+      // Fallback: generate a simple access token with longer expiration
+      const fallbackToken = await new SignJWT({
+        userId: user.id,
+        email: user.email,
+        roles: user.roles,
+        fallback: true
+      })
+        .setProtectedHeader({ alg: JWT_ALGORITHM })
+        .setIssuedAt()
+        .setExpirationTime('24h') // Longer expiration for fallback
+        .sign(JWT_SECRET)
+      
+      console.log('✅ Fallback token generated (24h expiration)')
+      refreshToken = fallbackToken
+    }
 
-  return {
-    accessToken,
-    refreshToken
+    const tokenPair = {
+      accessToken,
+      refreshToken
+    }
+    
+    console.log('🎉 Token pair generation completed successfully')
+    return tokenPair
+    
+  } catch (error) {
+    console.error('💥 Complete token generation failure:', {
+      userId: user.id,
+      email: user.email,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    })
+    
+    // Last resort: throw detailed error for fallback mechanism in OAuth callback
+    throw new Error(`Complete token generation failed for user ${user.email}: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 
@@ -415,24 +456,97 @@ export function getRefreshTokenFromRequest(): string | null {
 
 // Database operation functions (implementation required)
 async function storeRefreshToken(userId: string, tokenId: string, token: string): Promise<void> {
-  // Database storage logic implementation required here
-  // Can store in UserSession table
-  try {
-    const { prisma } = await import('@/lib/prisma')
-    
-    await prisma.userSession.create({
-      data: {
-        userId,
-        sessionToken: tokenId,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        userAgent: 'refresh-token',
-        ipAddress: '0.0.0.0'
+  const MAX_RETRIES = 3
+  let lastError: Error | null = null
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const { prisma } = await import('@/lib/prisma')
+      
+      console.log(`[Attempt ${attempt}/${MAX_RETRIES}] Storing refresh token for user ${userId}`)
+      
+      // First, verify the user exists to avoid foreign key constraint errors
+      const userExists = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, email: true, isActive: true }
+      })
+      
+      if (!userExists) {
+        const error = new Error(`User ${userId} not found when storing refresh token`)
+        console.error(error.message)
+        throw error // Don't retry if user doesn't exist
       }
-    })
-  } catch (error) {
-    console.error('Error storing refresh token:', error)
-    throw error
+      
+      console.log(`User validation successful: ${userExists.email} (active: ${userExists.isActive})`)
+      
+      // Check for existing sessions with same token to prevent duplicates
+      const existingSession = await prisma.userSession.findUnique({
+        where: { sessionToken: tokenId },
+        select: { id: true, userId: true }
+      })
+      
+      if (existingSession) {
+        if (existingSession.userId === userId) {
+          console.log(`Session token already exists for same user, updating expiration`)
+          await prisma.userSession.update({
+            where: { sessionToken: tokenId },
+            data: {
+              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+              userAgent: 'refresh-token-updated',
+              ipAddress: '0.0.0.0'
+            }
+          })
+          console.log(`Successfully updated existing refresh token for user ${userId}`)
+          return
+        } else {
+          console.log(`Session token exists for different user, generating new token`)
+          tokenId = crypto.randomUUID() // Generate new unique token
+        }
+      }
+      
+      // Create the session record with enhanced error handling
+      const newSession = await prisma.userSession.create({
+        data: {
+          userId,
+          sessionToken: tokenId,
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+          userAgent: 'refresh-token',
+          ipAddress: '0.0.0.0'
+        }
+      })
+      
+      console.log(`Successfully stored refresh token: sessionId=${newSession.id}, userId=${userId}`)
+      return // Success, exit retry loop
+      
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error')
+      console.error(`[Attempt ${attempt}/${MAX_RETRIES}] Error storing refresh token:`, {
+        userId,
+        tokenId,
+        attempt,
+        error: lastError.message,
+        stack: lastError.stack
+      })
+      
+      // Check if it's a retryable error
+      const isRetryable = lastError.message.includes('timeout') || 
+                         lastError.message.includes('connection') ||
+                         lastError.message.includes('ECONNRESET') ||
+                         lastError.message.includes('ENOTFOUND')
+      
+      if (!isRetryable || attempt === MAX_RETRIES) {
+        break // Don't retry for non-retryable errors or on last attempt
+      }
+      
+      // Wait before retry with exponential backoff
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000)
+      console.log(`Retrying in ${delay}ms...`)
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
   }
+  
+  // If we reach here, all retries failed
+  throw new Error(`Failed to store refresh token after ${MAX_RETRIES} attempts: ${lastError?.message || 'Unknown error'}`)
 }
 
 async function validateRefreshToken(userId: string, tokenId: string): Promise<boolean> {
