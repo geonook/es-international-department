@@ -11,10 +11,26 @@ import { NextResponse } from 'next/server'
 import { performHealthCheck } from '@/lib/prisma'
 import { cache } from '@/lib/cache'
 import { performance } from 'perf_hooks'
-import packageJson from '../../../package.json'
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic'
+
+// Safe version reading function
+function getAppVersion(): string {
+  try {
+    // Try environment variable first
+    if (process.env.APP_VERSION) {
+      return process.env.APP_VERSION
+    }
+    
+    // Fallback to require (safer for production builds)
+    const pkg = require('../../../package.json')
+    return pkg.version || '1.6.0'
+  } catch (error) {
+    // Ultimate fallback if all fails
+    return '1.6.0'
+  }
+}
 
 export async function GET() {
   const startTime = performance.now()
@@ -30,7 +46,7 @@ export async function GET() {
       service: 'KCISLK ESID Info Hub',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
-      version: process.env.APP_VERSION || packageJson.version,
+      version: getAppVersion(),
       performance: {
         responseTime: `${totalTime.toFixed(2)}ms`,
         database: {
