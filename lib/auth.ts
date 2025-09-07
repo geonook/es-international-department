@@ -179,15 +179,34 @@ export function isTeacher(user: User | null): boolean {
 
 /**
  * Set authentication cookie (legacy function - prefer setAuthCookies for token pairs)
+ * Enhanced for Production environment compatibility
  */
 export function setAuthCookie(token: string) {
   const cookieStore = cookies()
+  
+  // Use consistent cookie configuration
+  const isProduction = process.env.NODE_ENV === 'production'
+  const nextAuthUrl = process.env.NEXTAUTH_URL
+  let cookieDomain: string | undefined = undefined
+  
+  if (isProduction && nextAuthUrl) {
+    try {
+      const url = new URL(nextAuthUrl)
+      if (url.hostname.includes('zeabur.app')) {
+        cookieDomain = url.hostname
+      }
+    } catch (error) {
+      console.warn('Failed to parse NEXTAUTH_URL for cookie domain:', error)
+    }
+  }
+  
   cookieStore.set('auth-token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax', // Use 'none' for cross-site OAuth in production
     maxAge: 4 * 60 * 60, // 4 hours (consistent with ACCESS_TOKEN_EXPIRES_IN)
     path: '/',
+    ...(cookieDomain && { domain: cookieDomain }),
   })
 }
 
@@ -407,27 +426,63 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenPai
 
 /**
  * Set authentication cookies (Access + Refresh)
+ * Enhanced for Production environment compatibility
  */
 export function setAuthCookies(tokenPair: TokenPair) {
   const cookieStore = cookies()
   
-  // Access Token (extended for better UX)
-  cookieStore.set('auth-token', tokenPair.accessToken, {
+  // Determine cookie domain for Production
+  const isProduction = process.env.NODE_ENV === 'production'
+  const nextAuthUrl = process.env.NEXTAUTH_URL
+  let cookieDomain: string | undefined = undefined
+  
+  if (isProduction && nextAuthUrl) {
+    try {
+      const url = new URL(nextAuthUrl)
+      // For zeabur.app domains, set the domain explicitly to ensure proper cookie scope
+      if (url.hostname.includes('zeabur.app')) {
+        cookieDomain = url.hostname
+      }
+    } catch (error) {
+      console.warn('Failed to parse NEXTAUTH_URL for cookie domain:', error)
+    }
+  }
+  
+  // Enhanced cookie configuration for Production
+  const cookieConfig = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' as const : 'lax' as const, // Use 'none' for cross-site OAuth in production
     maxAge: 4 * 60 * 60, // 4 hours (matches ACCESS_TOKEN_EXPIRES_IN)
     path: '/',
-  })
-
-  // Refresh Token (long-lived)
-  cookieStore.set('refresh-token', tokenPair.refreshToken, {
+    ...(cookieDomain && { domain: cookieDomain }),
+  }
+  
+  const refreshCookieConfig = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' as const : 'lax' as const, // Use 'none' for cross-site OAuth in production
     maxAge: 30 * 24 * 60 * 60, // 30 days
     path: '/',
-  })
+    ...(cookieDomain && { domain: cookieDomain }),
+  }
+  
+  // Add debug logging for Production
+  if (isProduction) {
+    console.log('🍪 Setting auth cookies with config:', {
+      domain: cookieDomain || 'default',
+      secure: cookieConfig.secure,
+      sameSite: cookieConfig.sameSite,
+      tokenLength: tokenPair.accessToken.length,
+      refreshTokenLength: tokenPair.refreshToken.length
+    })
+  }
+  
+  // Access Token (extended for better UX)
+  cookieStore.set('auth-token', tokenPair.accessToken, cookieConfig)
+
+  // Refresh Token (long-lived)
+  cookieStore.set('refresh-token', tokenPair.refreshToken, refreshCookieConfig)
 }
 
 /**
