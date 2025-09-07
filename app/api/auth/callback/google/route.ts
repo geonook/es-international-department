@@ -253,9 +253,17 @@ export async function GET(request: NextRequest) {
       roles: user.userRoles.map(ur => ur.role.name)
     }
 
-    // Generate JWT token pair
-    const tokenPair = await generateTokenPair(userForJWT)
-    setAuthCookies(tokenPair)
+    // Generate JWT token pair with fallback mechanism
+    try {
+      const tokenPair = await generateTokenPair(userForJWT)
+      setAuthCookies(tokenPair)
+    } catch (tokenError) {
+      console.error('Token pair generation failed, using fallback JWT:', tokenError)
+      // Fallback to simple JWT if refresh token generation fails
+      const { generateJWT, setAuthCookie } = await import('@/lib/auth')
+      const simpleToken = await generateJWT(userForJWT)
+      setAuthCookie(simpleToken)
+    }
 
     // Determine redirect URL - 所有已認證用戶都可進入 admin
     let redirectUrl = '/admin' // 預設重定向到 admin

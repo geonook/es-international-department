@@ -324,14 +324,21 @@ export async function verifyRefreshToken(token: string): Promise<RefreshTokenPay
  * Generate token pair (Access + Refresh)
  */
 export async function generateTokenPair(user: User): Promise<TokenPair> {
-  const [accessToken, refreshToken] = await Promise.all([
-    generateAccessToken(user),
-    generateRefreshToken(user.id)
-  ])
+  try {
+    const [accessToken, refreshToken] = await Promise.all([
+      generateAccessToken(user),
+      generateRefreshToken(user.id)
+    ])
 
-  return {
-    accessToken,
-    refreshToken
+    return {
+      accessToken,
+      refreshToken
+    }
+  } catch (error) {
+    console.error('Token pair generation failed:', error)
+    // If refresh token generation fails, still provide access token
+    // This allows the fallback mechanism in OAuth callback to work
+    throw new Error(`Token generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 
