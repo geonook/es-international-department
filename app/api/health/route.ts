@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { performHealthCheck } from '@/lib/prisma'
 import { cache } from '@/lib/cache'
 import { performance } from 'perf_hooks'
+import packageJson from '../../../package.json'
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic'
@@ -29,7 +30,7 @@ export async function GET() {
       service: 'KCISLK ESID Info Hub',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
-      version: '1.0.0',
+      version: process.env.APP_VERSION || packageJson.version,
       performance: {
         responseTime: `${totalTime.toFixed(2)}ms`,
         database: {
