@@ -84,7 +84,10 @@
     "create:test-data": "node scripts/create-test-data.js",
     "env:monitor": "tsx scripts/environment-monitor.ts",
     "env:monitor:start": "tsx scripts/environment-monitor.ts --interval=30000",
-    "env:monitor:fast": "tsx scripts/environment-monitor.ts --interval=10000"
+    "env:monitor:fast": "tsx scripts/environment-monitor.ts --interval=10000",
+    "monitor:version": "tsx scripts/version-alignment-monitor.ts",
+    "monitor:version:continuous": "tsx scripts/version-alignment-monitor.ts --continuous",
+    "monitor:version:fast": "tsx scripts/version-alignment-monitor.ts --continuous --interval=15"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
