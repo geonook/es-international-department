@@ -253,16 +253,38 @@ export async function GET(request: NextRequest) {
       roles: user.userRoles.map(ur => ur.role.name)
     }
 
-    // Generate JWT token pair with fallback mechanism
+    // Generate JWT token pair with enhanced fallback mechanism
+    console.log(`🔐 Starting authentication token generation for user: ${user.email}`)
     try {
       const tokenPair = await generateTokenPair(userForJWT)
       setAuthCookies(tokenPair)
+      console.log('✅ Token pair authentication successful')
     } catch (tokenError) {
-      console.error('Token pair generation failed, using fallback JWT:', tokenError)
-      // Fallback to simple JWT if refresh token generation fails
-      const { generateJWT, setAuthCookie } = await import('@/lib/auth')
-      const simpleToken = await generateJWT(userForJWT)
-      setAuthCookie(simpleToken)
+      console.error('❌ Token pair generation failed, using fallback JWT:', {
+        error: tokenError instanceof Error ? tokenError.message : 'Unknown error',
+        userId: user.id,
+        userEmail: user.email,
+        stack: tokenError instanceof Error ? tokenError.stack : undefined
+      })
+      
+      try {
+        // Fallback to simple JWT if refresh token generation fails
+        const { generateJWT, setAuthCookie } = await import('@/lib/auth')
+        console.log('🔄 Attempting fallback JWT generation...')
+        const simpleToken = await generateJWT(userForJWT)
+        setAuthCookie(simpleToken)
+        console.log('✅ Fallback JWT authentication successful')
+      } catch (fallbackError) {
+        console.error('💥 Complete authentication failure - both token pair and fallback failed:', {
+          tokenError: tokenError instanceof Error ? tokenError.message : 'Unknown token error',
+          fallbackError: fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback error',
+          userId: user.id,
+          userEmail: user.email
+        })
+        
+        // Return error instead of crashing
+        return NextResponse.redirect(new URL('/login?error=authentication_failed&detail=token_generation', baseUrl))
+      }
     }
 
     // Determine redirect URL - 所有已認證用戶都可進入 admin
