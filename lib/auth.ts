@@ -8,10 +8,18 @@ import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 import { env } from './env-validation'
 
-// JWT settings - using type-safe environment variables
-const JWT_SECRET = new TextEncoder().encode(env.JWT_SECRET)
+// JWT settings - direct environment access for production stability
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET || env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET is not configured - check environment variables')
+  }
+  return secret
+}
+
+const JWT_SECRET = new TextEncoder().encode(getJWTSecret())
 const JWT_ALGORITHM = 'HS256'
-const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN || '7d'
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || env.JWT_EXPIRES_IN || '7d'
 
 // User interface definitions
 export interface User {
