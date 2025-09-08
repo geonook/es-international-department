@@ -320,13 +320,13 @@ async function showCurrentEnvironment(env: Environment) {
     staging: {
       description: '預備環境 Staging', 
       port: '30592',
-      url: 'https://staging.es-international.zeabur.app',
+      url: 'https://next14-landing.zeabur.app',
       features: ['Production-like', 'Integration tests', 'UAT']
     },
     production: {
       description: '正式環境 Production',
       port: '32312', 
-      url: 'https://es-international.zeabur.app',
+      url: 'https://kcislk-infohub.zeabur.app',
       features: ['Live data', 'Monitoring', 'Performance optimized']
     }
   }
