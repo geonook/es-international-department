@@ -58,6 +58,7 @@ import CommunicationForm from '@/components/admin/CommunicationForm'
 // Removed: Unified Communications system - replaced with separated Teachers' Corner & Parents' Corner
 import HeroImageManager from '@/components/admin/HeroImageManager'
 import PageContentManager from '@/components/admin/PageContentManager'
+import HomepageSettingsManager from '@/components/admin/HomepageSettingsManager'
 import ContactInfoManager from '@/components/admin/ContactInfoManager'
 import NavigationMenuManager from '@/components/admin/NavigationMenuManager'
 import EventForm from '@/components/admin/EventForm'
@@ -1893,6 +1894,8 @@ export default function AdminPage() {
                 </div>
 
                 <div className="grid gap-4 lg:gap-8">
+                  {/* Homepage Settings Management */}
+                  <HomepageSettingsManager />
                   {/* Parent Announcements Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">

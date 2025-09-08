@@ -8,6 +8,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
+import { useHomepageSettings } from "@/hooks/useHomepageSettings"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -20,6 +21,9 @@ import { useRef, useEffect, useState } from "react"
 export default function HomePage() {
   // 頁面載入狀態 | Page loading state
   const [isLoaded, setIsLoaded] = useState(false)
+  
+  // 首頁設定資料 | Homepage settings data
+  const { settings, loading: settingsLoading } = useHomepageSettings()
   
   // 滾動效果相關 hooks | Scroll effect related hooks
   const { scrollY } = useScroll()
@@ -159,6 +163,17 @@ export default function HomePage() {
       <main>
         {/* Hero Section */}
         <section ref={heroRef} className="relative py-20 overflow-hidden">
+          {/* Hero Background Image */}
+          {settings.heroImage && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80"
+              style={{
+                backgroundImage: `url('${settings.heroImage}')`,
+              }}
+            />
+          )}
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-purple-900/30 to-pink-900/20" />
           <motion.div className="container mx-auto px-4 text-center relative z-10" style={{ y: y1, opacity }}>
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -177,16 +192,8 @@ export default function HomePage() {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                Welcome to our
+                {settings.mainTitle || "Welcome to our Parents' Corner"}
               </motion.h2>
-              <motion.h3
-                className="text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 via-purple-600 to-pink-600 mb-8"
-                initial={{ y: 50, opacity: 0 }}
-                animate={isHeroInView ? { y: 0, opacity: 1 } : {}}
-                transition={{ delay: 0.3, duration: 0.8 }}
-              >
-                Parents' Corner
-              </motion.h3>
             </motion.div>
 
             <motion.div
@@ -196,16 +203,20 @@ export default function HomePage() {
               transition={{ delay: 0.6, duration: 0.8 }}
             >
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-                  Explore Resources
+                <Button 
+                  className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => window.location.href = settings.exploreButtonLink}
+                >
+                  {settings.exploreButtonText || "Explore Resources"}
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
                   className="border-purple-300 text-purple-600 hover:bg-purple-50 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-transparent"
+                  onClick={() => window.location.href = settings.learnMoreButtonLink}
                 >
-                  Learn More
+                  {settings.learnMoreButtonText || "Learn More"}
                 </Button>
               </motion.div>
             </motion.div>
@@ -249,7 +260,7 @@ export default function HomePage() {
                 <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
                   <Image
-                    src="/placeholder.svg?height=400&width=600"
+                    src={settings.contentImage || "/placeholder.svg?height=400&width=600"}
                     alt="Mother and child reading together"
                     width={600}
                     height={400}
@@ -280,16 +291,7 @@ export default function HomePage() {
                   "
                 </motion.div>
                 <blockquote className="text-3xl md:text-4xl text-gray-700 font-light leading-relaxed relative z-10">
-                  <motion.span
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ delay: 0.8, duration: 1 }}
-                  >
-                    Parents are the cornerstone
-                  </motion.span>{" "}
-                  of a child's education; their support and collaboration with teachers create a powerful partnership
-                  that inspires and nurtures lifelong learners.
+                  {settings.quoteText || "Parents are the cornerstone of a child's education; their support and collaboration with teachers create a powerful partnership that inspires and nurtures lifelong learners."}
                 </blockquote>
 
                 <motion.div
