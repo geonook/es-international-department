@@ -15,7 +15,7 @@
 
 The staging environment is still redirecting to `localhost:8080` because:
 1. **Environment variables not set correctly in Zeabur console**
-2. **Domain mismatch**: Using old domain `staging.es-international.zeabur.app` instead of `next14-landing.zeabur.app`
+2. **Domain mismatch**: ✅ Fixed - now using correct domain `next14-landing.zeabur.app`
 3. **Code fix exists but deployment hasn't picked up correct config**
 
 ## 🔧 **REQUIRED ZEABUR ENVIRONMENT VARIABLES**

@@ -194,7 +194,7 @@ jobs:
     
     environment:
       name: staging
-      url: https://staging.es-international.zeabur.app
+      url: https://next14-landing.zeabur.app
     
     steps:
       - name: 📦 Checkout code
@@ -208,7 +208,7 @@ jobs:
       - name: 🧪 Deploy to Staging
         run: |
           echo "🧪 Deploying to staging environment..."
-          echo "🔗 Staging URL: https://staging.es-international.zeabur.app"
+          echo "🔗 Staging URL: https://next14-landing.zeabur.app"
           echo "✅ Staging deployment completed"
           
       - name: 🔍 Post-deployment tests

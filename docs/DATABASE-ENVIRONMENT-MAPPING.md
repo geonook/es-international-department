@@ -17,7 +17,7 @@
    Port 32718              Port 30592              Port 32312
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Development    │    │     Staging     │    │   Production    │
-│ kcislk_esid_dev │    │kcislk_esid_staging│  │kcislk_esid_prod │
+│     zeabur      │    │      zeabur     │    │      zeabur     │
 │                 │    │                 │    │                 │
 │ 🎯 本地開發     │    │ 🎯 功能驗證     │    │ 🎯 正式營運     │
 │ 💾 測試資料     │    │ 💾 模擬資料     │    │ 💾 正式資料     │
@@ -29,16 +29,16 @@
 
 | 環境 Environment | 服務名稱 Service | 埠號 Port | 資料庫名稱 Database | 用戶 User | 用途 Purpose |
 |------------------|------------------|-----------|---------------------|-----------|--------------|
-| **Development** | postgresql-noce | `32718` | `kcislk_esid_dev` | root | 本地開發測試 |
-| **Staging** | postgresql-prouse | `30592` | `kcislk_esid_staging` | root | 功能驗證測試 |
-| **Production** | postgresql | `32312` | `kcislk_esid_prod` | root | 正式營運服務 |
+| **Development** | postgresql-noce | `32718` | `zeabur` | root | 本地開發測試 |
+| **Staging** | postgresql-prouse | `30592` | `zeabur` | root | 功能驗證測試 |
+| **Production** | postgresql | `32312` | `zeabur` | root | 正式營運服務 |
 
 ## 🔗 Database Connection Details | 資料庫連接詳情
 
 ### Development Environment | 開發環境
 ```env
 # 配置檔案: .env.development, .env, .env.backup
-DATABASE_URL="postgresql://root:[PASSWORD]@tpe1.clusters.zeabur.com:32718/kcislk_esid_dev"
+DATABASE_URL="postgresql://root:C1iy0Z9n6YFSGJE3p2TMUg78KR5DLeB4@tpe1.clusters.zeabur.com:32718/zeabur"
 
 # 特性
 NODE_ENV=development
@@ -50,11 +50,11 @@ Debug: 啟用 (prisma:*)
 ### Staging Environment | 預備環境
 ```env
 # 配置檔案: .env.staging
-DATABASE_URL="postgresql://root:[PASSWORD]@tpe1.clusters.zeabur.com:30592/kcislk_esid_staging"
+DATABASE_URL="postgresql://root:dA5xMK20jhwiJV39E7GBLyl4Fo6QY18n@tpe1.clusters.zeabur.com:30592/zeabur"
 
 # 特性
 NODE_ENV=staging
-NEXTAUTH_URL=https://staging.es-international.zeabur.app
+NEXTAUTH_URL=https://next14-landing.zeabur.app
 Rate Limiting: 中等 (500 requests/15min)
 Debug: 限制 (prisma:warn)
 ```
@@ -62,7 +62,7 @@ Debug: 限制 (prisma:warn)
 ### Production Environment | 正式環境
 ```env
 # 配置檔案: .env.production
-DATABASE_URL="postgresql://root:[PASSWORD]@tpe1.clusters.zeabur.com:32312/kcislk_esid_prod"
+DATABASE_URL="postgresql://root:p356lGH1k4Kd7zefirJ0YSV8MC29ygON@tpe1.clusters.zeabur.com:32312/zeabur"
 
 # 特性
 NODE_ENV=production
