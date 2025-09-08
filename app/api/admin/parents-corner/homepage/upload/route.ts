@@ -8,24 +8,15 @@ import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { requireAdmin } from '@/lib/middleware'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
-    // 檢查用戶權限
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id }
-    })
-
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    const adminUser = await requireAdmin(request)
+    if (adminUser instanceof NextResponse) {
+      return adminUser
     }
 
     // 解析表單數據
@@ -73,18 +64,18 @@ export async function POST(request: NextRequest) {
 
     // 更新資料庫設定
     const settingKey = type === 'hero' ? 'homepage_hero_image' : 'homepage_content_image'
-    await prisma.systemSettings.upsert({
+    await prisma.systemSetting.upsert({
       where: { key: settingKey },
       update: { 
         value: publicUrl,
-        updatedBy: session.user.id
+        updatedBy: adminUser.id
       },
       create: {
         key: settingKey,
         value: publicUrl,
         category: 'homepage',
         description: `Homepage ${type} image`,
-        updatedBy: session.user.id
+        updatedBy: adminUser.id
       }
     })
 

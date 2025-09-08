@@ -5,8 +5,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { requireAdmin } from '@/lib/middleware'
+
+export const dynamic = 'force-dynamic'
 
 interface HomepageSettings {
   heroImage?: string
@@ -22,25 +23,15 @@ interface HomepageSettings {
 }
 
 // GET - 獲取首頁設定
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
-    // 檢查用戶權限
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id }
-    })
-
-    if (!user || user.role === 'viewer') {
-      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
+    const adminUser = await requireAdmin(request)
+    if (adminUser instanceof NextResponse) {
+      return adminUser
     }
 
     // 獲取首頁設定
-    const settings = await prisma.systemSettings.findMany({
+    const settings = await prisma.systemSetting.findMany({
       where: {
         key: {
           in: [
@@ -89,19 +80,9 @@ export async function GET() {
 // PUT - 更新首頁設定
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
-    // 檢查用戶權限
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id }
-    })
-
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    const adminUser = await requireAdmin(request)
+    if (adminUser instanceof NextResponse) {
+      return adminUser
     }
 
     const data: HomepageSettings = await request.json()
@@ -129,7 +110,7 @@ export async function PUT(request: NextRequest) {
     // 批量更新設定
     await Promise.all(
       settingsToUpdate.map(setting =>
-        prisma.systemSettings.upsert({
+        prisma.systemSetting.upsert({
           where: { key: setting.key },
           update: { value: setting.value },
           create: {
@@ -137,7 +118,7 @@ export async function PUT(request: NextRequest) {
             value: setting.value,
             category: 'homepage',
             description: `Homepage setting: ${setting.key}`,
-            updatedBy: session.user.id
+            updatedBy: adminUser.id
           }
         })
       )
