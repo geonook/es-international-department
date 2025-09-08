@@ -49,10 +49,70 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Check if user is already logged in
+  // Enhanced error handling with URL parameters
   useEffect(() => {
     checkAuth()
+    handleUrlErrors()
   }, [])
+
+  const handleUrlErrors = () => {
+    const errorParam = searchParams.get('error')
+    const detailParam = searchParams.get('detail')
+    
+    if (errorParam) {
+      let errorMessage = ''
+      
+      // 📊 Enhanced Error Messages for Production Debugging
+      switch (errorParam) {
+        case 'oauth_callback_failed':
+          errorMessage = '🚨 OAuth 回調失敗'
+          if (detailParam) {
+            errorMessage += `\n詳細錯誤: ${decodeURIComponent(detailParam)}`
+          }
+          break
+        case 'oauth_error':
+          errorMessage = '🔍 Google OAuth 認證錯誤'
+          break
+        case 'missing_parameters':
+          errorMessage = '⚠️ OAuth 參數缺失'
+          break
+        case 'state_mismatch':
+          errorMessage = '🔒 安全驗證失敗 (CSRF)'
+          break
+        case 'no_id_token':
+          errorMessage = '🎫 無法獲取 Google ID Token'
+          break
+        case 'invalid_user_info':
+          errorMessage = '👤 Google 用戶資料無效'
+          break
+        case 'user_creation_failed':
+          errorMessage = '🗄️ 用戶建立失敗'
+          break
+        case 'authentication_failed':
+          if (detailParam === 'token_generation') {
+            errorMessage = '🔐 JWT Token 生成失敗'
+          } else {
+            errorMessage = '🚫 認證失敗'
+          }
+          break
+        default:
+          errorMessage = `❌ 登入錯誤: ${errorParam}`
+          if (detailParam) {
+            errorMessage += `\n詳細: ${decodeURIComponent(detailParam)}`
+          }
+      }
+      
+      setError(errorMessage)
+      
+      // 記錄錯誤到 console 以便生產環境偵錯
+      console.error('🚨 Login Page Error:', {
+        error: errorParam,
+        detail: detailParam,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      })
+    }
+  }
 
   const checkAuth = async () => {
     try {

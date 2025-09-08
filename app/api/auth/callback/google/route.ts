@@ -253,38 +253,88 @@ export async function GET(request: NextRequest) {
       roles: user.userRoles.map(ur => ur.role.name)
     }
 
-    // Generate JWT token pair with enhanced fallback mechanism
+    // 🔄 Enhanced JWT Token Generation with Retry Mechanism
     console.log(`🔐 Starting authentication token generation for user: ${user.email}`)
-    try {
-      const tokenPair = await generateTokenPair(userForJWT)
-      setAuthCookies(tokenPair)
-      console.log('✅ Token pair authentication successful')
-    } catch (tokenError) {
-      console.error('❌ Token pair generation failed, using fallback JWT:', {
-        error: tokenError instanceof Error ? tokenError.message : 'Unknown error',
-        userId: user.id,
-        userEmail: user.email,
-        stack: tokenError instanceof Error ? tokenError.stack : undefined
-      })
-      
+    
+    // 重試配置
+    const MAX_RETRIES = 3
+    const RETRY_DELAY = 1000 // 1 second
+    
+    let authSuccess = false
+    let lastError: Error | null = null
+    
+    // 主要 Token Pair 生成 (含重試)
+    for (let attempt = 1; attempt <= MAX_RETRIES && !authSuccess; attempt++) {
       try {
-        // Fallback to simple JWT if refresh token generation fails
-        const { generateJWT, setAuthCookie } = await import('@/lib/auth')
-        console.log('🔄 Attempting fallback JWT generation...')
-        const simpleToken = await generateJWT(userForJWT)
-        setAuthCookie(simpleToken)
-        console.log('✅ Fallback JWT authentication successful')
-      } catch (fallbackError) {
-        console.error('💥 Complete authentication failure - both token pair and fallback failed:', {
-          tokenError: tokenError instanceof Error ? tokenError.message : 'Unknown token error',
-          fallbackError: fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback error',
+        console.log(`🔄 Token pair generation attempt ${attempt}/${MAX_RETRIES}`)
+        const tokenPair = await generateTokenPair(userForJWT)
+        setAuthCookies(tokenPair)
+        console.log(`✅ Token pair authentication successful on attempt ${attempt}`)
+        authSuccess = true
+        break
+      } catch (tokenError) {
+        lastError = tokenError instanceof Error ? tokenError : new Error(String(tokenError))
+        console.error(`❌ Token pair generation attempt ${attempt} failed:`, {
+          error: lastError.message,
           userId: user.id,
-          userEmail: user.email
+          userEmail: user.email,
+          attempt: attempt,
+          stack: lastError.stack
         })
         
-        // Return error instead of crashing
-        return NextResponse.redirect(new URL('/login?error=authentication_failed&detail=token_generation', baseUrl))
+        if (attempt < MAX_RETRIES) {
+          console.log(`⏳ Waiting ${RETRY_DELAY}ms before retry...`)
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY))
+        }
       }
+    }
+    
+    // 如果主要方法失敗，嘗試備用 JWT (含重試)
+    if (!authSuccess) {
+      console.log('🔄 Main token generation failed, attempting fallback JWT...')
+      
+      for (let attempt = 1; attempt <= MAX_RETRIES && !authSuccess; attempt++) {
+        try {
+          const { generateJWT, setAuthCookie } = await import('@/lib/auth')
+          console.log(`🔄 Fallback JWT generation attempt ${attempt}/${MAX_RETRIES}`)
+          const simpleToken = await generateJWT(userForJWT)
+          setAuthCookie(simpleToken)
+          console.log(`✅ Fallback JWT authentication successful on attempt ${attempt}`)
+          authSuccess = true
+          break
+        } catch (fallbackError) {
+          lastError = fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError))
+          console.error(`❌ Fallback JWT attempt ${attempt} failed:`, {
+            error: lastError.message,
+            userId: user.id,
+            userEmail: user.email,
+            attempt: attempt
+          })
+          
+          if (attempt < MAX_RETRIES) {
+            console.log(`⏳ Waiting ${RETRY_DELAY}ms before fallback retry...`)
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY))
+          }
+        }
+      }
+    }
+    
+    // 如果所有方法都失敗
+    if (!authSuccess) {
+      console.error('💥 Complete authentication failure - all retries exhausted:', {
+        lastError: lastError?.message || 'Unknown error',
+        userId: user.id,
+        userEmail: user.email,
+        maxRetries: MAX_RETRIES,
+        stack: lastError?.stack
+      })
+      
+      // 提供更詳細的錯誤資訊
+      const errorDetail = lastError ? 
+        `token_generation_failed_after_retries: ${lastError.message.substring(0, 50)}` :
+        'token_generation_failed_unknown'
+      
+      return NextResponse.redirect(new URL(`/login?error=authentication_failed&detail=${encodeURIComponent(errorDetail)}`, baseUrl))
     }
 
     // Determine redirect URL - 所有已認證用戶都可進入 admin
@@ -308,9 +358,48 @@ export async function GET(request: NextRequest) {
     return response
 
   } catch (error) {
-    console.error('Google OAuth callback error:', error)
+    // 📊 Enhanced Error Logging for Production Debugging
+    const errorDetails = {
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      baseUrl: getBaseUrl(),
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined,
+      requestUrl: request.url,
+      userAgent: request.headers.get('user-agent'),
+      // Environment validation
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+      hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
+      hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+      hasDatabaseUrl: !!process.env.DATABASE_URL
+    }
+
+    console.error('🚨 [PRODUCTION] Google OAuth Callback Critical Error:', errorDetails)
+    
+    // Log specific error patterns for common issues
+    if (error instanceof Error) {
+      if (error.message.includes('JWT_SECRET')) {
+        console.error('🔐 JWT Secret Error - Check environment variables')
+      } else if (error.message.includes('database') || error.message.includes('prisma')) {
+        console.error('🗄️ Database Connection Error - Check DATABASE_URL')
+      } else if (error.message.includes('google') || error.message.includes('oauth')) {
+        console.error('🔍 Google OAuth Error - Check Google credentials and Console setup')
+      } else if (error.message.includes('token')) {
+        console.error('🎫 Token Generation Error - Check JWT configuration')
+      }
+    }
+    
     // Use baseUrl to avoid localhost:8080 redirect issue
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://kcislk-infohub.zeabur.app'
-    return NextResponse.redirect(new URL('/login?error=oauth_callback_failed', baseUrl))
+    const baseUrl = getBaseUrl()
+    
+    // Enhanced error parameter for debugging
+    const errorParam = error instanceof Error ? 
+      `oauth_callback_failed&detail=${encodeURIComponent(error.message.substring(0, 100))}` : 
+      'oauth_callback_failed&detail=unknown_error'
+    
+    console.error(`🔄 Redirecting to: ${baseUrl}/login?error=${errorParam}`)
+    return NextResponse.redirect(new URL(`/login?error=${errorParam}`, baseUrl))
   }
 }
