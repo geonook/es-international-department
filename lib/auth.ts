@@ -220,10 +220,40 @@ export function setAuthCookie(token: string) {
 
 /**
  * Clear authentication cookie
+ * Enhanced for Production environment compatibility - matches setAuthCookie domain logic
  */
 export function clearAuthCookie() {
   const cookieStore = cookies()
-  cookieStore.delete('auth-token')
+  
+  // Use same domain logic as setAuthCookie
+  const isProduction = process.env.NODE_ENV === 'production'
+  const nextAuthUrl = process.env.NEXTAUTH_URL
+  let cookieDomain: string | undefined = undefined
+  
+  if (isProduction && nextAuthUrl) {
+    try {
+      const url = new URL(nextAuthUrl)
+      if (url.hostname.includes('zeabur.app')) {
+        cookieDomain = url.hostname
+      }
+    } catch (error) {
+      console.warn('Failed to parse NEXTAUTH_URL for cookie domain:', error)
+    }
+  }
+  
+  // Clear with same domain configuration as when cookie was set
+  if (cookieDomain) {
+    cookieStore.set('auth-token', '', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 0, // Immediately expire
+      path: '/',
+      domain: cookieDomain,
+    })
+  } else {
+    cookieStore.delete('auth-token')
+  }
 }
 
 /**
