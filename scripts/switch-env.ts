@@ -57,7 +57,7 @@ function showHelp() {
   console.log('  npm run env:switch health development')
   console.log('')
   console.log('Features:')
-  console.log('  ✅ 自動備份當前環境設定')
+  console.log('  ✅ 安全環境切換（源環境檔案提供備份保護）')
   console.log('  ✅ 環境健康檢查（資料庫、OAuth、必要檔案）')
   console.log('  ✅ 開發環境自動重啟伺服器')
   console.log('  ✅ 詳細的環境狀態報告')
@@ -94,17 +94,13 @@ async function switchEnvironment(targetEnv: Environment) {
   }
   
   try {
-    // 備份現有 .env 檔案（如果存在）
+    // 直接切換到目標環境（源環境檔案本身提供備份機制）
     const currentEnvPath = path.join(process.cwd(), '.env')
-    const backupPath = path.join(process.cwd(), '.env.backup')
+    const targetEnvPath = path.join(process.cwd(), `.env.${targetEnv}`)
     
-    if (fs.existsSync(currentEnvPath)) {
-      fs.copyFileSync(currentEnvPath, backupPath)
-      console.log('📋 Current .env backed up to .env.backup')
-    }
+    console.log(`🔄 Switching from current environment to ${targetEnv}`)
     
     // 複製目標環境檔案到 .env
-    const targetEnvPath = path.join(process.cwd(), `.env.${targetEnv}`)
     fs.copyFileSync(targetEnvPath, currentEnvPath)
     
     console.log(`✅ Successfully switched to ${targetEnv} environment`)
