@@ -275,10 +275,7 @@ export default function IDSquads() {
                     <h3 className="text-base font-semibold text-gray-900 mb-1">
                       {squad.name}
                     </h3>
-                    <div className="w-12 h-0.5 bg-purple-600 mx-auto mb-3"></div>
-                    <p className="text-xs text-gray-600">
-                      Excellence • Leadership • Innovation
-                    </p>
+                    <div className="w-12 h-0.5 bg-purple-600 mx-auto"></div>
                   </CardContent>
                 </Card>
               </motion.div>
