@@ -5,15 +5,12 @@
 
 'use client'
 
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React from 'react'
+import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { 
   Users, 
   Award, 
-  Star, 
   Target, 
   Compass, 
   Lightbulb,
@@ -24,8 +21,7 @@ import {
   Search,
   Zap,
   Crown,
-  Anchor,
-  X
+  Anchor
 } from 'lucide-react'
 
 interface Squad {
@@ -198,52 +194,21 @@ const squads: Squad[] = [
 ]
 
 export default function IDSquads() {
-  const [selectedSquad, setSelectedSquad] = useState<Squad | null>(null)
-
   // 動畫變體
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05,
+        staggerChildren: 0.1,
         delayChildren: 0.2,
       },
     },
   }
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0, scale: 0.9 },
-    visible: { 
-      y: 0, 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        type: 'spring',
-        damping: 20,
-        stiffness: 300
-      }
-    },
-  }
-
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        type: 'spring',
-        damping: 20,
-        stiffness: 300
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      scale: 0.8,
-      transition: {
-        duration: 0.2
-      }
-    }
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
   }
 
   return (
@@ -290,7 +255,7 @@ export default function IDSquads() {
 
         {/* Squads Grid */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -298,44 +263,18 @@ export default function IDSquads() {
           {squads.map((squad) => {
             const IconComponent = squad.icon
             return (
-              <motion.div 
-                key={squad.id} 
-                variants={itemVariants}
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Card 
-                  className={`h-full ${squad.bgColor} border-2 cursor-pointer hover:shadow-lg transition-all duration-300 group`}
-                  onClick={() => setSelectedSquad(squad)}
-                >
-                  <CardContent className="p-6 text-center">
-                    <div className="mb-4">
-                      <div className={`w-16 h-16 mx-auto rounded-full bg-white shadow-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                        <IconComponent className={`w-8 h-8 ${squad.color}`} />
-                      </div>
-                      <h3 className={`text-lg font-bold ${squad.color} group-hover:scale-105 transition-transform duration-300`}>
-                        {squad.name}
-                      </h3>
+              <motion.div key={squad.id} variants={itemVariants}>
+                <Card className={`${squad.bgColor} border-2 hover:shadow-lg transition-all duration-300 group`}>
+                  <CardContent className="p-4 text-center">
+                    <div className={`w-12 h-12 mx-auto rounded-full bg-white shadow-sm flex items-center justify-center mb-3`}>
+                      <IconComponent className={`w-6 h-6 ${squad.color}`} />
                     </div>
-                    <p className="text-sm text-gray-600 line-clamp-2 mb-4">
-                      {squad.description}
+                    <h3 className={`text-sm font-semibold ${squad.color} mb-2`}>
+                      {squad.name}
+                    </h3>
+                    <p className={`text-xs italic ${squad.color} opacity-80`}>
+                      "{squad.motto}"
                     </p>
-                    <div className="flex flex-wrap gap-1 justify-center">
-                      {squad.values.slice(0, 2).map((value) => (
-                        <Badge 
-                          key={value} 
-                          variant="secondary" 
-                          className="text-xs bg-white/70"
-                        >
-                          {value}
-                        </Badge>
-                      ))}
-                      {squad.values.length > 2 && (
-                        <Badge variant="secondary" className="text-xs bg-white/70">
-                          +{squad.values.length - 2}
-                        </Badge>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -343,92 +282,6 @@ export default function IDSquads() {
           })}
         </motion.div>
 
-        {/* Squad Detail Modal */}
-        <AnimatePresence>
-          {selectedSquad && (
-            <motion.div
-              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedSquad(null)}
-            >
-              <motion.div
-                className={`bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto ${selectedSquad.bgColor} border-2`}
-                variants={modalVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center`}>
-                      <selectedSquad.icon className={`w-8 h-8 ${selectedSquad.color}`} />
-                    </div>
-                    <div>
-                      <h3 className={`text-2xl font-bold ${selectedSquad.color}`}>
-                        {selectedSquad.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm">ID Squad</p>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setSelectedSquad(null)}
-                    className="hover:bg-white/70"
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
-                </div>
-
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Description</h4>
-                    <p className="text-gray-700">{selectedSquad.description}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Squad Motto</h4>
-                    <p className={`italic text-lg ${selectedSquad.color} font-medium`}>
-                      "{selectedSquad.motto}"
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Core Values</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedSquad.values.map((value) => (
-                        <Badge 
-                          key={value} 
-                          className={`${selectedSquad.color} bg-white/80`}
-                        >
-                          {value}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Key Characteristics</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      {selectedSquad.characteristics.map((characteristic) => (
-                        <div 
-                          key={characteristic}
-                          className="flex items-center gap-2 bg-white/60 rounded-lg p-2"
-                        >
-                          <Star className={`w-4 h-4 ${selectedSquad.color}`} />
-                          <span className="text-sm text-gray-700">{characteristic}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </section>
   )

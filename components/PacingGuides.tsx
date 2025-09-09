@@ -206,7 +206,7 @@ export default function PacingGuides() {
                   <div className="flex items-center justify-between text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      <span>Updated: {new Date(guide.lastUpdated).toLocaleDateString()}</span>
+                      <span>Updated: {guide.lastUpdated}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="w-3 h-3" />
