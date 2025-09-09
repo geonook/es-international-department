@@ -256,25 +256,28 @@ export default function IDSquads() {
 
         {/* Squads Grid */}
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           {squads.map((squad) => {
-            const IconComponent = squad.icon
+            const firstLetter = squad.name.charAt(0).toUpperCase()
             return (
               <motion.div key={squad.id} variants={itemVariants}>
-                <Card className={`${squad.bgColor} border-2 hover:shadow-lg transition-all duration-300 group`}>
-                  <CardContent className="p-4 text-center">
-                    <div className={`w-12 h-12 mx-auto rounded-full bg-white shadow-sm flex items-center justify-center mb-3`}>
-                      <IconComponent className={`w-6 h-6 ${squad.color}`} />
+                <Card className="bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center mb-4 shadow-lg">
+                      <span className="text-2xl font-bold text-white">
+                        {firstLetter}
+                      </span>
                     </div>
-                    <h3 className={`text-sm font-semibold ${squad.color} mb-2`}>
+                    <h3 className="text-base font-semibold text-gray-900 mb-1">
                       {squad.name}
                     </h3>
-                    <p className={`text-xs italic ${squad.color} opacity-80`}>
-                      "{squad.motto}"
+                    <div className="w-12 h-0.5 bg-purple-600 mx-auto mb-3"></div>
+                    <p className="text-xs text-gray-600">
+                      Excellence • Leadership • Innovation
                     </p>
                   </CardContent>
                 </Card>
