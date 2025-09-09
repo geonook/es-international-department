@@ -231,10 +231,17 @@ export default function IDSquads() {
               Our ID Squads
             </h2>
           </div>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-6">
-            The ID Squads are at the heart of our ID community spirit! This dynamic house system encourages 
-            teamwork, friendship, and healthy competition while developing leadership skills and fostering collaboration.
-          </p>
+          <div className="max-w-4xl mx-auto mb-6 space-y-4">
+            <p className="text-xl text-gray-600">
+              The ID Squads are at the heart of our ID community spirit! This dynamic house system encourages 
+              teamwork, friendship, and healthy competition. Each squad is a unique group of students who work 
+              together through academic achievements, positive behavior, and participation in school events.
+            </p>
+            <p className="text-xl text-gray-600">
+              By joining an ID Squad, students build friendships, develop leadership skills, and learn the value 
+              of collaboration—all while having fun!
+            </p>
+          </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <Award className="w-4 h-4 text-purple-500" />
