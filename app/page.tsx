@@ -9,6 +9,7 @@ import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { useHomepageSettings } from "@/hooks/useHomepageSettings"
+import MobileNav from "@/components/ui/mobile-nav"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -121,6 +122,7 @@ export default function HomePage() {
               </div>
             </motion.div>
 
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               {[
                 { name: "Home", href: "/", active: true },
@@ -156,6 +158,9 @@ export default function HomePage() {
                 <Search className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600 transition-colors" />
               </motion.div>
             </nav>
+
+            {/* Mobile Navigation */}
+            <MobileNav />
           </div>
         </div>
       </motion.header>

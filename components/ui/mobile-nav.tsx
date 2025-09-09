@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Home, Calendar, BookOpen, Settings, GraduationCap } from 'lucide-react'
@@ -16,11 +16,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: '首頁', href: '/', icon: Home },
-  { name: '活動資訊', href: '/events', icon: Calendar },
-  { name: '學習資源', href: '/resources', icon: BookOpen },
-  { name: '教師專區', href: '/teachers', icon: GraduationCap, requiresAuth: true },
-  { name: '管理後台', href: '/admin', icon: Settings, requiresAuth: true, adminOnly: true }
+  { name: 'Home', href: '/', icon: Home },
+  { name: 'Events', href: '/events', icon: Calendar },
+  { name: 'Resources', href: '/resources', icon: BookOpen },
+  { name: 'Teachers', href: '/teachers', icon: GraduationCap, requiresAuth: true },
+  { name: 'Admin', href: '/admin', icon: Settings, requiresAuth: true, adminOnly: true }
 ]
 
 export default function MobileNav() {
@@ -29,6 +29,29 @@ export default function MobileNav() {
 
   const toggleNav = () => setIsOpen(!isOpen)
   const closeNav = () => setIsOpen(false)
+
+  // 鍵盤導航支援 | Keyboard navigation support
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Escape' && isOpen) {
+      closeNav()
+    }
+  }
+
+  // 焦點陷阱 | Focus trap
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown as any)
+      document.body.style.overflow = 'hidden' // 防止背景滾動
+    } else {
+      document.removeEventListener('keydown', handleKeyDown as any)
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown as any)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
 
   const filteredNavItems = navItems.filter(item => {
     if (item.requiresAuth && !user) return false
@@ -44,7 +67,10 @@ export default function MobileNav() {
         size="sm"
         className="md:hidden p-2"
         onClick={toggleNav}
-        aria-label="開啟選單"
+        aria-label={isOpen ? "關閉選單" : "開啟選單"}
+        aria-expanded={isOpen}
+        aria-controls="mobile-menu"
+        aria-haspopup="true"
       >
         {isOpen ? (
           <X className="h-6 w-6" />
@@ -70,6 +96,9 @@ export default function MobileNav() {
       <AnimatePresence>
         {isOpen && (
           <motion.nav
+            id="mobile-menu"
+            role="navigation"
+            aria-label="行動版主選單"
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
@@ -84,10 +113,10 @@ export default function MobileNav() {
             <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
               <div>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                  KCISLK ESID
+                  ES International Department
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  國際部資訊中心
+                  Excellence in Education
                 </p>
               </div>
               <Button
@@ -124,17 +153,27 @@ export default function MobileNav() {
 
             {/* 導航連結 */}
             <div className="py-6">
-              <nav className="space-y-2 px-6">
-                {filteredNavItems.map((item) => {
+              <nav className="space-y-2 px-6" role="menu">
+                {filteredNavItems.map((item, index) => {
                   const IconComponent = item.icon
                   return (
                     <Link
                       key={item.name}
                       href={item.href}
+                      role="menuitem"
+                      tabIndex={0}
                       onClick={closeNav}
-                      className="flex items-center gap-4 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 group"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          closeNav()
+                          // Navigate to the href
+                          window.location.href = item.href
+                        }
+                      }}
+                      className="flex items-center gap-4 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-colors duration-200 group"
                     >
-                      <IconComponent className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                      <IconComponent className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-focus:text-blue-600 dark:group-focus:text-blue-400 transition-colors" />
                       <span className="font-medium">{item.name}</span>
                     </Link>
                   )
