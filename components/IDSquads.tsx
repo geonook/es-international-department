@@ -231,37 +231,48 @@ export default function IDSquads() {
               Our ID Squads
             </h2>
           </div>
-          {/* Banner Image */}
+          {/* Optimized Side-by-Side Layout */}
           <motion.div 
-            className="max-w-6xl mx-auto mb-8"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center max-w-7xl mx-auto mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="flex justify-center">
+            {/* Left: Image Area (2/5 width) */}
+            <motion.div 
+              className="lg:col-span-2"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+            >
               <Image
                 src="/squad-characters/all-squads-banner.png"
                 alt="All 14 ID Squad Characters"
-                width={800}
-                height={400}
-                className="object-contain max-w-full h-auto rounded-2xl shadow-lg"
+                width={500}
+                height={300}
+                className="object-contain w-full h-auto rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
                 priority
               />
-            </div>
+            </motion.div>
+            
+            {/* Right: Text Area (3/5 width) - Left Aligned */}
+            <motion.div 
+              className="lg:col-span-3 space-y-6"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.7 }}
+            >
+              <p className="text-xl text-gray-600 leading-relaxed">
+                The ID Squads are at the heart of our ID community spirit! This dynamic house system encourages 
+                teamwork, friendship, and healthy competition. Each squad is a unique group of students who work 
+                together through academic achievements, positive behavior, and participation in school events.
+              </p>
+              <p className="text-xl text-gray-600 leading-relaxed">
+                By joining an ID Squad, students build friendships, develop leadership skills, and learn the value 
+                of collaboration—all while having fun!
+              </p>
+            </motion.div>
           </motion.div>
-
-          {/* Description Text - Clean Centered Layout */}
-          <div className="max-w-4xl mx-auto mb-6 space-y-4">
-            <p className="text-xl text-gray-600 text-center">
-              The ID Squads are at the heart of our ID community spirit! This dynamic house system encourages 
-              teamwork, friendship, and healthy competition. Each squad is a unique group of students who work 
-              together through academic achievements, positive behavior, and participation in school events.
-            </p>
-            <p className="text-xl text-gray-600 text-center">
-              By joining an ID Squad, students build friendships, develop leadership skills, and learn the value 
-              of collaboration—all while having fun!
-            </p>
-          </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <Award className="w-4 h-4 text-purple-500" />
