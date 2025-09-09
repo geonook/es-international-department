@@ -3,29 +3,23 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Home, Calendar, BookOpen, Settings, GraduationCap } from 'lucide-react'
+import { Menu, X, Home, Calendar, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/hooks/useAuth'
 
 interface NavItem {
   name: string
   href: string
   icon: React.ComponentType<{ className?: string }>
-  requiresAuth?: boolean
-  adminOnly?: boolean
 }
 
 const navItems: NavItem[] = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Events', href: '/events', icon: Calendar },
-  { name: 'Resources', href: '/resources', icon: BookOpen },
-  { name: 'Teachers', href: '/teachers', icon: GraduationCap, requiresAuth: true },
-  { name: 'Admin', href: '/admin', icon: Settings, requiresAuth: true, adminOnly: true }
+  { name: 'Resources', href: '/resources', icon: BookOpen }
 ]
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
-  const { user, isAdmin } = useAuth()
 
   const toggleNav = () => setIsOpen(!isOpen)
   const closeNav = () => setIsOpen(false)
@@ -37,7 +31,7 @@ export default function MobileNav() {
     }
   }
 
-  // 焦點陷阱 | Focus trap
+  // 焦點陷阱與背景滾動控制 | Focus trap and background scroll control
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown as any)
@@ -52,12 +46,6 @@ export default function MobileNav() {
       document.body.style.overflow = 'unset'
     }
   }, [isOpen])
-
-  const filteredNavItems = navItems.filter(item => {
-    if (item.requiresAuth && !user) return false
-    if (item.adminOnly && !isAdmin) return false
-    return true
-  })
 
   return (
     <>
@@ -92,37 +80,42 @@ export default function MobileNav() {
         )}
       </AnimatePresence>
 
-      {/* 側邊選單 */}
+      {/* Google Material Design側邊選單 */}
       <AnimatePresence>
         {isOpen && (
           <motion.nav
             id="mobile-menu"
             role="navigation"
-            aria-label="行動版主選單"
+            aria-label="主要導航選單"
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ 
-              type: 'spring', 
-              damping: 20, 
-              stiffness: 300 
+              type: 'tween',
+              duration: 0.3,
+              ease: [0.4, 0.0, 0.2, 1] // Material Design標準easing
             }}
-            className="fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl z-50 md:hidden overflow-y-auto"
+            className="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-gray-900 shadow-2xl z-50 md:hidden"
           >
-            {/* 選單標題區域 */}
-            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                  ES International Department
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Excellence in Education
-                </p>
+            {/* 選單頭部 - 採用Material Design規範 */}
+            <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 bg-purple-50 dark:bg-gray-800">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
+                  <Home className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+                    ES International
+                  </h2>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    Department
+                  </p>
+                </div>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-2"
+                className="p-1.5 hover:bg-purple-100 dark:hover:bg-gray-700"
                 onClick={closeNav}
                 aria-label="關閉選單"
               >
@@ -130,31 +123,10 @@ export default function MobileNav() {
               </Button>
             </div>
 
-            {/* 用戶資訊區域 */}
-            {user && (
-              <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border-b dark:border-gray-600">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium text-sm">
-                      {user.name?.charAt(0) || 'U'}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white text-sm">
-                      {user.name}
-                    </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-300">
-                      {isAdmin ? '管理員' : '一般用戶'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 導航連結 */}
-            <div className="py-6">
-              <nav className="space-y-2 px-6" role="menu">
-                {filteredNavItems.map((item, index) => {
+            {/* 導航項目 - Material Design列表樣式 */}
+            <div className="py-2">
+              <nav role="menu">
+                {navItems.map((item, index) => {
                   const IconComponent = item.icon
                   return (
                     <Link
@@ -167,37 +139,27 @@ export default function MobileNav() {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault()
                           closeNav()
-                          // Navigate to the href
                           window.location.href = item.href
                         }
                       }}
-                      className="flex items-center gap-4 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-colors duration-200 group"
+                      className="flex items-center gap-4 px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800 focus:outline-none transition-colors duration-150 group"
                     >
-                      <IconComponent className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-focus:text-blue-600 dark:group-focus:text-blue-400 transition-colors" />
-                      <span className="font-medium">{item.name}</span>
+                      <IconComponent className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors" />
+                      <span className="font-medium text-sm">{item.name}</span>
                     </Link>
                   )
                 })}
               </nav>
             </div>
 
-            {/* 底部區域 */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              {!user ? (
-                <Link 
-                  href="/login" 
-                  onClick={closeNav}
-                  className="block w-full"
-                >
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                    登入系統
-                  </Button>
-                </Link>
-              ) : (
-                <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                  KCISLK ESID Info Hub v1.0
-                </p>
-              )}
+            {/* 底部品牌標識 */}
+            <div className="absolute bottom-4 left-6 right-6">
+              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+                ES International Department
+              </p>
+              <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-1">
+                Excellence in Education
+              </p>
             </div>
           </motion.nav>
         )}

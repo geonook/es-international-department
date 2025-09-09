@@ -10,6 +10,8 @@ import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { useHomepageSettings } from "@/hooks/useHomepageSettings"
 import MobileNav from "@/components/ui/mobile-nav"
+import PacingGuides from "@/components/PacingGuides"
+import IDSquads from "@/components/IDSquads"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -596,6 +598,9 @@ export default function HomePage() {
           </div>
         </motion.section>
 
+        {/* Pacing Guides Section */}
+        <PacingGuides />
+
         {/* Quick Stats */}
         <motion.section
           className="py-16 bg-white/50 backdrop-blur-sm"
@@ -634,63 +639,8 @@ export default function HomePage() {
           </div>
         </motion.section>
 
-        {/* KCFSID Squads */}
-        <motion.section
-          className="py-20 bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={containerVariants}
-        >
-          <div className="container mx-auto px-4">
-            <motion.div className="text-center mb-16" variants={itemVariants}>
-              <motion.h2
-                className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8 }}
-              >
-                KCFSID <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Squads</span>
-              </motion.h2>
-              <motion.p
-                className="text-lg text-gray-600 max-w-2xl mx-auto"
-                initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-              >
-                Our six unique squads foster collaboration, leadership, and excellence in every student.
-              </motion.p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {squads.map((squad, index) => (
-                <motion.div
-                  key={squad}
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="bg-white shadow-xl border-0 overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                    <CardContent className="p-6 text-center">
-                      <motion.div
-                        className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl transition-all duration-300"
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <span className="text-2xl font-bold text-white">{squad[0]}</span>
-                      </motion.div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{squad}</h3>
-                      <div className="h-1 w-16 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full mx-auto mb-3" />
-                      <p className="text-sm text-gray-600">
-                        Excellence • Leadership • Innovation
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
+        {/* ID Squads Section */}
+        <IDSquads />
 
         {/* Contact CTA */}
         <motion.section
