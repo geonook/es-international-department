@@ -276,7 +276,7 @@ export default function IDSquads() {
             
             return (
               <motion.div key={squad.id} variants={itemVariants}>
-                <Card className="bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 group">
+                <Card className="bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 group hover:scale-105">
                   <CardContent className="p-6 text-center">
                     <div className="w-24 h-24 mx-auto mb-4 relative overflow-visible">
                       <Image
@@ -284,13 +284,13 @@ export default function IDSquads() {
                         alt={`${squad.name} character`}
                         width={96}
                         height={96}
-                        className="object-contain transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:-translate-y-1 group-hover:rotate-3"
+                        className="object-contain transition-all duration-300 ease-in-out group-hover:scale-125 group-hover:-translate-y-2 group-hover:rotate-6"
                       />
                     </div>
-                    <h3 className="text-base font-semibold text-gray-900 mb-1 transition-colors duration-300 group-hover:text-purple-600">
+                    <h3 className="text-base font-semibold text-gray-900 mb-1 transition-all duration-300 group-hover:text-purple-600 group-hover:scale-110">
                       {squad.name}
                     </h3>
-                    <div className="w-12 h-0.5 bg-purple-600 mx-auto transition-all duration-300 group-hover:w-16"></div>
+                    <div className="w-12 h-0.5 bg-purple-600 mx-auto transition-all duration-300 group-hover:w-20 group-hover:h-1"></div>
                   </CardContent>
                 </Card>
               </motion.div>
