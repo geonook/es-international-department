@@ -172,8 +172,10 @@ export default function HomePage() {
               }}
             />
           )}
-          {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-purple-900/30 to-pink-900/20" />
+          {/* Overlay for better text readability - only show when hero image exists */}
+          {settings.heroImage && (
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-purple-900/30 to-pink-900/20" />
+          )}
           <motion.div className="container mx-auto px-4 text-center relative z-10" style={{ y: y1, opacity }}>
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
