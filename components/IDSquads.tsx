@@ -263,8 +263,15 @@ export default function IDSquads() {
           animate="visible"
         >
           {squads.map((squad) => {
-            // Map squad names to image file names (handle special case for Guardian)
-            const imageName = squad.name === 'Guardians' ? 'GUardian' : squad.name.slice(0, -1)
+            // Map squad names to image file names (handle special cases)
+            let imageName = squad.name
+            if (squad.name === 'Guardians') {
+              imageName = 'GUardian'
+            } else if (squad.name === 'Visionaries') {
+              imageName = 'Visionaries'
+            } else {
+              imageName = squad.name.slice(0, -1) // Remove 's' for other squads
+            }
             const imagePath = `/squad-characters/${imageName}.png`
             
             return (
