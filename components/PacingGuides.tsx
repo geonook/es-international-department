@@ -155,8 +155,9 @@ export default function PacingGuides() {
             </h2>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive curriculum guides for Term 1 across all grade levels. 
-            Parents are encouraged to review these periodically as they may be updated during the term.
+            We are excited to share our SY25-26 pacing guides with you! These guides outline the weekly plans for what will be covered in both our LTs' and ITs' courses. 
+            We encourage you to review them periodically, as some details may change due to unforeseen circumstances. 
+            Simply select the correct grade and then the correct level E1, E2, E3 on the bottom tab.
           </p>
         </motion.div>
 
