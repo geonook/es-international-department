@@ -2,7 +2,7 @@
 **Information Service Website for KCISLK Elementary School International Department | 林口康橋國際學校資訊服務網站**
 
 > **📊 項目狀態**: 100% 完成 | **🚀 部署狀態**: ✅ 企業級生產就緒  
-> **⚡ 最後更新**: 2025-09-08 | **🎯 里程碑**: ✅ 環境隔離完成 - 三環境完全獨立運作
+> **⚡ 最後更新**: 2025-09-09 | **🎯 里程碑**: ✅ Git 工作流程標準化 - 三環境分支管理完成
 
 ## 🎉 最新成果 | Latest Achievements
 
@@ -160,8 +160,12 @@ KCISLK ESID Ecosystem
   **小隊系統** - KCFSID 小隊資訊和活動
 
 #### Advanced Features | 進階功能
+- **Parents' Corner Homepage Management** - Admin interface for customizing homepage content, images, and links  
+  **家長專區首頁管理** - 管理員介面自訂首頁內容、圖片和連結
 - **Multi-Environment Management** - Smart switching between Development/Staging/Production  
   **多環境管理** - Development/Staging/Production 智能切換
+- **Git Workflow Management** - Three-environment branch strategy with manual production control  
+  **Git 工作流程管理** - 三環境分支策略與手動生產控制
 - **Real-time Monitoring** - Environment health monitoring with intelligent alerts  
   **即時監控** - 環境健康監控與智能警報
 - **CI/CD Automation** - GitHub Actions pipeline for automated testing and deployment  
@@ -287,9 +291,22 @@ docker build -t kcislk-esid-info-hub .  # Build Docker image | 建置 Docker 映
 docker run -p 8080:8080 kcislk-esid-info-hub  # Run container | 執行容器
 
 # Git workflow (follow CLAUDE.md rules) | Git 工作流程（遵循 CLAUDE.md 規則）
+# Standard Development Flow | 標準開發流程
+git checkout develop                # 切換到開發分支
 git add .                           # 暫存所有變更
 git commit -m "feat: description"   # 提交變更
-git push origin main                # 推送到主分支（自動 GitHub 備份）
+git push origin develop             # 推送到開發分支（觸發 Staging 部署）
+
+# Production Release (Manual Control) | 生產發布（手動控制）
+git checkout main                   # 切換到主分支
+git merge develop                   # 合併開發分支到主分支
+git push origin main                # 推送到主分支（觸發 Production 部署）
+
+# Emergency Hotfix | 緊急修復
+git checkout -b hotfix/issue-name   # 從 main 創建 hotfix 分支
+# ... make fixes ...
+git checkout main && git merge hotfix/issue-name
+git checkout develop && git merge hotfix/issue-name
 ```
 
 ## 🔐 Google OAuth Setup | Google OAuth 設定
@@ -400,6 +417,8 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor'
 - 📋 **Quick Start**: `docs/QUICK-START-OAUTH.md` - 5-minute setup guide
 - 📖 **Detailed Setup**: `docs/google-oauth-setup.md` - Complete configuration guide  
 - 📊 **Status Summary**: `docs/OAUTH-STATUS-SUMMARY.md` - Implementation overview
+- 🔄 **Git Workflow**: `docs/GIT-WORKFLOW-GUIDE.md` - Multi-environment branch management
+- 📋 **CLAUDE.md Guidelines**: Essential development rules and patterns
 
 ### 🎯 Features | 功能
 - ✅ Secure Google OAuth 2.0 authentication
