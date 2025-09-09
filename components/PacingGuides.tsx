@@ -215,7 +215,7 @@ export default function PacingGuides() {
                       className="text-6xl md:text-7xl font-bold text-white mb-2 drop-shadow-lg"
                       whileHover={{ 
                         scale: 1.1,
-                        rotate: [0, -5, 5, 0],
+                        rotate: 5,
                       }}
                       transition={{
                         type: "spring",
