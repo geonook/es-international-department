@@ -50,8 +50,8 @@ This file provides essential guidance to Claude Code (claude.ai/code) when worki
 ### 📝 MANDATORY REQUIREMENTS | 強制要求
 - **COMMIT** after every completed task/phase - no exceptions  
   **提交** 每個完成的任務/階段後 - 無例外
-- **GITHUB BACKUP** - Push to GitHub after every commit to maintain backup: `git push origin main`  
-  **GITHUB 備份** - 每次提交後推送到 GitHub 以維護備份：`git push origin main`
+- **GITHUB BACKUP** - Push to GitHub after every commit to maintain backup: `git push origin <current-branch>`  
+  **GITHUB 備份** - 每次提交後推送到 GitHub 以維護備份：`git push origin <當前分支>`
 - **USE TASK AGENTS** for all long-running operations (>30 seconds) - Bash commands stop when context switches  
   **使用任務代理** 處理所有長時間運行的操作（>30秒）- Bash 命令在上下文切換時會停止
 - **TODOWRITE** for complex tasks (3+ steps) → parallel agents → git checkpoints → test validation  
@@ -68,8 +68,8 @@ This file provides essential guidance to Claude Code (claude.ai/code) when worki
   **並行任務代理** - 同時啟動多個任務代理以獲得最大效率
 - **SYSTEMATIC WORKFLOW** - TodoWrite → Parallel agents → Git checkpoints → GitHub backup → Test validation  
   **系統化工作流程** - TodoWrite → 並行代理 → Git 檢查點 → GitHub 備份 → 測試驗證
-- **GITHUB BACKUP WORKFLOW** - After every commit: `git push origin main` to maintain GitHub backup  
-  **GITHUB 備份工作流程** - 每次提交後：`git push origin main` 以維護 GitHub 備份
+- **GITHUB BACKUP WORKFLOW** - After every commit: `git push origin <current-branch>` to maintain GitHub backup  
+  **GITHUB 備份工作流程** - 每次提交後：`git push origin <當前分支>` 以維護 GitHub 備份
 - **BACKGROUND PROCESSING** - ONLY Task agents can run true background operations  
   **背景處理** - 只有任務代理能執行真正的背景操作
 
@@ -136,8 +136,8 @@ This file provides essential guidance to Claude Code (claude.ai/code) when worki
   **TypeScript 優化**: ✅ 完成 - 修復200+ 編譯錯誤，達到零錯誤狀態
 - **Performance Optimization**: ✅ Complete - Fixed 48 N+1 query issues, enterprise-grade performance  
   **效能優化**: ✅ 完成 - 修復48個N+1查詢問題，達到企業級效能標準
-- **Multi-Environment Management**: ✅ Complete - Enhanced switching, monitoring, CI/CD pipeline  
-  **多環境管理系統**: ✅ 完成 - 增強切換、監控、CI/CD 流水線
+- **Git Branch Management & Multi-Environment**: ✅ Complete - Standardized three-environment workflow with automated Staging deployment and manual Production control  
+  **Git 分支管理與多環境系統**: ✅ 完成 - 標準化三環境工作流程，自動 Staging 部署與手動 Production 控制
 - **Documentation**: ✅ Complete - Comprehensive setup guides  
   **文件**: ✅ 完成 - 完整設定指南
 
@@ -187,6 +187,7 @@ kcislk-esid-info-hub/
 │   ├── test-oauth-config.ts   # OAuth configuration testing | OAuth 配置測試
 │   └── test-db-connection.ts  # Database connection testing | 資料庫連接測試
 ├── docs/                      # Documentation | 文件
+│   ├── GIT-WORKFLOW-GUIDE.md  # Git workflow standards | Git 工作流程標準
 │   ├── QUICK-START-OAUTH.md   # OAuth quick setup guide | OAuth 快速設定指南
 │   ├── google-oauth-setup.md  # Detailed OAuth setup | 詳細 OAuth 設定
 │   ├── OAUTH-STATUS-SUMMARY.md # Implementation status | 實作狀態總結
@@ -245,10 +246,11 @@ npm run env:monitor:fast        # Start monitoring (10s interval) | 啟動監控
 # Google OAuth system configured for both environments
 # OAuth testing interface: http://localhost:3001/test-oauth (dev)
 
-# Git workflow | Git 工作流程
+# Git workflow | Git 工作流程 (Follow three-environment standard)
 git add .                           # 暫存所有變更
 git commit -m "feat: description"   # 提交變更（功能：描述）
-git push origin main                # 推送到主分支
+git push origin develop             # 推送到 develop 分支 (觸發 Staging 部署)
+# git push origin main              # 只有準備 Production 發布時才推送到 main
 ```
 
 ## 🌍 MULTI-ENVIRONMENT & GIT BRANCH MANAGEMENT | 多環境與 Git 分支管理規範
@@ -370,7 +372,7 @@ hotfix/oauth-callback-error
 hotfix/database-connection-issue
 
 # Release branches (if needed) | 發布分支 (如需要)
-release/v1.6.2
+release/v1.7.0
 ```
 
 #### **Code Review Requirements | 代碼審查要求**
@@ -431,8 +433,8 @@ git push origin develop --force-with-lease
 
 #### **Official Release | 正式發布**
 1. **Merge to main** | **合併到 main**: `git checkout main && git merge develop`
-2. **Tag version** | **標籤版本**: `git tag -a v1.6.2 -m "Release version 1.6.2"`
-3. **Push release** | **推送發布**: `git push origin main && git push origin v1.6.2`
+2. **Tag version** | **標籤版本**: `git tag -a v1.7.0 -m "Release version 1.7.0"`
+3. **Push release** | **推送發布**: `git push origin main && git push origin v1.7.0`
 4. **Monitor deployment** | **監控部署**: Ensure Production environment starts normally
 
 #### **Post-Release Verification | 發布後驗證**
