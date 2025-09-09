@@ -1,13 +1,13 @@
 # CLAUDE.md - KCISLK ESID Info Hub
 # KCISLK ESID Info Hub - Claude Code 開發指導文件
 
-> **Documentation Version**: 1.5 | **文件版本**: 1.5  
-> **Last Updated**: 2025-09-05 | **最後更新**: 2025-09-05  
+> **Documentation Version**: 1.6 | **文件版本**: 1.6  
+> **Last Updated**: 2025-09-09 | **最後更新**: 2025-09-09  
 > **Project**: KCISLK ESID Info Hub | **專案**: KCISLK ESID Info Hub  
 > **Description**: KCISLK ESID Info Hub - Information service website for parents and teachers of KCISLK Elementary School International Department, providing the latest educational resources, event information, and communication tools.  
 > **專案描述**: KCISLK ESID Info Hub - 為林口康橋國際學校的家長和老師提供最新教育資源、活動資訊和溝通工具的資訊服務網站。  
-> **Features**: GitHub auto-backup, Task agents, technical debt prevention, multi-environment management, real-time monitoring  
-> **功能特色**: GitHub 自動備份、任務代理、技術債務預防、多環境管理、即時監控
+> **Features**: GitHub auto-backup, Task agents, technical debt prevention, multi-environment deployment strategy, Git branch management, real-time monitoring  
+> **功能特色**: GitHub 自動備份、任務代理、技術債務預防、多環境部署策略、Git 分支管理、即時監控
 
 This file provides essential guidance to Claude Code (claude.ai/code) when working with code in this repository.  
 本文件為 Claude Code (claude.ai/code) 在此儲存庫中工作時提供重要指導原則。
@@ -250,6 +250,212 @@ git add .                           # 暫存所有變更
 git commit -m "feat: description"   # 提交變更（功能：描述）
 git push origin main                # 推送到主分支
 ```
+
+## 🌍 MULTI-ENVIRONMENT & GIT BRANCH MANAGEMENT | 多環境與 Git 分支管理規範
+
+### 🏗️ **THREE-ENVIRONMENT ARCHITECTURE | 三環境架構**
+
+#### **Environment Mapping | 環境對應關係**
+```
+📦 三環境架構
+├── 🖥️ Development (本地開發)
+│   ├── 分支: develop (主要開發分支)
+│   ├── 地址: http://localhost:3001
+│   └── 用途: 日常開發與功能測試
+│
+├── 🧪 Staging (測試環境)  
+│   ├── 分支: develop (自動部署)
+│   ├── 地址: https://next14-landing.zeabur.app
+│   └── 用途: 整合測試與預發布驗證
+│
+└── 🌟 Production (生產環境)
+    ├── 分支: main (手動控制部署)
+    ├── 地址: https://kcislk-infohub.zeabur.app
+    └── 用途: 正式營運服務
+```
+
+#### **Branch Usage Rules | 分支使用規則**
+- **main**: 僅存放生產就緒的穩定版本 | Only production-ready stable versions
+- **develop**: 開發主線，所有功能整合與測試 | Development mainline for feature integration and testing
+- **feature/***: 功能開發分支，完成後合併到 develop | Feature development branches, merged to develop when complete
+- **hotfix/***: 緊急修復分支，可同時合併到 main 和 develop | Emergency fix branches, can be merged to both main and develop
+
+### 🔄 **STANDARD DEVELOPMENT WORKFLOW | 標準開發流程**
+
+#### **Daily Feature Development | 日常功能開發**
+```bash
+# 1. Create feature branch from develop | 從 develop 創建功能分支
+git checkout develop
+git pull origin develop
+git checkout -b feature/新功能描述
+
+# 2. Local development and testing | 本地開發與測試
+npm run dev  # Development on localhost:3001
+
+# 3. Commit completed work | 開發完成後提交
+git add .
+git commit -m "feat: 新功能描述"
+git push origin feature/新功能描述
+
+# 4. Merge to develop (triggers Staging auto-deployment) | 合併到 develop (觸發 Staging 自動部署)
+git checkout develop  
+git merge feature/新功能描述
+git push origin develop
+
+# 5. After Staging testing passes, prepare Production release | Staging 環境測試通過後，準備發布到 Production
+# ⚠️ MANUAL CONTROL: Only YOU decide when to update Production | 手動控制：只有您決定何時更新 Production
+git checkout main
+git merge develop
+git push origin main  # Triggers Production auto-deployment | 觸發 Production 自動部署
+```
+
+#### **Production Control Mechanism | Production 控制機制**
+> **🛡️ KEY PRINCIPLE | 關鍵原則**: Production 環境只有在您明確合併 develop 到 main 時才會更新  
+> **Production environment only updates when YOU explicitly merge develop to main**
+
+### 🚨 **EMERGENCY HOTFIX WORKFLOW | 緊急修復流程**
+
+```bash
+# 1. Create hotfix branch from main | 從 main 創建 hotfix 分支
+git checkout main
+git pull origin main
+git checkout -b hotfix/緊急問題描述
+
+# 2. Fix issue and test | 修復問題並測試
+# ... fix the critical issue ...
+
+# 3. Merge to both main and develop | 同時合併到 main 和 develop
+git checkout main
+git merge hotfix/緊急問題描述
+git push origin main
+
+git checkout develop  
+git merge hotfix/緊急問題描述
+git push origin develop
+
+# 4. Clean up hotfix branch | 刪除 hotfix 分支
+git branch -d hotfix/緊急問題描述
+git push origin --delete hotfix/緊急問題描述
+```
+
+### ✅ **BEST PRACTICES | 最佳實務**
+
+#### **Commit Message Standards | 提交訊息規範**
+```bash
+# Feature additions | 功能新增
+git commit -m "feat: 新增 Parents' Corner 首頁管理功能"
+
+# Bug fixes | 問題修復  
+git commit -m "fix: 修復 OAuth 重定向錯誤"
+
+# Performance improvements | 效能改進
+git commit -m "perf: 優化資料庫查詢效能"
+
+# Documentation updates | 文檔更新
+git commit -m "docs: 更新部署指南"
+
+# Code refactoring | 重構代碼
+git commit -m "refactor: 重構認證中介軟體"
+```
+
+#### **Branch Naming Standards | 分支命名規範**
+```bash
+# Feature branches | 功能分支
+feature/homepage-management
+feature/user-authentication  
+feature/parent-notification-system
+
+# Hotfix branches | 修復分支
+hotfix/oauth-callback-error
+hotfix/database-connection-issue
+
+# Release branches (if needed) | 發布分支 (如需要)
+release/v1.6.2
+```
+
+#### **Code Review Requirements | 代碼審查要求**
+- All merges to main require code review | 所有合併到 main 的變更都需要經過代碼審查
+- Develop branch merges can be fast-forward | develop 分支的合併可以是 fast-forward
+- Important features must be thoroughly tested in Staging | 重要功能需要在 Staging 環境充分測試後才能發布
+
+### 🛠️ **ENVIRONMENT MANAGEMENT COMMANDS | 環境管理命令**
+
+#### **Branch Management | 分支管理**
+```bash
+# View all branches | 查看所有分支
+git branch -a
+
+# Check branch differences | 查看分支差異
+git log --oneline develop..main  # main 領先 develop 的提交
+git log --oneline main..develop  # develop 領先 main 的提交
+
+# Sync remote branches | 同步遠程分支
+git fetch origin
+git remote prune origin  # Clean up deleted remote branches | 清理已刪除的遠程分支
+```
+
+#### **Environment Verification | 環境驗證**
+```bash
+# Check Staging environment | 檢查 Staging 環境
+curl https://next14-landing.zeabur.app/api/health
+
+# Check Production environment | 檢查 Production 環境  
+curl https://kcislk-infohub.zeabur.app/api/health
+
+# Verify OAuth endpoints | 驗證 OAuth 端點
+curl https://next14-landing.zeabur.app/api/auth/providers
+curl https://kcislk-infohub.zeabur.app/api/auth/providers
+```
+
+#### **Troubleshooting | 問題排除**
+```bash
+# View branch history graph | 查看分支歷史圖
+git log --graph --oneline --all
+
+# Check unpushed commits | 檢查未推送的提交
+git log origin/develop..HEAD
+
+# Force sync develop branch (use carefully) | 強制同步 develop 分支 (謹慎使用)
+git checkout develop
+git reset --hard origin/main
+git push origin develop --force-with-lease
+```
+
+### 📈 **VERSION RELEASE WORKFLOW | 版本發布流程**
+
+#### **Pre-Release Preparation | 準備發布**
+1. **Staging Environment Testing** | **Staging 環境測試**: Thoroughly test in develop branch
+2. **Feature Completeness Check** | **功能完整性檢查**: Ensure all planned features are completed  
+3. **Performance and Security Validation** | **效能和安全驗證**: Run complete test suite
+4. **Documentation Updates** | **文檔更新**: Synchronize relevant documentation
+
+#### **Official Release | 正式發布**
+1. **Merge to main** | **合併到 main**: `git checkout main && git merge develop`
+2. **Tag version** | **標籤版本**: `git tag -a v1.6.2 -m "Release version 1.6.2"`
+3. **Push release** | **推送發布**: `git push origin main && git push origin v1.6.2`
+4. **Monitor deployment** | **監控部署**: Ensure Production environment starts normally
+
+#### **Post-Release Verification | 發布後驗證**
+1. **Feature Testing** | **功能測試**: Verify key features work normally
+2. **Performance Monitoring** | **效能監控**: Check system performance metrics
+3. **Error Monitoring** | **錯誤監控**: Ensure no new errors are generated
+4. **User Feedback** | **使用者回饋**: Collect and process user feedback
+
+### 🚨 **IMPORTANT CONSIDERATIONS | 重要注意事項**
+
+#### **Operations to Avoid | 避免的操作**
+- ❌ **Direct development on main branch** | **直接在 main 分支開發**: All development should be in develop or feature branches
+- ❌ **Skip Staging testing** | **跳過 Staging 測試**: Important changes must be validated in Staging environment
+- ❌ **Use --force push** | **使用 --force push**: Avoid force pushing unless absolutely necessary
+- ❌ **Merge untested code** | **合併未測試的代碼**: Ensure functionality is fully tested locally before merging
+
+#### **Must Follow Rules | 必須遵循的規則**
+- ✅ **Follow CLAUDE.md standards** | **遵循 CLAUDE.md 規範**: Commit immediately after each completed task
+- ✅ **Push to GitHub backup** | **推送到 GitHub 備份**: Push to remote after every commit
+- ✅ **Use TodoWrite tracking** | **使用 TodoWrite 追蹤**: Use todo lists for complex task management
+- ✅ **Verify environment consistency** | **驗證環境一致性**: Ensure functionality is synchronized across three environments
+
+---
 
 ## 🚨 TECHNICAL DEBT PREVENTION | 技術債務預防
 
