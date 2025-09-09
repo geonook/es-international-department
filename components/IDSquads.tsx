@@ -273,24 +273,6 @@ export default function IDSquads() {
               </p>
             </motion.div>
           </motion.div>
-          <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-purple-500" />
-              <span>Build friendships</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Crown className="w-4 h-4 text-purple-500" />
-              <span>Develop leadership</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-purple-500" />
-              <span>Promote collaboration</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-purple-500" />
-              <span>Create healthy competition</span>
-            </div>
-          </div>
         </motion.div>
 
         {/* Squads Grid */}
