@@ -6,6 +6,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
 import { 
@@ -262,15 +263,22 @@ export default function IDSquads() {
           animate="visible"
         >
           {squads.map((squad) => {
-            const firstLetter = squad.name.charAt(0).toUpperCase()
+            // Map squad names to image file names (handle special case for Guardian)
+            const imageName = squad.name === 'Guardians' ? 'GUardian' : squad.name.slice(0, -1)
+            const imagePath = `/squad-characters/${imageName}.png`
+            
             return (
               <motion.div key={squad.id} variants={itemVariants}>
                 <Card className="bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center mb-4 shadow-lg">
-                      <span className="text-2xl font-bold text-white">
-                        {firstLetter}
-                      </span>
+                    <div className="w-24 h-24 mx-auto mb-4 relative">
+                      <Image
+                        src={imagePath}
+                        alt={`${squad.name} character`}
+                        width={96}
+                        height={96}
+                        className="object-contain"
+                      />
                     </div>
                     <h3 className="text-base font-semibold text-gray-900 mb-1">
                       {squad.name}
