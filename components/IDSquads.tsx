@@ -231,34 +231,36 @@ export default function IDSquads() {
               Our ID Squads
             </h2>
           </div>
-          <div className="max-w-6xl mx-auto mb-6">
-            {/* Side-by-side layout: Image on left, text on right */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              {/* Left: Media Image */}
-              <div className="flex justify-center lg:justify-end">
-                <Image
-                  src="/squad-characters/media.png"
-                  alt="ID Squad Characters"
-                  width={400}
-                  height={300}
-                  className="object-contain max-w-full h-auto"
-                  priority
-                />
-              </div>
-              
-              {/* Right: Description Text */}
-              <div className="space-y-4">
-                <p className="text-xl text-gray-600">
-                  The ID Squads are at the heart of our ID community spirit! This dynamic house system encourages 
-                  teamwork, friendship, and healthy competition. Each squad is a unique group of students who work 
-                  together through academic achievements, positive behavior, and participation in school events.
-                </p>
-                <p className="text-xl text-gray-600">
-                  By joining an ID Squad, students build friendships, develop leadership skills, and learn the value 
-                  of collaboration—all while having fun!
-                </p>
-              </div>
+          {/* Banner Image */}
+          <motion.div 
+            className="max-w-6xl mx-auto mb-8"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <div className="flex justify-center">
+              <Image
+                src="/squad-characters/all-squads-banner.png"
+                alt="All 14 ID Squad Characters"
+                width={800}
+                height={400}
+                className="object-contain max-w-full h-auto rounded-2xl shadow-lg"
+                priority
+              />
             </div>
+          </motion.div>
+
+          {/* Description Text - Clean Centered Layout */}
+          <div className="max-w-4xl mx-auto mb-6 space-y-4">
+            <p className="text-xl text-gray-600 text-center">
+              The ID Squads are at the heart of our ID community spirit! This dynamic house system encourages 
+              teamwork, friendship, and healthy competition. Each squad is a unique group of students who work 
+              together through academic achievements, positive behavior, and participation in school events.
+            </p>
+            <p className="text-xl text-gray-600 text-center">
+              By joining an ID Squad, students build friendships, develop leadership skills, and learn the value 
+              of collaboration—all while having fun!
+            </p>
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
