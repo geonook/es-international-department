@@ -601,44 +601,6 @@ export default function HomePage() {
         {/* Pacing Guides Section */}
         <PacingGuides />
 
-        {/* Quick Stats */}
-        <motion.section
-          className="py-16 bg-white/50 backdrop-blur-sm"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={containerVariants}
-        >
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {[
-                { number: "6", label: "Grade Levels", icon: BookOpen },
-                { number: "500+", label: "Students", icon: Users },
-                { number: "50+", label: "Resources", icon: ExternalLink },
-                { number: "12", label: "Monthly Updates", icon: Calendar },
-              ].map((stat, index) => (
-                <motion.div key={index} variants={itemVariants} className="text-center group">
-                  <motion.div
-                    className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl transition-all duration-300"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                  >
-                    <stat.icon className="w-8 h-8 text-white" />
-                  </motion.div>
-                  <motion.div
-                    className="text-3xl font-bold text-gray-900 mb-2"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    {stat.number}
-                  </motion.div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
-
         {/* ID Squads Section */}
         <IDSquads />
 
