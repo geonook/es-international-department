@@ -103,17 +103,15 @@ export async function GET(request: NextRequest) {
     const formattedMessages = combinedMessages.map(msg => ({
       id: msg.id,
       title: msg.title,
-      content: msg.summary || msg.content.substring(0, 200) + '...',
+      content: msg.content, // 返回完整內容
+      contentPreview: msg.summary || msg.content.substring(0, 200) + '...', // 預覽內容
       type: msg.type || 'announcement',
       priority: msg.priority,
       isImportant: msg.isImportant || msg.priority === 'high',
       isPinned: msg.isPinned || false,
-      date: msg.publishedAt || msg.createdAt,
-      author: msg.author ? 
-        msg.author.displayName || 
-        `${msg.author.firstName || ''} ${msg.author.lastName || ''}`.trim() || 
-        'KCISLK ESID' 
-        : 'KCISLK ESID',
+      publishedAt: msg.publishedAt,
+      createdAt: msg.createdAt,
+      author: msg.author, // 返回完整 author 對象
       targetAudience: msg.targetAudience
     }))
 

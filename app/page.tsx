@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar, Newspaper } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar, Newspaper, X } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
@@ -13,7 +14,6 @@ import { useHomepageSettings } from "@/hooks/useHomepageSettings"
 import MobileNav from "@/components/ui/mobile-nav"
 import PacingGuides from "@/components/PacingGuides"
 import IDSquads from "@/components/IDSquads"
-import { ResponsiveTestControls } from "@/components/dev/ResponsiveTestGrid"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -30,10 +30,15 @@ export default function HomePage() {
   // Message Board 狀態 | Message Board state
   const [messages, setMessages] = useState([])
   const [messagesLoading, setMessagesLoading] = useState(true)
+  const [selectedMessage, setSelectedMessage] = useState(null)
+  const [showMessageDetail, setShowMessageDetail] = useState(false)
   
   // Newsletter 狀態 | Newsletter state  
   const [newsletters, setNewsletters] = useState([])
   const [newslettersLoading, setNewslettersLoading] = useState(true)
+  
+  // 消息展開狀態 | Message expansion state
+  const [expandedMessages, setExpandedMessages] = useState(new Set())
   
   // 首頁設定資料 | Homepage settings data
   const { settings, loading: settingsLoading } = useHomepageSettings()
@@ -142,6 +147,20 @@ export default function HomePage() {
       news: "新聞"
     }
     return typeNames[type] || "通知"
+  }
+
+  // 處理消息展開/收合 | Handle message expand/collapse
+  const toggleMessageExpansion = (messageId, event) => {
+    event.stopPropagation() // 防止觸發 Modal
+    setExpandedMessages(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(messageId)) {
+        newSet.delete(messageId)
+      } else {
+        newSet.add(messageId)
+      }
+      return newSet
+    })
   }
 
   // 容器動畫變體 - 漸進式顯示子元素 | Container animation variants - staggered children
@@ -560,18 +579,22 @@ export default function HomePage() {
                                 return (
                                   <motion.div
                                     key={message.id}
-                                    className={`bg-gradient-to-br ${styles.container} rounded-xl p-4 sm:p-6 border-l-4 ${styles.border} hover:shadow-lg transition-all duration-300`}
+                                    className={`bg-gradient-to-br ${styles.container} rounded-xl p-4 sm:p-6 border-l-4 ${styles.border} hover:shadow-lg transition-all duration-300 cursor-pointer`}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.1 }}
                                     whileHover={{ scale: 1.02 }}
+                                    onClick={() => {
+                                      setSelectedMessage(message)
+                                      setShowMessageDetail(true)
+                                    }}
                                   >
                                     <div className="flex justify-between items-start mb-3">
                                       <span className={`text-sm ${styles.badge} px-3 py-1 rounded-full font-medium`}>
                                         {getTypeDisplayName(message.type)}
                                       </span>
                                       <div className="text-right text-sm text-gray-600">
-                                        {new Date(message.date).toLocaleDateString('zh-TW', { 
+                                        {new Date(message.publishedAt || message.createdAt).toLocaleDateString('zh-TW', { 
                                           month: 'short', 
                                           day: 'numeric',
                                           year: 'numeric'
@@ -590,9 +613,29 @@ export default function HomePage() {
                                       </div>
                                       <div className="flex-1">
                                         <h4 className="font-bold text-gray-900 mb-2 text-base sm:text-lg leading-tight">{message.title}</h4>
-                                        <p className="text-gray-700 mb-3 leading-relaxed text-sm sm:text-base">
-                                          {message.content}
-                                        </p>
+                                        {/* Gmail 風格的漸進展開內容 */}
+                                        <div className="space-y-2">
+                                          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                            expandedMessages.has(message.id) ? 'max-h-none' : 'max-h-20'
+                                          }`}>
+                                            <p className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+                                              {message.content || '暫無內容'}
+                                            </p>
+                                          </div>
+                                          
+                                          {/* 顯示更多/收合按鈕 - 只在內容超過一定長度時顯示 */}
+                                          {message.content && message.content.length > 200 && (
+                                            <button 
+                                              onClick={(e) => toggleMessageExpansion(message.id, e)}
+                                              className="text-blue-600 text-sm font-medium hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors duration-200 mb-3"
+                                            >
+                                              {expandedMessages.has(message.id) ? '收合' : '顯示更多'}
+                                              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                                                expandedMessages.has(message.id) ? 'rotate-180' : ''
+                                              }`} />
+                                            </button>
+                                          )}
+                                        </div>
                                         <div className="flex flex-wrap gap-1 sm:gap-2">
                                           {message.isImportant && (
                                             <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full font-medium">Important</span>
@@ -601,7 +644,9 @@ export default function HomePage() {
                                             <span className="text-xs bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full font-medium">Pinned</span>
                                           )}
                                           <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
-                                            {message.author}
+                                            {message.author?.displayName || 
+                                             `${message.author?.firstName || ''} ${message.author?.lastName || ''}`.trim() || 
+                                             'KCISLK ESID'}
                                           </span>
                                         </div>
                                       </div>
@@ -618,6 +663,12 @@ export default function HomePage() {
                             )}
                           </div>
 
+                          {/* 
+                            REMOVED 2025-09-11: "View All Messages & Announcements" button
+                            可以在未來需要時取消註解以恢復功能
+                            Can uncomment in the future to restore functionality
+                          */}
+                          {/*
                           <motion.div 
                             className="flex justify-center"
                             whileHover={{ scale: 1.02 }} 
@@ -629,6 +680,7 @@ View All Messages & Announcements
                               </Button>
                             </Link>
                           </motion.div>
+                          */}
                         </CardContent>
                       </Card>
                     </motion.div>
@@ -897,6 +949,84 @@ Browse Complete Newsletter Archive
         </motion.section>
       </main>
 
+      {/* Message Detail Modal */}
+      <Dialog open={showMessageDetail} onOpenChange={setShowMessageDetail}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-gray-900 pr-8">
+              {selectedMessage?.title}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              公告詳細內容
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedMessage && (
+            <div className="space-y-4 mt-4">
+              {/* Meta Information */}
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span className={`px-3 py-1 rounded-full font-medium ${
+                  selectedMessage.priority === 'high' 
+                    ? 'bg-red-100 text-red-700'
+                    : selectedMessage.priority === 'medium'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-green-100 text-green-700'
+                }`}>
+                  {getTypeDisplayName(selectedMessage.type)}
+                </span>
+                
+                {selectedMessage.isImportant && (
+                  <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 font-medium">
+                    Important
+                  </span>
+                )}
+                
+                {selectedMessage.isPinned && (
+                  <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-600 font-medium">
+                    Pinned
+                  </span>
+                )}
+                
+                <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                  {selectedMessage.author?.displayName || 
+                   `${selectedMessage.author?.firstName || ''} ${selectedMessage.author?.lastName || ''}`.trim() || 
+                   'KCISLK ESID'}
+                </span>
+                
+                <span className="text-gray-500 ml-auto">
+                  {(selectedMessage.publishedAt || selectedMessage.createdAt) && 
+                    new Date(selectedMessage.publishedAt || selectedMessage.createdAt).toLocaleDateString('zh-TW', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                </span>
+              </div>
+              
+              {/* Divider */}
+              <div className="border-t border-gray-200"></div>
+              
+              {/* Full Content */}
+              <div className="prose prose-gray max-w-none">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {selectedMessage.content}
+                </p>
+              </div>
+              
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowMessageDetail(false)}
+                >
+                  關閉
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
@@ -953,9 +1083,6 @@ Browse Complete Newsletter Archive
           </div>
         </div>
       </footer>
-      
-      {/* Development Tools - Only in development */}
-      <ResponsiveTestControls />
     </div>
   )
 }
