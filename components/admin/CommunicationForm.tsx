@@ -60,7 +60,7 @@ export default function CommunicationForm({
     targetAudience: communication?.targetAudience || 'all',
     priority: communication?.priority || 'medium',
     status: communication?.status || 'draft',
-    sourceGroup: communication?.sourceGroup || '',
+    sourceGroup: communication?.sourceGroup || 'general',
     isImportant: communication?.isImportant || false,
     isPinned: communication?.isPinned || false,
     boardType: communication?.boardType || 'general',
@@ -102,7 +102,7 @@ export default function CommunicationForm({
 
   // Source group options for teachers
   const sourceGroupOptions = [
-    { value: '', label: 'General', icon: Users, color: 'bg-gray-100 text-gray-700' },
+    { value: 'general', label: 'General', icon: Users, color: 'bg-gray-100 text-gray-700' },
     { value: 'Vickie', label: 'Principal Vickie', icon: Star, color: 'bg-purple-100 text-purple-700' },
     { value: 'Matthew', label: 'Vice Principal Matthew', icon: Star, color: 'bg-indigo-100 text-indigo-700' },
     { value: 'Academic Team', label: 'Academic Team', icon: BookOpen, color: 'bg-blue-100 text-blue-700' },
