@@ -104,7 +104,8 @@ export async function GET(request: NextRequest) {
     
     const { announcements, totalCount, queryTime } = result
 
-    const response = createApiSuccessResponse({
+    const response = NextResponse.json({
+      success: true,
       announcements,
       pagination: {
         page,

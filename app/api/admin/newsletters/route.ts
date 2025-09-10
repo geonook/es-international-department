@@ -71,14 +71,25 @@ export async function GET(request: NextRequest) {
       ]
     }
 
+    // Add type filter for communication table - query newsletters as communication type
+    const communicationWhere = { 
+      ...where, 
+      type: 'newsletter',
+      // Map newsletter-specific filters to communication fields
+      ...(where.issueNumber && { sourceGroup: `Issue ${where.issueNumber}` })
+    }
+    
+    // Remove newsletter-specific fields that don't exist in communication table
+    delete communicationWhere.issueNumber
+
     // Calculate total count and pagination
-    const totalCount = await prisma.newsletter.count({ where })
+    const totalCount = await prisma.communication.count({ where: communicationWhere })
     const totalPages = Math.ceil(totalCount / limit)
     const skip = (page - 1) * limit
 
-    // Get newsletters list
-    const newsletters = await prisma.newsletter.findMany({
-      where,
+    // Get newsletters from communication table
+    const newsletters = await prisma.communication.findMany({
+      where: communicationWhere,
       include: {
         author: {
           select: {
@@ -91,8 +102,7 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
-        { publicationDate: 'desc' },
-        { issueNumber: 'desc' },
+        { publishedAt: 'desc' },
         { createdAt: 'desc' }
       ],
       skip,
@@ -166,17 +176,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create newsletter
-    const newsletter = await prisma.newsletter.create({
+    // Create newsletter in communication table
+    const newsletter = await prisma.communication.create({
       data: {
         title: data.title,
         content: data.content,
-        htmlContent: data.htmlContent || null,
-        coverImageUrl: data.coverImageUrl || null,
-        pdfUrl: data.pdfUrl || null,
+        summary: data.htmlContent || null,
+        type: 'newsletter',
+        targetAudience: 'parents', // Default newsletters to parents
         status: data.status || 'draft',
-        issueNumber: data.issueNumber || null,
-        publicationDate: data.publicationDate ? new Date(data.publicationDate) : null,
+        sourceGroup: data.issueNumber ? `Issue ${data.issueNumber}` : 'Newsletter',
+        publishedAt: data.publicationDate ? new Date(data.publicationDate) : null,
         authorId: currentUser.id
       },
       include: {
