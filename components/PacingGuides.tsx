@@ -167,65 +167,29 @@ export default function PacingGuides() {
                   <div className={`h-2 ${guide.primaryColor}`} />
                   
                   {/* Card Content */}
-                  <div className="p-6">
-                    {/* Grade Number & Icon */}
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="p-4">
+                    {/* Grade and Term Display */}
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className={`w-12 h-12 ${guide.lightColor} rounded-xl flex items-center justify-center`}>
-                          <span className={`text-2xl font-bold ${guide.textColor}`}>
+                        <div className={`w-10 h-10 ${guide.lightColor} rounded-lg flex items-center justify-center`}>
+                          <span className={`text-lg font-bold ${guide.textColor}`}>
                             {guide.gradeNumber}
                           </span>
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
-                            {guide.grade}
+                          <h3 className="text-base font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
+                            {guide.grade} - Term 1
                           </h3>
-                          <p className="text-sm text-gray-500">Pacing Guide</p>
                         </div>
                       </div>
                       
                       {/* External Link Icon */}
                       <motion.div
-                        className={`w-10 h-10 ${guide.lightColor} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform`}
+                        className={`w-8 h-8 ${guide.lightColor} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform`}
                       >
-                        <ExternalLink className={`w-4 h-4 ${guide.textColor}`} />
+                        <ExternalLink className={`w-3 h-3 ${guide.textColor}`} />
                       </motion.div>
                     </div>
-                    
-                    {/* Description */}
-                    <p className="text-gray-600 text-sm mb-4">
-                      SY25-26 curriculum pacing guide with weekly plans for LT and IT courses.
-                    </p>
-                    
-                    {/* Action Area */}
-                    <div className="flex items-center justify-between">
-                      <span className={`text-xs font-medium px-3 py-1 ${guide.lightColor} ${guide.textColor} rounded-full`}>
-                        Google Sheets
-                      </span>
-                      
-                      <motion.div
-                        className="text-gray-400 group-hover:text-gray-600 transition-colors"
-                        animate={{
-                          x: [0, 2, 0]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        <span className="text-xs font-medium">Open →</span>
-                      </motion.div>
-                    </div>
-                    
-                    {/* Hover Accent Line */}
-                    <motion.div
-                      className={`h-0.5 ${guide.primaryColor} mt-4 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ originX: 0 }}
-                    />
                   </div>
                 </motion.div>
               </Link>
