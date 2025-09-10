@@ -319,22 +319,24 @@ export function RichTextEditor({
     content_css: theme === 'dark' ? 'dark' : 'default',
     placeholder: placeholder,
     toolbar: enableImageUpload ? [
-      'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor',
-      'alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist',
-      'link unlink | image imageupload | blockquote code | removeformat | help'
+      'undo redo | styleselect formatselect fontselect fontsizeselect | bold italic underline strikethrough',
+      'forecolor backcolor | alignleft aligncenter alignright alignjustify | outdent indent',
+      'numlist bullist | link unlink | image imageupload | blockquote code | emoticons charmap | removeformat help'
     ].join(' | ') : [
-      'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor',
-      'alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist',
-      'link unlink | blockquote code | removeformat | help'
+      'undo redo | styleselect formatselect fontselect fontsizeselect | bold italic underline strikethrough',
+      'forecolor backcolor | alignleft aligncenter alignright alignjustify | outdent indent',
+      'numlist bullist | link unlink | blockquote code | emoticons charmap | removeformat help'
     ].join(' | '),
     plugins: enableImageUpload ? [
       'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons',
+      'textcolor', 'colorpicker'
     ] : [
       'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons',
+      'textcolor', 'colorpicker'
     ],
     // 圖片上傳配置
     images_upload_handler: enableImageUpload ? imageUploadHandler : undefined,
@@ -344,16 +346,33 @@ export function RichTextEditor({
     automatic_uploads: enableImageUpload,
     paste_data_images: enableImageUpload,
     images_file_types: 'jpg,jpeg,png,gif,webp',
-    // Google Docs 相容性配置
-    paste_retain_style_properties: 'font-weight font-style text-decoration',
+    // Google Docs 相容性配置 - 增強版本
+    paste_retain_style_properties: 'color,background-color,font-weight,font-style,text-decoration,font-size,font-family,text-align',
     paste_convert_word_fake_lists: true,
-    paste_webkit_styles: 'font-weight font-style text-decoration',
+    paste_webkit_styles: 'color,background-color,font-weight,font-style,text-decoration,font-size,text-align',
     paste_merge_formats: true,
-    paste_auto_cleanup_on_paste: true,
+    paste_auto_cleanup_on_paste: false, // 關閉自動清理以保留更多格式
     paste_remove_styles_if_webkit: false,
     paste_strip_class_attributes: 'none',
-    // 保留 Google Docs 的列表格式
-    extended_valid_elements: 'div[*],p[*],span[*],strong,em,b,i,u,ol[*],ul[*],li[*]',
+    paste_block_drop: false, // 允許拖放粘貼
+    paste_enable_default_filters: false, // 關閉預設過濾器
+    paste_word_valid_elements: '*[*]', // 允許所有元素和屬性
+    paste_preprocess: function (plugin: any, args: any) {
+      // 保留 emoji 和特殊字符
+      args.content = args.content.replace(/[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}\u{200d}]/gu, function(match) {
+        return match; // 保留所有 emoji
+      });
+      // 保留特殊符號如 📌 ⚠️
+      args.content = args.content.replace(/[📌⚠️🔴🟡🟢🔵🟣⭐️✅❌]/g, function(match) {
+        return match;
+      });
+    },
+    // 保留 Google Docs 的列表格式和更多樣式
+    extended_valid_elements: 'div[*],p[*],span[*],strong,em,b,i,u,ol[*],ul[*],li[*],h1,h2,h3,h4,h5,h6,sub,sup,font[*]',
+    valid_elements: '*[*]',
+    valid_styles: {
+      '*': 'color,background-color,font-size,font-family,font-weight,font-style,text-decoration,text-align,margin,margin-top,margin-bottom,margin-left,margin-right,padding,padding-top,padding-bottom,padding-left,padding-right,border,border-width,border-style,border-color,line-height'
+    },
     file_picker_types: enableImageUpload ? 'image' : undefined,
     file_picker_callback: enableImageUpload ? (callback: any) => {
       fileInputRef.current?.click()

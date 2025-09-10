@@ -5,7 +5,7 @@
 
 import DOMPurify from 'dompurify'
 
-// 安全的 HTML 標籤和屬性配置
+// 安全的 HTML 標籤和屬性配置 - 增強支援 Google Docs 格式
 const SAFE_CONFIG = {
   ALLOWED_TAGS: [
     'p', 'br', 'strong', 'em', 'b', 'i', 'u', 's', 'sub', 'sup',
@@ -13,20 +13,26 @@ const SAFE_CONFIG = {
     'ul', 'ol', 'li',
     'blockquote', 'pre', 'code',
     'a', 'img',
-    'div', 'span',
+    'div', 'span', 'font',
     'table', 'thead', 'tbody', 'tr', 'th', 'td'
   ],
   ALLOWED_ATTR: [
     'href', 'target', 'rel',
     'src', 'alt', 'width', 'height', 'style',
-    'class',
+    'class', 'color', 'face', 'size',
     'data-*'
   ],
   ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
   ADD_TAGS: ['iframe'],
   ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'],
   FORBID_TAGS: ['script', 'object', 'embed', 'form', 'input', 'button'],
-  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']
+  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover'],
+  // 允許更多樣式屬性用於 Google Docs 格式
+  ALLOWED_CSS_PROPERTIES: [
+    'color', 'background-color', 'font-size', 'font-family', 'font-weight', 
+    'font-style', 'text-decoration', 'text-align', 'margin', 'padding',
+    'border', 'line-height', 'list-style-type'
+  ]
 }
 
 /**
@@ -61,22 +67,22 @@ export function sanitizeHtml(html: string, config?: Partial<typeof SAFE_CONFIG>)
 
 /**
  * 專為公告內容設計的清理函式
- * 保留常用格式但移除危險元素
+ * 保留常用格式但移除危險元素 - 支援 Google Docs 豐富格式
  */
 export function sanitizeAnnouncementContent(html: string): string {
   return sanitizeHtml(html, {
     ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'b', 'i', 'u', 
+      'p', 'br', 'strong', 'em', 'b', 'i', 'u', 's', 'sub', 'sup',
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
       'ul', 'ol', 'li',
       'blockquote', 'code',
       'a', 'img',
-      'div', 'span'
+      'div', 'span', 'font'
     ],
     ALLOWED_ATTR: [
       'href', 'target', 'rel',
       'src', 'alt', 'width', 'height', 
-      'style', 'class'
+      'style', 'class', 'color', 'face', 'size'
     ]
   })
 }
