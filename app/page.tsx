@@ -595,10 +595,10 @@ export default function HomePage() {
                                         </p>
                                         <div className="flex flex-wrap gap-1 sm:gap-2">
                                           {message.isImportant && (
-                                            <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full font-medium">重要</span>
+                                            <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full font-medium">Important</span>
                                           )}
                                           {message.isPinned && (
-                                            <span className="text-xs bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full font-medium">置頂</span>
+                                            <span className="text-xs bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full font-medium">Pinned</span>
                                           )}
                                           <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
                                             {message.author}
@@ -612,8 +612,8 @@ export default function HomePage() {
                             ) : (
                               <div className="text-center py-16 text-gray-500">
                                 <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                                <h3 className="text-lg font-medium mb-2">目前沒有訊息</h3>
-                                <p className="text-sm">最新的公告和資訊將會顯示在這裡</p>
+                                <h3 className="text-lg font-medium mb-2">No Messages Available</h3>
+                                <p className="text-sm">Latest announcements and information will be displayed here</p>
                               </div>
                             )}
                           </div>
@@ -625,7 +625,7 @@ export default function HomePage() {
                           >
                             <Link href="/announcements" className="w-full max-w-md">
                               <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-3">
-                                查看所有訊息與公告
+View All Messages & Announcements
                               </Button>
                             </Link>
                           </motion.div>
@@ -754,7 +754,7 @@ export default function HomePage() {
                                               onClick={() => window.open(newsletter.pdfUrl, '_blank')}
                                             >
                                               <ExternalLink className="w-4 h-4 mr-2" />
-                                              下載 PDF 版本
+Download PDF Version
                                             </Button>
                                           </motion.div>
                                         ) : (
@@ -777,7 +777,7 @@ export default function HomePage() {
                                 <p className="text-gray-600 mb-4">Want to see more newsletters?</p>
                                 <Link href="/newsletters">
                                   <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
-                                    瀏覽完整電子報檔案
+Browse Complete Newsletter Archive
                                   </Button>
                                 </Link>
                               </motion.div>
