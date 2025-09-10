@@ -11,6 +11,7 @@ import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { useHomepageSettings } from "@/hooks/useHomepageSettings"
+import { sanitizeAnnouncementContent } from "@/lib/sanitize-html"
 import MobileNav from "@/components/ui/mobile-nav"
 import PacingGuides from "@/components/PacingGuides"
 import IDSquads from "@/components/IDSquads"
@@ -618,9 +619,12 @@ export default function HomePage() {
                                           <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
                                             expandedMessages.has(message.id) ? 'max-h-none' : 'max-h-20'
                                           }`}>
-                                            <p className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-line">
-                                              {message.content || '暫無內容'}
-                                            </p>
+                                            <div 
+                                              className="text-gray-700 leading-relaxed text-sm sm:text-base prose prose-sm max-w-none"
+                                              dangerouslySetInnerHTML={{ 
+                                                __html: sanitizeAnnouncementContent(message.content || '<p class="text-gray-500">暫無內容</p>')
+                                              }}
+                                            />
                                           </div>
                                           
                                           {/* 顯示更多/收合按鈕 - 只在內容超過一定長度時顯示 */}
@@ -1008,9 +1012,12 @@ Browse Complete Newsletter Archive
               
               {/* Full Content */}
               <div className="prose prose-gray max-w-none">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedMessage.content}
-                </p>
+                <div 
+                  className="text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ 
+                    __html: sanitizeAnnouncementContent(selectedMessage.content || '<p class="text-gray-500">暫無內容</p>')
+                  }}
+                />
               </div>
               
               {/* Actions */}

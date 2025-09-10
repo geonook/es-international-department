@@ -344,6 +344,16 @@ export function RichTextEditor({
     automatic_uploads: enableImageUpload,
     paste_data_images: enableImageUpload,
     images_file_types: 'jpg,jpeg,png,gif,webp',
+    // Google Docs 相容性配置
+    paste_retain_style_properties: 'font-weight font-style text-decoration',
+    paste_convert_word_fake_lists: true,
+    paste_webkit_styles: 'font-weight font-style text-decoration',
+    paste_merge_formats: true,
+    paste_auto_cleanup_on_paste: true,
+    paste_remove_styles_if_webkit: false,
+    paste_strip_class_attributes: 'none',
+    // 保留 Google Docs 的列表格式
+    extended_valid_elements: 'div[*],p[*],span[*],strong,em,b,i,u,ol[*],ul[*],li[*]',
     file_picker_types: enableImageUpload ? 'image' : undefined,
     file_picker_callback: enableImageUpload ? (callback: any) => {
       fileInputRef.current?.click()

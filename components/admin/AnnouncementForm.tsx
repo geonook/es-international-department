@@ -9,11 +9,11 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { X, Save, AlertTriangle } from 'lucide-react'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 
 interface AnnouncementFormProps {
   announcement?: {
@@ -112,15 +112,17 @@ export default function AnnouncementForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="content">Content *</Label>
-          <Textarea
-            id="content"
+          <Label htmlFor="content">Content * (支援富文本格式)</Label>
+          <RichTextEditor
             value={formData.content}
-            onChange={(e) => handleChange('content', e.target.value)}
-            placeholder="Enter announcement content"
-            rows={6}
-            required
+            onChange={(content) => handleChange('content', content)}
+            placeholder="Enter announcement content with rich formatting..."
             disabled={isSubmitting}
+            minHeight={200}
+            maxHeight={400}
+            showWordCount={true}
+            enableImageUpload={true}
+            className="border rounded-md"
           />
         </div>
 
