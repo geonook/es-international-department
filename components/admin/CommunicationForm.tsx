@@ -351,7 +351,7 @@ Supports links to Google Sheets, documents, and other resources.`
           )}
         </div>
 
-        {/* Parents' Corner Sync Configuration */}
+        {/* Parents' Corner Sync Configuration - COMMENTED OUT DUE TO UNDEFINED VARIABLES
         {showParentsSync && formData.syncToParents && (
           <div className="space-y-4 p-4 bg-pink-50 rounded-lg border border-pink-200">
             <div className="flex items-center gap-2 mb-3">
@@ -380,7 +380,7 @@ Supports links to Google Sheets, documents, and other resources.`
               </div>
             </div>
 
-            {/* Parents Preview */}
+            Parents Preview
             {parentsPreview && (
               <div>
                 <Label className="text-sm font-medium text-pink-800 mb-2 block">
@@ -408,15 +408,18 @@ Supports links to Google Sheets, documents, and other resources.`
             </div>
           </div>
         )}
+        */}
 
         <div className="flex justify-between items-center pt-6 border-t">
           <div className="text-sm text-gray-600">
+            {/* Sync status indicator - COMMENTED OUT DUE TO UNDEFINED VARIABLES
             {formData.syncToParents && (
               <div className="flex items-center gap-2 text-pink-600">
                 <Heart className="w-4 h-4" />
                 <span>Will sync to Parents' Corner</span>
               </div>
             )}
+            */}
           </div>
           <div className="flex space-x-2">
           <Button type="button" variant="outline" onClick={onCancel}>
