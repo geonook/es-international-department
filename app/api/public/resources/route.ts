@@ -19,20 +19,20 @@ export async function GET(request: NextRequest) {
 
     // 查詢條件
     const whereCondition: any = {
-      status: status,
-      OR: [
-        { expiresAt: null },
-        { expiresAt: { gte: new Date() } }
-      ]
+      status: status
     }
 
-    // 過濾條件
+    // 過濾條件 - 使用關聯表查詢
     if (gradeLevel && gradeLevel !== 'all') {
-      whereCondition.gradeLevel = gradeLevel
+      whereCondition.gradeLevel = {
+        name: gradeLevel
+      }
     }
     
     if (category && category !== 'all') {
-      whereCondition.category = category
+      whereCondition.category = {
+        name: category
+      }
     }
     
     if (resourceType && resourceType !== 'all') {
@@ -47,14 +47,25 @@ export async function GET(request: NextRequest) {
         title: true,
         description: true,
         resourceType: true,
-        gradeLevel: true,
         fileUrl: true,
         externalUrl: true,
-        downloadUrl: true,
-        category: true,
-        tags: true,
-        isActive: true,
+        thumbnailUrl: true,
+        fileSize: true,
+        status: true,
+        isFeatured: true,
         createdAt: true,
+        gradeLevel: {
+          select: {
+            name: true,
+            displayName: true
+          }
+        },
+        category: {
+          select: {
+            name: true,
+            displayName: true
+          }
+        },
         creator: {
           select: {
             id: true,
@@ -62,11 +73,19 @@ export async function GET(request: NextRequest) {
             firstName: true,
             lastName: true
           }
+        },
+        tags: {
+          select: {
+            tag: {
+              select: {
+                name: true,
+                color: true
+              }
+            }
+          }
         }
       },
       orderBy: [
-        { gradeLevel: 'asc' },
-        { category: 'asc' },
         { createdAt: 'desc' }
       ],
       take: limit
@@ -78,13 +97,20 @@ export async function GET(request: NextRequest) {
       title: resource.title,
       description: resource.description,
       resourceType: resource.resourceType,
-      gradeLevel: resource.gradeLevel,
+      gradeLevel: resource.gradeLevel?.name || 'General',
+      gradeLevelDisplay: resource.gradeLevel?.displayName || 'General',
       fileUrl: resource.fileUrl,
       externalUrl: resource.externalUrl,
-      downloadUrl: resource.downloadUrl,
-      category: resource.category,
-      tags: resource.tags || [],
-      isActive: resource.isActive,
+      downloadUrl: resource.fileUrl || resource.externalUrl, // 使用 fileUrl 或 externalUrl 作為 downloadUrl
+      thumbnailUrl: resource.thumbnailUrl,
+      category: resource.category?.name || 'General',
+      categoryDisplay: resource.category?.displayName || 'General',
+      tags: resource.tags?.map(tagRelation => tagRelation.tag.name) || [],
+      tagColors: resource.tags?.map(tagRelation => tagRelation.tag.color) || [],
+      isActive: true, // 預設為 true，因為我們只查詢已發布的資源
+      isFeatured: resource.isFeatured,
+      status: resource.status,
+      fileSize: resource.fileSize ? Number(resource.fileSize) : null,
       createdAt: resource.createdAt.toISOString(),
       creator: resource.creator ? {
         displayName: resource.creator.displayName || 
