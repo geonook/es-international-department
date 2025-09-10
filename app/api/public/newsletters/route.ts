@@ -1,6 +1,13 @@
 /**
- * Public Newsletter API
- * 公開電子報 API - 供首頁顯示月刊電子報
+ * Enhanced Public Newsletter API with Date Filtering
+ * 增強的公開電子報 API - 支援月份/年份篩選功能
+ * 
+ * Query Parameters:
+ * - limit: number (default: 3) - 限制返回數量
+ * - audience: string (default: 'all') - 目標受眾
+ * - month: string (format: YYYY-MM) - 篩選特定月份
+ * - year: string (format: YYYY) - 篩選特定年份
+ * - dateRange: 'month'|'year'|'all' - 日期範圍類型
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -8,17 +15,73 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
-// GET - 獲取最新的電子報內容
+// Helper function to build date filters
+function buildDateFilters(searchParams: URLSearchParams) {
+  const month = searchParams.get('month') // Format: YYYY-MM
+  const year = searchParams.get('year')   // Format: YYYY
+  const dateRange = searchParams.get('dateRange') || 'all'
+  
+  if (month && month.match(/^\d{4}-\d{2}$/)) {
+    // Filter by specific month
+    const [yearPart, monthPart] = month.split('-')
+    const startDate = new Date(parseInt(yearPart), parseInt(monthPart) - 1, 1)
+    const endDate = new Date(parseInt(yearPart), parseInt(monthPart), 0, 23, 59, 59, 999)
+    
+    return {
+      publishedAt: {
+        gte: startDate,
+        lte: endDate
+      }
+    }
+  } else if (year && year.match(/^\d{4}$/)) {
+    // Filter by specific year
+    const startDate = new Date(parseInt(year), 0, 1)
+    const endDate = new Date(parseInt(year), 11, 31, 23, 59, 59, 999)
+    
+    return {
+      publishedAt: {
+        gte: startDate,
+        lte: endDate
+      }
+    }
+  }
+  
+  // No date filter - return all
+  return {}
+}
+
+// Helper function to format month/year from date
+function formatMonthYear(date: Date | null | undefined): { month: string; year: number } {
+  if (!date) {
+    const now = new Date()
+    return {
+      month: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`,
+      year: now.getFullYear()
+    }
+  }
+  
+  const d = new Date(date)
+  return {
+    month: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+    year: d.getFullYear()
+  }
+}
+
+// GET - 獲取電子報內容 (支援日期篩選)
 export async function GET(request: NextRequest) {
   try {
     // 獲取查詢參數
     const { searchParams } = new URL(request.url)
-    const limit = parseInt(searchParams.get('limit') || '3')
+    const limit = parseInt(searchParams.get('limit') || '10')
     const targetAudience = searchParams.get('audience') || 'all'
+    
+    // Build date filters
+    const dateFilters = buildDateFilters(searchParams)
 
-    // 查詢條件 - 僅使用 newsletter 表中存在的欄位
+    // 查詢條件 - 結合基礎條件和日期篩選
     const whereCondition: any = {
-      status: 'published'
+      status: 'published',
+      ...dateFilters
     }
 
     // 獲取電子報數據 - 使用 communication 資料表，查詢 newsletter 類型
@@ -96,8 +159,11 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // 格式化回應數據 - 使用 communication 資料表欄位
+    // 格式化回應數據 - 增加月份/年份資訊
     const formattedNewsletters = newsletters.map(newsletter => {
+      const publishedDate = newsletter.publishedAt || newsletter.createdAt
+      const { month, year } = formatMonthYear(publishedDate)
+      
       return {
         id: newsletter.id,
         title: newsletter.title,
@@ -106,7 +172,9 @@ export async function GET(request: NextRequest) {
         priority: 'medium',
         isImportant: false,
         isPinned: false,
-        date: newsletter.publishedAt || newsletter.createdAt,
+        date: publishedDate,
+        month: month, // 新增：格式化的月份 (YYYY-MM)
+        year: year,   // 新增：年份
         author: newsletter.author ? 
           newsletter.author.displayName || 
           `${newsletter.author.firstName || ''} ${newsletter.author.lastName || ''}`.trim() || 
@@ -115,26 +183,52 @@ export async function GET(request: NextRequest) {
         targetAudience: 'all',
         onlineReaderUrl: newsletter.onlineReaderUrl, // 線上閱讀器 URL
         pdfUrl: newsletter.pdfUrl, // PDF 下載 URL
-        issueNumber: newsletter.issueNumber // 期號
+        issueNumber: newsletter.issueNumber, // 期號
+        hasOnlineReader: Boolean(newsletter.onlineReaderUrl) // 新增：是否有線上閱讀器
       }
     })
 
-    // 如果有實際數據，返回實際數據；否則返回預設數據
+    // 計算額外的統計資訊
+    const totalCount = await prisma.communication.count({
+      where: {
+        status: 'published',
+        type: 'newsletter'
+      }
+    })
+    
+    // 獲取查詢參數用於回應元數據
+    const queryParams = {
+      month: searchParams.get('month'),
+      year: searchParams.get('year'),
+      limit: limit,
+      audience: targetAudience
+    }
+    
+    // 如果有實際數據，返回增強的回應資料
     if (formattedNewsletters.length > 0) {
       return NextResponse.json({
         success: true,
         data: formattedNewsletters,
         total: formattedNewsletters.length,
+        totalInDatabase: totalCount,
+        queryParams: queryParams,
+        hasDateFilter: Boolean(queryParams.month || queryParams.year),
         source: 'database'
       })
     }
 
-    // 不應該再執行到這裡，因為上面已經處理了所有情況
+    // 沒有找到數據時的回應
     return NextResponse.json({
       success: true,
       data: [],
       total: 0,
-      source: 'empty'
+      totalInDatabase: totalCount,
+      queryParams: queryParams,
+      hasDateFilter: Boolean(queryParams.month || queryParams.year),
+      source: 'empty',
+      message: queryParams.month || queryParams.year 
+        ? `No newsletters found for the specified ${queryParams.month ? 'month' : 'year'}`
+        : 'No newsletters available'
     })
 
   } catch (error) {

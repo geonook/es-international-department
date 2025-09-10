@@ -91,7 +91,9 @@
     "env:monitor:fast": "tsx scripts/environment-monitor.ts --interval=10000",
     "monitor:version": "tsx scripts/version-alignment-monitor.ts",
     "monitor:version:continuous": "tsx scripts/version-alignment-monitor.ts --continuous",
-    "monitor:version:fast": "tsx scripts/version-alignment-monitor.ts --continuous --interval=15"
+    "monitor:version:fast": "tsx scripts/version-alignment-monitor.ts --continuous --interval=15",
+    "test:newsletter-api": "tsx scripts/test-newsletter-api.ts",
+    "test:newsletters": "npm run test:newsletter-api"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",

@@ -1267,3 +1267,224 @@ export const CALENDAR_LOCALE_CONFIG = {
   moreLinkText: '顯示更多',
   noEventsText: '沒有活動'
 }
+
+// ========================================
+// 電子報系統類型定義 | Newsletter System Types
+// ========================================
+
+// 電子報基礎介面
+export interface Newsletter {
+  id: number
+  title: string
+  content: string
+  summary?: string
+  type: 'newsletter'
+  priority: 'low' | 'medium' | 'high'
+  isImportant: boolean
+  isPinned: boolean
+  date: Date | string
+  month: string        // Format: YYYY-MM
+  year: number
+  author: string
+  targetAudience: 'all' | 'teachers' | 'parents'
+  onlineReaderUrl?: string
+  pdfUrl?: string
+  issueNumber?: string
+  hasOnlineReader: boolean
+}
+
+// 電子報檔案月份資料
+export interface NewsletterMonthlyArchive {
+  month: string        // Format: YYYY-MM
+  year: number
+  count: number
+  newsletters: Array<{
+    id: number
+    title: string
+    issueNumber?: string
+    publishedAt: Date | string
+    hasOnlineReader: boolean
+    onlineReaderUrl?: string
+    pdfUrl?: string
+  }>
+  hasOnlineReader: boolean
+}
+
+// 電子報檔案年份資料
+export interface NewsletterYearlyArchive {
+  year: number
+  count: number
+  months: NewsletterMonthlyArchive[]
+}
+
+// 電子報篩選參數
+export interface NewsletterFilters {
+  month?: string       // Format: YYYY-MM
+  year?: string        // Format: YYYY
+  dateRange?: 'month' | 'year' | 'all'
+  audience?: 'all' | 'teachers' | 'parents'
+  limit?: number
+  includeEmpty?: boolean
+}
+
+// 電子報 API 回應
+export interface NewsletterResponse extends ApiResponse {
+  data: Newsletter[]
+  total: number
+  totalInDatabase: number
+  queryParams: {
+    month?: string | null
+    year?: string | null
+    limit: number
+    audience: string
+  }
+  hasDateFilter: boolean
+  source: 'database' | 'empty' | 'fallback'
+}
+
+// 電子報檔案 API 回應
+export interface NewsletterArchiveResponse extends ApiResponse {
+  archive: NewsletterMonthlyArchive[] | NewsletterYearlyArchive[] | {
+    byMonth: NewsletterMonthlyArchive[]
+    byYear: NewsletterYearlyArchive[]
+  }
+  availableYears: number[]
+  availableMonths: string[]
+  totalNewsletters: number
+  totalMonths: number
+  totalYears: number
+  groupBy: 'month' | 'year' | 'both'
+  queryParams: {
+    groupBy: string
+    limit: number
+    includeEmpty: boolean
+  }
+}
+
+// 電子報統計資訊
+export interface NewsletterStats {
+  total: number
+  currentMonth: number
+  currentYear: number
+  byMonth: Record<string, number>  // Format: YYYY-MM
+  byYear: Record<string, number>
+  withOnlineReader: number
+  withPdfOnly: number
+  recentIssues: Newsletter[]
+}
+
+// 電子報歷史瀏覽器 Props
+export interface NewsletterArchiveBrowserProps {
+  archives?: NewsletterMonthlyArchive[]
+  selectedMonth?: string
+  selectedYear?: number
+  loading?: boolean
+  error?: string
+  onMonthSelect?: (month: string) => void
+  onYearSelect?: (year: number) => void
+  onNewsletterSelect?: (newsletter: Newsletter) => void
+  showYearNavigation?: boolean
+  showMonthNavigation?: boolean
+  groupBy?: 'month' | 'year' | 'both'
+  className?: string
+}
+
+// 電子報卡片 Props
+export interface NewsletterCardProps {
+  newsletter: Newsletter
+  onView?: (newsletter: Newsletter) => void
+  onDownload?: (newsletter: Newsletter) => void
+  showOnlineReader?: boolean
+  showDownload?: boolean
+  showDate?: boolean
+  compact?: boolean
+  className?: string
+}
+
+// 電子報月份選擇器 Props
+export interface NewsletterMonthSelectorProps {
+  availableMonths: string[]
+  selectedMonth?: string
+  onMonthSelect: (month: string) => void
+  showYearOnly?: boolean
+  loading?: boolean
+  className?: string
+}
+
+// 電子報年份選擇器 Props
+export interface NewsletterYearSelectorProps {
+  availableYears: number[]
+  selectedYear?: number
+  onYearSelect: (year: number) => void
+  loading?: boolean
+  className?: string
+}
+
+// Hook 回傳類型
+export interface UseNewslettersReturn {
+  newsletters: Newsletter[]
+  loading: boolean
+  error?: string
+  total: number
+  totalInDatabase: number
+  hasDateFilter: boolean
+  filters: NewsletterFilters
+  fetchNewsletters: (filters?: NewsletterFilters) => Promise<void>
+  refetch: () => Promise<void>
+}
+
+export interface UseNewsletterArchiveReturn {
+  archives: NewsletterMonthlyArchive[] | NewsletterYearlyArchive[]
+  availableYears: number[]
+  availableMonths: string[]
+  totalNewsletters: number
+  loading: boolean
+  error?: string
+  groupBy: 'month' | 'year' | 'both'
+  fetchArchive: (groupBy?: 'month' | 'year' | 'both', limit?: number) => Promise<void>
+  refetch: () => Promise<void>
+}
+
+// 電子報常數和標籤
+export const NEWSLETTER_MONTH_LABELS: Record<string, string> = {
+  '01': '一月',
+  '02': '二月', 
+  '03': '三月',
+  '04': '四月',
+  '05': '五月',
+  '06': '六月',
+  '07': '七月',
+  '08': '八月',
+  '09': '九月',
+  '10': '十月',
+  '11': '十一月',
+  '12': '十二月'
+}
+
+// Helper function to format month display
+export function formatNewsletterMonth(monthString: string): string {
+  const [year, month] = monthString.split('-')
+  const monthLabel = NEWSLETTER_MONTH_LABELS[month] || month
+  return `${year}年${monthLabel}`
+}
+
+// Helper function to get current month string
+export function getCurrentMonthString(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+}
+
+// Helper function to get month range
+export function getMonthRange(startMonth: string, endMonth: string): string[] {
+  const months: string[] = []
+  const start = new Date(startMonth + '-01')
+  const end = new Date(endMonth + '-01')
+  
+  const current = new Date(start)
+  while (current <= end) {
+    months.push(`${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`)
+    current.setMonth(current.getMonth() + 1)
+  }
+  
+  return months
+}
