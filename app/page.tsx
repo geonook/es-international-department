@@ -551,7 +551,7 @@ export default function HomePage() {
                           <p className="text-sm text-gray-600 mt-2">Latest updates, announcements, and important notices from ES International Department</p>
                         </CardHeader>
                         <CardContent className="p-4 sm:p-6 lg:p-8">
-                          <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
+                          <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                             {messagesLoading ? (
                               // Enhanced loading skeleton
                               Array.from({ length: 5 }).map((_, index) => (
@@ -580,7 +580,7 @@ export default function HomePage() {
                                 return (
                                   <motion.div
                                     key={message.id}
-                                    className={`bg-gradient-to-br ${styles.container} rounded-xl p-4 sm:p-6 border-l-4 ${styles.border} hover:shadow-lg transition-all duration-300 cursor-pointer`}
+                                    className={`bg-gradient-to-br ${styles.container} rounded-xl p-3 sm:p-4 border-l-4 ${styles.border} hover:shadow-lg transition-all duration-300 cursor-pointer`}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.1 }}
@@ -603,24 +603,24 @@ export default function HomePage() {
                                       </div>
                                     </div>
                                     <div className="flex items-start gap-3 sm:gap-4">
-                                      <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
+                                      <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
                                         {message.isPinned ? (
-                                          <BookOpen className="w-6 h-6 text-white" />
+                                          <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                         ) : message.type === 'announcement' ? (
-                                          <Calendar className="w-6 h-6 text-white" />
+                                          <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                         ) : (
-                                          <span className="text-white font-bold text-sm">ID</span>
+                                          <span className="text-white font-bold text-xs sm:text-sm">ID</span>
                                         )}
                                       </div>
                                       <div className="flex-1">
-                                        <h4 className="font-bold text-gray-900 mb-2 text-base sm:text-lg leading-tight">{message.title}</h4>
+                                        <h4 className="font-semibold text-gray-900 mb-1.5 text-sm sm:text-base leading-tight">{message.title}</h4>
                                         {/* Gmail 風格的漸進展開內容 */}
-                                        <div className="space-y-2">
+                                        <div className="space-y-1.5">
                                           <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                            expandedMessages.has(message.id) ? 'max-h-none' : 'max-h-20'
+                                            expandedMessages.has(message.id) ? 'max-h-none' : 'max-h-14'
                                           }`}>
                                             <div 
-                                              className="text-gray-700 leading-relaxed text-sm sm:text-base prose prose-sm max-w-none"
+                                              className="text-gray-700 leading-relaxed text-xs sm:text-sm prose prose-sm max-w-none"
                                               dangerouslySetInnerHTML={{ 
                                                 __html: sanitizeAnnouncementContent(message.content || '<p class="text-gray-500">暫無內容</p>')
                                               }}
@@ -631,10 +631,10 @@ export default function HomePage() {
                                           {message.content && message.content.length > 200 && (
                                             <button 
                                               onClick={(e) => toggleMessageExpansion(message.id, e)}
-                                              className="text-blue-600 text-sm font-medium hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors duration-200 mb-3"
+                                              className="text-blue-600 text-xs sm:text-sm font-medium hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors duration-200 mb-2"
                                             >
                                               {expandedMessages.has(message.id) ? '收合' : '顯示更多'}
-                                              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                                              <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${
                                                 expandedMessages.has(message.id) ? 'rotate-180' : ''
                                               }`} />
                                             </button>
