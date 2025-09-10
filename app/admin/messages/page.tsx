@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import MessageBoardForm from '@/components/admin/MessageBoardForm'
 import MessageBoardList from '@/components/admin/MessageBoardList'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AlertTriangle } from 'lucide-react'
 
 interface MessageBoardData {
   id: number
@@ -164,12 +166,12 @@ export default function MessageBoardAdminPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
-        {/* Warning Alert */}
-        <Alert className="mb-6 bg-yellow-50 border-yellow-200">
-          <AlertTriangle className="h-4 w-4 text-yellow-600" />
-          <AlertDescription className="text-yellow-800">
-            <strong>⚠️ Advanced Message Board</strong> - This creates messages that may appear on the homepage. 
-            For Parents' Corner content, consider using the main admin panel → Parents' Corner instead.
+        {/* Updated Alert - Advanced Message Board is now isolated */}
+        <Alert className="mb-6 bg-blue-50 border-blue-200">
+          <AlertTriangle className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            <strong>ℹ️ Advanced Message Board (Independent)</strong> - This system is now completely separate from the homepage. 
+            Messages created here will NOT appear on the homepage. For homepage content, use the main admin panel → Parents' Corner → Homepage Announcements.
           </AlertDescription>
         </Alert>
         

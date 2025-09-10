@@ -32,11 +32,11 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 獲取訊息板數據
-    const messages = await prisma.communication.findMany({
+    // 簡化架構：只獲取 announcements (Homepage Announcements from Parents' Corner)
+    const announcements = await prisma.communication.findMany({
       where: {
         ...whereCondition,
-        type: 'message_board'
+        type: 'announcement'  // 只使用 announcement 類型
       },
       select: {
         id: true,
@@ -68,60 +68,8 @@ export async function GET(request: NextRequest) {
       take: limit
     })
 
-    // 如果沒有訊息，嘗試獲取公告
-    let combinedMessages = messages
-
-    if (messages.length < limit) {
-      const announcements = await prisma.announcement.findMany({
-        where: {
-          status: 'published',
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gte: new Date() } }
-          ],
-          ...(targetAudience !== 'all' ? {
-            targetAudience: {
-              in: [targetAudience, 'all']
-            }
-          } : {})
-        },
-        select: {
-          id: true,
-          title: true,
-          content: true,
-          summary: true,
-          targetAudience: true,
-          priority: true,
-          status: true,
-          publishedAt: true,
-          createdAt: true,
-          author: {
-            select: {
-              id: true,
-              displayName: true,
-              firstName: true,
-              lastName: true
-            }
-          }
-        },
-        orderBy: [
-          { priority: 'desc' },
-          { publishedAt: 'desc' }
-        ],
-        take: limit - messages.length
-      })
-
-      // 合併訊息和公告
-      combinedMessages = [
-        ...messages,
-        ...announcements.map(ann => ({
-          ...ann,
-          type: 'announcement' as const,
-          isImportant: ann.priority === 'high',
-          isPinned: false
-        }))
-      ]
-    }
+    // 簡化變數名稱
+    const combinedMessages = announcements
 
     // 格式化回應數據
     const formattedMessages = combinedMessages.map(msg => ({
