@@ -1363,35 +1363,41 @@ export default function AdminPage() {
                     <CardContent>
                       <div className="space-y-3">
                         <Button
-                          className="w-full justify-start bg-transparent"
-                          variant="outline"
-                          onClick={() => setActiveTab('parents')}
-                        >
-                          <Edit className="w-4 h-4 mr-2" />
-                          Manage Announcements
-                        </Button>
-                        <Button 
-                          className="w-full justify-start bg-transparent" 
-                          variant="outline"
+                          className="w-full justify-start bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 shadow-md"
                           onClick={() => {
-                            console.log('🔥 Manage Events button clicked!')
-                            window.location.href = '/admin/events'
+                            console.log('🔥 Parents Corner Management clicked!')
+                            window.location.href = '/admin/parents-corner'
                           }}
                         >
-                          <Calendar className="w-4 h-4 mr-2" />
-                          Manage Events
+                          <BookOpen className="w-4 h-4 mr-2" />
+                          Unified Management
                         </Button>
-                        <Button 
-                          className="w-full justify-start bg-transparent" 
-                          variant="outline"
-                          onClick={() => {
-                            console.log('🔥 Update Newsletter button clicked!')
-                            setShowNewsletterForm(true)
-                          }}
-                        >
-                          <FileText className="w-4 h-4 mr-2" />
-                          Edit Newsletter
-                        </Button>
+                        <div className="pt-2 border-t border-gray-100">
+                          <p className="text-xs text-gray-500 mb-2">Quick Access:</p>
+                          <div className="space-y-2">
+                            <Button
+                              className="w-full justify-start bg-transparent text-sm"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setActiveTab('parents')}
+                            >
+                              <Edit className="w-3 h-3 mr-2" />
+                              Announcements
+                            </Button>
+                            <Button 
+                              className="w-full justify-start bg-transparent text-sm" 
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                console.log('🔥 Update Newsletter button clicked!')
+                                setShowNewsletterForm(true)
+                              }}
+                            >
+                              <FileText className="w-3 h-3 mr-2" />
+                              Newsletter
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
