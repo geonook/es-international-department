@@ -491,7 +491,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <TabsList className="grid w-full max-w-xs sm:max-w-md md:max-w-lg grid-cols-3 bg-white/90 backdrop-blur-lg shadow-xl border border-white/20 p-1 rounded-2xl overflow-hidden">
+                  <TabsList className="grid w-full max-w-xs sm:max-w-md md:max-w-lg grid-cols-2 bg-white/90 backdrop-blur-lg shadow-xl border border-white/20 p-1 rounded-2xl overflow-hidden">
                     <TabsTrigger 
                       value="news" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-800 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px]"
@@ -509,15 +509,6 @@ export default function HomePage() {
                       <span className="hidden md:inline text-sm truncate">Monthly Newsletter</span>
                       <span className="hidden sm:inline md:hidden text-xs truncate">Newsletter</span>
                       <span className="sm:hidden text-xs truncate">Letter</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="info" 
-                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px]"
-                    >
-                      <Calendar className="w-4 h-4 flex-shrink-0" />
-                      <span className="hidden md:inline text-sm truncate">Quick Info</span>
-                      <span className="hidden sm:inline md:hidden text-xs truncate">Info</span>
-                      <span className="sm:hidden text-xs truncate">Info</span>
                     </TabsTrigger>
                   </TabsList>
                 </motion.div>
@@ -808,166 +799,6 @@ export default function HomePage() {
                     </motion.div>
                   </TabsContent>
 
-                  {/* Quick Info Tab */}
-                  <TabsContent value="info" className="mt-0">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                        <CardHeader className="text-center pb-4 bg-gradient-to-r from-green-50 to-emerald-50">
-                          <CardTitle className="text-3xl text-purple-700 flex items-center justify-center gap-3">
-                            <Calendar className="w-8 h-8" />
-                            Quick Information & Contacts
-                          </CardTitle>
-                          <p className="text-sm text-gray-600 mt-2">Essential information, contact details, and emergency notices</p>
-                        </CardHeader>
-                        <CardContent className="p-8">
-                          <div className="grid md:grid-cols-2 gap-8">
-                            {/* Contact Information */}
-                            <motion.div 
-                              className="space-y-6"
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.2 }}
-                            >
-                              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <Phone className="w-5 h-5 text-green-600" />
-                                Contact Information
-                              </h3>
-                              
-                              <div className="space-y-4">
-                                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                                      <Mail className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div>
-                                      <p className="font-medium text-gray-900">Email</p>
-                                      <p className="text-sm text-gray-600">esid@kangchiao.com.tw</p>
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                                      <Phone className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div>
-                                      <p className="font-medium text-gray-900">Phone</p>
-                                      <p className="text-sm text-gray-600">(02) 8195-8852</p>
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-200">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-                                      <Users className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div>
-                                      <p className="font-medium text-gray-900">Office Hours</p>
-                                      <p className="text-sm text-gray-600">Monday - Friday, 8:00 AM - 5:00 PM</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </motion.div>
-                            
-                            {/* Important Links & Quick Access */}
-                            <motion.div 
-                              className="space-y-6"
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.4 }}
-                            >
-                              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <ExternalLink className="w-5 h-5 text-green-600" />
-                                Quick Access
-                              </h3>
-                              
-                              <div className="space-y-3">
-                                <Link href="/events">
-                                  <motion.div 
-                                    className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                                    whileHover={{ scale: 1.02 }}
-                                  >
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-3">
-                                        <Calendar className="w-5 h-5 text-purple-600" />
-                                        <span className="font-medium text-gray-900">Upcoming Events</span>
-                                      </div>
-                                      <ExternalLink className="w-4 h-4 text-gray-400" />
-                                    </div>
-                                  </motion.div>
-                                </Link>
-                                
-                                <Link href="/resources">
-                                  <motion.div 
-                                    className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                                    whileHover={{ scale: 1.02 }}
-                                  >
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-3">
-                                        <BookOpen className="w-5 h-5 text-blue-600" />
-                                        <span className="font-medium text-gray-900">Learning Resources</span>
-                                      </div>
-                                      <ExternalLink className="w-4 h-4 text-gray-400" />
-                                    </div>
-                                  </motion.div>
-                                </Link>
-                                
-                                <motion.div 
-                                  className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl p-4"
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ delay: 0.6 }}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center">
-                                      <span className="text-white text-xs font-bold">!</span>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium text-red-900">Emergency Contact</p>
-                                      <p className="text-sm text-red-700">For urgent matters outside office hours</p>
-                                    </div>
-                                  </div>
-                                </motion.div>
-                              </div>
-                            </motion.div>
-                          </div>
-                          
-                          {/* Additional Information Section */}
-                          <motion.div 
-                            className="mt-8 pt-8 border-t border-gray-200"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8 }}
-                          >
-                            <div className="text-center">
-                              <h4 className="text-lg font-semibold text-gray-900 mb-3">Stay Connected</h4>
-                              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                                Keep up-to-date with the latest news, events, and resources from ES International Department. 
-                                We're here to support your child's educational journey.
-                              </p>
-                              <div className="flex justify-center gap-4">
-                                <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white">
-                                  <Mail className="w-4 h-4 mr-2" />
-                                  Contact Us
-                                </Button>
-                                <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
-                                  <Phone className="w-4 h-4 mr-2" />
-                                  Call Us
-                                </Button>
-                              </div>
-                            </div>
-                          </motion.div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </TabsContent>
                 </div>
               </Tabs>
             </motion.div>
