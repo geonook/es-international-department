@@ -22,7 +22,7 @@ export function useHomepageSettings() {
   const [settings, setSettings] = useState<HomepageSettings>({
     mainTitle: 'Welcome to our Parents\' Corner',
     subtitle: 'Your dedicated family hub for school updates, events, and communication with your child\'s learning journey',
-    quoteText: 'Parents are the cornerstone of a child\'s education; their support and collaboration with teachers create',
+    quoteText: 'Parents are the cornerstone of a child\'s education; their support and collaboration with teachers create a powerful partnership that inspires and nurtures lifelong learners.',
     quoteAuthor: '',
     exploreButtonText: 'Explore Resources',
     exploreButtonLink: '/resources',

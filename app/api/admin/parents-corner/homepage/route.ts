@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
       contentImage: settingsMap.homepage_content_image,
       mainTitle: settingsMap.homepage_main_title || 'Welcome to our Parents\' Corner',
       subtitle: settingsMap.homepage_subtitle || 'Your dedicated family hub for school updates, events, and communication with your child\'s learning journey',
-      quoteText: settingsMap.homepage_quote_text || 'Parents are the cornerstone of a child\'s education; their support and collaboration with teachers create',
+      quoteText: settingsMap.homepage_quote_text || 'Parents are the cornerstone of a child\'s education; their support and collaboration with teachers create a powerful partnership that inspires and nurtures lifelong learners.',
       quoteAuthor: settingsMap.homepage_quote_author || '',
       exploreButtonText: settingsMap.homepage_explore_button_text || 'Explore Resources',
       exploreButtonLink: settingsMap.homepage_explore_button_link || '/resources',
