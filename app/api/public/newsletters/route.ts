@@ -21,19 +21,22 @@ export async function GET(request: NextRequest) {
       status: 'published'
     }
 
-    // 獲取電子報數據 - 使用 newsletter 資料表
-    const newsletters = await prisma.newsletter.findMany({
-      where: whereCondition,
+    // 獲取電子報數據 - 使用 communication 資料表
+    const newsletters = await prisma.communication.findMany({
+      where: {
+        ...whereCondition,
+        type: 'newsletter'  // 只獲取 newsletter 類型
+      },
       select: {
         id: true,
         title: true,
         content: true,
-        htmlContent: true,
-        coverImageUrl: true,
+        summary: true,
+        onlineReaderUrl: true,
         pdfUrl: true,
-        status: true,
         issueNumber: true,
-        publicationDate: true,
+        status: true,
+        publishedAt: true,
         createdAt: true,
         author: {
           select: {
@@ -45,31 +48,31 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
-        { publicationDate: 'desc' },
+        { publishedAt: 'desc' },
         { issueNumber: 'desc' },
         { createdAt: 'desc' }
       ],
       take: limit
     })
 
-    // 格式化回應數據 - 直接使用 newsletter 資料表欄位
+    // 格式化回應數據 - 使用 communication 資料表欄位
     const formattedNewsletters = newsletters.map(newsletter => {
       return {
         id: newsletter.id,
         title: newsletter.title,
-        content: newsletter.content.length > 200 ? newsletter.content.substring(0, 200) + '...' : newsletter.content,
+        content: newsletter.summary || (newsletter.content.length > 200 ? newsletter.content.substring(0, 200) + '...' : newsletter.content),
         type: 'newsletter',
-        priority: 'medium', // Newsletter 表沒有 priority 欄位，使用預設值
-        isImportant: false, // Newsletter 表沒有 isImportant 欄位，使用預設值
-        isPinned: false, // Newsletter 表沒有 isPinned 欄位，使用預設值
-        date: newsletter.publicationDate || newsletter.createdAt,
+        priority: 'medium',
+        isImportant: false,
+        isPinned: false,
+        date: newsletter.publishedAt || newsletter.createdAt,
         author: newsletter.author ? 
           newsletter.author.displayName || 
           `${newsletter.author.firstName || ''} ${newsletter.author.lastName || ''}`.trim() || 
           'KCISLK ESID' 
           : 'KCISLK ESID',
-        targetAudience: 'all', // Newsletter 表沒有 targetAudience 欄位，使用預設值
-        coverImage: newsletter.coverImageUrl,
+        targetAudience: 'all',
+        onlineReaderUrl: newsletter.onlineReaderUrl, // 新增線上閱讀器 URL
         pdfUrl: newsletter.pdfUrl,
         issueNumber: newsletter.issueNumber
       }
@@ -91,7 +94,7 @@ export async function GET(request: NextRequest) {
         {
           id: 1,
           title: '2025年1月份 國際部月刊',
-          content: '本月月刊包含期末評量週安排、寒假活動規劃、以及下學期課程預告。內容豐富，歡迎家長們下載閱讀。',
+          content: '本月月刊包含期末評量週安排、寒假活動規劃、以及下學期課程預告。內容豐富，歡迎家長們線上閱讀。',
           type: 'newsletter',
           priority: 'high',
           isImportant: true,
@@ -99,7 +102,7 @@ export async function GET(request: NextRequest) {
           date: new Date().toISOString(),
           author: 'KCISLK ESID',
           targetAudience: 'all',
-          coverImage: null,
+          onlineReaderUrl: 'https://online.pubhtml5.com/vpgbz/xjrq/', // 線上閱讀器範例
           pdfUrl: null,
           issueNumber: '2025-01'
         },
@@ -114,7 +117,7 @@ export async function GET(request: NextRequest) {
           date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
           author: 'KCISLK ESID',
           targetAudience: 'parents',
-          coverImage: null,
+          onlineReaderUrl: null,
           pdfUrl: null,
           issueNumber: '2024-12'
         }

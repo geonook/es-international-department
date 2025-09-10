@@ -14,7 +14,12 @@ export async function GET(request: NextRequest) {
     // 獲取查詢參數
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '5')
+    const page = parseInt(searchParams.get('page') || '1')
     const targetAudience = searchParams.get('audience') || 'all'
+    const priority = searchParams.get('priority')
+    const search = searchParams.get('search')
+    
+    const skip = (page - 1) * limit
 
     // 查詢條件
     const whereCondition: any = {
@@ -32,41 +37,64 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // 過濾優先級
+    if (priority && priority !== 'all') {
+      whereCondition.priority = priority
+    }
+
+    // 搜尋功能
+    if (search && search.trim()) {
+      whereCondition.OR = [
+        { title: { contains: search.trim(), mode: 'insensitive' } },
+        { content: { contains: search.trim(), mode: 'insensitive' } },
+        { summary: { contains: search.trim(), mode: 'insensitive' } }
+      ]
+    }
+
     // 簡化架構：只獲取 announcements (Homepage Announcements from Parents' Corner)
-    const announcements = await prisma.communication.findMany({
-      where: {
-        ...whereCondition,
-        type: 'announcement'  // 只使用 announcement 類型
-      },
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        summary: true,
-        type: true,
-        targetAudience: true,
-        priority: true,
-        status: true,
-        isImportant: true,
-        isPinned: true,
-        publishedAt: true,
-        createdAt: true,
-        author: {
-          select: {
-            id: true,
-            displayName: true,
-            firstName: true,
-            lastName: true
+    const [announcements, totalCount] = await Promise.all([
+      prisma.communication.findMany({
+        where: {
+          ...whereCondition,
+          type: 'announcement'  // 只使用 announcement 類型
+        },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          summary: true,
+          type: true,
+          targetAudience: true,
+          priority: true,
+          status: true,
+          isImportant: true,
+          isPinned: true,
+          publishedAt: true,
+          createdAt: true,
+          author: {
+            select: {
+              id: true,
+              displayName: true,
+              firstName: true,
+              lastName: true
+            }
           }
+        },
+        orderBy: [
+          { isPinned: 'desc' },
+          { priority: 'desc' },
+          { publishedAt: 'desc' }
+        ],
+        skip,
+        take: limit
+      }),
+      prisma.communication.count({
+        where: {
+          ...whereCondition,
+          type: 'announcement'
         }
-      },
-      orderBy: [
-        { isPinned: 'desc' },
-        { priority: 'desc' },
-        { publishedAt: 'desc' }
-      ],
-      take: limit
-    })
+      })
+    ])
 
     // 簡化變數名稱
     const combinedMessages = announcements
@@ -92,42 +120,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: formattedMessages,
-      total: formattedMessages.length
+      total: totalCount,
+      pagination: {
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNextPage: page < Math.ceil(totalCount / limit),
+        hasPrevPage: page > 1
+      }
     })
 
   } catch (error) {
     console.error('Error fetching public messages:', error)
     
-    // 返回預設數據以避免首頁錯誤
+    // 返回空數據而非預設數據，確保首頁顯示真實資料庫內容
     return NextResponse.json({
-      success: true,
-      data: [
-        {
-          id: 1,
-          title: '期末評量週注意事項',
-          content: '親愛的家長們，期末評量週即將到來（1/20-1/24），請協助孩子做好複習準備。各科評量範圍已上傳至班級群組。',
-          type: 'announcement',
-          priority: 'high',
-          isImportant: true,
-          isPinned: true,
-          date: new Date().toISOString(),
-          author: 'KCISLK ESID',
-          targetAudience: 'all'
-        },
-        {
-          id: 2,
-          title: '國際文化日活動報名開始',
-          content: '2025國際文化日將於2月28日舉行，歡迎家長報名參與文化展示攤位。報名表請至辦公室索取。',
-          type: 'message_board',
-          priority: 'medium',
-          isImportant: false,
-          isPinned: false,
-          date: new Date().toISOString(),
-          author: 'KCISLK ESID',
-          targetAudience: 'parents'
-        }
-      ],
-      total: 2
+      success: false,
+      data: [],
+      total: 0,
+      error: 'Failed to fetch messages'
     })
   }
 }

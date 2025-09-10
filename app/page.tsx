@@ -559,9 +559,11 @@ export default function HomePage() {
                     </div>
 
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                        查看更多訊息
-                      </Button>
+                      <Link href="/announcements">
+                        <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                          查看更多訊息
+                        </Button>
+                      </Link>
                     </motion.div>
                   </CardContent>
                 </Card>
@@ -641,23 +643,59 @@ export default function HomePage() {
                               </motion.div>
                             )}
                             
-                            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                              {newsletter.pdfUrl ? (
+                            {newsletter.onlineReaderUrl ? (
+                              // 線上閱讀器嵌入 | Online Reader Embed
+                              <div className="space-y-4">
+                                <motion.div 
+                                  className="relative bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4"
+                                  initial={{ opacity: 0, scale: 0.95 }}
+                                  whileInView={{ opacity: 1, scale: 1 }}
+                                  transition={{ delay: 0.7 }}
+                                >
+                                  <div className="relative">
+                                    <iframe
+                                      src={newsletter.onlineReaderUrl}
+                                      width="100%"
+                                      height="300"
+                                      frameBorder="0"
+                                      className="rounded-lg shadow-lg"
+                                      title={`${newsletter.title} Online Reader`}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg pointer-events-none" />
+                                  </div>
+                                </motion.div>
+                                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                  <Button 
+                                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                    onClick={() => window.open(newsletter.onlineReaderUrl, '_blank')}
+                                  >
+                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                    在新視窗中開啟完整閱讀器
+                                  </Button>
+                                </motion.div>
+                              </div>
+                            ) : newsletter.pdfUrl ? (
+                              // PDF 下載按鈕 | PDF Download Button
+                              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                                 <Button 
                                   className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                                   onClick={() => window.open(newsletter.pdfUrl, '_blank')}
                                 >
-                                  View Latest Newsletter
+                                  <ExternalLink className="w-4 h-4 mr-2" />
+                                  下載 PDF 版本
                                 </Button>
-                              ) : (
+                              </motion.div>
+                            ) : (
+                              // 尚無內容 | No Content Available
+                              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                                 <Button 
-                                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                  className="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-lg transition-all duration-300"
                                   disabled
                                 >
                                   Newsletter Coming Soon
                                 </Button>
-                              )}
-                            </motion.div>
+                              </motion.div>
+                            )}
                           </div>
                         ))}
                         
