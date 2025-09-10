@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar, Newspaper } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
@@ -35,6 +36,22 @@ export default function HomePage() {
   
   // 首頁設定資料 | Homepage settings data
   const { settings, loading: settingsLoading } = useHomepageSettings()
+  
+  // Tab 狀態管理 | Tab state management
+  const [activeTab, setActiveTab] = useState("news")
+  
+  // 會話儲存功能 | Session storage functionality
+  useEffect(() => {
+    const savedTab = sessionStorage.getItem('homepage-active-tab')
+    if (savedTab) {
+      setActiveTab(savedTab)
+    }
+  }, [])
+  
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    sessionStorage.setItem('homepage-active-tab', value)
+  }
   
   // 滾動效果相關 hooks | Scroll effect related hooks
   const { scrollY } = useScroll()
@@ -451,301 +468,498 @@ export default function HomePage() {
               </motion.span>
             </motion.h2>
 
+            {/* Tab-Based Content Layout */}
             <motion.div
-              className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto"
+              className="max-w-6xl mx-auto"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {/* ID News Message Board */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500">
-                  <CardHeader className="text-center pb-4 bg-gradient-to-r from-purple-50 to-pink-50">
-                    <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-                      <CardTitle className="text-2xl text-purple-700 cursor-pointer flex items-center justify-center gap-2 group-hover:text-purple-900 transition-colors">
-                        <BookOpen className="w-6 h-6" />
-                        ID News Message Board
-                      </CardTitle>
-                    </motion.div>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
-                      {messagesLoading ? (
-                        // 載入中的骨架屏 | Loading skeleton
-                        Array.from({ length: 3 }).map((_, index) => (
-                          <div key={index} className="bg-gray-50 rounded-xl p-4 animate-pulse">
-                            <div className="flex justify-between items-start mb-2">
-                              <div className="h-5 w-16 bg-gray-200 rounded-full"></div>
-                              <div className="h-4 w-20 bg-gray-200 rounded"></div>
-                            </div>
-                            <div className="flex items-start gap-3">
-                              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                              <div className="flex-1">
-                                <div className="h-4 w-3/4 bg-gray-200 rounded mb-2"></div>
-                                <div className="h-3 w-full bg-gray-200 rounded mb-1"></div>
-                                <div className="h-3 w-2/3 bg-gray-200 rounded mb-2"></div>
-                                <div className="flex gap-2">
-                                  <div className="h-5 w-12 bg-gray-200 rounded"></div>
-                                  <div className="h-5 w-16 bg-gray-200 rounded"></div>
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                {/* Tab Navigation */}
+                <motion.div 
+                  className="flex justify-center mb-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <TabsList className="grid w-full max-w-md grid-cols-3 bg-white/90 backdrop-blur-lg shadow-xl border border-white/20 p-1 rounded-2xl">
+                    <TabsTrigger 
+                      value="news" 
+                      className="flex items-center gap-2 px-4 py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-800 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span className="hidden sm:inline">News & Announcements</span>
+                      <span className="sm:hidden">News</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="newsletter" 
+                      className="flex items-center gap-2 px-4 py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                    >
+                      <Newspaper className="w-4 h-4" />
+                      <span className="hidden sm:inline">Monthly Newsletter</span>
+                      <span className="sm:hidden">Newsletter</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="info" 
+                      className="flex items-center gap-2 px-4 py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      <span className="hidden sm:inline">Quick Info</span>
+                      <span className="sm:hidden">Info</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </motion.div>
+
+                {/* Tab Content */}
+                <div className="relative">
+                  {/* ID News & Announcements Tab */}
+                  <TabsContent value="news" className="mt-0">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                        <CardHeader className="text-center pb-4 bg-gradient-to-r from-purple-50 to-pink-50">
+                          <CardTitle className="text-3xl text-purple-700 flex items-center justify-center gap-3">
+                            <BookOpen className="w-8 h-8" />
+                            ID News & Announcements
+                          </CardTitle>
+                          <p className="text-sm text-gray-600 mt-2">Latest updates, announcements, and important notices from ES International Department</p>
+                        </CardHeader>
+                        <CardContent className="p-8">
+                          <div className="space-y-6 mb-8">
+                            {messagesLoading ? (
+                              // Enhanced loading skeleton
+                              Array.from({ length: 5 }).map((_, index) => (
+                                <div key={index} className="bg-gray-50 rounded-xl p-6 animate-pulse">
+                                  <div className="flex justify-between items-start mb-3">
+                                    <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                                    <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                                  </div>
+                                  <div className="flex items-start gap-4">
+                                    <div className="w-12 h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                                    <div className="flex-1">
+                                      <div className="h-5 w-3/4 bg-gray-200 rounded mb-3"></div>
+                                      <div className="h-4 w-full bg-gray-200 rounded mb-2"></div>
+                                      <div className="h-4 w-2/3 bg-gray-200 rounded mb-3"></div>
+                                      <div className="flex gap-2">
+                                        <div className="h-6 w-16 bg-gray-200 rounded"></div>
+                                        <div className="h-6 w-20 bg-gray-200 rounded"></div>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
+                              ))
+                            ) : messages.length > 0 ? (
+                              messages.map((message, index) => {
+                                const styles = getPriorityStyles(message.priority, message.type)
+                                return (
+                                  <motion.div
+                                    key={message.id}
+                                    className={`bg-gradient-to-br ${styles.container} rounded-xl p-6 border-l-4 ${styles.border} hover:shadow-lg transition-all duration-300`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    whileHover={{ scale: 1.02 }}
+                                  >
+                                    <div className="flex justify-between items-start mb-3">
+                                      <span className={`text-sm ${styles.badge} px-3 py-1 rounded-full font-medium`}>
+                                        {getTypeDisplayName(message.type)}
+                                      </span>
+                                      <div className="text-right text-sm text-gray-600">
+                                        {new Date(message.date).toLocaleDateString('zh-TW', { 
+                                          month: 'short', 
+                                          day: 'numeric',
+                                          year: 'numeric'
+                                        })}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-start gap-4">
+                                      <div className={`w-12 h-12 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
+                                        {message.isPinned ? (
+                                          <BookOpen className="w-6 h-6 text-white" />
+                                        ) : message.type === 'announcement' ? (
+                                          <Calendar className="w-6 h-6 text-white" />
+                                        ) : (
+                                          <span className="text-white font-bold text-sm">ID</span>
+                                        )}
+                                      </div>
+                                      <div className="flex-1">
+                                        <h4 className="font-bold text-gray-900 mb-2 text-lg">{message.title}</h4>
+                                        <p className="text-gray-700 mb-3 leading-relaxed">
+                                          {message.content}
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                          {message.isImportant && (
+                                            <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full font-medium">重要</span>
+                                          )}
+                                          {message.isPinned && (
+                                            <span className="text-xs bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full font-medium">置頂</span>
+                                          )}
+                                          <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+                                            {message.author}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </motion.div>
+                                )
+                              })
+                            ) : (
+                              <div className="text-center py-16 text-gray-500">
+                                <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                                <h3 className="text-lg font-medium mb-2">目前沒有訊息</h3>
+                                <p className="text-sm">最新的公告和資訊將會顯示在這裡</p>
                               </div>
-                            </div>
+                            )}
                           </div>
-                        ))
-                      ) : messages.length > 0 ? (
-                        // 動態載入的訊息 | Dynamically loaded messages
-                        messages.map((message, index) => {
-                          const styles = getPriorityStyles(message.priority, message.type)
-                          return (
-                            <motion.div
-                              key={message.id}
-                              className={`bg-gradient-to-br ${styles.container} rounded-xl p-4 border-l-4 ${styles.border}`}
-                              whileHover={{ scale: 1.02 }}
-                              transition={{ duration: 0.2 }}
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: index * 0.1 }}
+
+                          <motion.div 
+                            className="flex justify-center"
+                            whileHover={{ scale: 1.02 }} 
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <Link href="/announcements" className="w-full max-w-md">
+                              <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-3">
+                                查看所有訊息與公告
+                              </Button>
+                            </Link>
+                          </motion.div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </TabsContent>
+
+                  {/* Monthly Newsletter Tab */}
+                  <TabsContent value="newsletter" className="mt-0">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                        <CardHeader className="text-center pb-4 bg-gradient-to-r from-blue-50 to-cyan-50">
+                          <CardTitle className="text-3xl text-purple-700 flex items-center justify-center gap-3">
+                            <Newspaper className="w-8 h-8" />
+                            Monthly Newsletter Archive
+                          </CardTitle>
+                          <p className="text-sm text-gray-600 mt-2">Browse our collection of monthly newsletters with online reading capabilities</p>
+                        </CardHeader>
+                        <CardContent className="p-8">
+                          {newslettersLoading ? (
+                            <div className="animate-pulse space-y-6">
+                              {Array.from({ length: 3 }).map((_, index) => (
+                                <div key={index} className="bg-gray-50 rounded-xl p-6">
+                                  <div className="flex gap-6">
+                                    <div className="w-32 h-40 bg-gray-200 rounded-lg flex-shrink-0"></div>
+                                    <div className="flex-1">
+                                      <div className="h-6 w-2/3 bg-gray-200 rounded mb-3"></div>
+                                      <div className="h-4 w-full bg-gray-200 rounded mb-2"></div>
+                                      <div className="h-4 w-3/4 bg-gray-200 rounded mb-4"></div>
+                                      <div className="h-10 w-32 bg-gray-200 rounded"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : newsletters.length > 0 ? (
+                            <div className="space-y-8">
+                              {newsletters.map((newsletter, index) => (
+                                <motion.div
+                                  key={newsletter.id}
+                                  className="bg-gradient-to-r from-blue-50/50 to-cyan-50/50 rounded-xl p-6 border border-blue-100 hover:shadow-lg transition-all duration-300"
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: index * 0.1 }}
+                                  whileHover={{ scale: 1.01 }}
+                                >
+                                  <div className="flex flex-col lg:flex-row gap-6">
+                                    {/* Newsletter Cover */}
+                                    <div className="lg:w-1/3">
+                                      {newsletter.coverImage ? (
+                                        <motion.div className="relative" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
+                                          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-xl blur-lg" />
+                                          <Image
+                                            src={newsletter.coverImage}
+                                            alt={`${newsletter.title} Preview`}
+                                            width={300}
+                                            height={400}
+                                            className="relative w-full rounded-xl shadow-lg"
+                                          />
+                                        </motion.div>
+                                      ) : (
+                                        <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl p-8 text-center aspect-[3/4] flex flex-col items-center justify-center">
+                                          <Newspaper className="w-16 h-16 mb-4 text-blue-400" />
+                                          <p className="text-blue-600 font-medium">Newsletter Cover</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                    
+                                    {/* Newsletter Details */}
+                                    <div className="lg:w-2/3 flex flex-col justify-between">
+                                      <div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                          {newsletter.issueNumber && (
+                                            <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
+                                              {newsletter.issueNumber}
+                                            </span>
+                                          )}
+                                          <span className="text-sm text-gray-500">
+                                            {new Date(newsletter.publishDate || newsletter.createdAt).toLocaleDateString('zh-TW', {
+                                              year: 'numeric',
+                                              month: 'long'
+                                            })}
+                                          </span>
+                                        </div>
+                                        
+                                        <h3 className="text-xl font-bold text-gray-900 mb-3">{newsletter.title}</h3>
+                                        <p className="text-gray-700 leading-relaxed mb-4">{newsletter.content}</p>
+                                        
+                                        {newsletter.onlineReaderUrl && (
+                                          <div className="mb-4">
+                                            <div className="bg-white/80 rounded-lg p-4 border border-blue-200">
+                                              <iframe
+                                                src={newsletter.onlineReaderUrl}
+                                                width="100%"
+                                                height="200"
+                                                frameBorder="0"
+                                                className="rounded-lg"
+                                                title={`${newsletter.title} Preview`}
+                                              />
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                      
+                                      {/* Action Buttons */}
+                                      <div className="flex flex-col sm:flex-row gap-3">
+                                        {newsletter.onlineReaderUrl ? (
+                                          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+                                            <Button 
+                                              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                              onClick={() => window.open(newsletter.onlineReaderUrl, '_blank')}
+                                            >
+                                              <ExternalLink className="w-4 h-4 mr-2" />
+                                              開啟完整閱讀器
+                                            </Button>
+                                          </motion.div>
+                                        ) : newsletter.pdfUrl ? (
+                                          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+                                            <Button 
+                                              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                              onClick={() => window.open(newsletter.pdfUrl, '_blank')}
+                                            >
+                                              <ExternalLink className="w-4 h-4 mr-2" />
+                                              下載 PDF 版本
+                                            </Button>
+                                          </motion.div>
+                                        ) : (
+                                          <Button className="flex-1 bg-gray-300 text-gray-500" disabled>
+                                            Coming Soon
+                                          </Button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              ))}
+                              
+                              <motion.div 
+                                className="text-center pt-8 border-t border-blue-100"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                              >
+                                <p className="text-gray-600 mb-4">Want to see more newsletters?</p>
+                                <Link href="/newsletters">
+                                  <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                                    瀏覽完整電子報檔案
+                                  </Button>
+                                </Link>
+                              </motion.div>
+                            </div>
+                          ) : (
+                            <div className="text-center py-16">
+                              <Newspaper className="w-16 h-16 mx-auto mb-6 text-blue-400" />
+                              <h3 className="text-xl font-semibold text-gray-900 mb-3">Newsletter Archive Coming Soon</h3>
+                              <p className="text-gray-600 mb-6 max-w-md mx-auto leading-relaxed">
+                                We're preparing monthly newsletters filled with important updates, events, and highlights from our ID community.
+                              </p>
+                              <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white" disabled>
+                                Newsletter Coming Soon
+                              </Button>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </TabsContent>
+
+                  {/* Quick Info Tab */}
+                  <TabsContent value="info" className="mt-0">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                        <CardHeader className="text-center pb-4 bg-gradient-to-r from-green-50 to-emerald-50">
+                          <CardTitle className="text-3xl text-purple-700 flex items-center justify-center gap-3">
+                            <Calendar className="w-8 h-8" />
+                            Quick Information & Contacts
+                          </CardTitle>
+                          <p className="text-sm text-gray-600 mt-2">Essential information, contact details, and emergency notices</p>
+                        </CardHeader>
+                        <CardContent className="p-8">
+                          <div className="grid md:grid-cols-2 gap-8">
+                            {/* Contact Information */}
+                            <motion.div 
+                              className="space-y-6"
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.2 }}
                             >
-                              <div className="flex justify-between items-start mb-2">
-                                <span className={`text-xs ${styles.badge} px-2 py-1 rounded-full font-medium`}>
-                                  {getTypeDisplayName(message.type)}
-                                </span>
-                                <div className="text-right text-xs text-gray-600">
-                                  {new Date(message.date).toLocaleDateString('zh-TW', { 
-                                    month: 'short', 
-                                    day: 'numeric'
-                                  })}
+                              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <Phone className="w-5 h-5 text-green-600" />
+                                Contact Information
+                              </h3>
+                              
+                              <div className="space-y-4">
+                                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                                      <Mail className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-gray-900">Email</p>
+                                      <p className="text-sm text-gray-600">esid@kangchiao.com.tw</p>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="flex items-start gap-3">
-                                <div className={`w-10 h-10 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
-                                  {message.isPinned ? (
-                                    <BookOpen className="w-5 h-5 text-white" />
-                                  ) : message.type === 'announcement' ? (
-                                    <Calendar className="w-5 h-5 text-white" />
-                                  ) : (
-                                    <span className="text-white font-bold text-xs">ID</span>
-                                  )}
+                                
+                                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                                      <Phone className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-gray-900">Phone</p>
+                                      <p className="text-sm text-gray-600">(02) 8195-8852</p>
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="flex-1">
-                                  <h4 className="font-semibold text-gray-900 mb-1">{message.title}</h4>
-                                  <p className="text-sm text-gray-700 mb-2">
-                                    {message.content}
-                                  </p>
-                                  <div className="flex gap-2">
-                                    {message.isImportant && (
-                                      <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">重要</span>
-                                    )}
-                                    {message.isPinned && (
-                                      <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded">置頂</span>
-                                    )}
-                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                                      {message.author}
-                                    </span>
+                                
+                                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-200">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                                      <Users className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-gray-900">Office Hours</p>
+                                      <p className="text-sm text-gray-600">Monday - Friday, 8:00 AM - 5:00 PM</p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </motion.div>
-                          )
-                        })
-                      ) : (
-                        // 沒有訊息時顯示 | Display when no messages
-                        <div className="text-center py-8 text-gray-500">
-                          <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                          <p>目前沒有訊息</p>
-                        </div>
-                      )}
-                    </div>
-
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Link href="/announcements">
-                        <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                          查看更多訊息
-                        </Button>
-                      </Link>
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* Monthly Newsletter */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden group hover:shadow-3xl transition-all duration-500">
-                  <CardHeader className="text-center pb-4 bg-gradient-to-r from-blue-50 to-cyan-50">
-                    <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-                      <CardTitle className="text-2xl text-purple-700 cursor-pointer flex items-center justify-center gap-2 group-hover:text-purple-900 transition-colors">
-                        <Calendar className="w-6 h-6" />
-                        Monthly Newsletter
-                      </CardTitle>
-                    </motion.div>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    {newslettersLoading ? (
-                      // 載入中的骨架屏 | Loading skeleton
-                      <div className="animate-pulse">
-                        <div className="text-center mb-4">
-                          <div className="h-5 w-48 bg-gray-200 rounded mx-auto mb-2"></div>
-                          <div className="h-4 w-64 bg-gray-200 rounded mx-auto mb-1"></div>
-                          <div className="h-4 w-56 bg-gray-200 rounded mx-auto"></div>
-                        </div>
-                        <div className="relative mb-4">
-                          <div className="h-48 w-full bg-gray-200 rounded-xl"></div>
-                        </div>
-                        <div className="h-10 w-full bg-gray-200 rounded"></div>
-                      </div>
-                    ) : newsletters.length > 0 ? (
-                      // 動態載入的電子報 | Dynamically loaded newsletters
-                      <div>
-                        {newsletters.slice(0, 1).map((newsletter) => (
-                          <div key={newsletter.id}>
-                            <div className="text-center mb-4">
-                              <motion.h3
-                                className="font-semibold text-gray-900 mb-2"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ delay: 0.3 }}
-                              >
-                                {newsletter.title}
-                              </motion.h3>
-                              <motion.p
-                                className="text-sm text-gray-600 leading-relaxed"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                              >
-                                {newsletter.content}
-                              </motion.p>
-                              {newsletter.issueNumber && (
-                                <div className="mt-2">
-                                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                                    {newsletter.issueNumber}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
                             
-                            {newsletter.coverImage ? (
-                              <motion.div className="relative mb-4" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
-                                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-lg" />
-                                <Image
-                                  src={newsletter.coverImage}
-                                  alt={`${newsletter.title} Preview`}
-                                  width={300}
-                                  height={200}
-                                  className="relative w-full rounded-xl shadow-lg"
-                                />
-                              </motion.div>
-                            ) : (
-                              <motion.div className="relative mb-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-8 text-center">
-                                <Calendar className="w-16 h-16 mx-auto mb-4 text-blue-400" />
-                                <p className="text-blue-600 font-medium">Newsletter Cover</p>
-                              </motion.div>
-                            )}
-                            
-                            {newsletter.onlineReaderUrl ? (
-                              // 線上閱讀器嵌入 | Online Reader Embed
-                              <div className="space-y-4">
+                            {/* Important Links & Quick Access */}
+                            <motion.div 
+                              className="space-y-6"
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.4 }}
+                            >
+                              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <ExternalLink className="w-5 h-5 text-green-600" />
+                                Quick Access
+                              </h3>
+                              
+                              <div className="space-y-3">
+                                <Link href="/events">
+                                  <motion.div 
+                                    className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                                    whileHover={{ scale: 1.02 }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-3">
+                                        <Calendar className="w-5 h-5 text-purple-600" />
+                                        <span className="font-medium text-gray-900">Upcoming Events</span>
+                                      </div>
+                                      <ExternalLink className="w-4 h-4 text-gray-400" />
+                                    </div>
+                                  </motion.div>
+                                </Link>
+                                
+                                <Link href="/resources">
+                                  <motion.div 
+                                    className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                                    whileHover={{ scale: 1.02 }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-3">
+                                        <BookOpen className="w-5 h-5 text-blue-600" />
+                                        <span className="font-medium text-gray-900">Learning Resources</span>
+                                      </div>
+                                      <ExternalLink className="w-4 h-4 text-gray-400" />
+                                    </div>
+                                  </motion.div>
+                                </Link>
+                                
                                 <motion.div 
-                                  className="relative bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4"
-                                  initial={{ opacity: 0, scale: 0.95 }}
-                                  whileInView={{ opacity: 1, scale: 1 }}
-                                  transition={{ delay: 0.7 }}
+                                  className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl p-4"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  transition={{ delay: 0.6 }}
                                 >
-                                  <div className="relative">
-                                    <iframe
-                                      src={newsletter.onlineReaderUrl}
-                                      width="100%"
-                                      height="300"
-                                      frameBorder="0"
-                                      className="rounded-lg shadow-lg"
-                                      title={`${newsletter.title} Online Reader`}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg pointer-events-none" />
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-xs font-bold">!</span>
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-red-900">Emergency Contact</p>
+                                      <p className="text-sm text-red-700">For urgent matters outside office hours</p>
+                                    </div>
                                   </div>
                                 </motion.div>
-                                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                  <Button 
-                                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                                    onClick={() => window.open(newsletter.onlineReaderUrl, '_blank')}
-                                  >
-                                    <ExternalLink className="w-4 h-4 mr-2" />
-                                    在新視窗中開啟完整閱讀器
-                                  </Button>
-                                </motion.div>
                               </div>
-                            ) : newsletter.pdfUrl ? (
-                              // PDF 下載按鈕 | PDF Download Button
-                              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Button 
-                                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                                  onClick={() => window.open(newsletter.pdfUrl, '_blank')}
-                                >
-                                  <ExternalLink className="w-4 h-4 mr-2" />
-                                  下載 PDF 版本
-                                </Button>
-                              </motion.div>
-                            ) : (
-                              // 尚無內容 | No Content Available
-                              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Button 
-                                  className="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-lg transition-all duration-300"
-                                  disabled
-                                >
-                                  Newsletter Coming Soon
-                                </Button>
-                              </motion.div>
-                            )}
+                            </motion.div>
                           </div>
-                        ))}
-                        
-                        {newsletters.length > 1 && (
-                          <div className="mt-4 pt-4 border-t">
-                            <p className="text-xs text-gray-500 text-center">
-                              {newsletters.length - 1} more newsletters available
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      // 沒有電子報時顯示 | Display when no newsletters
-                      <div className="text-center">
-                        <div className="text-center mb-4">
-                          <motion.p
-                            className="font-semibold text-gray-900 mb-2"
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            transition={{ delay: 0.3 }}
+                          
+                          {/* Additional Information Section */}
+                          <motion.div 
+                            className="mt-8 pt-8 border-t border-gray-200"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
                           >
-                            Stay informed and connected!
-                          </motion.p>
-                          <motion.p
-                            className="text-sm text-gray-600 leading-relaxed"
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            transition={{ delay: 0.5 }}
-                          >
-                            We will be uploading a monthly newsletter filled with important updates, events, and highlights
-                            from our ID community.
-                          </motion.p>
-                        </div>
-                        <motion.div className="relative mb-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-8">
-                          <Calendar className="w-16 h-16 mx-auto mb-4 text-blue-400" />
-                          <p className="text-blue-600 font-medium">Newsletter Coming Soon</p>
-                        </motion.div>
-                        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                          <Button 
-                            className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                            disabled
-                          >
-                            Newsletter Coming Soon
-                          </Button>
-                        </motion.div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
+                            <div className="text-center">
+                              <h4 className="text-lg font-semibold text-gray-900 mb-3">Stay Connected</h4>
+                              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Keep up-to-date with the latest news, events, and resources from ES International Department. 
+                                We're here to support your child's educational journey.
+                              </p>
+                              <div className="flex justify-center gap-4">
+                                <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white">
+                                  <Mail className="w-4 h-4 mr-2" />
+                                  Contact Us
+                                </Button>
+                                <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                                  <Phone className="w-4 h-4 mr-2" />
+                                  Call Us
+                                </Button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </TabsContent>
+                </div>
+              </Tabs>
             </motion.div>
           </div>
         </motion.section>
