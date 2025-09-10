@@ -93,15 +93,55 @@ function isMarkdown(content: string): boolean {
  */
 export function markdownToHtml(markdown: string): string {
   if (typeof window === 'undefined') {
-    // 服務器端簡單處理
-    return markdown.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                  .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                  .replace(/^\d+\.\s(.*)$/gm, '<ol><li>$1</li></ol>')
-                  .replace(/^\*\s(.*)$/gm, '<ul><li>$1</li></ul>')
+    // 服務器端處理 - 改進版本
+    let html = markdown
+    
+    // 處理粗體
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    
+    // 處理斜體（單星號，但不是粗體內的）
+    html = html.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em>$1</em>')
+    
+    // 處理編號列表 - 正確的方式
+    const lines = html.split('\n')
+    let inOrderedList = false
+    const processedLines: string[] = []
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim()
+      const olMatch = line.match(/^(\d+)\.\s(.*)$/)
+      
+      if (olMatch) {
+        if (!inOrderedList) {
+          processedLines.push('<ol>')
+          inOrderedList = true
+        }
+        processedLines.push(`<li>${olMatch[2]}</li>`)
+      } else {
+        if (inOrderedList) {
+          processedLines.push('</ol>')
+          inOrderedList = false
+        }
+        
+        // 處理項目符號列表
+        const ulMatch = line.match(/^[-*]\s(.*)$/)
+        if (ulMatch) {
+          processedLines.push(`<ul><li>${ulMatch[1]}</li></ul>`)
+        } else if (line) {
+          processedLines.push(`<p>${line}</p>`)
+        }
+      }
+    }
+    
+    if (inOrderedList) {
+      processedLines.push('</ol>')
+    }
+    
+    return processedLines.join('\n')
   }
   
   try {
-    // 配置 marked
+    // 客戶端使用 marked
     marked.setOptions({
       gfm: true, // GitHub Flavored Markdown
       breaks: true, // 支援換行
@@ -125,11 +165,25 @@ export function sanitizeAnnouncementContent(content: string): string {
   
   // 檢測是否為 Markdown 格式
   let htmlContent = content
-  if (isMarkdown(content)) {
-    htmlContent = markdownToHtml(content)
+  const isContentMarkdown = isMarkdown(content)
+  
+  // 調試資訊（開發環境）
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log('🔍 sanitizeAnnouncementContent 調試:')
+    console.log('原始內容:', content.substring(0, 100) + '...')
+    console.log('是否為 Markdown:', isContentMarkdown)
   }
   
-  return sanitizeHtml(htmlContent, {
+  if (isContentMarkdown) {
+    htmlContent = markdownToHtml(content)
+    
+    // 調試資訊（開發環境）
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.log('轉換後 HTML:', htmlContent.substring(0, 200) + '...')
+    }
+  }
+  
+  const finalHtml = sanitizeHtml(htmlContent, {
     ALLOWED_TAGS: [
       'p', 'br', 'strong', 'em', 'b', 'i', 'u', 's', 'sub', 'sup',
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -144,6 +198,14 @@ export function sanitizeAnnouncementContent(content: string): string {
       'style', 'class', 'color', 'face', 'size'
     ]
   })
+  
+  // 調試資訊（開發環境）
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log('清理後 HTML:', finalHtml.substring(0, 200) + '...')
+    console.log('---')
+  }
+  
+  return finalHtml
 }
 
 /**
