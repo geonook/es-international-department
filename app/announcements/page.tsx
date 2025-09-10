@@ -210,23 +210,23 @@ export default function AnnouncementsPage() {
               <Filter className="w-5 h-5 text-indigo-600" />
               <h2 className="text-lg font-semibold text-gray-900">Search & Filter Announcements</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Search Bar */}
-              <div className="md:col-span-2">
+              <div className="sm:col-span-2 lg:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Search announcement titles or content..."
+                    placeholder="Search announcements..."
                     value={searchQuery}
                     onChange={handleSearch}
-                    className="pl-10 border-indigo-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                    className="pl-10 border-indigo-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 text-base"
                   />
                 </div>
               </div>
 
               {/* Priority Filter */}
-              <div>
+              <div className="sm:col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Priority Level</label>
                 <Select value={priorityFilter} onValueChange={handlePriorityFilter}>
                   <SelectTrigger className="border-indigo-200 focus:border-indigo-400">
@@ -242,7 +242,7 @@ export default function AnnouncementsPage() {
               </div>
 
               {/* Audience Filter */}
-              <div>
+              <div className="sm:col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Target Audience</label>
                 <Select value={audienceFilter} onValueChange={handleAudienceFilter}>
                   <SelectTrigger className="border-indigo-200 focus:border-indigo-400">
@@ -377,9 +377,9 @@ export default function AnnouncementsPage() {
                   className="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg border border-indigo-100 overflow-hidden hover:shadow-xl transition-all duration-300"
                 >
                   <Card className="border-0 bg-transparent hover:bg-white/40 transition-all duration-300">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="space-y-3 flex-1">
+                    <CardHeader className="pb-4 px-4 sm:px-6">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                        <div className="space-y-3 flex-1 min-w-0">
                           <div className="flex items-start gap-3">
                             {announcement.isPinned && (
                               <div className="flex-shrink-0 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center mt-1">
@@ -387,7 +387,7 @@ export default function AnnouncementsPage() {
                               </div>
                             )}
                             <div className="flex-1">
-                              <CardTitle className="text-xl text-gray-900 leading-tight mb-2">
+                              <CardTitle className="text-lg sm:text-xl text-gray-900 leading-tight mb-2 break-words">
                                 {announcement.title}
                                 {announcement.isImportant && (
                                   <span className="ml-2 inline-flex items-center">
@@ -395,7 +395,7 @@ export default function AnnouncementsPage() {
                                   </span>
                                 )}
                               </CardTitle>
-                              <div className="flex items-center gap-4 text-sm text-gray-600">
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
                                 <div className="flex items-center gap-1">
                                   <User className="w-4 h-4" />
                                   <span className="font-medium">{announcement.author}</span>
@@ -408,7 +408,7 @@ export default function AnnouncementsPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                        <div className="flex flex-row sm:flex-col items-start sm:items-end gap-2 flex-shrink-0 mt-2 sm:mt-0">
                           <Badge 
                             variant="secondary" 
                             className={`${getPriorityStyles(announcement.priority)} font-medium`}
@@ -430,16 +430,16 @@ export default function AnnouncementsPage() {
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="px-4 sm:px-6">
                       <div className="prose prose-sm max-w-none">
-                        <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                        <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm sm:text-base">
                           {announcement.content}
                         </p>
                       </div>
                       
                       {/* Additional metadata */}
-                      <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-                        <div className="flex items-center gap-4">
+                      <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gray-500">
+                        <div className="flex items-center flex-wrap gap-2 sm:gap-4">
                           <span>Type: {announcement.type.charAt(0).toUpperCase() + announcement.type.slice(1)}</span>
                           {announcement.isImportant && (
                             <span className="text-red-600 font-medium">⚠ Important Notice</span>
@@ -459,23 +459,24 @@ export default function AnnouncementsPage() {
 
         {/* Pagination Navigation */}
         {!loading && announcements.length > 0 && totalPages > 1 && (
-          <div className="mt-12 flex flex-col items-center space-y-4">
-            <div className="bg-white/80 backdrop-blur-lg rounded-xl p-6 shadow-lg border border-indigo-100">
-              <div className="flex items-center justify-between gap-4">
-                <div className="text-sm text-gray-600">
-                  Showing page {currentPage} of {totalPages} ({totalCount} total announcements)
+          <div className="mt-8 sm:mt-12 flex flex-col items-center space-y-4">
+            <div className="bg-white/80 backdrop-blur-lg rounded-xl p-4 sm:p-6 shadow-lg border border-indigo-100 w-full">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
+                  <span className="block sm:inline">Page {currentPage} of {totalPages}</span>
+                  <span className="block sm:inline sm:ml-2">({totalCount} total)</span>
                 </div>
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50"
+                    className="border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50 px-2 sm:px-3"
                   >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
-                    Previous
+                    <ChevronLeft className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Previous</span>
                   </Button>
                   
                   <div className="flex items-center gap-1">

@@ -5,10 +5,13 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "dev": "next dev -p 3001",
     "dev:staging": "next dev -p 3002 --env .env.staging",
     "dev:production": "next dev -p 3003 --env .env.production", 
     "lint": "next lint",
+    "test:responsive": "echo 'Manual responsive testing required - use dev tools in browser'",
+    "lighthouse": "npx lighthouse http://localhost:3000 --output json --output html --output-path ./lighthouse-report.html",
     "start": "next start -p ${PORT:-8080}",
     "start:staging": "PORT=8081 next start -p ${PORT:-8081}",
     "start:production": "PORT=8082 next start -p ${PORT:-8082}",

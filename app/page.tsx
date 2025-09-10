@@ -13,6 +13,7 @@ import { useHomepageSettings } from "@/hooks/useHomepageSettings"
 import MobileNav from "@/components/ui/mobile-nav"
 import PacingGuides from "@/components/PacingGuides"
 import IDSquads from "@/components/IDSquads"
+import { ResponsiveTestControls } from "@/components/dev/ResponsiveTestGrid"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -164,6 +165,11 @@ export default function HomePage() {
   const floatingVariants = {
     animate: {
       y: [-10, 10, -10],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
     },
   }
 
@@ -204,26 +210,27 @@ export default function HomePage() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <motion.div className="flex items-center gap-3" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+            <motion.div className="flex items-center gap-2 sm:gap-3" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <motion.div
-                className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center shadow-lg"
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center shadow-lg"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
               >
-                <Sparkles className="w-6 h-6 text-white" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </motion.div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                  ES International Department
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent leading-tight truncate">
+                  <span className="hidden sm:inline">ES International Department</span>
+                  <span className="sm:hidden">ES Int'l Dept</span>
                 </h1>
-                <p className="text-xs text-gray-500">Excellence in Education</p>
+                <p className="text-xs text-gray-500 leading-tight">Excellence in Education</p>
               </div>
             </motion.div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               {[
                 { name: "Home", href: "/", active: true },
                 { name: "Events", href: "/events" },
@@ -281,14 +288,14 @@ export default function HomePage() {
           {settings.heroImage && (
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-purple-900/30 to-pink-900/20" />
           )}
-          <motion.div className="container mx-auto px-4 text-center relative z-10" style={{ y: y1, opacity }}>
+          <motion.div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10" style={{ y: y1, opacity }}>
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={isHeroInView ? { scale: 1, opacity: 1 } : {}}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.h2
-                className="text-6xl md:text-8xl font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-purple-800 mb-6"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-purple-800 mb-4 sm:mb-6 leading-tight"
                 animate={{
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
@@ -299,31 +306,31 @@ export default function HomePage() {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                {settings.mainTitle || "Welcome to our Parents' Corner"}
+                <span className="block">{settings.mainTitle || "Welcome to our Parents' Corner"}</span>
               </motion.h2>
             </motion.div>
 
             <motion.div
-              className="flex justify-center gap-4 mt-8"
+              className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-6 sm:mt-8 px-4"
               initial={{ y: 30, opacity: 0 }}
               animate={isHeroInView ? { y: 0, opacity: 1 } : {}}
               transition={{ delay: 0.6, duration: 0.8 }}
             >
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
                 <Button 
-                  className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-6 sm:px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 min-h-[44px] text-sm sm:text-base"
                   onClick={() => window.location.href = settings.exploreButtonLink}
                 >
-                  {settings.exploreButtonText || "Explore Resources"}
+                  <span className="truncate">{settings.exploreButtonText || "Explore Resources"}</span>
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
                 <Button
                   variant="outline"
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-transparent"
+                  className="w-full sm:w-auto border-purple-300 text-purple-600 hover:bg-purple-50 px-6 sm:px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm min-h-[44px] text-sm sm:text-base"
                   onClick={() => window.location.href = settings.learnMoreButtonLink}
                 >
-                  {settings.learnMoreButtonText || "Learn More"}
+                  <span className="truncate">{settings.learnMoreButtonText || "Learn More"}</span>
                 </Button>
               </motion.div>
             </motion.div>
@@ -361,8 +368,8 @@ export default function HomePage() {
           viewport={{ once: true, margin: "-100px" }}
           variants={containerVariants}
         >
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col lg:flex-row items-center gap-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
               <motion.div className="lg:w-1/2" variants={itemVariants}>
                 <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
@@ -445,9 +452,9 @@ export default function HomePage() {
             />
           </div>
 
-          <div className="container mx-auto px-4 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.h2
-              className="text-5xl font-bold text-white text-center mb-16"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center mb-8 sm:mb-12 lg:mb-16 leading-tight"
               initial={{ y: 50, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8 }}
@@ -484,30 +491,33 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <TabsList className="grid w-full max-w-md grid-cols-3 bg-white/90 backdrop-blur-lg shadow-xl border border-white/20 p-1 rounded-2xl">
+                  <TabsList className="grid w-full max-w-xs sm:max-w-md md:max-w-lg grid-cols-3 bg-white/90 backdrop-blur-lg shadow-xl border border-white/20 p-1 rounded-2xl overflow-hidden">
                     <TabsTrigger 
                       value="news" 
-                      className="flex items-center gap-2 px-4 py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-800 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-800 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px]"
                     >
-                      <BookOpen className="w-4 h-4" />
-                      <span className="hidden sm:inline">News & Announcements</span>
-                      <span className="sm:hidden">News</span>
+                      <BookOpen className="w-4 h-4 flex-shrink-0" />
+                      <span className="hidden md:inline text-sm truncate">News & Announcements</span>
+                      <span className="hidden sm:inline md:hidden text-xs truncate">News</span>
+                      <span className="sm:hidden text-xs truncate">News</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="newsletter" 
-                      className="flex items-center gap-2 px-4 py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px]"
                     >
-                      <Newspaper className="w-4 h-4" />
-                      <span className="hidden sm:inline">Monthly Newsletter</span>
-                      <span className="sm:hidden">Newsletter</span>
+                      <Newspaper className="w-4 h-4 flex-shrink-0" />
+                      <span className="hidden md:inline text-sm truncate">Monthly Newsletter</span>
+                      <span className="hidden sm:inline md:hidden text-xs truncate">Newsletter</span>
+                      <span className="sm:hidden text-xs truncate">Letter</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="info" 
-                      className="flex items-center gap-2 px-4 py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px]"
                     >
-                      <Calendar className="w-4 h-4" />
-                      <span className="hidden sm:inline">Quick Info</span>
-                      <span className="sm:hidden">Info</span>
+                      <Calendar className="w-4 h-4 flex-shrink-0" />
+                      <span className="hidden md:inline text-sm truncate">Quick Info</span>
+                      <span className="hidden sm:inline md:hidden text-xs truncate">Info</span>
+                      <span className="sm:hidden text-xs truncate">Info</span>
                     </TabsTrigger>
                   </TabsList>
                 </motion.div>
@@ -529,8 +539,8 @@ export default function HomePage() {
                           </CardTitle>
                           <p className="text-sm text-gray-600 mt-2">Latest updates, announcements, and important notices from ES International Department</p>
                         </CardHeader>
-                        <CardContent className="p-8">
-                          <div className="space-y-6 mb-8">
+                        <CardContent className="p-4 sm:p-6 lg:p-8">
+                          <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
                             {messagesLoading ? (
                               // Enhanced loading skeleton
                               Array.from({ length: 5 }).map((_, index) => (
@@ -559,7 +569,7 @@ export default function HomePage() {
                                 return (
                                   <motion.div
                                     key={message.id}
-                                    className={`bg-gradient-to-br ${styles.container} rounded-xl p-6 border-l-4 ${styles.border} hover:shadow-lg transition-all duration-300`}
+                                    className={`bg-gradient-to-br ${styles.container} rounded-xl p-4 sm:p-6 border-l-4 ${styles.border} hover:shadow-lg transition-all duration-300`}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.1 }}
@@ -577,8 +587,8 @@ export default function HomePage() {
                                         })}
                                       </div>
                                     </div>
-                                    <div className="flex items-start gap-4">
-                                      <div className={`w-12 h-12 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
+                                    <div className="flex items-start gap-3 sm:gap-4">
+                                      <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
                                         {message.isPinned ? (
                                           <BookOpen className="w-6 h-6 text-white" />
                                         ) : message.type === 'announcement' ? (
@@ -588,11 +598,11 @@ export default function HomePage() {
                                         )}
                                       </div>
                                       <div className="flex-1">
-                                        <h4 className="font-bold text-gray-900 mb-2 text-lg">{message.title}</h4>
-                                        <p className="text-gray-700 mb-3 leading-relaxed">
+                                        <h4 className="font-bold text-gray-900 mb-2 text-base sm:text-lg leading-tight">{message.title}</h4>
+                                        <p className="text-gray-700 mb-3 leading-relaxed text-sm sm:text-base">
                                           {message.content}
                                         </p>
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex flex-wrap gap-1 sm:gap-2">
                                           {message.isImportant && (
                                             <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full font-medium">重要</span>
                                           )}
@@ -1013,24 +1023,24 @@ export default function HomePage() {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
               >
-                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-none">
                   <Button
                     size="lg"
-                    className="bg-white text-purple-700 hover:bg-purple-50 px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3"
+                    className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50 px-6 sm:px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 min-h-[48px] text-sm sm:text-base"
                   >
-                    <Mail className="w-5 h-5" />
-                    Contact Us
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Contact Us</span>
                   </Button>
                 </motion.div>
 
-                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-none">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-2 border-white text-white hover:bg-white hover:text-purple-700 px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3"
+                    className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-purple-700 px-6 sm:px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 min-h-[48px] text-sm sm:text-base"
                   >
-                    <Phone className="w-5 h-5" />
-                    Call Us
+                    <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Call Us</span>
                   </Button>
                 </motion.div>
               </motion.div>
@@ -1112,6 +1122,9 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+      
+      {/* Development Tools - Only in development */}
+      <ResponsiveTestControls />
     </div>
   )
 }

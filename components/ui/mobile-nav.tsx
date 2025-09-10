@@ -53,7 +53,7 @@ export default function MobileNav() {
       <Button
         variant="ghost"
         size="sm"
-        className="md:hidden p-2"
+        className="lg:hidden p-3 min-h-[44px] min-w-[44px] hover:bg-purple-50"
         onClick={toggleNav}
         aria-label={isOpen ? "關閉選單" : "開啟選單"}
         aria-expanded={isOpen}
@@ -61,9 +61,9 @@ export default function MobileNav() {
         aria-haspopup="true"
       >
         {isOpen ? (
-          <X className="h-6 w-6" />
+          <X className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
         ) : (
-          <Menu className="h-6 w-6" />
+          <Menu className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
         )}
       </Button>
 
@@ -74,7 +74,7 @@ export default function MobileNav() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
             onClick={closeNav}
           />
         )}
@@ -95,19 +95,19 @@ export default function MobileNav() {
               duration: 0.3,
               ease: [0.4, 0.0, 0.2, 1] // Material Design標準easing
             }}
-            className="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-gray-900 shadow-2xl z-50 md:hidden"
+            className="fixed top-0 left-0 h-screen w-72 sm:w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 lg:hidden"
           >
             {/* 選單頭部 - 採用Material Design規範 */}
-            <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 bg-purple-50 dark:bg-gray-800">
-              <div className="flex items-center gap-3 flex-1">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
-                  <Home className="w-4 h-4 text-white" />
+            <div className="h-16 sm:h-18 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 bg-purple-50 dark:bg-gray-800">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Home className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base font-semibold text-gray-900 dark:text-white leading-tight truncate">
                     ES International
                   </h2>
-                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-tight truncate">
                     Department
                   </p>
                 </div>
@@ -115,7 +115,7 @@ export default function MobileNav() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-1.5 hover:bg-purple-100 dark:hover:bg-gray-700"
+                className="p-2 hover:bg-purple-100 dark:hover:bg-gray-700 min-h-[44px] min-w-[44px] flex-shrink-0"
                 onClick={closeNav}
                 aria-label="關閉選單"
               >
@@ -142,10 +142,10 @@ export default function MobileNav() {
                           window.location.href = item.href
                         }
                       }}
-                      className="flex items-center gap-4 px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800 focus:outline-none transition-colors duration-150 group"
+                      className="flex items-center gap-4 px-6 py-4 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800 focus:outline-none transition-colors duration-150 group min-h-[48px] active:bg-gray-200 dark:active:bg-gray-700"
                     >
-                      <IconComponent className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors" />
-                      <span className="font-medium text-sm">{item.name}</span>
+                      <IconComponent className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors flex-shrink-0" />
+                      <span className="font-medium text-base">{item.name}</span>
                     </Link>
                   )
                 })}
@@ -153,11 +153,11 @@ export default function MobileNav() {
             </div>
 
             {/* 底部品牌標識 */}
-            <div className="absolute bottom-4 left-6 right-6">
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+            <div className="absolute bottom-4 left-6 right-6 text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                 ES International Department
               </p>
-              <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-1">
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 Excellence in Education
               </p>
             </div>
