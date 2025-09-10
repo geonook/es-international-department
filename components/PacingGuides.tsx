@@ -7,7 +7,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ExternalLink, BookOpen, Download } from 'lucide-react'
+import { ExternalLink, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 
@@ -288,37 +288,6 @@ export default function PacingGuides() {
               </Link>
             </motion.div>
           ))}
-        </motion.div>
-
-        {/* Additional Info */}
-        <motion.div
-          className="mt-12 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <div className="bg-blue-50 rounded-2xl p-8 max-w-4xl mx-auto">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Download className="w-6 h-6 text-blue-600" />
-              <h3 className="text-xl font-semibold text-blue-900">
-                Important Notes
-              </h3>
-            </div>
-            <div className="space-y-3 text-blue-800">
-              <p>
-                • All Pacing Guides are accessible via Google Spreadsheets for easy viewing and printing
-              </p>
-              <p>
-                • Guides may be updated during the term - please check back regularly
-              </p>
-              <p>
-                • Each guide includes learning objectives, assessment criteria, and suggested home activities
-              </p>
-              <p>
-                • Contact your child's teacher for specific questions about curriculum content
-              </p>
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>
