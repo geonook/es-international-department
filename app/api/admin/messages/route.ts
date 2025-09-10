@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
+import { getCurrentUser, canManageContent, AUTH_ERRORS } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check admin permissions
-    if (!isAdmin(currentUser)) {
+    // Check content management permissions
+    if (!canManageContent(currentUser)) {
       return NextResponse.json(
         { 
           success: false, 
@@ -49,18 +49,21 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
-    const boardType = searchParams.get('boardType') // 'teachers', 'parents', 'general'
+    const targetAudience = searchParams.get('targetAudience') // 'teachers', 'parents', 'all'
     const sourceGroup = searchParams.get('sourceGroup') // 'Vickie', 'Matthew', 'Academic Team', etc.
     const status = searchParams.get('status')
+    const priority = searchParams.get('priority') // 'low', 'medium', 'high', 'critical'
     const search = searchParams.get('search')
     const isPinned = searchParams.get('pinned') // 'true', 'false', or null for all
     const isImportant = searchParams.get('important') // 'true', 'false', or null for all
 
     // Build filter conditions
-    const where: any = {}
+    const where: any = {
+      type: 'message_board' // Only get message board communications
+    }
 
-    if (boardType) {
-      where.boardType = boardType
+    if (targetAudience && targetAudience !== 'all') {
+      where.targetAudience = targetAudience
     }
 
     if (sourceGroup) {
@@ -69,6 +72,10 @@ export async function GET(request: NextRequest) {
 
     if (status) {
       where.status = status
+    }
+
+    if (priority) {
+      where.priority = priority
     }
 
     if (isPinned === 'true') {
@@ -86,12 +93,10 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
-        { content: { contains: search, mode: 'insensitive' } }
+        { content: { contains: search, mode: 'insensitive' } },
+        { summary: { contains: search, mode: 'insensitive' } }
       ]
     }
-
-    // Add type filter for message board communications
-    where.type = 'message_board'
 
     // Calculate total count and pagination
     const totalCount = await prisma.communication.count({ where })
@@ -128,8 +133,9 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
-        { isImportant: 'desc' },
         { isPinned: 'desc' },
+        { priority: 'desc' },
+        { publishedAt: 'desc' },
         { createdAt: 'desc' }
       ],
       skip,
@@ -180,8 +186,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check admin permissions
-    if (!isAdmin(currentUser)) {
+    // Check content management permissions
+    if (!canManageContent(currentUser)) {
       return NextResponse.json(
         { 
           success: false, 
@@ -208,12 +214,16 @@ export async function POST(request: NextRequest) {
       data: {
         title: data.title,
         content: data.content,
+        summary: data.summary || null,
         type: 'message_board', // Set type for message board
-        boardType: data.boardType || 'general',
+        targetAudience: data.targetAudience || 'all',
         sourceGroup: data.sourceGroup || null,
+        priority: data.priority || 'medium',
         isImportant: data.isImportant || false,
         isPinned: data.isPinned || false,
-        status: data.status || 'published', // Use 'published' instead of 'active'
+        status: data.status || 'published',
+        publishedAt: new Date(), // Set publish time
+        expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
         authorId: currentUser.id
       },
       include: {

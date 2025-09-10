@@ -156,6 +156,7 @@ export async function PUT(
     if (data.content !== undefined) updateData.content = data.content
     if (data.htmlContent !== undefined) updateData.htmlContent = data.htmlContent
     if (data.coverImageUrl !== undefined) updateData.coverImageUrl = data.coverImageUrl
+    if (data.pdfUrl !== undefined) updateData.pdfUrl = data.pdfUrl
     if (data.status !== undefined) updateData.status = data.status
     if (data.issueNumber !== undefined) updateData.issueNumber = data.issueNumber
     if (data.publicationDate !== undefined) {

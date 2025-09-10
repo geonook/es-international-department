@@ -16,42 +16,25 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '3')
     const targetAudience = searchParams.get('audience') || 'all'
 
-    // 查詢條件
+    // 查詢條件 - 僅使用 newsletter 表中存在的欄位
     const whereCondition: any = {
-      status: 'published',
-      OR: [
-        { expiresAt: null },
-        { expiresAt: { gte: new Date() } }
-      ]
+      status: 'published'
     }
 
-    // 過濾目標受眾
-    if (targetAudience !== 'all') {
-      whereCondition.targetAudience = {
-        in: [targetAudience, 'all']
-      }
-    }
-
-    // 獲取電子報數據
-    const newsletters = await prisma.communication.findMany({
-      where: {
-        ...whereCondition,
-        type: 'newsletter'
-      },
+    // 獲取電子報數據 - 使用 newsletter 資料表
+    const newsletters = await prisma.newsletter.findMany({
+      where: whereCondition,
       select: {
         id: true,
         title: true,
         content: true,
-        summary: true,
-        type: true,
-        targetAudience: true,
-        priority: true,
+        htmlContent: true,
+        coverImageUrl: true,
+        pdfUrl: true,
         status: true,
-        isImportant: true,
-        isPinned: true,
-        publishedAt: true,
+        issueNumber: true,
+        publicationDate: true,
         createdAt: true,
-        metadata: true, // 包含可能的封面圖片和 PDF 鏈接
         author: {
           select: {
             id: true,
@@ -62,51 +45,33 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
-        { isPinned: 'desc' },
-        { priority: 'desc' },
-        { publishedAt: 'desc' }
+        { publicationDate: 'desc' },
+        { issueNumber: 'desc' },
+        { createdAt: 'desc' }
       ],
       take: limit
     })
 
-    // 格式化回應數據
+    // 格式化回應數據 - 直接使用 newsletter 資料表欄位
     const formattedNewsletters = newsletters.map(newsletter => {
-      // 解析 metadata 中的額外資訊
-      let coverImage = null
-      let pdfUrl = null
-      let issueNumber = null
-      
-      if (newsletter.metadata) {
-        try {
-          const metadata = typeof newsletter.metadata === 'string' 
-            ? JSON.parse(newsletter.metadata) 
-            : newsletter.metadata
-          coverImage = metadata.coverImage || null
-          pdfUrl = metadata.pdfUrl || null
-          issueNumber = metadata.issueNumber || null
-        } catch (e) {
-          // 如果 metadata 無法解析，忽略錯誤
-        }
-      }
-
       return {
         id: newsletter.id,
         title: newsletter.title,
-        content: newsletter.summary || newsletter.content.substring(0, 200) + '...',
+        content: newsletter.content.length > 200 ? newsletter.content.substring(0, 200) + '...' : newsletter.content,
         type: 'newsletter',
-        priority: newsletter.priority,
-        isImportant: newsletter.isImportant || newsletter.priority === 'high',
-        isPinned: newsletter.isPinned || false,
-        date: newsletter.publishedAt || newsletter.createdAt,
+        priority: 'medium', // Newsletter 表沒有 priority 欄位，使用預設值
+        isImportant: false, // Newsletter 表沒有 isImportant 欄位，使用預設值
+        isPinned: false, // Newsletter 表沒有 isPinned 欄位，使用預設值
+        date: newsletter.publicationDate || newsletter.createdAt,
         author: newsletter.author ? 
           newsletter.author.displayName || 
           `${newsletter.author.firstName || ''} ${newsletter.author.lastName || ''}`.trim() || 
           'KCISLK ESID' 
           : 'KCISLK ESID',
-        targetAudience: newsletter.targetAudience,
-        coverImage,
-        pdfUrl,
-        issueNumber
+        targetAudience: 'all', // Newsletter 表沒有 targetAudience 欄位，使用預設值
+        coverImage: newsletter.coverImageUrl,
+        pdfUrl: newsletter.pdfUrl,
+        issueNumber: newsletter.issueNumber
       }
     })
 

@@ -173,6 +173,7 @@ export async function POST(request: NextRequest) {
         content: data.content,
         htmlContent: data.htmlContent || null,
         coverImageUrl: data.coverImageUrl || null,
+        pdfUrl: data.pdfUrl || null,
         status: data.status || 'draft',
         issueNumber: data.issueNumber || null,
         publicationDate: data.publicationDate ? new Date(data.publicationDate) : null,

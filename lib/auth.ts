@@ -179,6 +179,13 @@ export function isOfficeMember(user: User | null): boolean {
 }
 
 /**
+ * Check if user can manage content (admin or office member)
+ */
+export function canManageContent(user: User | null): boolean {
+  return isAdmin(user) || isOfficeMember(user)
+}
+
+/**
  * Check if user is teacher (backward compatibility - now checks office_member)
  */
 export function isTeacher(user: User | null): boolean {

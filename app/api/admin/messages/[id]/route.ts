@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCurrentUser, isAdmin, AUTH_ERRORS } from '@/lib/auth'
+import { getCurrentUser, canManageContent, AUTH_ERRORS } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,8 +35,8 @@ export async function GET(
       )
     }
 
-    // Check admin permissions
-    if (!isAdmin(currentUser)) {
+    // Check content management permissions
+    if (!canManageContent(currentUser)) {
       return NextResponse.json(
         { 
           success: false, 
@@ -56,9 +56,12 @@ export async function GET(
       )
     }
 
-    // Get message board post details with all replies
-    const message = await prisma.messageBoard.findUnique({
-      where: { id: messageId },
+    // Get message board post details with all replies from Communication table
+    const message = await prisma.communication.findUnique({
+      where: { 
+        id: messageId,
+        type: 'message_board' // Ensure we only get message board posts
+      },
       include: {
         author: {
           select: {
@@ -94,7 +97,7 @@ export async function GET(
     }
 
     // Increment view count
-    await prisma.messageBoard.update({
+    await prisma.communication.update({
       where: { id: messageId },
       data: { viewCount: { increment: 1 } }
     })
@@ -135,8 +138,8 @@ export async function PUT(
       )
     }
 
-    // Check admin permissions
-    if (!isAdmin(currentUser)) {
+    // Check content management permissions
+    if (!canManageContent(currentUser)) {
       return NextResponse.json(
         { 
           success: false, 
@@ -160,8 +163,11 @@ export async function PUT(
     const data = await request.json()
 
     // Check if message board post exists
-    const existingMessage = await prisma.messageBoard.findUnique({
-      where: { id: messageId }
+    const existingMessage = await prisma.communication.findUnique({
+      where: { 
+        id: messageId,
+        type: 'message_board'
+      }
     })
 
     if (!existingMessage) {
@@ -176,14 +182,16 @@ export async function PUT(
 
     if (data.title !== undefined) updateData.title = data.title
     if (data.content !== undefined) updateData.content = data.content
-    if (data.boardType !== undefined) updateData.boardType = data.boardType
-    if (data.sourceGroup !== undefined) updateData.sourceGroup = data.sourceGroup
+    if (data.summary !== undefined) updateData.summary = data.summary
+    if (data.targetAudience !== undefined) updateData.targetAudience = data.targetAudience
+    if (data.priority !== undefined) updateData.priority = data.priority
     if (data.isImportant !== undefined) updateData.isImportant = data.isImportant
     if (data.isPinned !== undefined) updateData.isPinned = data.isPinned
     if (data.status !== undefined) updateData.status = data.status
+    if (data.expiresAt !== undefined) updateData.expiresAt = data.expiresAt ? new Date(data.expiresAt) : null
 
     // Update message board post
-    const updatedMessage = await prisma.messageBoard.update({
+    const updatedMessage = await prisma.communication.update({
       where: { id: messageId },
       data: updateData,
       include: {
@@ -251,8 +259,8 @@ export async function DELETE(
       )
     }
 
-    // Check admin permissions
-    if (!isAdmin(currentUser)) {
+    // Check content management permissions
+    if (!canManageContent(currentUser)) {
       return NextResponse.json(
         { 
           success: false, 
@@ -273,8 +281,11 @@ export async function DELETE(
     }
 
     // Check if message board post exists
-    const existingMessage = await prisma.messageBoard.findUnique({
-      where: { id: messageId }
+    const existingMessage = await prisma.communication.findUnique({
+      where: { 
+        id: messageId,
+        type: 'message_board'
+      }
     })
 
     if (!existingMessage) {
@@ -285,12 +296,12 @@ export async function DELETE(
     }
 
     // Delete all replies first (cascade delete)
-    await prisma.messageReply.deleteMany({
-      where: { messageId: messageId }
+    await prisma.communicationReply.deleteMany({
+      where: { communicationId: messageId }
     })
 
     // Delete message board post
-    await prisma.messageBoard.delete({
+    await prisma.communication.delete({
       where: { id: messageId }
     })
 

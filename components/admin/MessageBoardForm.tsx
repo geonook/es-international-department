@@ -26,9 +26,14 @@ interface MessageBoardData {
   id?: number
   title: string
   content: string
-  boardType: 'teachers' | 'parents' | 'general'
+  summary?: string
+  targetAudience: 'teachers' | 'parents' | 'all'
+  sourceGroup?: string
+  priority: 'low' | 'medium' | 'high' | 'critical'
   isPinned: boolean
-  status: 'active' | 'closed' | 'archived'
+  isImportant: boolean
+  status: 'draft' | 'published' | 'archived'
+  expiresAt?: string
 }
 
 interface MessageBoardFormProps {
@@ -51,9 +56,14 @@ export default function MessageBoardForm({
   const [formData, setFormData] = useState<MessageBoardData>({
     title: '',
     content: '',
-    boardType: 'general',
+    summary: '',
+    targetAudience: 'all',
+    sourceGroup: '',
+    priority: 'medium',
     isPinned: false,
-    status: 'active'
+    isImportant: false,
+    status: 'published',
+    expiresAt: ''
   })
   
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
@@ -110,20 +120,27 @@ export default function MessageBoardForm({
     }
   }
 
-  const boardTypeOptions = [
-    { value: 'general', label: 'General', description: 'General announcements and discussions' },
-    { value: 'teachers', label: 'Teachers', description: 'Teacher-specific discussions and notices' },
-    { value: 'parents', label: 'Parents', description: 'Parent-focused communications and updates' }
+  const targetAudienceOptions = [
+    { value: 'all', label: 'All Users', description: 'Visible to all teachers and parents' },
+    { value: 'teachers', label: 'Teachers Only', description: 'Only visible to teachers and staff' },
+    { value: 'parents', label: 'Parents Only', description: 'Only visible to parents and guardians' }
+  ]
+
+  const priorityOptions = [
+    { value: 'low', label: 'Low', description: 'General information', color: 'bg-green-100 text-green-800' },
+    { value: 'medium', label: 'Medium', description: 'Standard announcements', color: 'bg-blue-100 text-blue-800' },
+    { value: 'high', label: 'High', description: 'Important updates', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'critical', label: 'Critical', description: 'Urgent notifications', color: 'bg-red-100 text-red-800' }
   ]
 
   const statusColors = {
-    active: 'bg-green-100 text-green-800',
-    closed: 'bg-red-100 text-red-800',
-    archived: 'bg-gray-100 text-gray-800'
+    draft: 'bg-gray-100 text-gray-800',
+    published: 'bg-green-100 text-green-800',
+    archived: 'bg-purple-100 text-purple-800'
   }
 
-  const boardTypeColors = {
-    general: 'bg-blue-100 text-blue-800',
+  const audienceColors = {
+    all: 'bg-blue-100 text-blue-800',
     teachers: 'bg-purple-100 text-purple-800',
     parents: 'bg-pink-100 text-pink-800'
   }
@@ -175,6 +192,20 @@ export default function MessageBoardForm({
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="summary">Summary (Optional)</Label>
+                <Input
+                  id="summary"
+                  value={formData.summary}
+                  onChange={(e) => handleInputChange('summary', e.target.value)}
+                  placeholder="Brief summary for homepage display (max 200 chars)"
+                  maxLength={200}
+                />
+                <span className="text-xs text-gray-500">
+                  {formData.summary?.length || 0}/200 characters
+                </span>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="content">Content *</Label>
                 <Textarea
                   id="content"
@@ -189,27 +220,51 @@ export default function MessageBoardForm({
                 )}
               </div>
 
-              {/* Board Type and Settings */}
-              <div className="grid md:grid-cols-2 gap-6">
+              {/* Target Audience and Priority */}
+              <div className="grid md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="boardType">Board Type</Label>
+                  <Label htmlFor="targetAudience">Target Audience</Label>
                   <Select
-                    value={formData.boardType}
-                    onValueChange={(value) => handleInputChange('boardType', value)}
+                    value={formData.targetAudience}
+                    onValueChange={(value) => handleInputChange('targetAudience', value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {boardTypeOptions.map((option) => (
+                      {targetAudienceOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           <div className="flex flex-col">
                             <div className="flex items-center gap-2">
-                              <Badge className={boardTypeColors[option.value as keyof typeof boardTypeColors]}>
+                              <Badge className={audienceColors[option.value as keyof typeof audienceColors]}>
                                 {option.label}
                               </Badge>
                             </div>
                             <span className="text-xs text-gray-500 mt-1">{option.description}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="priority">Priority</Label>
+                  <Select
+                    value={formData.priority}
+                    onValueChange={(value) => handleInputChange('priority', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {priorityOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          <div className="flex items-center gap-2">
+                            <Badge className={option.color}>
+                              {option.label}
+                            </Badge>
+                            <span className="text-xs text-gray-500">{option.description}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -227,16 +282,16 @@ export default function MessageBoardForm({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">
+                      <SelectItem value="draft">
                         <div className="flex items-center gap-2">
-                          <Badge className={statusColors.active}>Active</Badge>
-                          <span className="text-xs text-gray-500">Open for comments</span>
+                          <Badge className={statusColors.draft}>Draft</Badge>
+                          <span className="text-xs text-gray-500">Not visible to users</span>
                         </div>
                       </SelectItem>
-                      <SelectItem value="closed">
+                      <SelectItem value="published">
                         <div className="flex items-center gap-2">
-                          <Badge className={statusColors.closed}>Closed</Badge>
-                          <span className="text-xs text-gray-500">Read-only, no new comments</span>
+                          <Badge className={statusColors.published}>Published</Badge>
+                          <span className="text-xs text-gray-500">Live and visible</span>
                         </div>
                       </SelectItem>
                       <SelectItem value="archived">
@@ -250,17 +305,57 @@ export default function MessageBoardForm({
                 </div>
               </div>
 
-              {/* Pin Option */}
-              <div className="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
-                <Checkbox
-                  id="isPinned"
-                  checked={formData.isPinned}
-                  onCheckedChange={(checked) => handleInputChange('isPinned', checked)}
-                />
-                <Label htmlFor="isPinned" className="flex items-center gap-2">
-                  <Pin className="w-4 h-4" />
-                  Pin this post to the top of the board
-                </Label>
+              {/* Source Group and Expiry */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="sourceGroup">Source Group (Optional)</Label>
+                  <Input
+                    id="sourceGroup"
+                    value={formData.sourceGroup}
+                    onChange={(e) => handleInputChange('sourceGroup', e.target.value)}
+                    placeholder="e.g. Academic Team, Administration, Grade 1-2"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="expiresAt">Expiry Date (Optional)</Label>
+                  <Input
+                    id="expiresAt"
+                    type="datetime-local"
+                    value={formData.expiresAt}
+                    onChange={(e) => handleInputChange('expiresAt', e.target.value)}
+                  />
+                  <span className="text-xs text-gray-500">
+                    Leave empty for no expiry
+                  </span>
+                </div>
+              </div>
+
+              {/* Pin and Important Options */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
+                  <Checkbox
+                    id="isPinned"
+                    checked={formData.isPinned}
+                    onCheckedChange={(checked) => handleInputChange('isPinned', checked)}
+                  />
+                  <Label htmlFor="isPinned" className="flex items-center gap-2">
+                    <Pin className="w-4 h-4" />
+                    Pin this post to the top
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2 p-4 bg-yellow-50 rounded-lg">
+                  <Checkbox
+                    id="isImportant"
+                    checked={formData.isImportant}
+                    onCheckedChange={(checked) => handleInputChange('isImportant', checked)}
+                  />
+                  <Label htmlFor="isImportant" className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    Mark as important
+                  </Label>
+                </div>
               </div>
 
               {/* Preview Section */}
@@ -276,12 +371,20 @@ export default function MessageBoardForm({
                   </h4>
                   <div className="space-y-2">
                     <h5 className="font-semibold text-gray-900">{formData.title || 'Untitled Post'}</h5>
+                    {formData.summary && (
+                      <p className="text-sm text-blue-600 italic">
+                        {formData.summary}
+                      </p>
+                    )}
                     <p className="text-sm text-gray-600 whitespace-pre-wrap">
                       {formData.content || 'No content yet...'}
                     </p>
-                    <div className="flex items-center gap-2">
-                      <Badge className={boardTypeColors[formData.boardType]}>
-                        {boardTypeOptions.find(opt => opt.value === formData.boardType)?.label}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge className={audienceColors[formData.targetAudience]}>
+                        {targetAudienceOptions.find(opt => opt.value === formData.targetAudience)?.label}
+                      </Badge>
+                      <Badge className={priorityOptions.find(opt => opt.value === formData.priority)?.color || 'bg-gray-100 text-gray-800'}>
+                        {priorityOptions.find(opt => opt.value === formData.priority)?.label} Priority
                       </Badge>
                       <Badge className={statusColors[formData.status]}>
                         {formData.status}
@@ -290,6 +393,17 @@ export default function MessageBoardForm({
                         <Badge variant="outline">
                           <Pin className="w-3 h-3 mr-1" />
                           Pinned
+                        </Badge>
+                      )}
+                      {formData.isImportant && (
+                        <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                          <AlertTriangle className="w-3 h-3 mr-1" />
+                          Important
+                        </Badge>
+                      )}
+                      {formData.sourceGroup && (
+                        <Badge variant="outline">
+                          {formData.sourceGroup}
                         </Badge>
                       )}
                     </div>

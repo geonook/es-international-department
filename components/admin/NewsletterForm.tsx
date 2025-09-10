@@ -30,6 +30,7 @@ interface NewsletterData {
   content: string
   htmlContent?: string
   coverImageUrl?: string
+  pdfUrl?: string
   status: 'draft' | 'published' | 'archived'
   issueNumber?: number
   publicationDate?: string
@@ -57,6 +58,7 @@ export default function NewsletterForm({
     content: '',
     htmlContent: '',
     coverImageUrl: '',
+    pdfUrl: '',
     status: 'draft',
     issueNumber: undefined,
     publicationDate: undefined
@@ -285,6 +287,25 @@ export default function NewsletterForm({
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              {/* PDF URL */}
+              <div className="space-y-2">
+                <Label htmlFor="pdfUrl">PDF URL (Homepage Display)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="pdfUrl"
+                    value={formData.pdfUrl || ''}
+                    onChange={(e) => handleInputChange('pdfUrl', e.target.value)}
+                    placeholder="https://example.com/newsletter.pdf"
+                  />
+                  <Button type="button" variant="outline" size="sm">
+                    <Upload className="w-4 h-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500">
+                  PDF link for "View Latest Newsletter" button on homepage
+                </p>
               </div>
 
               {/* Publication Date */}

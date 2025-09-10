@@ -62,6 +62,8 @@ import HomepageSettingsManager from '@/components/admin/HomepageSettingsManager'
 import ContactInfoManager from '@/components/admin/ContactInfoManager'
 import NavigationMenuManager from '@/components/admin/NavigationMenuManager'
 import EventForm from '@/components/admin/EventForm'
+import MessageBoardForm from '@/components/admin/MessageBoardForm'
+import MessageBoardList from '@/components/admin/MessageBoardList'
 
 interface Announcement {
   id: string
@@ -498,7 +500,7 @@ export default function AdminPage() {
     try {
       setIsMessageBoardLoading(true)
       setDataLoading(true)
-      const response = await fetch('/api/admin/communications?type=message_board&limit=20', {
+      const response = await fetch('/api/admin/messages?limit=20', {
         credentials: 'include'
       })
       
@@ -1026,7 +1028,7 @@ export default function AdminPage() {
 
     try {
       setDataLoading(true)
-      const response = await fetch(`/api/admin/communications/${messageBoardId}`, {
+      const response = await fetch(`/api/admin/messages/${messageBoardId}`, {
         method: 'DELETE',
         credentials: 'include'
       })
@@ -1048,22 +1050,23 @@ export default function AdminPage() {
     try {
       setDataLoading(true)
       
-      // Transform AnnouncementForm data to unified Communication format
+      // Use new Message Board data format
       const messageData = {
         title: formData.title,
         content: formData.content,
-        type: 'message_board', // Required field for unified Communication API
+        summary: formData.summary || null,
         targetAudience: formData.targetAudience || 'all',
         sourceGroup: formData.sourceGroup || null,
         priority: formData.priority || 'medium',
-        isImportant: formData.priority === 'high',
+        isImportant: formData.isImportant || false,
         isPinned: formData.isPinned || false,
-        status: formData.status || 'published'
+        status: formData.status || 'published',
+        expiresAt: formData.expiresAt || null
       }
       
       const url = editingMessageBoard 
-        ? `/api/admin/communications/${editingMessageBoard.id}` 
-        : '/api/admin/communications'
+        ? `/api/admin/messages/${editingMessageBoard.id}` 
+        : '/api/admin/messages'
       
       const method = editingMessageBoard ? 'PUT' : 'POST'
       
@@ -1076,13 +1079,14 @@ export default function AdminPage() {
         body: JSON.stringify(messageData)
       })
 
-      if (response.ok) {
+      const result = await response.json()
+      
+      if (response.ok && result.success) {
         setShowMessageBoardForm(false)
         setEditingMessageBoard(null)
         fetchMessageBoardPosts() // Refresh message board list
       } else {
-        const errorData = await response.json()
-        setError(errorData.message || 'Failed to save message board post')
+        setError(result.message || 'Failed to save message board post')
       }
     } catch (error) {
       console.error('Failed to save message board post:', error)
@@ -1324,7 +1328,7 @@ export default function AdminPage() {
                   { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
                   { id: 'parents', name: "Parents' Corner", icon: Sparkles },
                   { id: 'feedback', name: 'Feedback Management', icon: MessageCircle },
-                  { id: 'messages', name: 'Message Board', icon: MessageCircle }
+                  { id: 'messages', name: 'Message Board', icon: MessageCircle, href: '/admin/messages' }
                 ] : []),
                 // Only administrators can see content management and user management
                 ...(canManageUsers ? [
@@ -1338,20 +1342,31 @@ export default function AdminPage() {
                   { id: 'settings', name: 'Settings', icon: Settings }
                 ] : [])
               ].map((item) => (
-                <motion.button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
-                    activeTab === item.id
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-800 text-white shadow-lg'
-                      : 'text-gray-600 hover:bg-indigo-50 hover:text-indigo-600'
-                  }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <item.icon className="w-5 h-5" />
-                  {item.name}
-                </motion.button>
+                item.href ? (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                ) : (
+                  <motion.button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+                      activeTab === item.id
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-800 text-white shadow-lg'
+                        : 'text-gray-600 hover:bg-indigo-50 hover:text-indigo-600'
+                    }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    {item.name}
+                  </motion.button>
+                )
               ))}
             </div>
           </nav>
@@ -2910,14 +2925,16 @@ export default function AdminPage() {
                 exit={{ scale: 0.95, opacity: 0 }}
                 className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
               >
-                <AnnouncementForm
-                  announcement={editingMessageBoard || undefined}
+                <MessageBoardForm
+                  message={editingMessageBoard || null}
                   mode={editingMessageBoard ? 'edit' : 'create'}
                   onCancel={() => {
                     setShowMessageBoardForm(false)
                     setEditingMessageBoard(null)
                   }}
                   onSubmit={handleMessageBoardFormSubmit}
+                  loading={dataLoading}
+                  error={error}
                 />
               </motion.div>
             </motion.div>
