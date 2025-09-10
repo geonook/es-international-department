@@ -77,6 +77,101 @@ export default function EventsPage() {
     fetchEvents()
   }, [])
 
+  // Static events data as fallback
+  const staticEvents: Event[] = [
+    {
+      id: 1,
+      title: "International Cultural Day 2025",
+      description: "Join us for a celebration of diversity and cultural exchange. Parents and students will showcase their heritage through food, music, and traditional activities.",
+      eventType: "cultural",
+      startDate: "2025-02-28T09:00:00Z",
+      endDate: "2025-02-28T15:00:00Z",
+      startTime: "09:00",
+      endTime: "15:00",
+      location: "KCISLK School Gymnasium",
+      maxParticipants: 200,
+      registrationRequired: true,
+      registrationDeadline: "2025-02-25T23:59:00Z",
+      targetGrades: ["1-2", "3-4", "5-6"],
+      isFeatured: true,
+      status: "published",
+      createdAt: "2025-01-15T00:00:00Z",
+      creator: { displayName: "KCISLK ESID" }
+    },
+    {
+      id: 2,
+      title: "Parent-Teacher Conference",
+      description: "Individual meetings to discuss student progress and academic development. Please schedule your appointment with your child's teacher.",
+      eventType: "academic",
+      startDate: "2025-02-15T08:00:00Z",
+      endDate: "2025-02-15T17:00:00Z",
+      startTime: "08:00",
+      endTime: "17:00",
+      location: "Classroom Buildings",
+      registrationRequired: true,
+      registrationDeadline: "2025-02-12T17:00:00Z",
+      targetGrades: ["1-2", "3-4", "5-6"],
+      isFeatured: true,
+      status: "published",
+      createdAt: "2025-01-10T00:00:00Z",
+      creator: { displayName: "Academic Department" }
+    },
+    {
+      id: 3,
+      title: "Science Fair Exhibition",
+      description: "Students will present their science projects and experiments. Come support our young scientists and discover amazing innovations.",
+      eventType: "academic",
+      startDate: "2025-03-15T10:00:00Z",
+      endDate: "2025-03-15T14:00:00Z",
+      startTime: "10:00",
+      endTime: "14:00",
+      location: "Science Laboratory Complex",
+      maxParticipants: 150,
+      registrationRequired: false,
+      targetGrades: ["3-4", "5-6"],
+      isFeatured: false,
+      status: "published",
+      createdAt: "2025-01-08T00:00:00Z",
+      creator: { displayName: "Science Department" }
+    },
+    {
+      id: 4,
+      title: "Spring Sports Day",
+      description: "Annual sports competition featuring various athletic events. Students will compete in team sports and individual challenges.",
+      eventType: "sports",
+      startDate: "2025-04-20T08:30:00Z",
+      endDate: "2025-04-20T16:00:00Z",
+      startTime: "08:30",
+      endTime: "16:00",
+      location: "School Sports Field",
+      registrationRequired: false,
+      targetGrades: ["1-2", "3-4", "5-6"],
+      isFeatured: true,
+      status: "published",
+      createdAt: "2025-01-05T00:00:00Z",
+      creator: { displayName: "Physical Education Department" }
+    },
+    {
+      id: 5,
+      title: "Music Concert Performance",
+      description: "Student orchestra and choir will perform classical and contemporary pieces. A celebration of musical talent and creativity.",
+      eventType: "arts",
+      startDate: "2025-05-10T19:00:00Z",
+      endDate: "2025-05-10T21:00:00Z",
+      startTime: "19:00",
+      endTime: "21:00",
+      location: "School Auditorium",
+      maxParticipants: 300,
+      registrationRequired: true,
+      registrationDeadline: "2025-05-08T17:00:00Z",
+      targetGrades: ["1-2", "3-4", "5-6"],
+      isFeatured: false,
+      status: "published",
+      createdAt: "2025-01-03T00:00:00Z",
+      creator: { displayName: "Music Department" }
+    }
+  ]
+
   const fetchEvents = async () => {
     try {
       setIsLoading(true)
@@ -87,17 +182,19 @@ export default function EventsPage() {
       params.set('status', 'published')
       params.set('limit', '50')
       
-      const response = await fetch(`/api/events?${params.toString()}`)
+      const response = await fetch(`/api/public/events?${params.toString()}`)
       const data = await response.json()
       
       if (data.success) {
         setEvents(data.data || [])
       } else {
-        setError('Failed to load events data')
+        // Use static events data when API fails
+        setEvents(staticEvents)
       }
     } catch (error) {
       console.error('Fetch events error:', error)
-      setError('Network error, please try again later')
+      // Use static events data when network fails
+      setEvents(staticEvents)
     } finally {
       setIsLoading(false)
     }

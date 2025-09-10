@@ -25,6 +25,14 @@ export default function HomePage() {
   // 頁面載入狀態 | Page loading state
   const [isLoaded, setIsLoaded] = useState(false)
   
+  // Message Board 狀態 | Message Board state
+  const [messages, setMessages] = useState([])
+  const [messagesLoading, setMessagesLoading] = useState(true)
+  
+  // Newsletter 狀態 | Newsletter state  
+  const [newsletters, setNewsletters] = useState([])
+  const [newslettersLoading, setNewslettersLoading] = useState(true)
+  
   // 首頁設定資料 | Homepage settings data
   const { settings, loading: settingsLoading } = useHomepageSettings()
   
@@ -40,10 +48,83 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsLoaded(true)
+    fetchMessages()
+    fetchNewsletters()
   }, [])
+
+  // 載入 Message Board 數據 | Load Message Board data
+  const fetchMessages = async () => {
+    try {
+      setMessagesLoading(true)
+      const response = await fetch('/api/public/messages?limit=5')
+      const data = await response.json()
+      
+      if (data.success) {
+        setMessages(data.data || [])
+      }
+    } catch (error) {
+      console.error('Failed to load messages:', error)
+    } finally {
+      setMessagesLoading(false)
+    }
+  }
+
+  // 載入 Newsletter 數據 | Load Newsletter data
+  const fetchNewsletters = async () => {
+    try {
+      setNewslettersLoading(true)
+      const response = await fetch('/api/public/newsletters?limit=3')
+      const data = await response.json()
+      
+      if (data.success) {
+        setNewsletters(data.data || [])
+      }
+    } catch (error) {
+      console.error('Failed to load newsletters:', error)
+    } finally {
+      setNewslettersLoading(false)
+    }
+  }
 
   // KCFSID 小隊列表 | KCFSID Squad list
   const squads = ["Achievers", "Adventurers", "Discoverers", "Explorers", "Innovators", "Leaders"]
+
+  // 取得訊息優先級顏色樣式 | Get message priority color styles
+  const getPriorityStyles = (priority, type) => {
+    const styles = {
+      high: {
+        container: "from-red-50 to-pink-50",
+        border: "border-red-400",
+        badge: "bg-red-100 text-red-700",
+        icon: "from-red-500 to-red-700"
+      },
+      medium: {
+        container: "from-blue-50 to-cyan-50",
+        border: "border-blue-400",
+        badge: "bg-blue-100 text-blue-700",
+        icon: "from-blue-500 to-blue-700"
+      },
+      low: {
+        container: "from-green-50 to-emerald-50",
+        border: "border-green-400",
+        badge: "bg-green-100 text-green-700",
+        icon: "from-green-500 to-green-700"
+      }
+    }
+    
+    return styles[priority] || styles.medium
+  }
+
+  // 取得訊息類型顯示名稱 | Get message type display name
+  const getTypeDisplayName = (type) => {
+    const typeNames = {
+      message_board: "訊息板",
+      announcement: "公告",
+      event: "活動",
+      news: "新聞"
+    }
+    return typeNames[type] || "通知"
+  }
 
   // 容器動畫變體 - 漸進式顯示子元素 | Container animation variants - staggered children
   const containerVariants = {
@@ -390,150 +471,91 @@ export default function HomePage() {
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
-                      {/* 範例訊息 1 - 重要通知 */}
-                      <motion.div
-                        className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-4 border-l-4 border-red-400"
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">
-                            重要通知
-                          </span>
-                          <div className="text-right text-xs text-gray-600">Jan 15, 2025</div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                            <span className="text-white font-bold text-xs">ID</span>
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 mb-1">期末評量週注意事項</h4>
-                            <p className="text-sm text-gray-700 mb-2">
-                              親愛的家長們，期末評量週即將到來（1/20-1/24），請協助孩子做好複習準備。各科評量範圍已上傳至班級群組。
-                            </p>
-                            <div className="flex gap-2">
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">評量週</span>
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">家長配合</span>
+                      {messagesLoading ? (
+                        // 載入中的骨架屏 | Loading skeleton
+                        Array.from({ length: 3 }).map((_, index) => (
+                          <div key={index} className="bg-gray-50 rounded-xl p-4 animate-pulse">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="h-5 w-16 bg-gray-200 rounded-full"></div>
+                              <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                              <div className="flex-1">
+                                <div className="h-4 w-3/4 bg-gray-200 rounded mb-2"></div>
+                                <div className="h-3 w-full bg-gray-200 rounded mb-1"></div>
+                                <div className="h-3 w-2/3 bg-gray-200 rounded mb-2"></div>
+                                <div className="flex gap-2">
+                                  <div className="h-5 w-12 bg-gray-200 rounded"></div>
+                                  <div className="h-5 w-16 bg-gray-200 rounded"></div>
+                                </div>
+                              </div>
                             </div>
                           </div>
+                        ))
+                      ) : messages.length > 0 ? (
+                        // 動態載入的訊息 | Dynamically loaded messages
+                        messages.map((message, index) => {
+                          const styles = getPriorityStyles(message.priority, message.type)
+                          return (
+                            <motion.div
+                              key={message.id}
+                              className={`bg-gradient-to-br ${styles.container} rounded-xl p-4 border-l-4 ${styles.border}`}
+                              whileHover={{ scale: 1.02 }}
+                              transition={{ duration: 0.2 }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.1 }}
+                            >
+                              <div className="flex justify-between items-start mb-2">
+                                <span className={`text-xs ${styles.badge} px-2 py-1 rounded-full font-medium`}>
+                                  {getTypeDisplayName(message.type)}
+                                </span>
+                                <div className="text-right text-xs text-gray-600">
+                                  {new Date(message.date).toLocaleDateString('zh-TW', { 
+                                    month: 'short', 
+                                    day: 'numeric'
+                                  })}
+                                </div>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <div className={`w-10 h-10 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
+                                  {message.isPinned ? (
+                                    <BookOpen className="w-5 h-5 text-white" />
+                                  ) : message.type === 'announcement' ? (
+                                    <Calendar className="w-5 h-5 text-white" />
+                                  ) : (
+                                    <span className="text-white font-bold text-xs">ID</span>
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-gray-900 mb-1">{message.title}</h4>
+                                  <p className="text-sm text-gray-700 mb-2">
+                                    {message.content}
+                                  </p>
+                                  <div className="flex gap-2">
+                                    {message.isImportant && (
+                                      <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">重要</span>
+                                    )}
+                                    {message.isPinned && (
+                                      <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded">置頂</span>
+                                    )}
+                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                                      {message.author}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )
+                        })
+                      ) : (
+                        // 沒有訊息時顯示 | Display when no messages
+                        <div className="text-center py-8 text-gray-500">
+                          <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                          <p>目前沒有訊息</p>
                         </div>
-                      </motion.div>
-
-                      {/* 範例訊息 2 - 活動公告 */}
-                      <motion.div
-                        className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border-l-4 border-blue-400"
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
-                            活動公告
-                          </span>
-                          <div className="text-right text-xs text-gray-600">Jan 12, 2025</div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                            <Calendar className="w-5 h-5 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 mb-1">國際文化日活動報名開始</h4>
-                            <p className="text-sm text-gray-700 mb-2">
-                              2025國際文化日將於2月28日舉行，歡迎各國家長分享文化特色。報名截止日期：1/25。
-                            </p>
-                            <div className="flex gap-2">
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">文化交流</span>
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">家長參與</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-
-                      {/* 範例訊息 3 - 學習資源 */}
-                      <motion.div
-                        className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-l-4 border-green-400"
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                            學習資源
-                          </span>
-                          <div className="text-right text-xs text-gray-600">Jan 10, 2025</div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                            <BookOpen className="w-5 h-5 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 mb-1">新版線上閱讀平台上線</h4>
-                            <p className="text-sm text-gray-700 mb-2">
-                              全新的Reading A-Z平台已經上線，提供更豐富的分級讀物。學生帳號密碼已發送至家長信箱。
-                            </p>
-                            <div className="flex gap-2">
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">閱讀平台</span>
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">數位學習</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-
-                      {/* 範例訊息 4 - 行政通知 */}
-                      <motion.div
-                        className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-4 border-l-4 border-purple-400"
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">
-                            行政通知
-                          </span>
-                          <div className="text-right text-xs text-gray-600">Jan 8, 2025</div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                            <Users className="w-5 h-5 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 mb-1">家長會議時間調整通知</h4>
-                            <p className="text-sm text-gray-700 mb-2">
-                              原定1/18的家長會議調整至1/22下午2:00舉行，地點：國際部會議室。請家長準時參加。
-                            </p>
-                            <div className="flex gap-2">
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">會議通知</span>
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">時間異動</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-
-                      {/* 範例訊息 5 - 成果分享 */}
-                      <motion.div
-                        className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 border-l-4 border-yellow-400"
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">
-                            成果分享
-                          </span>
-                          <div className="text-right text-xs text-gray-600">Jan 5, 2025</div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                            <Sparkles className="w-5 h-5 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 mb-1">學生英語演講比賽佳績</h4>
-                            <p className="text-sm text-gray-700 mb-2">
-                              恭喜本校學生在台北市英語演講比賽中獲得優異成績！六年級王小明榮獲第一名，五年級李小華獲得第三名。
-                            </p>
-                            <div className="flex gap-2">
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">競賽成果</span>
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">學生表現</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
+                      )}
                     </div>
 
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -557,40 +579,132 @@ export default function HomePage() {
                     </motion.div>
                   </CardHeader>
                   <CardContent className="p-6">
-                    <div className="text-center mb-4">
-                      <motion.p
-                        className="font-semibold text-gray-900 mb-2"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                      >
-                        Stay informed and connected!
-                      </motion.p>
-                      <motion.p
-                        className="text-sm text-gray-600 leading-relaxed"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                      >
-                        We will be uploading a monthly newsletter filled with important updates, events, and highlights
-                        from our ID community.
-                      </motion.p>
-                    </div>
-                    <motion.div className="relative mb-4" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-lg" />
-                      <Image
-                        src="/placeholder.svg?height=200&width=300"
-                        alt="Monthly Newsletter Preview"
-                        width={300}
-                        height={200}
-                        className="relative w-full rounded-xl shadow-lg"
-                      />
-                    </motion.div>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                        View Latest Newsletter
-                      </Button>
-                    </motion.div>
+                    {newslettersLoading ? (
+                      // 載入中的骨架屏 | Loading skeleton
+                      <div className="animate-pulse">
+                        <div className="text-center mb-4">
+                          <div className="h-5 w-48 bg-gray-200 rounded mx-auto mb-2"></div>
+                          <div className="h-4 w-64 bg-gray-200 rounded mx-auto mb-1"></div>
+                          <div className="h-4 w-56 bg-gray-200 rounded mx-auto"></div>
+                        </div>
+                        <div className="relative mb-4">
+                          <div className="h-48 w-full bg-gray-200 rounded-xl"></div>
+                        </div>
+                        <div className="h-10 w-full bg-gray-200 rounded"></div>
+                      </div>
+                    ) : newsletters.length > 0 ? (
+                      // 動態載入的電子報 | Dynamically loaded newsletters
+                      <div>
+                        {newsletters.slice(0, 1).map((newsletter) => (
+                          <div key={newsletter.id}>
+                            <div className="text-center mb-4">
+                              <motion.h3
+                                className="font-semibold text-gray-900 mb-2"
+                                initial={{ opacity: 0 }}
+                                whileInView={{ opacity: 1 }}
+                                transition={{ delay: 0.3 }}
+                              >
+                                {newsletter.title}
+                              </motion.h3>
+                              <motion.p
+                                className="text-sm text-gray-600 leading-relaxed"
+                                initial={{ opacity: 0 }}
+                                whileInView={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                              >
+                                {newsletter.content}
+                              </motion.p>
+                              {newsletter.issueNumber && (
+                                <div className="mt-2">
+                                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                    {newsletter.issueNumber}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {newsletter.coverImage ? (
+                              <motion.div className="relative mb-4" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
+                                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-xl blur-lg" />
+                                <Image
+                                  src={newsletter.coverImage}
+                                  alt={`${newsletter.title} Preview`}
+                                  width={300}
+                                  height={200}
+                                  className="relative w-full rounded-xl shadow-lg"
+                                />
+                              </motion.div>
+                            ) : (
+                              <motion.div className="relative mb-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-8 text-center">
+                                <Calendar className="w-16 h-16 mx-auto mb-4 text-blue-400" />
+                                <p className="text-blue-600 font-medium">Newsletter Cover</p>
+                              </motion.div>
+                            )}
+                            
+                            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                              {newsletter.pdfUrl ? (
+                                <Button 
+                                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                  onClick={() => window.open(newsletter.pdfUrl, '_blank')}
+                                >
+                                  View Latest Newsletter
+                                </Button>
+                              ) : (
+                                <Button 
+                                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                  disabled
+                                >
+                                  Newsletter Coming Soon
+                                </Button>
+                              )}
+                            </motion.div>
+                          </div>
+                        ))}
+                        
+                        {newsletters.length > 1 && (
+                          <div className="mt-4 pt-4 border-t">
+                            <p className="text-xs text-gray-500 text-center">
+                              {newsletters.length - 1} more newsletters available
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      // 沒有電子報時顯示 | Display when no newsletters
+                      <div className="text-center">
+                        <div className="text-center mb-4">
+                          <motion.p
+                            className="font-semibold text-gray-900 mb-2"
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                          >
+                            Stay informed and connected!
+                          </motion.p>
+                          <motion.p
+                            className="text-sm text-gray-600 leading-relaxed"
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                          >
+                            We will be uploading a monthly newsletter filled with important updates, events, and highlights
+                            from our ID community.
+                          </motion.p>
+                        </div>
+                        <motion.div className="relative mb-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-8">
+                          <Calendar className="w-16 h-16 mx-auto mb-4 text-blue-400" />
+                          <p className="text-blue-600 font-medium">Newsletter Coming Soon</p>
+                        </motion.div>
+                        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                          <Button 
+                            className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                            disabled
+                          >
+                            Newsletter Coming Soon
+                          </Button>
+                        </motion.div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>

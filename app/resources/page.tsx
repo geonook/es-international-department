@@ -83,7 +83,7 @@ export default function ResourcesPage() {
       params.set('status', 'published')
       params.set('limit', '100')
       
-      const response = await fetch(`/api/resources?${params.toString()}`)
+      const response = await fetch(`/api/public/resources?${params.toString()}`)
       const data = await response.json()
       
       if (data.success) {
