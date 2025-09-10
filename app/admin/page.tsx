@@ -1328,7 +1328,7 @@ export default function AdminPage() {
                   { id: 'teachers', name: "Teachers' Corner", icon: GraduationCap },
                   { id: 'parents', name: "Parents' Corner", icon: Sparkles },
                   { id: 'feedback', name: 'Feedback Management', icon: MessageCircle },
-                  { id: 'messages', name: 'Message Board', icon: MessageCircle, href: '/admin/messages' }
+                  { id: 'messages', name: 'Message Board (Advanced)', icon: MessageCircle, href: '/admin/messages' }
                 ] : []),
                 // Only administrators can see content management and user management
                 ...(canManageUsers ? [
@@ -1599,16 +1599,25 @@ export default function AdminPage() {
               >
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Teachers' Corner</h2>
-                  <p className="text-gray-600">Manage teacher message board, reminders and essential documents</p>
+                  <p className="text-gray-600">🎓 Manage /teachers page content - internal communications, reminders, and resources</p>
                 </div>
 
                 <div className="grid gap-4 lg:gap-8">
+                  {/* Info Alert */}
+                  <Alert className="bg-blue-50 border-blue-200">
+                    <GraduationCap className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800">
+                      <strong>Teachers' Corner Management</strong> - These functions control what teachers see on /teachers page.
+                      This is for internal teacher communications and resources.
+                    </AlertDescription>
+                  </Alert>
+                  
                   {/* Message Board Management */}
                   <Card className="bg-white/90 backdrop-blur-lg shadow-lg border-0">
                     <CardHeader className="flex flex-row items-center justify-between">
                       <CardTitle className="flex items-center gap-2">
                         <MessageSquare className="w-5 h-5 text-blue-600" />
-                        25-26 School Year Message Board
+                        Teachers' Internal Message Board
                       </CardTitle>
                       <Button 
                         size="sm" 
@@ -1905,10 +1914,19 @@ export default function AdminPage() {
               >
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Parents' Corner</h2>
-                  <p className="text-gray-600">Manage parent announcements, events and newsletters</p>
+                  <p className="text-gray-600">🏠 Manage homepage content for parents - announcements, newsletters, and settings</p>
                 </div>
 
                 <div className="grid gap-4 lg:gap-8">
+                  {/* Info Alert */}
+                  <Alert className="bg-purple-50 border-purple-200">
+                    <Sparkles className="h-4 w-4 text-purple-600" />
+                    <AlertDescription className="text-purple-800">
+                      <strong>Parents' Corner Management</strong> - These functions control what parents see on the homepage (/).
+                      Changes here directly affect the main website that families visit.
+                    </AlertDescription>
+                  </Alert>
+                  
                   {/* Homepage Settings Management */}
                   <HomepageSettingsManager />
                   {/* Parent Announcements Management */}
@@ -1916,7 +1934,7 @@ export default function AdminPage() {
                     <CardHeader className="flex flex-row items-center justify-between">
                       <CardTitle className="flex items-center gap-2">
                         <Bell className="w-5 h-5 text-purple-600" />
-                        School Announcements
+                        Homepage Announcements (Parents)
                       </CardTitle>
                       <Button 
                         size="sm" 
@@ -2016,7 +2034,7 @@ export default function AdminPage() {
                     <CardHeader className="flex flex-row items-center justify-between">
                       <CardTitle className="flex items-center gap-2">
                         <FileText className="w-5 h-5 text-green-600" />
-                        Parent Newsletter
+                        Homepage Newsletter (Parents)
                       </CardTitle>
                       <Button 
                         size="sm" 
