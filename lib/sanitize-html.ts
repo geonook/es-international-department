@@ -4,6 +4,7 @@
  */
 
 import DOMPurify from 'dompurify'
+import { marked } from 'marked'
 
 // 安全的 HTML 標籤和屬性配置 - 增強支援 Google Docs 格式
 const SAFE_CONFIG = {
@@ -66,11 +67,69 @@ export function sanitizeHtml(html: string, config?: Partial<typeof SAFE_CONFIG>)
 }
 
 /**
+ * 檢測內容是否為 Markdown 格式
+ * @param content - 要檢測的內容
+ * @returns 是否為 Markdown 格式
+ */
+function isMarkdown(content: string): boolean {
+  // 檢測常見的 Markdown 標記
+  const markdownPatterns = [
+    /^\d+\.\s/, // 編號列表 (1. )
+    /^\*\*.*\*\*/, // 粗體 (**text**)
+    /^#\s/, // 標題 (# )
+    /^\*\s/, // 項目符號 (* )
+    /^\-\s/, // 項目符號 (- )
+    /\[.*\]\(.*\)/, // 連結 [text](url)
+    /^>\s/ // 引用 (> )
+  ]
+  
+  return markdownPatterns.some(pattern => pattern.test(content.trim()))
+}
+
+/**
+ * 將 Markdown 轉換為 HTML
+ * @param markdown - Markdown 字符串
+ * @returns HTML 字符串
+ */
+export function markdownToHtml(markdown: string): string {
+  if (typeof window === 'undefined') {
+    // 服務器端簡單處理
+    return markdown.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                  .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                  .replace(/^\d+\.\s(.*)$/gm, '<ol><li>$1</li></ol>')
+                  .replace(/^\*\s(.*)$/gm, '<ul><li>$1</li></ul>')
+  }
+  
+  try {
+    // 配置 marked
+    marked.setOptions({
+      gfm: true, // GitHub Flavored Markdown
+      breaks: true, // 支援換行
+      sanitize: false // 我們稍後會用 DOMPurify 清理
+    })
+    
+    return marked(markdown) as string
+  } catch (error) {
+    console.error('Markdown parsing error:', error)
+    return markdown
+  }
+}
+
+/**
  * 專為公告內容設計的清理函式
  * 保留常用格式但移除危險元素 - 支援 Google Docs 豐富格式
+ * 自動檢測並處理 Markdown 格式
  */
-export function sanitizeAnnouncementContent(html: string): string {
-  return sanitizeHtml(html, {
+export function sanitizeAnnouncementContent(content: string): string {
+  if (!content) return '<p class="text-gray-500">暫無內容</p>'
+  
+  // 檢測是否為 Markdown 格式
+  let htmlContent = content
+  if (isMarkdown(content)) {
+    htmlContent = markdownToHtml(content)
+  }
+  
+  return sanitizeHtml(htmlContent, {
     ALLOWED_TAGS: [
       'p', 'br', 'strong', 'em', 'b', 'i', 'u', 's', 'sub', 'sup',
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
