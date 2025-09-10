@@ -41,6 +41,7 @@ import {
   MessageCircle,
   Phone,
   Navigation,
+  BookOpen,
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
