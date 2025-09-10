@@ -11,28 +11,28 @@ import { ExternalLink, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 
-// Simplified guide structure for button grid
-interface SimpleGuide {
+// Material Design 3.0 guide structure
+interface MaterialGuide {
   id: string
   grade: string
   gradeNumber: string
   title: string
   googleSheetsUrl: string
-  gradientFrom: string
-  gradientTo: string
-  shadowColor: string
+  primaryColor: string
+  lightColor: string
+  textColor: string
 }
 
-const pacingGuides: SimpleGuide[] = [
+const pacingGuides: MaterialGuide[] = [
   {
     id: 'grade1',
     grade: 'Grade 1',
     gradeNumber: '1',
     title: 'Grade 1 Pacing Guide',
     googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1ClRRDSHxDDO8JlPKvkchIwtatLzprTZ2b5ftxtnrm_Y/edit?gid=0#gid=0',
-    gradientFrom: 'from-red-500',
-    gradientTo: 'to-red-600',
-    shadowColor: 'shadow-red-500/25'
+    primaryColor: 'bg-red-500',
+    lightColor: 'bg-red-50',
+    textColor: 'text-red-700'
   },
   {
     id: 'grade2',
@@ -40,9 +40,9 @@ const pacingGuides: SimpleGuide[] = [
     gradeNumber: '2',
     title: 'Grade 2 Pacing Guide',
     googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1IgEtEnJT24dFe9AdFJvQ_WuKwEUxpPA9YQQCkUu8u-c/edit?gid=0#gid=0',
-    gradientFrom: 'from-orange-500',
-    gradientTo: 'to-orange-600',
-    shadowColor: 'shadow-orange-500/25'
+    primaryColor: 'bg-orange-500',
+    lightColor: 'bg-orange-50',
+    textColor: 'text-orange-700'
   },
   {
     id: 'grade3',
@@ -50,9 +50,9 @@ const pacingGuides: SimpleGuide[] = [
     gradeNumber: '3',
     title: 'Grade 3 Pacing Guide',
     googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1rYRK5sBBj995TRu1jfWWGdB0izz0QCPNZZJkbHKkDzk/edit?gid=0#gid=0',
-    gradientFrom: 'from-yellow-500',
-    gradientTo: 'to-yellow-600',
-    shadowColor: 'shadow-yellow-500/25'
+    primaryColor: 'bg-amber-500',
+    lightColor: 'bg-amber-50',
+    textColor: 'text-amber-700'
   },
   {
     id: 'grade4',
@@ -60,9 +60,9 @@ const pacingGuides: SimpleGuide[] = [
     gradeNumber: '4',
     title: 'Grade 4 Pacing Guide',
     googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1fdlfrkrGYOM6cZEEnwf63NaTCvSGYKxLpiyllSXcp2k/edit?gid=0#gid=0',
-    gradientFrom: 'from-green-500',
-    gradientTo: 'to-green-600',
-    shadowColor: 'shadow-green-500/25'
+    primaryColor: 'bg-emerald-500',
+    lightColor: 'bg-emerald-50',
+    textColor: 'text-emerald-700'
   },
   {
     id: 'grade5',
@@ -70,9 +70,9 @@ const pacingGuides: SimpleGuide[] = [
     gradeNumber: '5',
     title: 'Grade 5 Pacing Guide',
     googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1tFYNN2iD5uQG5ndN-MGWljeAkkrZV1T-YInPG39CEck/edit?gid=23748344#gid=23748344',
-    gradientFrom: 'from-blue-500',
-    gradientTo: 'to-blue-600',
-    shadowColor: 'shadow-blue-500/25'
+    primaryColor: 'bg-blue-500',
+    lightColor: 'bg-blue-50',
+    textColor: 'text-blue-700'
   },
   {
     id: 'grade6',
@@ -80,9 +80,9 @@ const pacingGuides: SimpleGuide[] = [
     gradeNumber: '6',
     title: 'Grade 6 Pacing Guide',
     googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1K5l6ofUA0O5icbnt_MpK2OubtqFeFZyFjUprI4WZeFA/edit?gid=0#gid=0',
-    gradientFrom: 'from-purple-500',
-    gradientTo: 'to-purple-600',
-    shadowColor: 'shadow-purple-500/25'
+    primaryColor: 'bg-violet-500',
+    lightColor: 'bg-violet-50',
+    textColor: 'text-violet-700'
   },
   {
     id: 'kcfs',
@@ -90,9 +90,9 @@ const pacingGuides: SimpleGuide[] = [
     gradeNumber: 'K',
     title: 'KCFS Pacing Guide',
     googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1nXN4oUiTXWNRYqOopmgOqQXmqtM1HYnzOehGkTM_zFc/edit?gid=0#gid=0',
-    gradientFrom: 'from-pink-500',
-    gradientTo: 'to-pink-600',
-    shadowColor: 'shadow-pink-500/25'
+    primaryColor: 'bg-pink-500',
+    lightColor: 'bg-pink-50',
+    textColor: 'text-pink-700'
   }
 ]
 
@@ -140,9 +140,9 @@ export default function PacingGuides() {
           </p>
         </motion.div>
 
-        {/* Minimalist Button Grid */}
+        {/* Material Design 3.0 Cards Grid */}
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -150,141 +150,84 @@ export default function PacingGuides() {
           {pacingGuides.map((guide) => (
             <motion.div key={guide.id} variants={itemVariants}>
               <Link href={guide.googleSheetsUrl} target="_blank" rel="noopener noreferrer">
-                <motion.button
-                  className={`relative w-full aspect-square bg-gradient-to-br ${guide.gradientFrom} ${guide.gradientTo} rounded-3xl shadow-lg ${guide.shadowColor} hover:shadow-2xl transition-all duration-500 group overflow-hidden`}
+                <motion.div
+                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer border border-gray-100 overflow-hidden"
                   whileHover={{ 
-                    scale: 1.05,
-                    y: -8,
-                    rotateX: -5,
-                    rotateY: 5,
+                    scale: 1.02,
+                    y: -4,
                   }}
                   whileTap={{ scale: 0.98 }}
                   transition={{
                     type: "spring",
-                    stiffness: 300,
-                    damping: 20
+                    stiffness: 400,
+                    damping: 25
                   }}
                 >
-                  {/* Animated gradient background */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    animate={{
-                      backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                    style={{ backgroundSize: "200% 200%" }}
-                  />
+                  {/* Colored Header Bar */}
+                  <div className={`h-2 ${guide.primaryColor}`} />
                   
-                  {/* Floating particles effect */}
-                  <div className="absolute inset-0 overflow-hidden">
-                    <motion.div
-                      className="absolute w-20 h-20 bg-white/10 rounded-full blur-xl -top-10 -left-10"
-                      animate={{
-                        x: [0, 100, 0],
-                        y: [0, 50, 0],
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                    <motion.div
-                      className="absolute w-16 h-16 bg-white/10 rounded-full blur-xl -bottom-8 -right-8"
-                      animate={{
-                        x: [0, -80, 0],
-                        y: [0, -40, 0],
-                      }}
-                      transition={{
-                        duration: 10,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 1
-                      }}
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col items-center justify-center p-6">
-                    {/* Grade Number */}
-                    <motion.div
-                      className="text-6xl md:text-7xl font-bold text-white mb-2 drop-shadow-lg"
-                      whileHover={{ 
-                        scale: 1.1,
-                        rotate: 5,
-                      }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 500,
-                        damping: 15
-                      }}
-                    >
-                      {guide.gradeNumber}
-                    </motion.div>
-                    
-                    {/* Grade Label */}
-                    <div className="text-white/90 font-medium text-sm mb-4">
-                      {guide.grade === 'KCFS' ? 'KCFS' : `Grade ${guide.gradeNumber}`}
+                  {/* Card Content */}
+                  <div className="p-6">
+                    {/* Grade Number & Icon */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-12 h-12 ${guide.lightColor} rounded-xl flex items-center justify-center`}>
+                          <span className={`text-2xl font-bold ${guide.textColor}`}>
+                            {guide.gradeNumber}
+                          </span>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
+                            {guide.grade}
+                          </h3>
+                          <p className="text-sm text-gray-500">Pacing Guide</p>
+                        </div>
+                      </div>
+                      
+                      {/* External Link Icon */}
+                      <motion.div
+                        className={`w-10 h-10 ${guide.lightColor} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform`}
+                      >
+                        <ExternalLink className={`w-4 h-4 ${guide.textColor}`} />
+                      </motion.div>
                     </div>
                     
-                    {/* Pacing Guide Text */}
-                    <div className="text-white/80 text-xs font-medium uppercase tracking-wider">
-                      Pacing Guide
+                    {/* Description */}
+                    <p className="text-gray-600 text-sm mb-4">
+                      SY25-26 curriculum pacing guide with weekly plans for LT and IT courses.
+                    </p>
+                    
+                    {/* Action Area */}
+                    <div className="flex items-center justify-between">
+                      <span className={`text-xs font-medium px-3 py-1 ${guide.lightColor} ${guide.textColor} rounded-full`}>
+                        Google Sheets
+                      </span>
+                      
+                      <motion.div
+                        className="text-gray-400 group-hover:text-gray-600 transition-colors"
+                        animate={{
+                          x: [0, 2, 0]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        <span className="text-xs font-medium">Open →</span>
+                      </motion.div>
                     </div>
                     
-                    {/* External Link Icon */}
+                    {/* Hover Accent Line */}
                     <motion.div
-                      className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm"
-                      whileHover={{ 
-                        scale: 1.2,
-                        rotate: 360,
-                        backgroundColor: "rgba(255, 255, 255, 0.3)"
-                      }}
-                      transition={{
-                        duration: 0.5,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <ExternalLink className="w-4 h-4 text-white" />
-                    </motion.div>
-                    
-                    {/* Hover indicator */}
-                    <motion.div
-                      className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      animate={{
-                        y: [0, -5, 0],
-                      }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <div className="text-white/60 text-xs">Click to Open</div>
-                    </motion.div>
+                      className={`h-0.5 ${guide.primaryColor} mt-4 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ originX: 0 }}
+                    />
                   </div>
-                  
-                  {/* Ripple effect on hover */}
-                  <motion.div
-                    className="absolute inset-0 rounded-3xl"
-                    initial={{ scale: 0, opacity: 0 }}
-                    whileHover={{
-                      scale: [1, 1.5],
-                      opacity: [0.3, 0],
-                    }}
-                    transition={{
-                      duration: 1,
-                      ease: "easeOut",
-                    }}
-                    style={{
-                      background: "radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%)",
-                    }}
-                  />
-                </motion.button>
+                </motion.div>
               </Link>
             </motion.div>
           ))}
