@@ -519,7 +519,7 @@ export default function StaticEventsPage() {
                 </motion.div>
               ))}
             </motion.div>
-          </motion.div>
+          </div>
         </motion.section>
 
         {/* Documents Section */}
@@ -654,7 +654,7 @@ export default function StaticEventsPage() {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                We're here to help! Contact our team for more information about upcoming events and activities.
+                We&apos;re here to help! Contact our team for more information about upcoming events and activities.
               </motion.p>
 
               <motion.div
