@@ -80,12 +80,24 @@ export async function GET(request: NextRequest) {
 // PUT - 更新首頁設定
 export async function PUT(request: NextRequest) {
   try {
+    console.log('🔄 Starting homepage settings update...')
+    
     const adminUser = await requireAdmin(request)
     if (adminUser instanceof NextResponse) {
+      console.log('❌ Admin authentication failed for settings update')
       return adminUser
     }
 
+    console.log(`✅ Admin authenticated for settings update: ${adminUser.email} (${adminUser.id})`)
+
     const data: HomepageSettings = await request.json()
+    console.log('📝 Settings to update:', {
+      mainTitle: data.mainTitle?.substring(0, 50),
+      subtitle: data.subtitle?.substring(0, 50),
+      quoteText: data.quoteText?.substring(0, 50),
+      heroImage: data.heroImage,
+      contentImage: data.contentImage
+    })
 
     // 設定映射
     const settingsToUpdate = [
@@ -107,27 +119,49 @@ export async function PUT(request: NextRequest) {
       settingsToUpdate.push({ key: 'homepage_content_image', value: data.contentImage })
     }
 
+    console.log(`💾 Updating ${settingsToUpdate.length} settings in database...`)
+
     // 批量更新設定
-    await Promise.all(
-      settingsToUpdate.map(setting =>
-        prisma.systemSetting.upsert({
-          where: { key: setting.key },
-          update: { value: setting.value },
-          create: {
-            key: setting.key,
-            value: setting.value,
-            category: 'homepage',
-            description: `Homepage setting: ${setting.key}`,
-            updatedBy: adminUser.id
-          }
+    try {
+      await Promise.all(
+        settingsToUpdate.map(async (setting) => {
+          console.log(`🔄 Updating setting: ${setting.key}`)
+          return prisma.systemSetting.upsert({
+            where: { key: setting.key },
+            update: { 
+              value: setting.value,
+              updatedBy: adminUser.id
+            },
+            create: {
+              key: setting.key,
+              value: setting.value,
+              category: 'homepage',
+              description: `Homepage setting: ${setting.key}`,
+              updatedBy: adminUser.id
+            }
+          })
         })
       )
-    )
+      
+      console.log(`✅ All ${settingsToUpdate.length} settings updated successfully`)
+    } catch (dbError) {
+      console.error('❌ Database batch update failed:', dbError)
+      throw dbError
+    }
+
+    console.log('🎉 Homepage settings update completed successfully')
 
     return NextResponse.json({ success: true, message: 'Homepage settings updated successfully' })
 
   } catch (error) {
-    console.error('Error updating homepage settings:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('💥 Homepage settings update error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
+    })
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
