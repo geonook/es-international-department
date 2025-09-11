@@ -243,7 +243,7 @@ export default function ResourcesPage() {
               {[
                 { name: "Home", href: "/" },
                 { name: "Events", href: "/events" },
-                { name: "Resources", href: "/resources", active: true, hasDropdown: true },
+                { name: "Resources", href: "/resources", active: true },
                 { name: "KCISLK", href: "https://web.kcislk.ntpc.edu.tw/en/", external: true },
               ].map((item, index) => (
                 <motion.div

@@ -260,7 +260,7 @@ export default function StaticEventsPage() {
               {[
                 { name: "Home", href: "/" },
                 { name: "Events", href: "/events", active: true },
-                { name: "Resources", href: "/resources", hasDropdown: true },
+                { name: "Resources", href: "/resources" },
                 { name: "KCISLK", href: "https://web.kcislk.ntpc.edu.tw/en/", external: true },
               ].map((item, index) => (
                 <motion.div
