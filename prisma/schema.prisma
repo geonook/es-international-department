@@ -53,6 +53,7 @@ model User {
   assignedRoles                     UserRole[]                 @relation("UserRoleAssigner")
   userRoles                         UserRole[]                 @relation("UserRoles")
   sessions                          UserSession[]
+  contentCarouselImages             ContentCarouselImage[]     @relation("ContentCarouselUploads")
 
   @@map("users")
 }
@@ -632,4 +633,25 @@ model CommunicationReply {
   @@index([parentReplyId])
   @@index([createdAt])
   @@map("communication_replies")
+}
+
+// Content Carousel Images Model for Homepage Management
+model ContentCarouselImage {
+  id          Int      @id @default(autoincrement())
+  title       String?  @db.VarChar(255)
+  description String?
+  imageUrl    String   @map("image_url")
+  altText     String   @default("Family learning moment") @map("alt_text")
+  order       Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  uploadedBy  String   @map("uploaded_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  uploader    User     @relation("ContentCarouselUploads", fields: [uploadedBy], references: [id])
+  
+  @@index([isActive, order])
+  @@index([uploadedBy])
+  @@map("content_carousel_images")
 }
