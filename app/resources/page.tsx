@@ -20,7 +20,9 @@ import {
   Lightbulb,
   Globe,
   School,
-  Gamepad2
+  Gamepad2,
+  Mail,
+  Phone
 } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
@@ -568,41 +570,167 @@ export default function ResourcesPage() {
             </motion.div>
           </div>
         </motion.section>
+
+        {/* Contact CTA Section - Matching Homepage */}
+        <motion.section
+          className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.3,
+              },
+            },
+          }}
+        >
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div 
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1 },
+              }} 
+              className="text-center max-w-3xl mx-auto"
+            >
+              <motion.h2
+                className="text-3xl sm:text-4xl md:text-5xl font-light text-white mb-6 leading-tight"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                Ready to Join Our Community?
+              </motion.h2>
+
+              <motion.p
+                className="text-lg md:text-xl text-purple-100 mb-8 leading-relaxed"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+              >
+                Connect with us today and discover how we can support your child&apos;s educational journey through meaningful partnerships and innovative programs.
+              </motion.p>
+
+              <motion.div
+                className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+              >
+                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-none">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto bg-white text-purple-700 hover:bg-purple-50 px-6 sm:px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 min-h-[48px] text-sm sm:text-base"
+                  >
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Contact Us</span>
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} className="flex-1 sm:flex-none">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-purple-700 px-6 sm:px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 min-h-[48px] text-sm sm:text-base"
+                  >
+                    <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Call Us</span>
+                  </Button>
+                </motion.div>
+              </motion.div>
+
+              <motion.div
+                className="mt-12 flex justify-center items-center gap-8 text-purple-200"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.9, duration: 0.8 }}
+              >
+                <div className="flex items-center gap-2">
+                  <Mail className="w-5 h-5" />
+                  <span>esid@kangchiao.com.tw</span>
+                </div>
+                <div className="hidden md:block w-px h-6 bg-purple-300" />
+                <div className="flex items-center gap-2">
+                  <Phone className="w-5 h-5" />
+                  <span>(02) 8195-8852</span>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </motion.section>
       </main>
 
-      {/* Footer - Same as homepage */}
+      {/* Footer - Matching Homepage Three-Column Structure */}
       <motion.footer
-        className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-12 relative overflow-hidden"
+        className="bg-gray-900 text-white py-12"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }} 
-            whileInView={{ y: 0, opacity: 1 }} 
-            transition={{ delay: 0.2 }}
-            className="text-lg mb-2"
-          >
-            &copy; 2025 ES International Department. All rights reserved.
-          </motion.p>
-          <motion.p
-            className="text-gray-400 text-sm"
-            initial={{ y: 20, opacity: 0 }}
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="grid md:grid-cols-3 gap-8"
+            initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
           >
-            Kang Chiao International School | Excellence in Education
-          </motion.p>
-        </div>
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(circle at 25% 25%, white 2px, transparent 2px)",
-              backgroundSize: "60px 60px",
-            }}
-          />
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">ES International Department</h3>
+                  <p className="text-xs text-gray-400">Excellence in Education</p>
+                </div>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Nurturing global citizens through innovative education and meaningful partnerships.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4 text-purple-300">Quick Links</h4>
+              <div className="space-y-2">
+                {["Events", "Resources", "News", "Contact"].map((link) => (
+                  <Link
+                    key={link}
+                    href={`/${link.toLowerCase()}`}
+                    className="block text-gray-300 hover:text-white transition-colors text-sm"
+                  >
+                    {link}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4 text-purple-300">Contact Info</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Mail className="w-4 h-4" />
+                  <span>esid@kangchiao.com.tw</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Phone className="w-4 h-4" />
+                  <span>(02) 8195-8852</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="border-t border-gray-700 mt-8 pt-8 text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+          >
+            <p className="text-gray-400 text-sm">
+              © 2025 ES International Department. All rights reserved.
+            </p>
+          </motion.div>
         </div>
       </motion.footer>
     </div>
