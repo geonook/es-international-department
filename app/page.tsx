@@ -953,7 +953,7 @@ Browse Complete Newsletter Archive
 
         {/* Contact CTA */}
         <motion.section
-          className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden"
+          className="hidden py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
