@@ -105,9 +105,9 @@ export default function ContentCarousel({
   if (loading) {
     return (
       <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
-        <div className=\"flex flex-col items-center gap-3\">
-          <Loader2 className=\"w-8 h-8 text-purple-600 animate-spin\" />
-          <p className=\"text-sm text-gray-500\">Loading carousel...</p>
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-purple-600 animate-spin" />
+          <p className="text-sm text-gray-500">Loading carousel...</p>
         </div>
       </div>
     )
@@ -117,9 +117,9 @@ export default function ContentCarousel({
   if (error) {
     return (
       <div className={`w-full ${getAspectRatioClass()} ${className}`}>
-        <Alert className=\"h-full flex items-center justify-center\">
-          <AlertCircle className=\"h-4 w-4\" />
-          <AlertDescription className=\"ml-2\">
+        <Alert className="h-full flex items-center justify-center">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="ml-2">
             Failed to load carousel images: {error}
           </AlertDescription>
         </Alert>
@@ -131,15 +131,15 @@ export default function ContentCarousel({
   if (images.length === 0) {
     return (
       <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
-        <div className=\"text-center p-8\">
+        <div className="text-center p-8">
           <Image
-            src=\"/uploads/homepage/content-1757551161020.jpeg\"
-            alt=\"Default family learning moment\"
+            src="/uploads/homepage/content-1757551161020.jpeg"
+            alt="Default family learning moment"
             width={200}
             height={133}
-            className=\"mx-auto rounded-lg shadow-sm mb-4\"
+            className="mx-auto rounded-lg shadow-sm mb-4"
           />
-          <p className=\"text-sm text-gray-500\">No carousel images available</p>
+          <p className="text-sm text-gray-500">No carousel images available</p>
         </div>
       </div>
     )
@@ -154,14 +154,14 @@ export default function ContentCarousel({
           src={image.imageUrl}
           alt={image.altText}
           fill
-          className=\"object-cover\"
+          className="object-cover"
           priority
         />
         {image.title && (
-          <div className=\"absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6\">
-            <h3 className=\"text-white text-lg font-semibold mb-1\">{image.title}</h3>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+            <h3 className="text-white text-lg font-semibold mb-1">{image.title}</h3>
             {image.description && (
-              <p className=\"text-white/90 text-sm line-clamp-2\">{image.description}</p>
+              <p className="text-white/90 text-sm line-clamp-2">{image.description}</p>
             )}
           </div>
         )}
@@ -172,34 +172,34 @@ export default function ContentCarousel({
   // 多張圖片時使用輪播
   return (
     <div className={`w-full ${getAspectRatioClass()} relative ${className}`}>
-      <Carousel className=\"w-full h-full\">
-        <CarouselContent className=\"h-full\">
+      <Carousel className="w-full h-full">
+        <CarouselContent className="h-full">
           {images.map((image, index) => (
-            <CarouselItem key={image.id} className=\"h-full\">
-              <div className=\"relative w-full h-full overflow-hidden rounded-lg\">
+            <CarouselItem key={image.id} className="h-full">
+              <div className="relative w-full h-full overflow-hidden rounded-lg">
                 <Image
                   src={image.imageUrl}
                   alt={image.altText}
                   fill
-                  className=\"object-cover transition-transform duration-500 hover:scale-105\"
+                  className="object-cover transition-transform duration-500 hover:scale-105"
                   priority={index === 0}
                 />
                 
                 {/* 圖片信息覆蓋層 */}
                 {(image.title || image.description) && (
-                  <div className=\"absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-6\">
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-6">
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
                     >
                       {image.title && (
-                        <h3 className=\"text-white text-lg font-semibold mb-2\">
+                        <h3 className="text-white text-lg font-semibold mb-2">
                           {image.title}
                         </h3>
                       )}
                       {image.description && (
-                        <p className=\"text-white/90 text-sm line-clamp-2 leading-relaxed\">
+                        <p className="text-white/90 text-sm line-clamp-2 leading-relaxed">
                           {image.description}
                         </p>
                       )}
@@ -214,15 +214,15 @@ export default function ContentCarousel({
         {/* 控制箭頭 */}
         {showArrows && images.length > 1 && (
           <>
-            <CarouselPrevious className=\"left-4 bg-white/90 hover:bg-white border-0 shadow-lg\" />
-            <CarouselNext className=\"right-4 bg-white/90 hover:bg-white border-0 shadow-lg\" />
+            <CarouselPrevious className="left-4 bg-white/90 hover:bg-white border-0 shadow-lg" />
+            <CarouselNext className="right-4 bg-white/90 hover:bg-white border-0 shadow-lg" />
           </>
         )}
       </Carousel>
 
       {/* 指示點 */}
       {showDots && images.length > 1 && (
-        <div className=\"absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10\">
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
           {images.map((_, index) => (
             <button
               key={index}

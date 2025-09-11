@@ -15,6 +15,7 @@ import { sanitizeAnnouncementContent } from "@/lib/sanitize-html"
 import MobileNav from "@/components/ui/mobile-nav"
 import PacingGuides from "@/components/PacingGuides"
 import IDSquads from "@/components/IDSquads"
+import ContentCarousel from "@/components/ContentCarousel"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -393,13 +394,16 @@ export default function HomePage() {
               <motion.div className="lg:w-1/2" variants={itemVariants}>
                 <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-                  <Image
-                    src={settings.contentImage || "/placeholder.svg?height=400&width=600"}
-                    alt="Mother and child reading together"
-                    width={600}
-                    height={400}
-                    className="relative rounded-3xl shadow-2xl"
-                  />
+                  <div className="relative rounded-3xl shadow-2xl overflow-hidden">
+                    <ContentCarousel
+                      autoPlay={true}
+                      autoPlayDelay={5000}
+                      showDots={true}
+                      showArrows={true}
+                      aspectRatio="wide"
+                      className="w-full"
+                    />
+                  </div>
                   <motion.div
                     className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full"
                     animate={{
