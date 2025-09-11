@@ -316,7 +316,7 @@ export default function HomePage() {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.h2
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-purple-800 mb-4 sm:mb-6 leading-tight"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-purple-800 mb-4 sm:mb-6 leading-tight"
                 animate={{
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
@@ -327,7 +327,7 @@ export default function HomePage() {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                <span className="block">{settings.mainTitle || "Welcome to our Parents' Corner"}</span>
+                <span className="block">{settings.mainTitle || "Welcome to our Parents' Corner".replace("Parents' Corner", "Parents'\u00A0Corner")}</span>
               </motion.h2>
             </motion.div>
 
