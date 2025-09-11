@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireAdmin } from '@/lib/middleware'
+import { requireAdminAuth } from '@/lib/auth-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,9 +25,13 @@ interface HomepageSettings {
 // GET - 獲取首頁設定
 export async function GET(request: NextRequest) {
   try {
-    const adminUser = await requireAdmin(request)
-    if (adminUser instanceof NextResponse) {
-      return adminUser
+    // 使用 requireAdminAuth 進行認證
+    const authResult = await requireAdminAuth(request)
+    if (!authResult.success || !authResult.user) {
+      return authResult.response || NextResponse.json(
+        { error: 'Authentication failed' },
+        { status: 401 }
+      )
     }
 
     // 獲取首頁設定
@@ -82,12 +86,17 @@ export async function PUT(request: NextRequest) {
   try {
     console.log('🔄 Starting homepage settings update...')
     
-    const adminUser = await requireAdmin(request)
-    if (adminUser instanceof NextResponse) {
+    // 使用 requireAdminAuth 進行認證
+    const authResult = await requireAdminAuth(request)
+    if (!authResult.success || !authResult.user) {
       console.log('❌ Admin authentication failed for settings update')
-      return adminUser
+      return authResult.response || NextResponse.json(
+        { error: 'Authentication failed' },
+        { status: 401 }
+      )
     }
 
+    const adminUser = authResult.user
     console.log(`✅ Admin authenticated for settings update: ${adminUser.email} (${adminUser.id})`)
 
     const data: HomepageSettings = await request.json()
@@ -135,8 +144,9 @@ export async function PUT(request: NextRequest) {
             create: {
               key: setting.key,
               value: setting.value,
-              category: 'homepage',
               description: `Homepage setting: ${setting.key}`,
+              dataType: 'string',
+              isPublic: false,
               updatedBy: adminUser.id
             }
           })

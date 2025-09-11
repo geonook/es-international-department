@@ -8,7 +8,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 import { prisma } from '@/lib/prisma'
-import { requireAdmin } from '@/lib/middleware'
+import { requireAdminAuth } from '@/lib/auth-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,12 +16,17 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🔄 Starting homepage image upload...')
     
-    const adminUser = await requireAdmin(request)
-    if (adminUser instanceof NextResponse) {
+    // 使用 requireAdminAuth 進行認證
+    const authResult = await requireAdminAuth(request)
+    if (!authResult.success || !authResult.user) {
       console.log('❌ Admin authentication failed')
-      return adminUser
+      return authResult.response || NextResponse.json(
+        { error: 'Authentication failed' },
+        { status: 401 }
+      )
     }
 
+    const adminUser = authResult.user
     console.log(`✅ Admin authenticated: ${adminUser.email} (${adminUser.id})`)
 
     // 解析表單數據
@@ -93,8 +98,9 @@ export async function POST(request: NextRequest) {
         create: {
           key: settingKey,
           value: publicUrl,
-          category: 'homepage',
           description: `Homepage ${type} image`,
+          dataType: 'string',
+          isPublic: false,
           updatedBy: adminUser.id
         }
       })
