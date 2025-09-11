@@ -124,8 +124,8 @@ export default function ContentCarousel({
       case 'tall': return 'aspect-[3/4]'
       case 'compact': return 'aspect-[4/3]'
       case 'responsive': 
-        // 響應式設計: 手機 16:9, 平板 4:3, 桌機 3:2
-        return 'aspect-[16/9] sm:aspect-[16/9] md:aspect-[4/3] lg:aspect-[3/2] xl:aspect-[3/2]'
+        // 卡片式設計: 統一使用正方形比例，創造卡片感
+        return 'aspect-square'
       case 'wide':
       default: return 'aspect-[16/9]'
     }
@@ -134,7 +134,7 @@ export default function ContentCarousel({
   // Loading 狀態
   if (loading) {
     return (
-      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 text-purple-600 animate-spin" />
           <p className="text-sm text-gray-500">Loading carousel images...</p>
@@ -147,7 +147,7 @@ export default function ContentCarousel({
   // Error 狀態
   if (error) {
     return (
-      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} ${className}`}>
         <Alert className="h-full flex items-center justify-center">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="ml-2">
@@ -161,7 +161,7 @@ export default function ContentCarousel({
   // 沒有圖片時的預設狀態
   if (images.length === 0) {
     return (
-      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
         <div className="text-center p-6">
           <div className="relative w-full max-w-xs mx-auto mb-4">
             <Image
@@ -184,7 +184,7 @@ export default function ContentCarousel({
   if (images.length === 1) {
     const image = images[0]
     return (
-      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] relative overflow-hidden rounded-lg border ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} relative overflow-hidden rounded-lg border ${className}`}>
         <Image
           src={image.imageUrl}
           alt={image.altText}
@@ -208,7 +208,7 @@ export default function ContentCarousel({
   // 多張圖片時使用輪播
   return (
     <div 
-      className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] relative ${className}`}
+      className={`w-full ${getAspectRatioClass()} relative ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -216,7 +216,7 @@ export default function ContentCarousel({
         <CarouselContent className="h-full">
           {images.map((image, index) => (
             <CarouselItem key={image.id} className="h-full">
-              <div className={`relative w-full h-full overflow-hidden rounded-lg ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px]`}>
+              <div className={`relative w-full h-full overflow-hidden rounded-lg ${getAspectRatioClass()}`}>
                 <Image
                   src={image.imageUrl}
                   alt={image.altText}
