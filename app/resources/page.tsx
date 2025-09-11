@@ -1,1188 +1,295 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  BookOpen, 
-  Download, 
-  ExternalLink, 
-  Play, 
-  FileText, 
-  Users, 
-  Sparkles, 
-  ChevronDown
-} from "lucide-react"
 import Link from "next/link"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { ExternalLink } from "lucide-react"
 import MobileNav from "@/components/ui/mobile-nav"
 
 /**
- * Resources Page Component - KCISLK ESID Learning Resource Center
- * 
- * @description Static resource page matching Google Sites structure exactly
- * @features Static resources, image placeholders, Google Sites structure
- * @author Claude Code | Generated for KCISLK ESID Info Hub
+ * Resources Page - 1:1 Copy of Google Sites Design
+ * Simple, clean layout matching original Google Sites exactly
+ * White background, purple headers, basic typography
  */
 
-interface Resource {
-  id: number
-  title: string
-  description?: string
-  resourceType: string
-  gradeLevel?: string
-  fileUrl?: string
-  externalUrl?: string
-  downloadUrl?: string
-  category: string
-  tags?: string[]
-  isActive: boolean
-  createdAt: string
-  creator?: {
-    displayName: string
-  }
-}
 export default function ResourcesPage() {
-  // Scroll parallax effect
-  const { scrollY } = useScroll()
-  const y1 = useTransform(scrollY, [0, 300], [0, -50])
-
-  // Complete static resource data following Google Sites structure exactly
-  const staticResources: Resource[] = [
-    // Parent Resources (matching Google Sites exactly)
-    {
-      id: 1,
-      title: "Parent Resources",
-      description: "Parents play a crucial role in their children's development. Offers informative articles and online tools.",
-      resourceType: "document",
-      gradeLevel: "parents",
-      category: "parent-resources",
-      externalUrl: "https://drive.google.com/drive/folders/parent-support",
-      tags: ["parents", "support", "development"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "ESID Team" }
-    },
-    
-    // G1-G2 Transition Materials - Summer 2025 (from Google Sites)
-    {
-      id: 2,
-      title: "Henry on Wheels",
-      description: "Transition reading material for G1-G2 students",
-      resourceType: "pdf",
-      gradeLevel: "1-2",
-      category: "g1-g2-transition",
-      downloadUrl: "/resources/henry-on-wheels.pdf",
-      externalUrl: "https://drive.google.com/file/d/henry-on-wheels",
-      tags: ["transition", "summer-2025", "G1-G2"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Reading Department" }
-    },
-    {
-      id: 3,
-      title: "Baby Animals Grow",
-      description: "Science and reading integrated material about animal growth",
-      resourceType: "pdf",
-      gradeLevel: "1-2",
-      category: "g1-g2-transition",
-      downloadUrl: "/resources/baby-animals-grow.pdf",
-      externalUrl: "https://drive.google.com/file/d/baby-animals-grow",
-      tags: ["transition", "summer-2025", "science", "G1-G2"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Reading Department" }
-    },
-    {
-      id: 4,
-      title: "Thumbs Up for Art and Music!",
-      description: "Creative arts integration with reading comprehension",
-      resourceType: "pdf",
-      gradeLevel: "1-2",
-      category: "g1-g2-transition",
-      downloadUrl: "/resources/thumbs-up-art-music.pdf",
-      externalUrl: "https://drive.google.com/file/d/thumbs-up-art-music",
-      tags: ["transition", "summer-2025", "arts", "G1-G2"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Arts & Reading Department" }
-    },
-    {
-      id: 5,
-      title: "What Is the Story of Our Flag?",
-      description: "Social studies and reading material about national symbols",
-      resourceType: "pdf",
-      gradeLevel: "1-2",
-      category: "g1-g2-transition",
-      downloadUrl: "/resources/story-of-our-flag.pdf",
-      externalUrl: "https://drive.google.com/file/d/story-of-our-flag",
-      tags: ["transition", "summer-2025", "social-studies", "G1-G2"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Social Studies Department" }
-    },
-    {
-      id: 6,
-      title: "My Autumn Book",
-      description: "Seasonal reading material with vocabulary and comprehension activities",
-      resourceType: "pdf",
-      gradeLevel: "1-2",
-      category: "g1-g2-transition",
-      downloadUrl: "/resources/my-autumn-book.pdf",
-      externalUrl: "https://drive.google.com/file/d/my-autumn-book",
-      tags: ["transition", "summer-2025", "seasons", "G1-G2"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Reading Department" }
-    },
-    {
-      id: 7,
-      title: "Review Games Collection",
-      description: "Interactive games for reviewing reading and vocabulary skills",
-      resourceType: "interactive",
-      gradeLevel: "1-2",
-      category: "g1-g2-transition",
-      externalUrl: "https://drive.google.com/drive/folders/review-games",
-      tags: ["games", "review", "summer-2025", "G1-G2"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "ESID Team" }
-    },
-    
-    // Reading Buddies (separate section as per Google Sites)
-    {
-      id: 8,
-      title: "Reading Buddies",
-      description: "Combines the science of reading with lots of laughter. YouTube channel with engaging video content.",
-      resourceType: "video",
-      gradeLevel: "all",
-      category: "reading-buddies",
-      externalUrl: "https://www.youtube.com/@readingbuddies",
-      tags: ["video", "reading", "science-of-reading"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Reading Buddies Team" }
-    },
-    
-    // Five Components of Reading (separate section)
-    {
-      id: 9,
-      title: "The Five Components of Reading",
-      description: "Link to scientific research document. Emphasizes systematic practice of reading components: phonemic awareness, phonics, fluency, vocabulary, and comprehension.",
-      resourceType: "document",
-      gradeLevel: "all",
-      category: "five-components",
-      externalUrl: "https://drive.google.com/file/d/five-components-reading",
-      tags: ["reading", "research", "systematic", "components"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Reading Department" }
-    },
-    
-    // Reading Campaign - Fall 2024 (separate section)
-    {
-      id: 10,
-      title: "Reading Campaign",
-      description: "Fall 2024: Weekly Reading Challenge. Focuses on reading beyond textbooks with weekly texts and comprehension activities.",
-      resourceType: "interactive",
-      gradeLevel: "all",
-      category: "reading-campaign",
-      externalUrl: "https://drive.google.com/drive/folders/weekly-reading-challenge",
-      tags: ["fall-2024", "weekly", "challenge", "beyond-textbooks"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Reading Campaign Team" }
-    },
-    
-    // Building Background Knowledge - Spring 2025 (final section)
-    {
-      id: 11,
-      title: "Building Background Knowledge",
-      description: "Spring 2025 resources. Emphasizes importance for English Language Learners with comprehensive materials.",
-      resourceType: "document",
-      gradeLevel: "all",
-      category: "background-knowledge",
-      externalUrl: "https://drive.google.com/drive/folders/background-knowledge",
-      tags: ["spring-2025", "ELL", "background-knowledge"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Language Department" }
-    },
-    {
-      id: 12,
-      title: "ReadWorks - Article a Day",
-      description: "Includes ReadWorks recommendation. Daily reading articles with comprehension questions. Build reading stamina and background knowledge.",
-      resourceType: "external",
-      gradeLevel: "all",
-      category: "background-knowledge",
-      externalUrl: "https://www.readworks.org/",
-      tags: ["daily-reading", "stamina", "recommended", "spring-2025"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "ReadWorks Partnership" }
-    }
-  ]
-
-  // Group resources by Google Sites structure exactly
-  const groupedByGoogleSites = {
-    'parent-resources': staticResources.filter(r => r.category === 'parent-resources'),
-    'g1-g2-transition': staticResources.filter(r => r.category === 'g1-g2-transition'),
-    'reading-buddies': staticResources.filter(r => r.category === 'reading-buddies'),
-    'five-components': staticResources.filter(r => r.category === 'five-components'),
-    'reading-campaign': staticResources.filter(r => r.category === 'reading-campaign'),
-    'background-knowledge': staticResources.filter(r => r.category === 'background-knowledge')
-  }
-
-  // Get resource icon
-  const getResourceIcon = (type: string) => {
-    switch (type) {
-      case 'pdf': return FileText
-      case 'video': return Play
-      case 'document': return FileText
-      case 'interactive': return BookOpen
-      case 'external': return ExternalLink
-      default: return FileText
-    }
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 },
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, -180, -360],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-        />
-      </div>
-
-      {/* Header */}
-      <motion.header
-        className="relative bg-white/80 backdrop-blur-lg shadow-lg border-b border-white/20 sticky top-0 z-50"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <motion.div className="flex items-center gap-3" whileHover={{ scale: 1.05 }}>
-              <motion.div
-                className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center shadow-lg"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
-              >
-                <Sparkles className="w-6 h-6 text-white" />
-              </motion.div>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                  KCISLK ESID Info Hub
-                </h1>
-                <p className="text-xs text-gray-500">KCISLK Elementary School International Department</p>
+    <>
+      {/* Google Fonts Import */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Gentium+Basic:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+      
+      <div className="min-h-screen bg-white">
+        {/* Simple Header - Matching current nav style */}
+        <header className="bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-200 sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-purple-700 rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">E</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-purple-700" style={{ fontFamily: 'Lora, serif' }}>
+                    KCISLK ESID Info Hub
+                  </h1>
+                  <p className="text-xs text-gray-600" style={{ fontFamily: 'Lato, sans-serif' }}>
+                    KCISLK Elementary School International Department
+                  </p>
+                </div>
               </div>
-            </motion.div>
 
-            <div className="flex items-center gap-4">
-              {/* 桌面版導航 */}
-              <nav className="hidden md:flex items-center space-x-8">
-                {[
-                  { name: "Home", href: "/" },
-                  { name: "Events", href: "/events" },
-                  { name: "Resources", href: "/resources", active: true, hasDropdown: true },
-                ].map((item, index) => (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 + 0.3 }}
-                  >
+              <div className="flex items-center gap-4">
+                {/* Desktop Navigation */}
+                <nav className="hidden md:flex items-center space-x-8">
+                  {[
+                    { name: "Home", href: "/" },
+                    { name: "Events", href: "/events" },
+                    { name: "Resources", href: "/resources", active: true },
+                  ].map((item) => (
                     <Link
+                      key={item.name}
                       href={item.href}
-                      className={`relative px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-1 ${
+                      className={`px-4 py-2 rounded-lg transition-all duration-300 ${
                         item.active
-                          ? "text-purple-600 bg-purple-100/50"
-                          : "text-gray-600 hover:text-purple-600 hover:bg-purple-50/50"
+                          ? "text-purple-700 bg-purple-100"
+                          : "text-gray-600 hover:text-purple-700 hover:bg-purple-50"
                       }`}
+                      style={{ fontFamily: 'Lato, sans-serif' }}
                     >
                       {item.name}
-                      {item.hasDropdown && <ChevronDown className="w-3 h-3" />}
                       {item.active && (
-                        <motion.div
-                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full"
-                          layoutId="activeTab"
-                        />
+                        <div className="h-0.5 bg-purple-700 rounded-full mt-1"></div>
                       )}
                     </Link>
-                  </motion.div>
-                ))}
-              </nav>
+                  ))}
+                </nav>
 
-              {/* 行動版導航 */}
-              <MobileNav />
+                {/* Mobile Navigation */}
+                <MobileNav />
+              </div>
             </div>
           </div>
-        </div>
-      </motion.header>
+        </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <motion.div
-          className="text-center mb-16"
-          style={{ y: y1 }}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.h2
-            className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-6"
-            animate={{
-              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "linear",
-            }}
-            style={{ backgroundSize: "200% 200%" }}
-          >
-            Learning Resources
-          </motion.h2>
-          <motion.p
-            className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            Comprehensive learning resources for parents, teachers, and students to support academic development and success across all grade levels.
-          </motion.p>
-        </motion.div>
+        {/* Main Content - Google Sites Style */}
+        <main className="container mx-auto px-6 py-12 max-w-4xl">
+          
+          {/* Page Title - Simple Google Sites Style */}
+          <div className="mb-12">
+            <h1 className="text-4xl font-bold text-purple-700 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+              Resources
+            </h1>
+          </div>
 
-        {/* Mission Statement */}
-        <motion.section
-          className="mb-16"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white relative overflow-hidden">
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-indigo-400/50 to-purple-500/50"
-                animate={{
-                  x: ["-100%", "100%"],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "linear",
-                }}
-              />
-              <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                >
-                  <Users className="h-8 w-8" />
-                </motion.div>
-                Our Resource Mission
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-8">
-              <motion.p
-                className="text-gray-700 text-lg leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-              >
-                Our resource center is dedicated to providing comprehensive support for parents, teachers, and students.
-                We offer carefully curated learning materials that align with our curriculum standards and support
-                student development across all academic areas. From foundational reading skills to advanced critical
-                thinking resources, our materials are designed to meet diverse learning needs and promote academic
-                excellence.
-              </motion.p>
-            </CardContent>
-          </Card>
-        </motion.section>
-
-        {/* Resource Sections Following Google Sites Structure Exactly */}
-        <div className="space-y-16">
           {/* 1. Parent Resources Section */}
-          {groupedByGoogleSites['parent-resources'].length > 0 && (
-            <motion.section
-              className="mb-16"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-rose-500 to-rose-600 text-white relative overflow-hidden">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                    />
-                    {/* Image placeholder area */}
-                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-                      <Users className="h-8 w-8 text-white/60" />
-                    </div>
-                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      >
-                        <Users className="h-8 w-8" />
-                      </motion.div>
-                      Parent Resources
-                    </CardTitle>
-                    <CardDescription className="text-white/90 text-lg relative z-10">
-                      Parents play a crucial role in their children's development
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    {/* Main image space */}
-                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-rose-50 to-pink-50 rounded-lg flex items-center justify-center border-2 border-dashed border-rose-200">
-                      <div className="text-center">
-                        <Users className="h-8 w-8 text-rose-400 mx-auto mb-2" />
-                        <p className="text-sm text-rose-600">Parents supporting child development</p>
-                      </div>
-                    </div>
-                    <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByGoogleSites['parent-resources'].map((resource) => {
-                        const IconComponent = getResourceIcon(resource.resourceType)
-                        return (
-                          <motion.div key={resource.id} variants={itemVariants}>
-                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors group">
-                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-rose-500 transition-colors" />
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 group-hover:text-rose-700 transition-colors">
-                                  {resource.title}
-                                </h4>
-                                {resource.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {resource.externalUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => window.open(resource.externalUrl, '_blank')}
-                                  >
-                                    <ExternalLink className="h-3 w-3" />
-                                    Open
-                                  </Button>
-                                )}
-                                {resource.downloadUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => {
-                                      const link = document.createElement('a')
-                                      link.href = resource.downloadUrl!
-                                      link.download = ''
-                                      link.click()
-                                    }}
-                                  >
-                                    <Download className="h-3 w-3" />
-                                    Download
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.section>
-          )}
+          <section className="mb-16">
+            {/* Image Placeholder */}
+            <div className="w-full h-48 bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
+              <div className="text-center text-gray-500" style={{ fontFamily: 'Lato, sans-serif' }}>
+                <div className="text-sm">Parent Resources Image</div>
+                <div className="text-xs mt-1">Parents supporting child development</div>
+              </div>
+            </div>
 
-          {/* 2. G1-G2 Transition Materials - Summer 2025 */}
-          {groupedByGoogleSites['g1-g2-transition'].length > 0 && (
-            <motion.section
-              className="mb-16"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+              Parent Resources
+            </h2>
+            <p className="text-gray-800 text-lg leading-relaxed mb-6" style={{ fontFamily: 'Gentium Basic, serif' }}>
+              Parents play a crucial role in their children's development. Offers informative articles and online tools.
+            </p>
+            <a 
+              href="https://drive.google.com/drive/folders/parent-support" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-700 hover:text-purple-800 underline hover:no-underline transition-all duration-200"
+              style={{ fontFamily: 'Gentium Basic, serif' }}
             >
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white relative overflow-hidden">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                    />
-                    {/* Image placeholder area */}
-                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-                      <BookOpen className="h-8 w-8 text-white/60" />
-                    </div>
-                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      >
-                        <BookOpen className="h-8 w-8" />
-                      </motion.div>
-                      G1-G2 Transition Materials
-                    </CardTitle>
-                    <CardDescription className="text-white/90 text-lg relative z-10">
-                      Summer 2025 - Essential reading materials to support the transition to formal education
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    {/* Main image space */}
-                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg flex items-center justify-center border-2 border-dashed border-blue-200">
-                      <div className="text-center">
-                        <BookOpen className="h-8 w-8 text-blue-400 mx-auto mb-2" />
-                        <p className="text-sm text-blue-600">Summer 2025 Transition Materials</p>
-                      </div>
-                    </div>
-                    <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByGoogleSites['g1-g2-transition'].map((resource) => {
-                        const IconComponent = getResourceIcon(resource.resourceType)
-                        return (
-                          <motion.div key={resource.id} variants={itemVariants}>
-                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-blue-50/50 transition-colors group">
-                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-blue-500 transition-colors" />
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 group-hover:text-blue-700 transition-colors">
-                                  {resource.title}
-                                </h4>
-                                {resource.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {resource.externalUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => window.open(resource.externalUrl, '_blank')}
-                                  >
-                                    <ExternalLink className="h-3 w-3" />
-                                    Open
-                                  </Button>
-                                )}
-                                {resource.downloadUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => {
-                                      const link = document.createElement('a')
-                                      link.href = resource.downloadUrl!
-                                      link.download = ''
-                                      link.click()
-                                    }}
-                                  >
-                                    <Download className="h-3 w-3" />
-                                    Download
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.section>
-          )}
+              Access Parent Resources <ExternalLink className="inline w-4 h-4 ml-1" />
+            </a>
+          </section>
 
-          {/* 3. Reading Buddies */}
-          {groupedByGoogleSites['reading-buddies'].length > 0 && (
-            <motion.section
-              className="mb-16"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white relative overflow-hidden">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                    />
-                    {/* Image placeholder area */}
-                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-                      <Play className="h-8 w-8 text-white/60" />
-                    </div>
-                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      >
-                        <Play className="h-8 w-8" />
-                      </motion.div>
-                      Reading Buddies
-                    </CardTitle>
-                    <CardDescription className="text-white/90 text-lg relative z-10">
-                      Combines the science of reading with lots of laughter
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    {/* Main image space */}
-                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg flex items-center justify-center border-2 border-dashed border-green-200">
-                      <div className="text-center">
-                        <Play className="h-8 w-8 text-green-400 mx-auto mb-2" />
-                        <p className="text-sm text-green-600">Reading Buddies YouTube Channel</p>
-                      </div>
-                    </div>
-                    <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByGoogleSites['reading-buddies'].map((resource) => {
-                        const IconComponent = getResourceIcon(resource.resourceType)
-                        return (
-                          <motion.div key={resource.id} variants={itemVariants}>
-                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-green-50/50 transition-colors group">
-                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-green-500 transition-colors" />
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 group-hover:text-green-700 transition-colors">
-                                  {resource.title}
-                                </h4>
-                                {resource.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {resource.externalUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => window.open(resource.externalUrl, '_blank')}
-                                  >
-                                    <ExternalLink className="h-3 w-3" />
-                                    Open
-                                  </Button>
-                                )}
-                                {resource.downloadUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => {
-                                      const link = document.createElement('a')
-                                      link.href = resource.downloadUrl!
-                                      link.download = ''
-                                      link.click()
-                                    }}
-                                  >
-                                    <Download className="h-3 w-3" />
-                                    Download
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.section>
-          )}
+          {/* 2. G1-G2 Transition Materials Section */}
+          <section className="mb-16">
+            {/* Image Placeholder */}
+            <div className="w-full h-48 bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
+              <div className="text-center text-gray-500" style={{ fontFamily: 'Lato, sans-serif' }}>
+                <div className="text-sm">G1-G2 Transition Materials</div>
+                <div className="text-xs mt-1">Summer 2025 Learning Resources</div>
+              </div>
+            </div>
 
-          {/* 4. The Five Components of Reading */}
-          {groupedByGoogleSites['five-components'].length > 0 && (
-            <motion.section
-              className="mb-16"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 text-white relative overflow-hidden">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                    />
-                    {/* Image placeholder area */}
-                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-                      <FileText className="h-8 w-8 text-white/60" />
-                    </div>
-                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      >
-                        <FileText className="h-8 w-8" />
-                      </motion.div>
-                      The Five Components of Reading
-                    </CardTitle>
-                    <CardDescription className="text-white/90 text-lg relative z-10">
-                      Link to scientific research document - Emphasizes systematic practice
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    {/* Main image space */}
-                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg flex items-center justify-center border-2 border-dashed border-purple-200">
-                      <div className="text-center">
-                        <FileText className="h-8 w-8 text-purple-400 mx-auto mb-2" />
-                        <p className="text-sm text-purple-600">Scientific Research Document</p>
-                      </div>
-                    </div>
-                    <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByGoogleSites['five-components'].map((resource) => {
-                        const IconComponent = getResourceIcon(resource.resourceType)
-                        return (
-                          <motion.div key={resource.id} variants={itemVariants}>
-                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-purple-50/50 transition-colors group">
-                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-purple-500 transition-colors" />
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 group-hover:text-purple-700 transition-colors">
-                                  {resource.title}
-                                </h4>
-                                {resource.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {resource.externalUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => window.open(resource.externalUrl, '_blank')}
-                                  >
-                                    <ExternalLink className="h-3 w-3" />
-                                    Open
-                                  </Button>
-                                )}
-                                {resource.downloadUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => {
-                                      const link = document.createElement('a')
-                                      link.href = resource.downloadUrl!
-                                      link.download = ''
-                                      link.click()
-                                    }}
-                                  >
-                                    <Download className="h-3 w-3" />
-                                    Download
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.section>
-          )}
-
-          {/* 5. Reading Campaign - Fall 2024 */}
-          {groupedByGoogleSites['reading-campaign'].length > 0 && (
-            <motion.section
-              className="mb-16"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white relative overflow-hidden">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                    />
-                    {/* Image placeholder area */}
-                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-                      <BookOpen className="h-8 w-8 text-white/60" />
-                    </div>
-                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      >
-                        <BookOpen className="h-8 w-8" />
-                      </motion.div>
-                      Reading Campaign
-                    </CardTitle>
-                    <CardDescription className="text-white/90 text-lg relative z-10">
-                      Fall 2024: Weekly Reading Challenge - Focuses on reading beyond textbooks
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    {/* Main image space */}
-                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg flex items-center justify-center border-2 border-dashed border-orange-200">
-                      <div className="text-center">
-                        <BookOpen className="h-8 w-8 text-orange-400 mx-auto mb-2" />
-                        <p className="text-sm text-orange-600">Fall 2024 Weekly Reading Challenge</p>
-                      </div>
-                    </div>
-                    <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByGoogleSites['reading-campaign'].map((resource) => {
-                        const IconComponent = getResourceIcon(resource.resourceType)
-                        return (
-                          <motion.div key={resource.id} variants={itemVariants}>
-                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-orange-50/50 transition-colors group">
-                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-orange-500 transition-colors" />
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 group-hover:text-orange-700 transition-colors">
-                                  {resource.title}
-                                </h4>
-                                {resource.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {resource.externalUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => window.open(resource.externalUrl, '_blank')}
-                                  >
-                                    <ExternalLink className="h-3 w-3" />
-                                    Open
-                                  </Button>
-                                )}
-                                {resource.downloadUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => {
-                                      const link = document.createElement('a')
-                                      link.href = resource.downloadUrl!
-                                      link.download = ''
-                                      link.click()
-                                    }}
-                                  >
-                                    <Download className="h-3 w-3" />
-                                    Download
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.section>
-          )}
-
-          {/* 6. Building Background Knowledge - Spring 2025 */}
-          {groupedByGoogleSites['background-knowledge'].length > 0 && (
-            <motion.section
-              className="mb-16"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <motion.div variants={itemVariants}>
-                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white relative overflow-hidden">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                    />
-                    {/* Image placeholder area */}
-                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-                      <Sparkles className="h-8 w-8 text-white/60" />
-                    </div>
-                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      >
-                        <Sparkles className="h-8 w-8" />
-                      </motion.div>
-                      Building Background Knowledge
-                    </CardTitle>
-                    <CardDescription className="text-white/90 text-lg relative z-10">
-                      Spring 2025 - Emphasizes importance for English Language Learners
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    {/* Main image space */}
-                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg flex items-center justify-center border-2 border-dashed border-cyan-200">
-                      <div className="text-center">
-                        <Sparkles className="h-8 w-8 text-cyan-400 mx-auto mb-2" />
-                        <p className="text-sm text-cyan-600">Spring 2025 - ELL Support Resources</p>
-                      </div>
-                    </div>
-                    <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByGoogleSites['background-knowledge'].map((resource) => {
-                        const IconComponent = getResourceIcon(resource.resourceType)
-                        return (
-                          <motion.div key={resource.id} variants={itemVariants}>
-                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-cyan-50/50 transition-colors group">
-                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-cyan-500 transition-colors" />
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 group-hover:text-cyan-700 transition-colors">
-                                  {resource.title}
-                                </h4>
-                                {resource.description && (
-                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {resource.externalUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => window.open(resource.externalUrl, '_blank')}
-                                  >
-                                    <ExternalLink className="h-3 w-3" />
-                                    Open
-                                  </Button>
-                                )}
-                                {resource.downloadUrl && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => {
-                                      const link = document.createElement('a')
-                                      link.href = resource.downloadUrl!
-                                      link.download = ''
-                                      link.click()
-                                    }}
-                                  >
-                                    <Download className="h-3 w-3" />
-                                    Download
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.section>
-          )}
-        </div>
-
-        {/* Featured Resources */}
-        <motion.section
-          className="mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={itemVariants}>
-            <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white relative overflow-hidden">
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-orange-400/50 to-red-500/50"
-                  animate={{
-                    x: ["-100%", "100%"],
-                  }}
-                  transition={{
-                    duration: 3.5,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "linear",
-                  }}
-                />
-                <CardTitle className="text-3xl relative z-10">Featured Learning Platforms</CardTitle>
-                <CardDescription className="text-orange-100 text-lg relative z-10">
-                  External platforms and tools that enhance our curriculum
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <motion.div
-                  className="grid md:grid-cols-2 gap-8"
-                  variants={containerVariants}
-                  initial="hidden"
-                  whileInView="visible"
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+              G1-G2 myView Transition Materials
+            </h2>
+            <p className="text-gray-800 text-lg leading-relaxed mb-6" style={{ fontFamily: 'Gentium Basic, serif' }}>
+              Learning materials for smooth student transition from Grade 1 to Grade 2. Summer 2025 collection.
+            </p>
+            
+            <div className="grid gap-3">
+              {[
+                "Henry on Wheels",
+                "Baby Animals Grow", 
+                "Thumbs Up for Art and Music!",
+                "What Is the Story of Our Flag?",
+                "My Autumn Book",
+                "Review Games"
+              ].map((title, index) => (
+                <a 
+                  key={index}
+                  href={`https://drive.google.com/file/d/${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-700 hover:text-purple-800 underline hover:no-underline transition-all duration-200 text-lg"
+                  style={{ fontFamily: 'Gentium Basic, serif' }}
                 >
-                  <motion.div variants={itemVariants}>
-                    <motion.div
-                      className="p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl border-l-4 border-orange-400 group hover:shadow-lg transition-all duration-300"
-                      whileHover={{ scale: 1.02, y: -5 }}
-                    >
-                      <h4 className="font-semibold text-orange-900 mb-3 text-xl">ReadWorks</h4>
-                      <p className="text-orange-800 mb-4 leading-relaxed">
-                        Comprehensive reading comprehension platform with thousands of articles and passages. Build reading stamina with Article a Day feature.
-                      </p>
-                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="gap-2 bg-transparent hover:bg-orange-100"
-                          onClick={() => window.open('https://www.readworks.org/', '_blank')}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Visit ReadWorks
-                        </Button>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
+                  {title} <ExternalLink className="inline w-4 h-4 ml-1" />
+                </a>
+              ))}
+            </div>
+          </section>
 
-                  <motion.div variants={itemVariants}>
-                    <motion.div
-                      className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border-l-4 border-blue-400 group hover:shadow-lg transition-all duration-300"
-                      whileHover={{ scale: 1.02, y: -5 }}
-                    >
-                      <h4 className="font-semibold text-blue-900 mb-3 text-xl">Reading Buddies YouTube</h4>
-                      <p className="text-blue-800 mb-4 leading-relaxed">
-                        Engaging video content for reading practice with peer support and interactive learning.
-                      </p>
-                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="gap-2 bg-transparent hover:bg-blue-100"
-                          onClick={() => window.open('https://www.youtube.com/@readingbuddies', '_blank')}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Watch Videos
-                        </Button>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </motion.section>
+          {/* 3. Reading Buddies Section */}
+          <section className="mb-16">
+            {/* Image Placeholder */}
+            <div className="w-full h-48 bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
+              <div className="text-center text-gray-500" style={{ fontFamily: 'Lato, sans-serif' }}>
+                <div className="text-sm">Reading Buddies</div>
+                <div className="text-xs mt-1">YouTube Channel Content</div>
+              </div>
+            </div>
 
-        {/* Resource Categories Overview */}
-        <motion.section
-          className="mb-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={itemVariants}>
-            <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-gray-700 to-gray-800 text-white">
-                <CardTitle className="text-3xl">Resource Categories</CardTitle>
-                <CardDescription className="text-gray-300 text-lg">
-                  Quick overview of available resource types
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-8">
-                <motion.div
-                  className="grid grid-cols-2 md:grid-cols-4 gap-6"
-                  variants={containerVariants}
-                  initial="hidden"
-                  whileInView="visible"
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+              Reading Buddies
+            </h2>
+            <p className="text-gray-800 text-lg leading-relaxed mb-6" style={{ fontFamily: 'Gentium Basic, serif' }}>
+              Combines the science of reading with lots of laughter. YouTube channel with engaging video content.
+            </p>
+            <a 
+              href="https://www.youtube.com/@readingbuddies" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-700 hover:text-purple-800 underline hover:no-underline transition-all duration-200"
+              style={{ fontFamily: 'Gentium Basic, serif' }}
+            >
+              Visit Reading Buddies YouTube Channel <ExternalLink className="inline w-4 h-4 ml-1" />
+            </a>
+          </section>
+
+          {/* 4. Five Components of Reading Section */}
+          <section className="mb-16">
+            {/* Image Placeholder */}
+            <div className="w-full h-48 bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
+              <div className="text-center text-gray-500" style={{ fontFamily: 'Lato, sans-serif' }}>
+                <div className="text-sm">Five Components of Reading</div>
+                <div className="text-xs mt-1">Scientific Research Document</div>
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+              The Five Components of Reading
+            </h2>
+            <p className="text-gray-800 text-lg leading-relaxed mb-6" style={{ fontFamily: 'Gentium Basic, serif' }}>
+              Link to scientific research document. Emphasizes systematic practice of reading components: phonemic awareness, phonics, fluency, vocabulary, and comprehension.
+            </p>
+            <a 
+              href="https://drive.google.com/file/d/five-components-reading" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-700 hover:text-purple-800 underline hover:no-underline transition-all duration-200"
+              style={{ fontFamily: 'Gentium Basic, serif' }}
+            >
+              Access Five Components Research Document <ExternalLink className="inline w-4 h-4 ml-1" />
+            </a>
+          </section>
+
+          {/* 5. Reading Campaign Section */}
+          <section className="mb-16">
+            {/* Image Placeholder */}
+            <div className="w-full h-48 bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
+              <div className="text-center text-gray-500" style={{ fontFamily: 'Lato, sans-serif' }}>
+                <div className="text-sm">Reading Campaign</div>
+                <div className="text-xs mt-1">Fall 2024 Weekly Challenge</div>
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+              Reading Campaign
+            </h2>
+            <p className="text-gray-800 text-lg leading-relaxed mb-6" style={{ fontFamily: 'Gentium Basic, serif' }}>
+              Fall 2024: Weekly Reading Challenge. Focuses on reading beyond textbooks with weekly texts and comprehension activities.
+            </p>
+            <a 
+              href="https://drive.google.com/drive/folders/weekly-reading-challenge" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-700 hover:text-purple-800 underline hover:no-underline transition-all duration-200"
+              style={{ fontFamily: 'Gentium Basic, serif' }}
+            >
+              Join Fall 2024 Weekly Reading Challenge <ExternalLink className="inline w-4 h-4 ml-1" />
+            </a>
+          </section>
+
+          {/* 6. Building Background Knowledge Section */}
+          <section className="mb-16">
+            {/* Image Placeholder */}
+            <div className="w-full h-48 bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
+              <div className="text-center text-gray-500" style={{ fontFamily: 'Lato, sans-serif' }}>
+                <div className="text-sm">Building Background Knowledge</div>
+                <div className="text-xs mt-1">Spring 2025 ELL Resources</div>
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4" style={{ fontFamily: 'Lora, serif' }}>
+              Building Background Knowledge
+            </h2>
+            <p className="text-gray-800 text-lg leading-relaxed mb-6" style={{ fontFamily: 'Gentium Basic, serif' }}>
+              Spring 2025 resources. Emphasizes importance for English Language Learners with comprehensive materials.
+            </p>
+            
+            <div className="space-y-4">
+              <a 
+                href="https://drive.google.com/drive/folders/background-knowledge" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block text-purple-700 hover:text-purple-800 underline hover:no-underline transition-all duration-200"
+                style={{ fontFamily: 'Gentium Basic, serif' }}
+              >
+                Access Spring 2025 Background Knowledge Resources <ExternalLink className="inline w-4 h-4 ml-1" />
+              </a>
+              
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2" style={{ fontFamily: 'Lora, serif' }}>
+                  Recommended Platform:
+                </h3>
+                <a 
+                  href="https://www.readworks.org/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-purple-700 hover:text-purple-800 underline hover:no-underline transition-all duration-200"
+                  style={{ fontFamily: 'Gentium Basic, serif' }}
                 >
-                  {[
-                    { icon: FileText, title: "PDF Materials", desc: "Downloadable guides" },
-                    { icon: Play, title: "Video Content", desc: "Educational videos" },
-                    { icon: ExternalLink, title: "External Links", desc: "Online platforms" },
-                    { icon: BookOpen, title: "Interactive Tools", desc: "Engaging activities" },
-                  ].map((item, index) => (
-                    <motion.div key={index} variants={itemVariants} className="text-center group">
-                      <motion.div
-                        className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl group-hover:from-purple-50 group-hover:to-purple-100 transition-all duration-300 hover:shadow-lg"
-                        whileHover={{ scale: 1.05, y: -5 }}
-                      >
-                        <motion.div
-                          className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-gray-600 to-gray-800 rounded-2xl flex items-center justify-center group-hover:from-purple-600 group-hover:to-purple-800 transition-all duration-300"
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.6 }}
-                        >
-                          <item.icon className="h-8 w-8 text-white" />
-                        </motion.div>
-                        <h5 className="font-medium text-gray-900 mb-2 text-lg group-hover:text-purple-700 transition-colors">
-                          {item.title}
-                        </h5>
-                        <p className="text-sm text-gray-600 group-hover:text-purple-600 transition-colors">
-                          {item.desc}
-                        </p>
-                      </motion.div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </motion.section>
-      </main>
+                  ReadWorks - Article a Day <ExternalLink className="inline w-4 h-4 ml-1" />
+                </a>
+                <p className="text-gray-700 text-base mt-2" style={{ fontFamily: 'Gentium Basic, serif' }}>
+                  Daily reading articles with comprehension questions. Build reading stamina and background knowledge.
+                </p>
+              </div>
+            </div>
+          </section>
 
-      {/* Footer */}
-      <motion.footer
-        className="bg-gradient-to-r from-purple-800 to-purple-900 text-white py-12 relative overflow-hidden"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.p initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-            &copy; 2025 KCISLK Elementary School International Department. All rights reserved.
-          </motion.p>
-          <motion.p
-            className="text-purple-300 text-sm mt-2"
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            KCISLK Elementary School International Department | Excellence in International Education
-          </motion.p>
-        </div>
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(circle at 25% 25%, white 2px, transparent 2px)",
-              backgroundSize: "60px 60px",
-            }}
-          />
-        </div>
-      </motion.footer>
-    </div>
+        </main>
+
+        {/* Simple Footer */}
+        <footer className="bg-gray-50 py-8 mt-16">
+          <div className="container mx-auto px-6 text-center">
+            <p className="text-gray-600" style={{ fontFamily: 'Lato, sans-serif' }}>
+              &copy; 2025 KCISLK Elementary School International Department. All rights reserved.
+            </p>
+            <p className="text-gray-500 text-sm mt-2" style={{ fontFamily: 'Lato, sans-serif' }}>
+              KCISLK Elementary School International Department | Excellence in International Education
+            </p>
+          </div>
+        </footer>
+      </div>
+    </>
   )
 }
