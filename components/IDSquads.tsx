@@ -214,7 +214,7 @@ export default function IDSquads() {
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+    <section id="id-squads" className="py-20 px-4 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
       <div className="container mx-auto max-w-7xl">
         {/* Section Header */}
         <motion.div

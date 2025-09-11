@@ -17,6 +17,7 @@ import PacingGuides from "@/components/PacingGuides"
 import IDSquads from "@/components/IDSquads"
 import ContentCarousel from "@/components/ContentCarousel"
 import BackToTop from "@/components/ui/back-to-top"
+import SideNavGuide from "@/components/ui/side-nav-guide"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -544,7 +545,7 @@ export default function HomePage() {
         </motion.section>
 
         {/* International Department NEWS */}
-        <motion.section className="pt-24 pb-20 relative overflow-hidden" style={{ y: y2 }}>
+        <motion.section id="id-news" className="pt-24 pb-20 relative overflow-hidden" style={{ y: y2 }}>
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/90 to-purple-800/90" />
           <div className="absolute inset-0 opacity-10">
             <div
@@ -1177,6 +1178,9 @@ Browse Complete Newsletter Archive
 
       {/* Back to Top Button */}
       <BackToTop />
+      
+      {/* Side Navigation Guide */}
+      <SideNavGuide />
     </div>
   )
 }
