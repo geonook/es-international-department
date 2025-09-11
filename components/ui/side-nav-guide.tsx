@@ -119,7 +119,7 @@ export default function SideNavGuide({ className = '' }: SideNavGuideProps) {
       onMouseLeave={() => setIsExpanded(false)}
     >
       <motion.div
-        className="bg-white/80 backdrop-blur-sm border border-purple-200/50 rounded-2xl shadow-lg overflow-hidden"
+        className="bg-gray-100/20 backdrop-blur-sm border border-gray-200/30 rounded-2xl shadow-sm overflow-hidden"
         layout
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
@@ -140,8 +140,8 @@ export default function SideNavGuide({ className = '' }: SideNavGuideProps) {
                     group relative w-full flex items-center gap-3 p-3 rounded-xl
                     transition-all duration-300 ease-out
                     ${isActive 
-                      ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' 
-                      : 'hover:bg-purple-50 text-gray-600 hover:text-purple-600'
+                      ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-sm' 
+                      : 'hover:bg-gray-100/50 text-gray-500 hover:text-gray-700'
                     }
                   `}
                   whileHover={{ scale: 1.02 }}
@@ -152,7 +152,7 @@ export default function SideNavGuide({ className = '' }: SideNavGuideProps) {
                   <motion.div
                     className={`
                       flex-shrink-0 transition-colors duration-300
-                      ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-purple-500'}
+                      ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'}
                     `}
                     animate={isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
                     transition={{ duration: 0.3 }}
@@ -170,7 +170,7 @@ export default function SideNavGuide({ className = '' }: SideNavGuideProps) {
                         transition={{ duration: 0.2, ease: "easeOut" }}
                         className={`
                           whitespace-nowrap text-sm font-medium overflow-hidden
-                          ${isActive ? 'text-white' : 'text-gray-700 group-hover:text-purple-600'}
+                          ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-gray-700'}
                         `}
                       >
                         {section.label}
@@ -201,28 +201,14 @@ export default function SideNavGuide({ className = '' }: SideNavGuideProps) {
 
         {/* 底部裝飾 */}
         <motion.div
-          className="h-1 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500"
+          className="h-0.5 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300"
           initial={{ scaleX: 0 }}
-          animate={{ scaleX: isExpanded ? 1 : 0.3 }}
+          animate={{ scaleX: isExpanded ? 1 : 0.2 }}
           transition={{ duration: 0.3 }}
           style={{ transformOrigin: 'center' }}
         />
       </motion.div>
 
-      {/* 提示文字 */}
-      {!isExpanded && (
-        <motion.div
-          className="absolute right-full mr-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          initial={{ opacity: 0, x: 10 }}
-          animate={{ opacity: 0.7, x: 0 }}
-          exit={{ opacity: 0, x: 10 }}
-          transition={{ delay: 2, duration: 0.3 }}
-        >
-          <div className="bg-gray-900/80 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap">
-            Quick Navigation
-          </div>
-        </motion.div>
-      )}
     </motion.div>
   )
 }
