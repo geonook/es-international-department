@@ -390,8 +390,9 @@ export default function HomePage() {
           variants={containerVariants}
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
-              <motion.div className="lg:w-1/2 relative order-1 lg:order-2" variants={itemVariants}>
+            {/* Mobile Layout: Text first, then Carousel */}
+            <div className="flex flex-col lg:hidden items-center gap-8">
+              <motion.div className="w-full relative" variants={itemVariants}>
                 <motion.div
                   className="absolute -top-8 -left-8 text-8xl text-purple-200 font-serif"
                   initial={{ opacity: 0, scale: 0 }}
@@ -432,7 +433,7 @@ export default function HomePage() {
                 </motion.div>
               </motion.div>
 
-              <motion.div className="lg:w-1/2 order-2 lg:order-1" variants={itemVariants}>
+              <motion.div className="w-full" variants={itemVariants}>
                 <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
                   <div className="relative rounded-3xl shadow-2xl overflow-hidden">
@@ -457,6 +458,78 @@ export default function HomePage() {
                       ease: "easeInOut",
                     }}
                   />
+                </motion.div>
+              </motion.div>
+            </div>
+
+            {/* Desktop Layout: Carousel left, Text right */}
+            <div className="hidden lg:flex lg:flex-row items-center gap-8 lg:gap-16">
+              <motion.div className="lg:w-1/2" variants={itemVariants}>
+                <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                  <div className="relative rounded-3xl shadow-2xl overflow-hidden">
+                    <ContentCarousel
+                      autoPlay={true}
+                      autoPlayDelay={5000}
+                      showDots={true}
+                      showArrows={true}
+                      aspectRatio="responsive"
+                      className="w-full"
+                    />
+                  </div>
+                  <motion.div
+                    className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 180, 360],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+
+              <motion.div className="lg:w-1/2 relative" variants={itemVariants}>
+                <motion.div
+                  className="absolute -top-8 -left-8 text-8xl text-purple-200 font-serif"
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  "
+                </motion.div>
+                <blockquote className="text-3xl md:text-4xl text-gray-700 font-light leading-relaxed relative z-10">
+                  {settings.quoteText || "Parents are the cornerstone of a child's education; their support and collaboration with teachers create a powerful partnership that inspires and nurtures lifelong learners."}
+                </blockquote>
+
+                <motion.div
+                  className="mt-12"
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1 }}
+                >
+                  <svg className="w-40 h-24 text-purple-300" viewBox="0 0 200 100" fill="none">
+                    <motion.path
+                      d="M20 50 Q100 20 180 50"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeDasharray="5,5"
+                      fill="none"
+                      initial={{ pathLength: 0 }}
+                      whileInView={{ pathLength: 1 }}
+                      transition={{ delay: 1.2, duration: 2 }}
+                    />
+                    <motion.polygon
+                      points="175,45 185,50 175,55 180,50"
+                      fill="currentColor"
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      transition={{ delay: 2 }}
+                    />
+                  </svg>
                 </motion.div>
               </motion.div>
             </div>
