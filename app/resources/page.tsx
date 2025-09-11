@@ -179,7 +179,7 @@ export default function ResourcesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
       {/* Animated Background - Same as homepage */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
