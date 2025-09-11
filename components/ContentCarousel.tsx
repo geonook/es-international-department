@@ -51,7 +51,7 @@ export default function ContentCarousel({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [api, setApi] = useState<CarouselApi>
+  const [api, setApi] = useState<CarouselApi>()
   const [isHovered, setIsHovered] = useState(false)
 
 
