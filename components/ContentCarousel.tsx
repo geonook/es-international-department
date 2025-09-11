@@ -56,7 +56,9 @@ export default function ContentCarousel({
     async function loadCarouselImages() {
       try {
         setLoading(true)
-        const response = await fetch('/api/parents-corner/carousel')
+        // Add cache-busting to ensure fresh data
+        const timestamp = Date.now()
+        const response = await fetch(`/api/parents-corner/carousel?_t=${timestamp}`)
         
         if (!response.ok) {
           throw new Error('Failed to load carousel images')
@@ -108,7 +110,8 @@ export default function ContentCarousel({
       <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 text-purple-600 animate-spin" />
-          <p className="text-sm text-gray-500">Loading carousel...</p>
+          <p className="text-sm text-gray-500">Loading carousel images...</p>
+          <p className="text-xs text-gray-400">Please wait while we fetch the latest content</p>
         </div>
       </div>
     )
@@ -143,8 +146,8 @@ export default function ContentCarousel({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg" />
           </div>
-          <p className="text-sm text-gray-600 font-medium">Add carousel images in admin panel</p>
-          <p className="text-xs text-gray-400 mt-1">現在還沒有輪播圖片</p>
+          <p className="text-sm text-gray-600 font-medium">No carousel images available</p>
+          <p className="text-xs text-gray-400 mt-1">Images can be added through the admin panel</p>
         </div>
       </div>
     )
