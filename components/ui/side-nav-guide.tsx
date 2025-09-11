@@ -33,7 +33,7 @@ const sections: NavSection[] = [
   },
   { 
     id: 'pacing-guides', 
-    label: 'Pacing Guides', 
+    label: 'Pacing', 
     icon: BookOpen,
     offset: -80
   },
@@ -137,7 +137,7 @@ export default function SideNavGuide({ className = '' }: SideNavGuideProps) {
                 <motion.button
                   onClick={() => scrollToSection(section.id, section.offset)}
                   className={`
-                    group relative w-full flex items-center gap-3 p-3 rounded-xl
+                    group relative w-full flex items-center gap-2 p-2.5 rounded-xl
                     transition-all duration-300 ease-out
                     ${isActive 
                       ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-sm' 
