@@ -1,13 +1,11 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Skeleton } from "@/components/ui/skeleton"
 import { 
   BookOpen, 
   Download, 
@@ -18,8 +16,6 @@ import {
   Search, 
   Sparkles, 
   ChevronDown,
-  Filter,
-  AlertCircle,
   Folder,
   Eye
 } from "lucide-react"
@@ -57,173 +53,296 @@ export default function ResourcesPage() {
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   
-  // State management
-  const [resources, setResources] = useState<Resource[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
-  
   // Filter and search state
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedGrade, setSelectedGrade] = useState('all')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
-  
-  // Load resource data
-  useEffect(() => {
-    fetchResources()
-  }, [])
 
-  const fetchResources = async () => {
-    try {
-      setIsLoading(true)
-      setError('')
-      
-      // Build query parameters
-      const params = new URLSearchParams()
-      params.set('status', 'published')
-      params.set('limit', '100')
-      
-      const response = await fetch(`/api/public/resources?${params.toString()}`)
-      const data = await response.json()
-      
-      if (data.success) {
-        setResources(data.data || [])
-      } else {
-        // If API doesn't exist, use static data
-        setResources(staticResources)
-      }
-    } catch (error) {
-      console.error('Fetch resources error:', error)
-      // Use static data when loading fails
-      setResources(staticResources)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // Static resource data as fallback
+  // Complete static resource data from Google Sites
   const staticResources: Resource[] = [
+    // Parent Support Resources
     {
       id: 1,
-      title: "myView Transition Materials",
-      description: "Comprehensive transition learning materials in PDF format",
+      title: "Parent Support Guide",
+      description: "Comprehensive guide for parents to support their children's learning journey at home",
+      resourceType: "document",
+      gradeLevel: "parents",
+      category: "parent-support",
+      externalUrl: "https://drive.google.com/drive/folders/parent-support",
+      tags: ["parents", "support", "home-learning"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "ESID Team" }
+    },
+    
+    // G1-G2 Transition Materials from Google Sites
+    {
+      id: 2,
+      title: "Henry on Wheels",
+      description: "Transition reading material for G1-G2 students",
       resourceType: "pdf",
       gradeLevel: "1-2",
       category: "reading",
-      downloadUrl: "/resources/myview-transition.pdf",
-      tags: ["transition", "reading"],
+      downloadUrl: "/resources/henry-on-wheels.pdf",
+      externalUrl: "https://drive.google.com/file/d/henry-on-wheels",
+      tags: ["transition", "reading", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Chen" }
-    },
-    {
-      id: 2,
-      title: "Reading Buddies Program",
-      description: "Interactive reading partnership program with video resources",
-      resourceType: "video",
-      gradeLevel: "1-2",
-      category: "reading",
-      externalUrl: "https://example.com/reading-buddies",
-      tags: ["reading", "partnership"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Wang" }
+      creator: { displayName: "Reading Department" }
     },
     {
       id: 3,
-      title: "The Five Components of Reading",
-      description: "Core reading skills explanation with Google Drive resources",
-      resourceType: "document",
+      title: "Baby Animals Grow",
+      description: "Science and reading integrated material about animal growth",
+      resourceType: "pdf",
       gradeLevel: "1-2",
       category: "reading",
-      externalUrl: "https://drive.google.com/example",
-      tags: ["reading", "skills"],
+      downloadUrl: "/resources/baby-animals-grow.pdf",
+      externalUrl: "https://drive.google.com/file/d/baby-animals-grow",
+      tags: ["transition", "reading", "science", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Lin" }
+      creator: { displayName: "Reading Department" }
     },
     {
       id: 4,
-      title: "Weekly Reading Challenge",
-      description: "Weekly texts and quizzes for reading comprehension",
-      resourceType: "interactive",
+      title: "Thumbs Up for Art and Music!",
+      description: "Creative arts integration with reading comprehension",
+      resourceType: "pdf",
       gradeLevel: "1-2",
       category: "reading",
-      externalUrl: "https://example.com/reading-challenge",
-      tags: ["reading", "quiz"],
+      downloadUrl: "/resources/thumbs-up-art-music.pdf",
+      externalUrl: "https://drive.google.com/file/d/thumbs-up-art-music",
+      tags: ["transition", "reading", "arts", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Wu" }
+      creator: { displayName: "Arts & Reading Department" }
     },
     {
       id: 5,
-      title: "Building Background Knowledge",
-      description: "Language learning resources and daily reading content via ReadWorks",
-      resourceType: "external",
+      title: "What Is the Story of Our Flag?",
+      description: "Social studies and reading material about national symbols",
+      resourceType: "pdf",
       gradeLevel: "1-2",
-      category: "language",
-      externalUrl: "https://readworks.org",
-      tags: ["language", "background"],
+      category: "reading",
+      downloadUrl: "/resources/story-of-our-flag.pdf",
+      externalUrl: "https://drive.google.com/file/d/story-of-our-flag",
+      tags: ["transition", "reading", "social-studies", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Liu" }
+      creator: { displayName: "Social Studies Department" }
     },
     {
       id: 6,
+      title: "My Autumn Book",
+      description: "Seasonal reading material with vocabulary and comprehension activities",
+      resourceType: "pdf",
+      gradeLevel: "1-2",
+      category: "reading",
+      downloadUrl: "/resources/my-autumn-book.pdf",
+      externalUrl: "https://drive.google.com/file/d/my-autumn-book",
+      tags: ["transition", "reading", "seasons", "G1-G2"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Reading Department" }
+    },
+    {
+      id: 7,
+      title: "Review Games Collection",
+      description: "Interactive games for reviewing reading and vocabulary skills",
+      resourceType: "interactive",
+      gradeLevel: "1-2",
+      category: "reading",
+      externalUrl: "https://drive.google.com/drive/folders/review-games",
+      tags: ["games", "review", "interactive", "G1-G2"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "ESID Team" }
+    },
+    
+    // Reading Support Resources
+    {
+      id: 8,
+      title: "Reading Buddies YouTube Channel",
+      description: "Video resources for reading practice with peer support",
+      resourceType: "video",
+      gradeLevel: "1-2",
+      category: "reading",
+      externalUrl: "https://www.youtube.com/@readingbuddies",
+      tags: ["video", "reading", "peer-learning"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Reading Buddies Team" }
+    },
+    {
+      id: 9,
+      title: "The Five Components of Reading",
+      description: "Comprehensive guide to the five essential components of reading: phonemic awareness, phonics, fluency, vocabulary, and comprehension",
+      resourceType: "document",
+      gradeLevel: "1-2",
+      category: "reading",
+      externalUrl: "https://drive.google.com/file/d/five-components-reading",
+      tags: ["reading", "fundamentals", "guide"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Reading Department" }
+    },
+    {
+      id: 10,
+      title: "Fall 2024 Weekly Reading Challenge",
+      description: "Weekly texts and quizzes to improve reading comprehension skills",
+      resourceType: "interactive",
+      gradeLevel: "1-2",
+      category: "reading",
+      externalUrl: "https://drive.google.com/drive/folders/weekly-reading-challenge",
+      tags: ["challenge", "weekly", "reading", "quiz"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Reading Campaign Team" }
+    },
+    
+    // Language Learning Resources
+    {
+      id: 11,
+      title: "Spring 2025: Building Background Knowledge",
+      description: "Resources for building essential background knowledge to support language learning",
+      resourceType: "document",
+      gradeLevel: "1-2",
+      category: "language",
+      externalUrl: "https://drive.google.com/drive/folders/background-knowledge",
+      tags: ["language", "background-knowledge", "spring-2025"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Language Department" }
+    },
+    {
+      id: 12,
+      title: "ReadWorks - Article a Day",
+      description: "Daily reading articles with comprehension questions. Build reading stamina and background knowledge",
+      resourceType: "external",
+      gradeLevel: "1-2",
+      category: "language",
+      externalUrl: "https://www.readworks.org/",
+      tags: ["daily-reading", "comprehension", "readworks"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "ReadWorks Partnership" }
+    },
+    
+    // Grades 3-4 Resources
+    {
+      id: 13,
       title: "Advanced Reading Comprehension",
       description: "Enhanced reading materials for intermediate learners",
       resourceType: "pdf",
       gradeLevel: "3-4",
       category: "reading",
       downloadUrl: "/resources/advanced-reading.pdf",
-      tags: ["reading", "comprehension"],
+      tags: ["reading", "comprehension", "G3-G4"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Teacher Zhou" }
     },
     {
-      id: 7,
+      id: 14,
       title: "Writing Workshop Resources",
       description: "Creative and academic writing support materials",
       resourceType: "document",
       gradeLevel: "3-4",
       category: "writing",
       externalUrl: "https://drive.google.com/writing-workshop",
-      tags: ["writing", "creative"],
+      tags: ["writing", "creative", "G3-G4"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Teacher Huang" }
     },
     {
-      id: 8,
+      id: 15,
+      title: "Grammar and Vocabulary Builder",
+      description: "Interactive exercises for improving grammar and expanding vocabulary",
+      resourceType: "interactive",
+      gradeLevel: "3-4",
+      category: "language",
+      externalUrl: "https://drive.google.com/grammar-vocabulary",
+      tags: ["grammar", "vocabulary", "G3-G4"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Language Department" }
+    },
+    
+    // Grades 5-6 Resources
+    {
+      id: 16,
       title: "Critical Thinking Materials",
       description: "Advanced analytical and critical thinking resources",
       resourceType: "interactive",
       gradeLevel: "5-6",
       category: "thinking",
-      externalUrl: "https://example.com/critical-thinking",
-      tags: ["thinking", "analysis"],
+      externalUrl: "https://drive.google.com/critical-thinking",
+      tags: ["thinking", "analysis", "G5-G6"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Teacher Zhang" }
     },
     {
-      id: 9,
+      id: 17,
       title: "Research Project Guides",
       description: "Comprehensive guides for independent research projects",
       resourceType: "pdf",
       gradeLevel: "5-6",
       category: "research",
       downloadUrl: "/resources/research-guides.pdf",
-      tags: ["research", "projects"],
+      tags: ["research", "projects", "G5-G6"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Teacher Xu" }
+    },
+    {
+      id: 18,
+      title: "Academic Writing Excellence",
+      description: "Advanced academic writing techniques and essay structures",
+      resourceType: "document",
+      gradeLevel: "5-6",
+      category: "writing",
+      externalUrl: "https://drive.google.com/academic-writing",
+      tags: ["writing", "academic", "essays", "G5-G6"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Writing Department" }
+    },
+    
+    // Additional Parent Resources
+    {
+      id: 19,
+      title: "Home Reading Strategies",
+      description: "Effective strategies for parents to support reading at home",
+      resourceType: "document",
+      gradeLevel: "parents",
+      category: "parent-support",
+      externalUrl: "https://drive.google.com/home-reading-strategies",
+      tags: ["parents", "reading", "home-support"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "Parent Engagement Team" }
+    },
+    {
+      id: 20,
+      title: "Parent-Teacher Communication Guide",
+      description: "Guidelines for effective communication between parents and teachers",
+      resourceType: "document",
+      gradeLevel: "parents",
+      category: "parent-support",
+      externalUrl: "https://drive.google.com/parent-teacher-communication",
+      tags: ["parents", "communication", "partnership"],
+      isActive: true,
+      createdAt: "2025-01-01T00:00:00Z",
+      creator: { displayName: "ESID Administration" }
     }
   ]
 
-  // Filter resources
-  const filteredResources = resources.filter(resource => {
+  // Filter resources - using static resources directly
+  const filteredResources = staticResources.filter(resource => {
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
@@ -286,6 +405,7 @@ export default function ResourcesPage() {
   }, {} as Record<string, Resource[]>)
 
   const gradeColors: Record<string, string> = {
+    'parents': 'from-rose-500 to-rose-600',
     '1-2': 'from-blue-500 to-blue-600',
     '3-4': 'from-green-500 to-green-600',
     '5-6': 'from-purple-500 to-purple-600',
@@ -293,6 +413,7 @@ export default function ResourcesPage() {
   }
 
   const gradeNames: Record<string, string> = {
+    'parents': 'Parent Resources',
     '1-2': 'Grades 1-2',
     '3-4': 'Grades 3-4', 
     '5-6': 'Grades 5-6',
@@ -464,6 +585,7 @@ export default function ResourcesPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Grade Levels</SelectItem>
+                        <SelectItem value="parents">Parent Resources</SelectItem>
                         <SelectItem value="1-2">Grades 1-2</SelectItem>
                         <SelectItem value="3-4">Grades 3-4</SelectItem>
                         <SelectItem value="5-6">Grades 5-6</SelectItem>
@@ -479,6 +601,7 @@ export default function ResourcesPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="parent-support">Parent Support</SelectItem>
                         <SelectItem value="reading">Reading</SelectItem>
                         <SelectItem value="writing">Writing</SelectItem>
                         <SelectItem value="language">Language</SelectItem>
@@ -510,19 +633,6 @@ export default function ResourcesPage() {
           </Card>
         </motion.div>
 
-        {/* Error Message */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-8"
-          >
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          </motion.div>
-        )}
 
         {/* Mission Statement */}
         <motion.section
@@ -572,39 +682,9 @@ export default function ResourcesPage() {
           </Card>
         </motion.section>
 
-        {/* Loading State */}
-        {isLoading && (
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {Array.from({ length: 6 }).map((_, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-2/3" />
-                      <div className="flex gap-2">
-                        <Skeleton className="h-8 w-20" />
-                        <Skeleton className="h-8 w-16" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
 
         {/* Resource Categories by Grade */}
-        {!isLoading && Object.keys(groupedByGrade).length > 0 ? (
+        {Object.keys(groupedByGrade).length > 0 ? (
           Object.entries(groupedByGrade).map(([grade, gradeResources]) => (
             <motion.section
               key={grade}
@@ -760,26 +840,24 @@ export default function ResourcesPage() {
           ))
         ) : (
           // Display when no resources are available
-          !isLoading && (
-            <motion.div
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
-              className="text-center py-12"
-            >
-              <Folder className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
-                  ? 'No resources found matching criteria' 
-                  : 'No resources available'}
-              </h3>
-              <p className="text-gray-600">
-                {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
-                  ? 'Please try adjusting your search criteria' 
-                  : 'Please stay tuned for more learning resources'}
-              </p>
-            </motion.div>
-          )
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-center py-12"
+          >
+            <Folder className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
+                ? 'No resources found matching criteria' 
+                : 'No resources available'}
+            </h3>
+            <p className="text-gray-600">
+              {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
+                ? 'Please try adjusting your search criteria' 
+                : 'Please stay tuned for more learning resources'}
+            </p>
+          </motion.div>
         )}
 
         {/* Featured Resources */}
@@ -823,10 +901,15 @@ export default function ResourcesPage() {
                     >
                       <h4 className="font-semibold text-orange-900 mb-3 text-xl">ReadWorks</h4>
                       <p className="text-orange-800 mb-4 leading-relaxed">
-                        Comprehensive reading comprehension platform with thousands of articles and passages.
+                        Comprehensive reading comprehension platform with thousands of articles and passages. Build reading stamina with Article a Day feature.
                       </p>
                       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button size="sm" variant="outline" className="gap-2 bg-transparent hover:bg-orange-100">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="gap-2 bg-transparent hover:bg-orange-100"
+                          onClick={() => window.open('https://www.readworks.org/', '_blank')}
+                        >
                           <ExternalLink className="h-4 w-4" />
                           Visit ReadWorks
                         </Button>
@@ -839,14 +922,19 @@ export default function ResourcesPage() {
                       className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border-l-4 border-blue-400 group hover:shadow-lg transition-all duration-300"
                       whileHover={{ scale: 1.02, y: -5 }}
                     >
-                      <h4 className="font-semibold text-blue-900 mb-3 text-xl">Google Drive Resources</h4>
+                      <h4 className="font-semibold text-blue-900 mb-3 text-xl">Reading Buddies YouTube</h4>
                       <p className="text-blue-800 mb-4 leading-relaxed">
-                        Centralized access to all our digital learning materials and resources.
+                        Engaging video content for reading practice with peer support and interactive learning.
                       </p>
                       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button size="sm" variant="outline" className="gap-2 bg-transparent hover:bg-blue-100">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="gap-2 bg-transparent hover:bg-blue-100"
+                          onClick={() => window.open('https://www.youtube.com/@readingbuddies', '_blank')}
+                        >
                           <ExternalLink className="h-4 w-4" />
-                          Access Drive
+                          Watch Videos
                         </Button>
                       </motion.div>
                     </motion.div>
