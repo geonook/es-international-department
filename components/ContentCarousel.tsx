@@ -17,6 +17,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from '@/components/ui/carousel'
 
 interface CarouselImageData {
@@ -50,6 +51,8 @@ export default function ContentCarousel({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [api, setApi] = useState<CarouselApi>
+  const [isHovered, setIsHovered] = useState(false)
 
 
   // 載入輪播圖片
@@ -82,16 +85,37 @@ export default function ContentCarousel({
     loadCarouselImages()
   }, [])
 
-  // 自動播放功能
+  // 監聽 carousel API 變化並同步當前索引
   useEffect(() => {
-    if (!autoPlay || images.length <= 1) return
+    if (!api) return
+
+    const onSelect = () => {
+      setCurrentIndex(api.selectedScrollSnap())
+    }
+
+    onSelect() // 初始化當前位置
+    api.on('select', onSelect)
+
+    return () => {
+      api.off('select', onSelect)
+    }
+  }, [api])
+
+  // 自動播放功能 (在鼠標懸停時暫停)
+  useEffect(() => {
+    if (!autoPlay || !api || images.length <= 1 || isHovered) return
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length)
+      // 檢查是否到達最後一張，如果是則回到第一張
+      if (api.selectedScrollSnap() === images.length - 1) {
+        api.scrollTo(0)
+      } else {
+        api.scrollNext()
+      }
     }, autoPlayDelay)
 
     return () => clearInterval(interval)
-  }, [autoPlay, autoPlayDelay, images.length])
+  }, [autoPlay, api, autoPlayDelay, images.length, isHovered])
 
   // 獲取寬高比樣式
   const getAspectRatioClass = () => {
@@ -179,8 +203,12 @@ export default function ContentCarousel({
 
   // 多張圖片時使用輪播
   return (
-    <div className={`w-full ${getAspectRatioClass()} relative ${className}`}>
-      <Carousel className="w-full h-full">
+    <div 
+      className={`w-full ${getAspectRatioClass()} relative ${className}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Carousel className="w-full h-full" setApi={setApi}>
         <CarouselContent className="h-full">
           {images.map((image, index) => (
             <CarouselItem key={image.id} className="h-full">
@@ -234,7 +262,7 @@ export default function ContentCarousel({
           {images.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index)}
+              onClick={() => api?.scrollTo(index)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex 
                   ? 'bg-white scale-125' 
