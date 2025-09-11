@@ -327,7 +327,7 @@ export default function HomePage() {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                {settings.mainTitle ? (
+                {settings.mainTitle && settings.mainTitle !== "Welcome to our Parents' Corner" ? (
                   <span className="block">{settings.mainTitle}</span>
                 ) : (
                   <>
