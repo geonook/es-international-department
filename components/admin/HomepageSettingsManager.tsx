@@ -36,6 +36,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
+import CarouselImageManager from './CarouselImageManager'
 
 interface HomepageSettings {
   heroImage?: string
@@ -215,10 +216,14 @@ export default function HomepageSettingsManager() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="images" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="images">
               <FileImage className="w-4 h-4 mr-2" />
               Images
+            </TabsTrigger>
+            <TabsTrigger value="carousel">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Carousel
             </TabsTrigger>
             <TabsTrigger value="content">
               <Type className="w-4 h-4 mr-2" />
@@ -373,6 +378,11 @@ export default function HomepageSettingsManager() {
                 )}
               </div>
             </div>
+          </TabsContent>
+
+          {/* Carousel Tab */}
+          <TabsContent value="carousel" className="space-y-6">
+            <CarouselImageManager />
           </TabsContent>
 
           {/* Content Tab */}

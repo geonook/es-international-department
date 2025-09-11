@@ -35,7 +35,7 @@ interface ContentCarouselProps {
   autoPlayDelay?: number
   showDots?: boolean
   showArrows?: boolean
-  aspectRatio?: 'wide' | 'square' | 'tall'
+  aspectRatio?: 'wide' | 'square' | 'tall' | 'compact'
 }
 
 export default function ContentCarousel({
@@ -96,6 +96,7 @@ export default function ContentCarousel({
     switch (aspectRatio) {
       case 'square': return 'aspect-square'
       case 'tall': return 'aspect-[3/4]'
+      case 'compact': return 'aspect-[4/3]'
       case 'wide':
       default: return 'aspect-[16/9]'
     }
@@ -131,15 +132,19 @@ export default function ContentCarousel({
   if (images.length === 0) {
     return (
       <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
-        <div className="text-center p-8">
-          <Image
-            src="/uploads/homepage/content-1757551161020.jpeg"
-            alt="Default family learning moment"
-            width={200}
-            height={133}
-            className="mx-auto rounded-lg shadow-sm mb-4"
-          />
-          <p className="text-sm text-gray-500">No carousel images available</p>
+        <div className="text-center p-6">
+          <div className="relative w-full max-w-xs mx-auto mb-4">
+            <Image
+              src="/uploads/homepage/content-1757551161020.jpeg"
+              alt="Default family learning moment"
+              width={300}
+              height={200}
+              className="w-full h-auto rounded-lg shadow-lg"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg" />
+          </div>
+          <p className="text-sm text-gray-600 font-medium">Add carousel images in admin panel</p>
+          <p className="text-xs text-gray-400 mt-1">現在還沒有輪播圖片</p>
         </div>
       </div>
     )
