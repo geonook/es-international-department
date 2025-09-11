@@ -327,7 +327,14 @@ export default function HomePage() {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                <span className="block">{settings.mainTitle || "Welcome to our Parents' Corner".replace("Parents' Corner", "Parents'\u00A0Corner")}</span>
+                {settings.mainTitle ? (
+                  <span className="block">{settings.mainTitle}</span>
+                ) : (
+                  <>
+                    <span className="block">Welcome to our</span>
+                    <span className="block whitespace-nowrap">Parents' Corner</span>
+                  </>
+                )}
               </motion.h2>
             </motion.div>
 
