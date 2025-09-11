@@ -295,7 +295,7 @@ export default function HomePage() {
 
       <main>
         {/* Hero Section */}
-        <section ref={heroRef} className="relative py-20 overflow-hidden">
+        <section ref={heroRef} className="relative py-12 md:py-16 lg:py-20 overflow-hidden">
           {/* Hero Background Image */}
           {settings.heroImage && (
             <div 
@@ -383,7 +383,7 @@ export default function HomePage() {
 
         {/* Parents Quote Section */}
         <motion.section
-          className="py-20 relative"
+          className="py-8 md:py-12 lg:py-16 relative"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
