@@ -258,10 +258,10 @@ export default function StaticEventsPage() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               {[
-                { name: "KCISLK", href: "https://web.kcislk.ntpc.edu.tw/en/", external: true },
                 { name: "Home", href: "/" },
                 { name: "Events", href: "/events", active: true },
                 { name: "Resources", href: "/resources", hasDropdown: true },
+                { name: "KCISLK", href: "https://web.kcislk.ntpc.edu.tw/en/", external: true },
               ].map((item, index) => (
                 <motion.div
                   key={item.name}
