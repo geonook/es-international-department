@@ -391,27 +391,27 @@ export default function HomePage() {
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {/* Mobile Layout: Text first, then Carousel */}
-            <div className="flex flex-col lg:hidden items-center gap-8">
+            <div className="flex flex-col lg:hidden items-center gap-6">
               <motion.div className="w-full relative" variants={itemVariants}>
                 <motion.div
-                  className="absolute -top-8 -left-8 text-8xl text-purple-200 font-serif"
+                  className="absolute -top-6 -left-6 text-6xl text-purple-200 font-serif"
                   initial={{ opacity: 0, scale: 0 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.5 }}
                 >
                   "
                 </motion.div>
-                <blockquote className="text-3xl md:text-4xl text-gray-700 font-light leading-relaxed relative z-10">
+                <blockquote className="text-2xl md:text-4xl text-gray-700 font-light leading-relaxed relative z-10">
                   {settings.quoteText || "Parents are the cornerstone of a child's education; their support and collaboration with teachers create a powerful partnership that inspires and nurtures lifelong learners."}
                 </blockquote>
 
                 <motion.div
-                  className="mt-12"
+                  className="mt-8"
                   initial={{ opacity: 0, x: -50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 1 }}
                 >
-                  <svg className="w-40 h-24 text-purple-300" viewBox="0 0 200 100" fill="none">
+                  <svg className="w-32 h-20 text-purple-300" viewBox="0 0 200 100" fill="none">
                     <motion.path
                       d="M20 50 Q100 20 180 50"
                       stroke="currentColor"
@@ -442,7 +442,7 @@ export default function HomePage() {
                       autoPlayDelay={5000}
                       showDots={true}
                       showArrows={true}
-                      aspectRatio="responsive"
+                      aspectRatio="compact"
                       className="w-full"
                     />
                   </div>
