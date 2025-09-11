@@ -391,35 +391,7 @@ export default function HomePage() {
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
-              <motion.div className="lg:w-1/2" variants={itemVariants}>
-                <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-                  <div className="relative rounded-3xl shadow-2xl overflow-hidden">
-                    <ContentCarousel
-                      autoPlay={true}
-                      autoPlayDelay={5000}
-                      showDots={true}
-                      showArrows={true}
-                      aspectRatio="responsive"
-                      className="w-full"
-                    />
-                  </div>
-                  <motion.div
-                    className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: "easeInOut",
-                    }}
-                  />
-                </motion.div>
-              </motion.div>
-
-              <motion.div className="lg:w-1/2 relative" variants={itemVariants}>
+              <motion.div className="lg:w-1/2 relative order-1 lg:order-2" variants={itemVariants}>
                 <motion.div
                   className="absolute -top-8 -left-8 text-8xl text-purple-200 font-serif"
                   initial={{ opacity: 0, scale: 0 }}
@@ -457,6 +429,34 @@ export default function HomePage() {
                       transition={{ delay: 2 }}
                     />
                   </svg>
+                </motion.div>
+              </motion.div>
+
+              <motion.div className="lg:w-1/2 order-2 lg:order-1" variants={itemVariants}>
+                <motion.div className="relative group" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                  <div className="relative rounded-3xl shadow-2xl overflow-hidden">
+                    <ContentCarousel
+                      autoPlay={true}
+                      autoPlayDelay={5000}
+                      showDots={true}
+                      showArrows={true}
+                      aspectRatio="responsive"
+                      className="w-full"
+                    />
+                  </div>
+                  <motion.div
+                    className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 180, 360],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
+                  />
                 </motion.div>
               </motion.div>
             </div>
