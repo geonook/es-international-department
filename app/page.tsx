@@ -400,7 +400,7 @@ export default function HomePage() {
                       autoPlayDelay={5000}
                       showDots={true}
                       showArrows={true}
-                      aspectRatio="compact"
+                      aspectRatio="responsive"
                       className="w-full"
                     />
                   </div>

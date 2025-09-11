@@ -36,7 +36,7 @@ interface ContentCarouselProps {
   autoPlayDelay?: number
   showDots?: boolean
   showArrows?: boolean
-  aspectRatio?: 'wide' | 'square' | 'tall' | 'compact'
+  aspectRatio?: 'wide' | 'square' | 'tall' | 'compact' | 'responsive'
 }
 
 export default function ContentCarousel({
@@ -117,12 +117,15 @@ export default function ContentCarousel({
     return () => clearInterval(interval)
   }, [autoPlay, api, autoPlayDelay, images.length, isHovered])
 
-  // 獲取寬高比樣式
+  // 獲取寬高比樣式 - 支援響應式設計
   const getAspectRatioClass = () => {
     switch (aspectRatio) {
       case 'square': return 'aspect-square'
       case 'tall': return 'aspect-[3/4]'
       case 'compact': return 'aspect-[4/3]'
+      case 'responsive': 
+        // 響應式設計: 手機 16:9, 平板 4:3, 桌機 3:2
+        return 'aspect-[16/9] sm:aspect-[16/9] md:aspect-[4/3] lg:aspect-[3/2] xl:aspect-[3/2]'
       case 'wide':
       default: return 'aspect-[16/9]'
     }
@@ -131,7 +134,7 @@ export default function ContentCarousel({
   // Loading 狀態
   if (loading) {
     return (
-      <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 text-purple-600 animate-spin" />
           <p className="text-sm text-gray-500">Loading carousel images...</p>
@@ -144,7 +147,7 @@ export default function ContentCarousel({
   // Error 狀態
   if (error) {
     return (
-      <div className={`w-full ${getAspectRatioClass()} ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] ${className}`}>
         <Alert className="h-full flex items-center justify-center">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="ml-2">
@@ -158,7 +161,7 @@ export default function ContentCarousel({
   // 沒有圖片時的預設狀態
   if (images.length === 0) {
     return (
-      <div className={`w-full ${getAspectRatioClass()} bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border flex items-center justify-center ${className}`}>
         <div className="text-center p-6">
           <div className="relative w-full max-w-xs mx-auto mb-4">
             <Image
@@ -181,13 +184,14 @@ export default function ContentCarousel({
   if (images.length === 1) {
     const image = images[0]
     return (
-      <div className={`w-full ${getAspectRatioClass()} relative overflow-hidden rounded-lg border ${className}`}>
+      <div className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] relative overflow-hidden rounded-lg border ${className}`}>
         <Image
           src={image.imageUrl}
           alt={image.altText}
           fill
           className="object-cover"
           priority
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
         />
         {image.title && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
@@ -204,7 +208,7 @@ export default function ContentCarousel({
   // 多張圖片時使用輪播
   return (
     <div 
-      className={`w-full ${getAspectRatioClass()} relative ${className}`}
+      className={`w-full ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] relative ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -212,13 +216,14 @@ export default function ContentCarousel({
         <CarouselContent className="h-full">
           {images.map((image, index) => (
             <CarouselItem key={image.id} className="h-full">
-              <div className={`relative w-full overflow-hidden rounded-lg ${getAspectRatioClass()}`}>
+              <div className={`relative w-full h-full overflow-hidden rounded-lg ${getAspectRatioClass()} min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px]`}>
                 <Image
                   src={image.imageUrl}
                   alt={image.altText}
                   fill
                   className="object-cover transition-transform duration-500 hover:scale-105"
                   priority={index === 0}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
                 />
                 
                 {/* 圖片信息覆蓋層 */}
@@ -247,27 +252,27 @@ export default function ContentCarousel({
           ))}
         </CarouselContent>
         
-        {/* 控制箭頭 */}
+        {/* 控制箭頭 - 響應式設計 */}
         {showArrows && images.length > 1 && (
           <>
-            <CarouselPrevious className="left-4 bg-white/90 hover:bg-white border-0 shadow-lg" />
-            <CarouselNext className="right-4 bg-white/90 hover:bg-white border-0 shadow-lg" />
+            <CarouselPrevious className="left-2 sm:left-3 md:left-4 w-10 h-10 sm:w-8 sm:h-8 bg-white/90 hover:bg-white border-0 shadow-lg" />
+            <CarouselNext className="right-2 sm:right-3 md:right-4 w-10 h-10 sm:w-8 sm:h-8 bg-white/90 hover:bg-white border-0 shadow-lg" />
           </>
         )}
       </Carousel>
 
-      {/* 指示點 */}
+      {/* 指示點 - 響應式設計 */}
       {showDots && images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5 sm:gap-2 z-10">
           {images.map((_, index) => (
             <button
               key={index}
               onClick={() => api?.scrollTo(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`w-2.5 h-2.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex 
                   ? 'bg-white scale-125' 
                   : 'bg-white/50 hover:bg-white/75'
-              }`}
+              } touch-manipulation`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
