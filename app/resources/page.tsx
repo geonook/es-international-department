@@ -61,8 +61,8 @@ export default function ResourcesPage() {
   // Resource categories data structure
   const resourceCategories = {
     reading: {
-      title: "多元閱讀",
-      description: "透過多樣化的閱讀資源，培養孩子對閱讀的興趣與能力",
+      title: "Diverse Reading",
+      description: "Foster children's interest and ability in reading through diverse resources and engaging programs",
       color: "from-green-500 to-emerald-600",
       icon: BookOpen,
       resources: [
@@ -100,8 +100,8 @@ export default function ResourcesPage() {
       ]
     },
     strategy: {
-      title: "學習策略",
-      description: "基於科學研究的學習策略，幫助學生建立穩固的學習基礎",
+      title: "Learning Strategies",
+      description: "Science-based learning strategies to help students build solid foundations and enhance academic success",
       color: "from-purple-500 to-violet-600", 
       icon: Brain,
       resources: [
@@ -129,8 +129,8 @@ export default function ResourcesPage() {
       ]
     },
     grade12: {
-      title: "低年級專屬 (G1-G2)",
-      description: "專為一、二年級學生設計的過渡教材與學習資源",
+      title: "G1-G2 Exclusive Resources",
+      description: "Specialized transition materials and learning resources designed specifically for Grade 1-2 students",
       color: "from-orange-500 to-red-600",
       icon: GraduationCap,
       resources: [
@@ -176,7 +176,7 @@ export default function ResourcesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-hidden">
       {/* Animated Background - Same as homepage */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -276,8 +276,8 @@ export default function ResourcesPage() {
       </motion.header>
 
       <main>
-        {/* Hero Section */}
-        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+        {/* Hero Section - Parents' Corner Style */}
+        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
           <motion.div 
             className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
             style={{ y: y1 }}
@@ -297,29 +297,36 @@ export default function ResourcesPage() {
                 <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
-                <Badge className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-1">
-                  Learning Resources
+                <Badge className="bg-white/20 backdrop-blur-lg text-white px-4 py-1">
+                  Parents' Corner Resources
                 </Badge>
               </motion.div>
 
               <motion.h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+                className="text-4xl md:text-5xl lg:text-6xl font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 mb-6 leading-tight"
                 initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                animate={{ opacity: 1, y: 0, backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                transition={{ 
+                  opacity: { delay: 0.3 },
+                  y: { delay: 0.3 },
+                  backgroundPosition: {
+                    duration: 5,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "linear"
+                  }
+                }}
+                style={{ backgroundSize: "200% 200%" }}
               >
-                <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                  學習資源中心
-                </span>
+                Learning Resource Center
               </motion.h2>
 
               <motion.p
-                className="text-lg md:text-xl text-gray-700 leading-relaxed"
+                className="text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                為家長、教師和學生提供全面的學習資源，支持各年級的學術發展與成功
+                Comprehensive learning resources for parents, teachers, and students to support academic development and success across all grade levels
               </motion.p>
             </motion.div>
           </motion.div>
@@ -337,7 +344,7 @@ export default function ResourcesPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               variants={itemVariants}
-              className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
+              className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/30 overflow-hidden"
             >
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 {/* Tab Navigation */}
@@ -347,27 +354,27 @@ export default function ResourcesPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-white/90 backdrop-blur-lg shadow-xl border border-white/20 p-1 rounded-2xl overflow-hidden">
+                  <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-white/95 backdrop-blur-lg shadow-xl border border-white/30 p-1 rounded-2xl overflow-hidden">
                     <TabsTrigger 
                       value="reading" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-green-50"
                     >
                       <BookOpen className="w-4 h-4" />
-                      <span className="text-sm font-medium">多元閱讀</span>
+                      <span className="text-sm font-medium">Diverse Reading</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="strategy" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-purple-50"
                     >
                       <Brain className="w-4 h-4" />
-                      <span className="text-sm font-medium">學習策略</span>
+                      <span className="text-sm font-medium">Learning Strategies</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="grade12" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-orange-50"
                     >
                       <GraduationCap className="w-4 h-4" />
-                      <span className="text-sm font-medium">低年級專屬</span>
+                      <span className="text-sm font-medium">G1-G2 Exclusive</span>
                     </TabsTrigger>
                   </TabsList>
                 </motion.div>
@@ -508,7 +515,7 @@ export default function ResourcesPage() {
 
         {/* Call to Action Section */}
         <motion.section
-          className="py-16 md:py-20 relative overflow-hidden"
+          className="py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -517,19 +524,19 @@ export default function ResourcesPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <motion.div variants={itemVariants}>
               <motion.h3
-                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+                className="text-3xl md:text-4xl font-bold text-white mb-6"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
-                需要更多資源？
+                Need More Resources?
               </motion.h3>
               <motion.p
-                className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
+                className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto"
                 initial={{ y: 30, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                如需更多學習教材或對使用這些資源有任何疑問，請聯繫我們的團隊
+                Contact our team for additional learning materials or if you have questions about using these resources
               </motion.p>
 
               <motion.div
@@ -543,7 +550,7 @@ export default function ResourcesPage() {
                     size="lg"
                     className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
                   >
-                    聯繫支援團隊
+                    Contact Support Team
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -553,7 +560,7 @@ export default function ResourcesPage() {
                       variant="outline"
                       className="w-full sm:w-auto border-2 border-purple-300 text-purple-700 hover:bg-purple-50 px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                     >
-                      返回首頁
+                      Back to Home
                     </Button>
                   </Link>
                 </motion.div>
