@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
+import BackToTop from "@/components/ui/back-to-top"
 import { useState } from "react"
 
 /**
@@ -240,6 +241,7 @@ export default function ResourcesPage() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               {[
+                { name: "KCISLK", href: "https://web.kcislk.ntpc.edu.tw/en/", external: true },
                 { name: "Home", href: "/" },
                 { name: "Events", href: "/events" },
                 { name: "Resources", href: "/resources", active: true, hasDropdown: true },
@@ -252,6 +254,7 @@ export default function ResourcesPage() {
                 >
                   <Link
                     href={item.href}
+                    {...(item.external && { target: "_blank", rel: "noopener noreferrer" })}
                     className={`relative px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-1 ${
                       item.active
                         ? "text-purple-600 bg-purple-100/50"
@@ -718,6 +721,9 @@ export default function ResourcesPage() {
           </div>
         </div>
       </footer>
+
+      {/* Back to Top Button */}
+      <BackToTop />
     </div>
   )
 }

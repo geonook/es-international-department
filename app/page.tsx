@@ -16,6 +16,7 @@ import MobileNav from "@/components/ui/mobile-nav"
 import PacingGuides from "@/components/PacingGuides"
 import IDSquads from "@/components/IDSquads"
 import ContentCarousel from "@/components/ContentCarousel"
+import BackToTop from "@/components/ui/back-to-top"
 
 /**
  * 首頁組件 - ES 國際部家長門戶網站
@@ -253,6 +254,7 @@ export default function HomePage() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               {[
+                { name: "KCISLK", href: "https://web.kcislk.ntpc.edu.tw/en/", external: true },
                 { name: "Home", href: "/", active: true },
                 { name: "Events", href: "/events" },
                 { name: "Resources", href: "/resources", hasDropdown: true },
@@ -265,6 +267,7 @@ export default function HomePage() {
                 >
                   <Link
                     href={item.href}
+                    {...(item.external && { target: "_blank", rel: "noopener noreferrer" })}
                     className={`relative px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-1 ${
                       item.active
                         ? "text-purple-600 bg-purple-100/50"
@@ -282,9 +285,6 @@ export default function HomePage() {
                   </Link>
                 </motion.div>
               ))}
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Search className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600 transition-colors" />
-              </motion.div>
             </nav>
 
             {/* Mobile Navigation */}
@@ -1167,6 +1167,9 @@ Browse Complete Newsletter Archive
           </div>
         </div>
       </footer>
+
+      {/* Back to Top Button */}
+      <BackToTop />
     </div>
   )
 }
