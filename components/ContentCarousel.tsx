@@ -36,7 +36,7 @@ interface ContentCarouselProps {
   autoPlayDelay?: number
   showDots?: boolean
   showArrows?: boolean
-  aspectRatio?: 'wide' | 'square' | 'tall' | 'compact' | 'responsive'
+  aspectRatio?: 'wide' | 'square' | 'tall' | 'compact' | 'responsive' | 'mobile'
 }
 
 export default function ContentCarousel({
@@ -123,6 +123,7 @@ export default function ContentCarousel({
       case 'square': return 'aspect-square'
       case 'tall': return 'aspect-[3/4]'
       case 'compact': return 'aspect-[4/3]'
+      case 'mobile': return 'aspect-[5/3]'
       case 'responsive': 
         // 卡片式設計: 統一使用正方形比例，創造卡片感
         return 'aspect-square'

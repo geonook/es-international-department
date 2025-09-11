@@ -401,12 +401,12 @@ export default function HomePage() {
                 >
                   "
                 </motion.div>
-                <blockquote className="text-2xl md:text-4xl text-gray-700 font-light leading-relaxed relative z-10">
+                <blockquote className="text-2xl md:text-4xl text-gray-700 font-light leading-normal md:leading-relaxed relative z-10">
                   {settings.quoteText || "Parents are the cornerstone of a child's education; their support and collaboration with teachers create a powerful partnership that inspires and nurtures lifelong learners."}
                 </blockquote>
 
                 <motion.div
-                  className="mt-8"
+                  className="mt-8 hidden md:block"
                   initial={{ opacity: 0, x: -50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 1 }}
@@ -442,7 +442,7 @@ export default function HomePage() {
                       autoPlayDelay={5000}
                       showDots={true}
                       showArrows={true}
-                      aspectRatio="compact"
+                      aspectRatio="mobile"
                       className="w-full"
                     />
                   </div>
