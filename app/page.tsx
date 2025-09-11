@@ -383,7 +383,7 @@ export default function HomePage() {
 
         {/* Parents Quote Section */}
         <motion.section
-          className="py-8 md:py-12 lg:py-16 relative"
+          className="py-8 pb-12 md:py-12 lg:py-16 relative"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -537,7 +537,7 @@ export default function HomePage() {
         </motion.section>
 
         {/* International Department NEWS */}
-        <motion.section className="py-20 relative overflow-hidden" style={{ y: y2 }}>
+        <motion.section className="pt-24 pb-20 relative overflow-hidden" style={{ y: y2 }}>
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/90 to-purple-800/90" />
           <div className="absolute inset-0 opacity-10">
             <div
