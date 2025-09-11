@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
@@ -11,8 +10,7 @@ import {
   FileText, 
   Users, 
   Sparkles, 
-  ChevronDown,
-  Eye
+  ChevronDown
 } from "lucide-react"
 import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
@@ -21,8 +19,8 @@ import MobileNav from "@/components/ui/mobile-nav"
 /**
  * Resources Page Component - KCISLK ESID Learning Resource Center
  * 
- * @description Provides learning resources for all grade levels, including PDF materials, video content, interactive tools, and external learning platforms
- * @features Dynamic resource loading, graded learning resources, search functionality, multiple resource types, download capabilities
+ * @description Static resource page matching Google Sites structure exactly
+ * @features Static resources, image placeholders, Google Sites structure
  * @author Claude Code | Generated for KCISLK ESID Info Hub
  */
 
@@ -47,37 +45,35 @@ export default function ResourcesPage() {
   // Scroll parallax effect
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
-  
-  // No filter or search needed
 
-  // Complete static resource data from Google Sites
+  // Complete static resource data following Google Sites structure exactly
   const staticResources: Resource[] = [
-    // Parent Support Resources
+    // Parent Resources (matching Google Sites exactly)
     {
       id: 1,
-      title: "Parent Support Guide",
-      description: "Comprehensive guide for parents to support their children's learning journey at home",
+      title: "Parent Resources",
+      description: "Parents play a crucial role in their children's development. Offers informative articles and online tools.",
       resourceType: "document",
       gradeLevel: "parents",
-      category: "parent-support",
+      category: "parent-resources",
       externalUrl: "https://drive.google.com/drive/folders/parent-support",
-      tags: ["parents", "support", "home-learning"],
+      tags: ["parents", "support", "development"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "ESID Team" }
     },
     
-    // G1-G2 Transition Materials from Google Sites
+    // G1-G2 Transition Materials - Summer 2025 (from Google Sites)
     {
       id: 2,
       title: "Henry on Wheels",
       description: "Transition reading material for G1-G2 students",
       resourceType: "pdf",
       gradeLevel: "1-2",
-      category: "reading",
+      category: "g1-g2-transition",
       downloadUrl: "/resources/henry-on-wheels.pdf",
       externalUrl: "https://drive.google.com/file/d/henry-on-wheels",
-      tags: ["transition", "reading", "G1-G2"],
+      tags: ["transition", "summer-2025", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Reading Department" }
@@ -88,10 +84,10 @@ export default function ResourcesPage() {
       description: "Science and reading integrated material about animal growth",
       resourceType: "pdf",
       gradeLevel: "1-2",
-      category: "reading",
+      category: "g1-g2-transition",
       downloadUrl: "/resources/baby-animals-grow.pdf",
       externalUrl: "https://drive.google.com/file/d/baby-animals-grow",
-      tags: ["transition", "reading", "science", "G1-G2"],
+      tags: ["transition", "summer-2025", "science", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Reading Department" }
@@ -102,10 +98,10 @@ export default function ResourcesPage() {
       description: "Creative arts integration with reading comprehension",
       resourceType: "pdf",
       gradeLevel: "1-2",
-      category: "reading",
+      category: "g1-g2-transition",
       downloadUrl: "/resources/thumbs-up-art-music.pdf",
       externalUrl: "https://drive.google.com/file/d/thumbs-up-art-music",
-      tags: ["transition", "reading", "arts", "G1-G2"],
+      tags: ["transition", "summer-2025", "arts", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Arts & Reading Department" }
@@ -116,10 +112,10 @@ export default function ResourcesPage() {
       description: "Social studies and reading material about national symbols",
       resourceType: "pdf",
       gradeLevel: "1-2",
-      category: "reading",
+      category: "g1-g2-transition",
       downloadUrl: "/resources/story-of-our-flag.pdf",
       externalUrl: "https://drive.google.com/file/d/story-of-our-flag",
-      tags: ["transition", "reading", "social-studies", "G1-G2"],
+      tags: ["transition", "summer-2025", "social-studies", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Social Studies Department" }
@@ -130,10 +126,10 @@ export default function ResourcesPage() {
       description: "Seasonal reading material with vocabulary and comprehension activities",
       resourceType: "pdf",
       gradeLevel: "1-2",
-      category: "reading",
+      category: "g1-g2-transition",
       downloadUrl: "/resources/my-autumn-book.pdf",
       externalUrl: "https://drive.google.com/file/d/my-autumn-book",
-      tags: ["transition", "reading", "seasons", "G1-G2"],
+      tags: ["transition", "summer-2025", "seasons", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Reading Department" }
@@ -144,65 +140,69 @@ export default function ResourcesPage() {
       description: "Interactive games for reviewing reading and vocabulary skills",
       resourceType: "interactive",
       gradeLevel: "1-2",
-      category: "reading",
+      category: "g1-g2-transition",
       externalUrl: "https://drive.google.com/drive/folders/review-games",
-      tags: ["games", "review", "interactive", "G1-G2"],
+      tags: ["games", "review", "summer-2025", "G1-G2"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "ESID Team" }
     },
     
-    // Reading Support Resources
+    // Reading Buddies (separate section as per Google Sites)
     {
       id: 8,
-      title: "Reading Buddies YouTube Channel",
-      description: "Video resources for reading practice with peer support",
+      title: "Reading Buddies",
+      description: "Combines the science of reading with lots of laughter. YouTube channel with engaging video content.",
       resourceType: "video",
-      gradeLevel: "1-2",
-      category: "reading",
+      gradeLevel: "all",
+      category: "reading-buddies",
       externalUrl: "https://www.youtube.com/@readingbuddies",
-      tags: ["video", "reading", "peer-learning"],
+      tags: ["video", "reading", "science-of-reading"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Reading Buddies Team" }
     },
+    
+    // Five Components of Reading (separate section)
     {
       id: 9,
       title: "The Five Components of Reading",
-      description: "Comprehensive guide to the five essential components of reading: phonemic awareness, phonics, fluency, vocabulary, and comprehension",
+      description: "Link to scientific research document. Emphasizes systematic practice of reading components: phonemic awareness, phonics, fluency, vocabulary, and comprehension.",
       resourceType: "document",
-      gradeLevel: "1-2",
-      category: "reading",
+      gradeLevel: "all",
+      category: "five-components",
       externalUrl: "https://drive.google.com/file/d/five-components-reading",
-      tags: ["reading", "fundamentals", "guide"],
+      tags: ["reading", "research", "systematic", "components"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Reading Department" }
     },
+    
+    // Reading Campaign - Fall 2024 (separate section)
     {
       id: 10,
-      title: "Fall 2024 Weekly Reading Challenge",
-      description: "Weekly texts and quizzes to improve reading comprehension skills",
+      title: "Reading Campaign",
+      description: "Fall 2024: Weekly Reading Challenge. Focuses on reading beyond textbooks with weekly texts and comprehension activities.",
       resourceType: "interactive",
-      gradeLevel: "1-2",
-      category: "reading",
+      gradeLevel: "all",
+      category: "reading-campaign",
       externalUrl: "https://drive.google.com/drive/folders/weekly-reading-challenge",
-      tags: ["challenge", "weekly", "reading", "quiz"],
+      tags: ["fall-2024", "weekly", "challenge", "beyond-textbooks"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Reading Campaign Team" }
     },
     
-    // Language Learning Resources
+    // Building Background Knowledge - Spring 2025 (final section)
     {
       id: 11,
-      title: "Spring 2025: Building Background Knowledge",
-      description: "Resources for building essential background knowledge to support language learning",
+      title: "Building Background Knowledge",
+      description: "Spring 2025 resources. Emphasizes importance for English Language Learners with comprehensive materials.",
       resourceType: "document",
-      gradeLevel: "1-2",
-      category: "language",
+      gradeLevel: "all",
+      category: "background-knowledge",
       externalUrl: "https://drive.google.com/drive/folders/background-knowledge",
-      tags: ["language", "background-knowledge", "spring-2025"],
+      tags: ["spring-2025", "ELL", "background-knowledge"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "Language Department" }
@@ -210,136 +210,26 @@ export default function ResourcesPage() {
     {
       id: 12,
       title: "ReadWorks - Article a Day",
-      description: "Daily reading articles with comprehension questions. Build reading stamina and background knowledge",
+      description: "Includes ReadWorks recommendation. Daily reading articles with comprehension questions. Build reading stamina and background knowledge.",
       resourceType: "external",
-      gradeLevel: "1-2",
-      category: "language",
+      gradeLevel: "all",
+      category: "background-knowledge",
       externalUrl: "https://www.readworks.org/",
-      tags: ["daily-reading", "comprehension", "readworks"],
+      tags: ["daily-reading", "stamina", "recommended", "spring-2025"],
       isActive: true,
       createdAt: "2025-01-01T00:00:00Z",
       creator: { displayName: "ReadWorks Partnership" }
-    },
-    
-    // Grades 3-4 Resources
-    {
-      id: 13,
-      title: "Advanced Reading Comprehension",
-      description: "Enhanced reading materials for intermediate learners",
-      resourceType: "pdf",
-      gradeLevel: "3-4",
-      category: "reading",
-      downloadUrl: "/resources/advanced-reading.pdf",
-      tags: ["reading", "comprehension", "G3-G4"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Zhou" }
-    },
-    {
-      id: 14,
-      title: "Writing Workshop Resources",
-      description: "Creative and academic writing support materials",
-      resourceType: "document",
-      gradeLevel: "3-4",
-      category: "writing",
-      externalUrl: "https://drive.google.com/writing-workshop",
-      tags: ["writing", "creative", "G3-G4"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Huang" }
-    },
-    {
-      id: 15,
-      title: "Grammar and Vocabulary Builder",
-      description: "Interactive exercises for improving grammar and expanding vocabulary",
-      resourceType: "interactive",
-      gradeLevel: "3-4",
-      category: "language",
-      externalUrl: "https://drive.google.com/grammar-vocabulary",
-      tags: ["grammar", "vocabulary", "G3-G4"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Language Department" }
-    },
-    
-    // Grades 5-6 Resources
-    {
-      id: 16,
-      title: "Critical Thinking Materials",
-      description: "Advanced analytical and critical thinking resources",
-      resourceType: "interactive",
-      gradeLevel: "5-6",
-      category: "thinking",
-      externalUrl: "https://drive.google.com/critical-thinking",
-      tags: ["thinking", "analysis", "G5-G6"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Zhang" }
-    },
-    {
-      id: 17,
-      title: "Research Project Guides",
-      description: "Comprehensive guides for independent research projects",
-      resourceType: "pdf",
-      gradeLevel: "5-6",
-      category: "research",
-      downloadUrl: "/resources/research-guides.pdf",
-      tags: ["research", "projects", "G5-G6"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Teacher Xu" }
-    },
-    {
-      id: 18,
-      title: "Academic Writing Excellence",
-      description: "Advanced academic writing techniques and essay structures",
-      resourceType: "document",
-      gradeLevel: "5-6",
-      category: "writing",
-      externalUrl: "https://drive.google.com/academic-writing",
-      tags: ["writing", "academic", "essays", "G5-G6"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Writing Department" }
-    },
-    
-    // Additional Parent Resources
-    {
-      id: 19,
-      title: "Home Reading Strategies",
-      description: "Effective strategies for parents to support reading at home",
-      resourceType: "document",
-      gradeLevel: "parents",
-      category: "parent-support",
-      externalUrl: "https://drive.google.com/home-reading-strategies",
-      tags: ["parents", "reading", "home-support"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "Parent Engagement Team" }
-    },
-    {
-      id: 20,
-      title: "Parent-Teacher Communication Guide",
-      description: "Guidelines for effective communication between parents and teachers",
-      resourceType: "document",
-      gradeLevel: "parents",
-      category: "parent-support",
-      externalUrl: "https://drive.google.com/parent-teacher-communication",
-      tags: ["parents", "communication", "partnership"],
-      isActive: true,
-      createdAt: "2025-01-01T00:00:00Z",
-      creator: { displayName: "ESID Administration" }
     }
   ]
 
-  // Group resources by category/theme for cleaner presentation
-  const groupedByTheme = {
-    'parent-support': staticResources.filter(r => r.category === 'parent-support'),
-    'g1-g2-transition': staticResources.filter(r => r.gradeLevel === '1-2' && r.tags?.includes('transition')),
-    'reading-support': staticResources.filter(r => r.category === 'reading' && r.gradeLevel === '1-2' && !r.tags?.includes('transition')),
-    'language-learning': staticResources.filter(r => r.category === 'language' && r.gradeLevel === '1-2'),
-    'grades-3-4': staticResources.filter(r => r.gradeLevel === '3-4'),
-    'grades-5-6': staticResources.filter(r => r.gradeLevel === '5-6')
+  // Group resources by Google Sites structure exactly
+  const groupedByGoogleSites = {
+    'parent-resources': staticResources.filter(r => r.category === 'parent-resources'),
+    'g1-g2-transition': staticResources.filter(r => r.category === 'g1-g2-transition'),
+    'reading-buddies': staticResources.filter(r => r.category === 'reading-buddies'),
+    'five-components': staticResources.filter(r => r.category === 'five-components'),
+    'reading-campaign': staticResources.filter(r => r.category === 'reading-campaign'),
+    'background-knowledge': staticResources.filter(r => r.category === 'background-knowledge')
   }
 
   // Get resource icon
@@ -350,10 +240,9 @@ export default function ResourcesPage() {
       case 'document': return FileText
       case 'interactive': return BookOpen
       case 'external': return ExternalLink
-      default: return Folder
+      default: return FileText
     }
   }
-
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -489,8 +378,6 @@ export default function ResourcesPage() {
           </motion.p>
         </motion.div>
 
-
-
         {/* Mission Statement */}
         <motion.section
           className="mb-16"
@@ -539,11 +426,10 @@ export default function ResourcesPage() {
           </Card>
         </motion.section>
 
-
-        {/* Resource Sections by Theme */}
+        {/* Resource Sections Following Google Sites Structure Exactly */}
         <div className="space-y-16">
-          {/* Parent Support Section */}
-          {groupedByTheme['parent-support'].length > 0 && (
+          {/* 1. Parent Resources Section */}
+          {groupedByGoogleSites['parent-resources'].length > 0 && (
             <motion.section
               className="mb-16"
               variants={containerVariants}
@@ -559,6 +445,10 @@ export default function ResourcesPage() {
                       animate={{ x: ["-100%", "100%"] }}
                       transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                     />
+                    {/* Image placeholder area */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Users className="h-8 w-8 text-white/60" />
+                    </div>
                     <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
                       <motion.div
                         animate={{ rotate: [0, 10, -10, 0] }}
@@ -566,15 +456,22 @@ export default function ResourcesPage() {
                       >
                         <Users className="h-8 w-8" />
                       </motion.div>
-                      Parent Support Resources
+                      Parent Resources
                     </CardTitle>
                     <CardDescription className="text-white/90 text-lg relative z-10">
-                      Essential resources to support your child's learning journey at home
+                      Parents play a crucial role in their children's development
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
+                    {/* Main image space */}
+                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-rose-50 to-pink-50 rounded-lg flex items-center justify-center border-2 border-dashed border-rose-200">
+                      <div className="text-center">
+                        <Users className="h-8 w-8 text-rose-400 mx-auto mb-2" />
+                        <p className="text-sm text-rose-600">Parents supporting child development</p>
+                      </div>
+                    </div>
                     <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByTheme['parent-support'].map((resource) => {
+                      {groupedByGoogleSites['parent-resources'].map((resource) => {
                         const IconComponent = getResourceIcon(resource.resourceType)
                         return (
                           <motion.div key={resource.id} variants={itemVariants}>
@@ -628,8 +525,8 @@ export default function ResourcesPage() {
             </motion.section>
           )}
 
-          {/* G1-G2 Transition Materials */}
-          {groupedByTheme['g1-g2-transition'].length > 0 && (
+          {/* 2. G1-G2 Transition Materials - Summer 2025 */}
+          {groupedByGoogleSites['g1-g2-transition'].length > 0 && (
             <motion.section
               className="mb-16"
               variants={containerVariants}
@@ -645,6 +542,10 @@ export default function ResourcesPage() {
                       animate={{ x: ["-100%", "100%"] }}
                       transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                     />
+                    {/* Image placeholder area */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                      <BookOpen className="h-8 w-8 text-white/60" />
+                    </div>
                     <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
                       <motion.div
                         animate={{ rotate: [0, 10, -10, 0] }}
@@ -655,12 +556,19 @@ export default function ResourcesPage() {
                       G1-G2 Transition Materials
                     </CardTitle>
                     <CardDescription className="text-white/90 text-lg relative z-10">
-                      Essential reading materials to support the transition to formal education
+                      Summer 2025 - Essential reading materials to support the transition to formal education
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
+                    {/* Main image space */}
+                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg flex items-center justify-center border-2 border-dashed border-blue-200">
+                      <div className="text-center">
+                        <BookOpen className="h-8 w-8 text-blue-400 mx-auto mb-2" />
+                        <p className="text-sm text-blue-600">Summer 2025 Transition Materials</p>
+                      </div>
+                    </div>
                     <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByTheme['g1-g2-transition'].map((resource) => {
+                      {groupedByGoogleSites['g1-g2-transition'].map((resource) => {
                         const IconComponent = getResourceIcon(resource.resourceType)
                         return (
                           <motion.div key={resource.id} variants={itemVariants}>
@@ -714,8 +622,8 @@ export default function ResourcesPage() {
             </motion.section>
           )}
 
-          {/* Reading Support Resources */}
-          {groupedByTheme['reading-support'].length > 0 && (
+          {/* 3. Reading Buddies */}
+          {groupedByGoogleSites['reading-buddies'].length > 0 && (
             <motion.section
               className="mb-16"
               variants={containerVariants}
@@ -731,22 +639,33 @@ export default function ResourcesPage() {
                       animate={{ x: ["-100%", "100%"] }}
                       transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                     />
+                    {/* Image placeholder area */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Play className="h-8 w-8 text-white/60" />
+                    </div>
                     <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
                       <motion.div
                         animate={{ rotate: [0, 10, -10, 0] }}
                         transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                       >
-                        <BookOpen className="h-8 w-8" />
+                        <Play className="h-8 w-8" />
                       </motion.div>
-                      Reading Support Resources
+                      Reading Buddies
                     </CardTitle>
                     <CardDescription className="text-white/90 text-lg relative z-10">
-                      Tools and materials to strengthen reading comprehension and fluency
+                      Combines the science of reading with lots of laughter
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
+                    {/* Main image space */}
+                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg flex items-center justify-center border-2 border-dashed border-green-200">
+                      <div className="text-center">
+                        <Play className="h-8 w-8 text-green-400 mx-auto mb-2" />
+                        <p className="text-sm text-green-600">Reading Buddies YouTube Channel</p>
+                      </div>
+                    </div>
                     <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByTheme['reading-support'].map((resource) => {
+                      {groupedByGoogleSites['reading-buddies'].map((resource) => {
                         const IconComponent = getResourceIcon(resource.resourceType)
                         return (
                           <motion.div key={resource.id} variants={itemVariants}>
@@ -800,8 +719,8 @@ export default function ResourcesPage() {
             </motion.section>
           )}
 
-          {/* Language Learning Resources */}
-          {groupedByTheme['language-learning'].length > 0 && (
+          {/* 4. The Five Components of Reading */}
+          {groupedByGoogleSites['five-components'].length > 0 && (
             <motion.section
               className="mb-16"
               variants={containerVariants}
@@ -817,22 +736,33 @@ export default function ResourcesPage() {
                       animate={{ x: ["-100%", "100%"] }}
                       transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                     />
+                    {/* Image placeholder area */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                      <FileText className="h-8 w-8 text-white/60" />
+                    </div>
                     <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
                       <motion.div
                         animate={{ rotate: [0, 10, -10, 0] }}
                         transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                       >
-                        <BookOpen className="h-8 w-8" />
+                        <FileText className="h-8 w-8" />
                       </motion.div>
-                      Language Learning Resources
+                      The Five Components of Reading
                     </CardTitle>
                     <CardDescription className="text-white/90 text-lg relative z-10">
-                      Building essential language skills and background knowledge
+                      Link to scientific research document - Emphasizes systematic practice
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
+                    {/* Main image space */}
+                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg flex items-center justify-center border-2 border-dashed border-purple-200">
+                      <div className="text-center">
+                        <FileText className="h-8 w-8 text-purple-400 mx-auto mb-2" />
+                        <p className="text-sm text-purple-600">Scientific Research Document</p>
+                      </div>
+                    </div>
                     <motion.div className="space-y-4" variants={containerVariants}>
-                      {groupedByTheme['language-learning'].map((resource) => {
+                      {groupedByGoogleSites['five-components'].map((resource) => {
                         const IconComponent = getResourceIcon(resource.resourceType)
                         return (
                           <motion.div key={resource.id} variants={itemVariants}>
@@ -840,6 +770,200 @@ export default function ResourcesPage() {
                               <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-purple-500 transition-colors" />
                               <div className="flex-1">
                                 <h4 className="font-medium text-gray-900 group-hover:text-purple-700 transition-colors">
+                                  {resource.title}
+                                </h4>
+                                {resource.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {resource.externalUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => window.open(resource.externalUrl, '_blank')}
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    Open
+                                  </Button>
+                                )}
+                                {resource.downloadUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => {
+                                      const link = document.createElement('a')
+                                      link.href = resource.downloadUrl!
+                                      link.download = ''
+                                      link.click()
+                                    }}
+                                  >
+                                    <Download className="h-3 w-3" />
+                                    Download
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )
+                      })}
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.section>
+          )}
+
+          {/* 5. Reading Campaign - Fall 2024 */}
+          {groupedByGoogleSites['reading-campaign'].length > 0 && (
+            <motion.section
+              className="mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white relative overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                    />
+                    {/* Image placeholder area */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                      <BookOpen className="h-8 w-8 text-white/60" />
+                    </div>
+                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                      >
+                        <BookOpen className="h-8 w-8" />
+                      </motion.div>
+                      Reading Campaign
+                    </CardTitle>
+                    <CardDescription className="text-white/90 text-lg relative z-10">
+                      Fall 2024: Weekly Reading Challenge - Focuses on reading beyond textbooks
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    {/* Main image space */}
+                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg flex items-center justify-center border-2 border-dashed border-orange-200">
+                      <div className="text-center">
+                        <BookOpen className="h-8 w-8 text-orange-400 mx-auto mb-2" />
+                        <p className="text-sm text-orange-600">Fall 2024 Weekly Reading Challenge</p>
+                      </div>
+                    </div>
+                    <motion.div className="space-y-4" variants={containerVariants}>
+                      {groupedByGoogleSites['reading-campaign'].map((resource) => {
+                        const IconComponent = getResourceIcon(resource.resourceType)
+                        return (
+                          <motion.div key={resource.id} variants={itemVariants}>
+                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-orange-50/50 transition-colors group">
+                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-orange-500 transition-colors" />
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 group-hover:text-orange-700 transition-colors">
+                                  {resource.title}
+                                </h4>
+                                {resource.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {resource.externalUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => window.open(resource.externalUrl, '_blank')}
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    Open
+                                  </Button>
+                                )}
+                                {resource.downloadUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => {
+                                      const link = document.createElement('a')
+                                      link.href = resource.downloadUrl!
+                                      link.download = ''
+                                      link.click()
+                                    }}
+                                  >
+                                    <Download className="h-3 w-3" />
+                                    Download
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )
+                      })}
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.section>
+          )}
+
+          {/* 6. Building Background Knowledge - Spring 2025 */}
+          {groupedByGoogleSites['background-knowledge'].length > 0 && (
+            <motion.section
+              className="mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white relative overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                    />
+                    {/* Image placeholder area */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Sparkles className="h-8 w-8 text-white/60" />
+                    </div>
+                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                      >
+                        <Sparkles className="h-8 w-8" />
+                      </motion.div>
+                      Building Background Knowledge
+                    </CardTitle>
+                    <CardDescription className="text-white/90 text-lg relative z-10">
+                      Spring 2025 - Emphasizes importance for English Language Learners
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    {/* Main image space */}
+                    <div className="mb-6 w-full h-32 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg flex items-center justify-center border-2 border-dashed border-cyan-200">
+                      <div className="text-center">
+                        <Sparkles className="h-8 w-8 text-cyan-400 mx-auto mb-2" />
+                        <p className="text-sm text-cyan-600">Spring 2025 - ELL Support Resources</p>
+                      </div>
+                    </div>
+                    <motion.div className="space-y-4" variants={containerVariants}>
+                      {groupedByGoogleSites['background-knowledge'].map((resource) => {
+                        const IconComponent = getResourceIcon(resource.resourceType)
+                        return (
+                          <motion.div key={resource.id} variants={itemVariants}>
+                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-cyan-50/50 transition-colors group">
+                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-cyan-500 transition-colors" />
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 group-hover:text-cyan-700 transition-colors">
                                   {resource.title}
                                 </h4>
                                 {resource.description && (
