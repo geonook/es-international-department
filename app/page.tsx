@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar, Newspaper, X } from "lucide-react"
+import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar, Newspaper, Megaphone, X } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
@@ -601,7 +601,7 @@ export default function HomePage() {
                       value="news" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-800 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px]"
                     >
-                      <BookOpen className="w-4 h-4 flex-shrink-0" />
+                      <Megaphone className="w-4 h-4 flex-shrink-0" />
                       <span className="hidden md:inline text-sm truncate">News & Announcements</span>
                       <span className="hidden sm:inline md:hidden text-xs truncate">News</span>
                       <span className="sm:hidden text-xs truncate">News</span>
@@ -630,7 +630,7 @@ export default function HomePage() {
                       <Card className="bg-white/95 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
                         <CardHeader className="text-center pb-4 bg-gradient-to-r from-purple-50 to-pink-50">
                           <CardTitle className="text-3xl text-purple-700 flex items-center justify-center gap-3">
-                            <BookOpen className="w-8 h-8" />
+                            <Megaphone className="w-8 h-8" />
                             ID News & Announcements
                           </CardTitle>
                           <p className="text-sm text-gray-600 mt-2">Latest updates, announcements, and important notices from ES International Department</p>
@@ -690,7 +690,7 @@ export default function HomePage() {
                                     <div className="flex items-start gap-3 sm:gap-4">
                                       <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br ${styles.icon} rounded-full flex items-center justify-center shadow-md flex-shrink-0`}>
                                         {message.isPinned ? (
-                                          <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                          <Megaphone className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                         ) : message.type === 'announcement' ? (
                                           <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                         ) : (
@@ -745,7 +745,7 @@ export default function HomePage() {
                               })
                             ) : (
                               <div className="text-center py-16 text-gray-500">
-                                <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                                <Megaphone className="w-16 h-16 mx-auto mb-4 opacity-50" />
                                 <h3 className="text-lg font-medium mb-2">No Messages Available</h3>
                                 <p className="text-sm">Latest announcements and information will be displayed here</p>
                               </div>

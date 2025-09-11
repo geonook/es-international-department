@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Newspaper, BookOpen, Trophy } from 'lucide-react'
+import { Megaphone, BookOpen, Trophy } from 'lucide-react'
 
 /**
  * SideNavGuide Component
@@ -28,7 +28,7 @@ const sections: NavSection[] = [
   { 
     id: 'id-news', 
     label: 'ID NEWS', 
-    icon: Newspaper,
+    icon: Megaphone,
     offset: -80 // 考慮固定導航欄高度
   },
   { 
