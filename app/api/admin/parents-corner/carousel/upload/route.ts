@@ -8,6 +8,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 import { requireAdminAuth } from '@/lib/auth-utils'
+import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
@@ -84,16 +85,45 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Upload successful:', fileUrl)
 
+    // 獲取額外的元數據
+    const title = formData.get('title') as string || ''
+    const description = formData.get('description') as string || ''
+    const altText = formData.get('altText') as string || 'Family learning moment'
+
+    // 確定輪播順序
+    const maxOrder = await prisma.contentCarouselImage.aggregate({
+      _max: { order: true }
+    })
+    const nextOrder = (maxOrder._max.order || 0) + 1
+
+    // 創建輪播圖片記錄
+    const carouselImage = await prisma.contentCarouselImage.create({
+      data: {
+        title: title || null,
+        description: description || null,
+        imageUrl: fileUrl,
+        altText,
+        order: nextOrder,
+        isActive: true,
+        uploadedBy: authResult.user.id
+      },
+      include: {
+        uploader: {
+          select: {
+            id: true,
+            email: true,
+            displayName: true
+          }
+        }
+      }
+    })
+
+    console.log('✅ Created carousel image record:', carouselImage.id)
+
     return NextResponse.json({
       success: true,
-      data: {
-        url: fileUrl,
-        filename: fileName,
-        originalName: file.name,
-        size: file.size,
-        type: file.type
-      },
-      message: 'File uploaded successfully'
+      data: carouselImage,
+      message: 'Carousel image uploaded and created successfully'
     })
 
   } catch (error) {

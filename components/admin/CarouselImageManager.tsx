@@ -49,7 +49,7 @@ interface EditingImage extends Partial<CarouselImageData> {
 }
 
 export default function CarouselImageManager({ className = '' }: CarouselImageManagerProps) {
-  const { images, loading, error, refetch, addImage, updateImage, deleteImage, reorderImages } = useCarouselImages()
+  const { images, loading, error, refetch, updateImage, deleteImage, reorderImages } = useCarouselImages()
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [editingImage, setEditingImage] = useState<EditingImage | null>(null)
@@ -67,6 +67,7 @@ export default function CarouselImageManager({ className = '' }: CarouselImageMa
       formData.append('file', file)
       formData.append('type', 'carousel')
       
+      // Add metadata to the form data
       if (imageData?.title) formData.append('title', imageData.title)
       if (imageData?.description) formData.append('description', imageData.description)
       if (imageData?.altText) formData.append('altText', imageData.altText)
@@ -85,26 +86,24 @@ export default function CarouselImageManager({ className = '' }: CarouselImageMa
       setUploadProgress(100)
 
       if (uploadResponse.ok) {
-        const { url } = await uploadResponse.json()
+        const result = await uploadResponse.json()
         
-        // Create the carousel image record
-        await addImage({
-          title: imageData?.title || '',
-          description: imageData?.description || '',
-          imageUrl: url,
-          altText: imageData?.altText || 'Family learning moment',
-          order: images.length + 1
-        })
-
-        toast.success('Carousel image uploaded successfully!')
-        setShowAddDialog(false)
-        setEditingImage(null)
+        if (result.success && result.data) {
+          // Refresh the images list to show the new image
+          await refetch()
+          toast.success('Carousel image uploaded successfully!')
+          setShowAddDialog(false)
+          setEditingImage(null)
+        } else {
+          throw new Error(result.error || 'Failed to create carousel image')
+        }
       } else {
-        throw new Error('Upload failed')
+        const errorData = await uploadResponse.json()
+        throw new Error(errorData.error || 'Upload failed')
       }
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error('Failed to upload carousel image')
+      toast.error(`Failed to upload carousel image: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setUploading(false)
       setUploadProgress(0)
@@ -228,10 +227,13 @@ export default function CarouselImageManager({ className = '' }: CarouselImageMa
                 Add Image
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md" aria-describedby="add-image-description">
               <DialogHeader>
                 <DialogTitle>Add New Carousel Image</DialogTitle>
               </DialogHeader>
+              <p id="add-image-description" className="text-sm text-gray-600 mb-4">
+                Upload a new image for the homepage carousel. You can add a title and description to make it more informative.
+              </p>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="new-title">Title (Optional)</Label>
@@ -384,10 +386,13 @@ export default function CarouselImageManager({ className = '' }: CarouselImageMa
                                 <Edit3 className="w-4 h-4" />
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-md">
+                            <DialogContent className="max-w-md" aria-describedby="edit-image-description">
                               <DialogHeader>
                                 <DialogTitle>Edit Image Details</DialogTitle>
                               </DialogHeader>
+                              <p id="edit-image-description" className="text-sm text-gray-600 mb-4">
+                                Update the title, description, and alt text for this carousel image.
+                              </p>
                               <div className="space-y-4">
                                 <div>
                                   <Label htmlFor="edit-title">Title</Label>
