@@ -3,9 +3,6 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
   BookOpen, 
   Download, 
@@ -13,10 +10,8 @@ import {
   Play, 
   FileText, 
   Users, 
-  Search, 
   Sparkles, 
   ChevronDown,
-  Folder,
   Eye
 } from "lucide-react"
 import Link from "next/link"
@@ -53,11 +48,7 @@ export default function ResourcesPage() {
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   
-  // Filter and search state
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedGrade, setSelectedGrade] = useState('all')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [selectedType, setSelectedType] = useState('all')
+  // No filter or search needed
 
   // Complete static resource data from Google Sites
   const staticResources: Resource[] = [
@@ -341,36 +332,15 @@ export default function ResourcesPage() {
     }
   ]
 
-  // Filter resources - using static resources directly
-  const filteredResources = staticResources.filter(resource => {
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      const matchesSearch = 
-        resource.title.toLowerCase().includes(query) ||
-        (resource.description && resource.description.toLowerCase().includes(query)) ||
-        (resource.tags && resource.tags.some(tag => tag.toLowerCase().includes(query)))
-      
-      if (!matchesSearch) return false
-    }
-    
-    // Grade level filter
-    if (selectedGrade !== 'all' && resource.gradeLevel !== selectedGrade) {
-      return false
-    }
-    
-    // Category filter
-    if (selectedCategory !== 'all' && resource.category !== selectedCategory) {
-      return false
-    }
-    
-    // Resource type filter
-    if (selectedType !== 'all' && resource.resourceType !== selectedType) {
-      return false
-    }
-    
-    return true
-  })
+  // Group resources by category/theme for cleaner presentation
+  const groupedByTheme = {
+    'parent-support': staticResources.filter(r => r.category === 'parent-support'),
+    'g1-g2-transition': staticResources.filter(r => r.gradeLevel === '1-2' && r.tags?.includes('transition')),
+    'reading-support': staticResources.filter(r => r.category === 'reading' && r.gradeLevel === '1-2' && !r.tags?.includes('transition')),
+    'language-learning': staticResources.filter(r => r.category === 'language' && r.gradeLevel === '1-2'),
+    'grades-3-4': staticResources.filter(r => r.gradeLevel === '3-4'),
+    'grades-5-6': staticResources.filter(r => r.gradeLevel === '5-6')
+  }
 
   // Get resource icon
   const getResourceIcon = (type: string) => {
@@ -384,41 +354,6 @@ export default function ResourcesPage() {
     }
   }
 
-  // Get resource type display name
-  const getResourceTypeName = (type: string) => {
-    switch (type) {
-      case 'pdf': return 'PDF Document'
-      case 'video': return 'Video'
-      case 'document': return 'Document'
-      case 'interactive': return 'Interactive'
-      case 'external': return 'External Link'
-      default: return type
-    }
-  }
-
-  // Group resources by grade level
-  const groupedByGrade = filteredResources.reduce((acc, resource) => {
-    const grade = resource.gradeLevel || 'other'
-    if (!acc[grade]) acc[grade] = []
-    acc[grade].push(resource)
-    return acc
-  }, {} as Record<string, Resource[]>)
-
-  const gradeColors: Record<string, string> = {
-    'parents': 'from-rose-500 to-rose-600',
-    '1-2': 'from-blue-500 to-blue-600',
-    '3-4': 'from-green-500 to-green-600',
-    '5-6': 'from-purple-500 to-purple-600',
-    'other': 'from-gray-500 to-gray-600'
-  }
-
-  const gradeNames: Record<string, string> = {
-    'parents': 'Parent Resources',
-    '1-2': 'Grades 1-2',
-    '3-4': 'Grades 3-4', 
-    '5-6': 'Grades 5-6',
-    'other': 'Other Grades'
-  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -554,84 +489,6 @@ export default function ResourcesPage() {
           </motion.p>
         </motion.div>
 
-        {/* Search and Filter */}
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="bg-white/80 backdrop-blur-lg">
-            <CardContent className="p-6">
-              <div className="flex flex-col gap-4">
-                {/* Search Bar */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search resource titles, descriptions, or tags..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                
-                {/* Filter Options */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  {/* Grade Level Filter */}
-                  <div className="flex-1">
-                    <Select value={selectedGrade} onValueChange={setSelectedGrade}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Grade Level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Grade Levels</SelectItem>
-                        <SelectItem value="parents">Parent Resources</SelectItem>
-                        <SelectItem value="1-2">Grades 1-2</SelectItem>
-                        <SelectItem value="3-4">Grades 3-4</SelectItem>
-                        <SelectItem value="5-6">Grades 5-6</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {/* Category Filter */}
-                  <div className="flex-1">
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        <SelectItem value="parent-support">Parent Support</SelectItem>
-                        <SelectItem value="reading">Reading</SelectItem>
-                        <SelectItem value="writing">Writing</SelectItem>
-                        <SelectItem value="language">Language</SelectItem>
-                        <SelectItem value="thinking">Critical Thinking</SelectItem>
-                        <SelectItem value="research">Research</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {/* Resource Type Filter */}
-                  <div className="flex-1">
-                    <Select value={selectedType} onValueChange={setSelectedType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Resource Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="pdf">PDF Document</SelectItem>
-                        <SelectItem value="video">Video</SelectItem>
-                        <SelectItem value="document">Document</SelectItem>
-                        <SelectItem value="interactive">Interactive</SelectItem>
-                        <SelectItem value="external">External Link</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
 
 
         {/* Mission Statement */}
@@ -683,11 +540,11 @@ export default function ResourcesPage() {
         </motion.section>
 
 
-        {/* Resource Categories by Grade */}
-        {Object.keys(groupedByGrade).length > 0 ? (
-          Object.entries(groupedByGrade).map(([grade, gradeResources]) => (
+        {/* Resource Sections by Theme */}
+        <div className="space-y-16">
+          {/* Parent Support Section */}
+          {groupedByTheme['parent-support'].length > 0 && (
             <motion.section
-              key={grade}
               className="mb-16"
               variants={containerVariants}
               initial="hidden"
@@ -696,139 +553,71 @@ export default function ResourcesPage() {
             >
               <motion.div variants={itemVariants}>
                 <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
-                  <CardHeader className={`bg-gradient-to-r ${gradeColors[grade] || gradeColors.other} text-white relative overflow-hidden`}>
+                  <CardHeader className="bg-gradient-to-r from-rose-500 to-rose-600 text-white relative overflow-hidden">
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{
-                        x: ["-100%", "100%"],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear",
-                      }}
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                     />
                     <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
                       <motion.div
-                        animate={{
-                          rotate: [0, 10, -10, 0],
-                          scale: [1, 1.1, 1],
-                        }}
+                        animate={{ rotate: [0, 10, -10, 0] }}
                         transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                       >
-                        <BookOpen className="h-8 w-8" />
+                        <Users className="h-8 w-8" />
                       </motion.div>
-                      {gradeNames[grade] || grade} Resources
+                      Parent Support Resources
                     </CardTitle>
                     <CardDescription className="text-white/90 text-lg relative z-10">
-                      Specialized learning materials for {gradeNames[grade] || grade} students
+                      Essential resources to support your child's learning journey at home
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
-                    <motion.div
-                      className="grid gap-8"
-                      variants={containerVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                    >
-                      {gradeResources.map((resource) => {
+                    <motion.div className="space-y-4" variants={containerVariants}>
+                      {groupedByTheme['parent-support'].map((resource) => {
                         const IconComponent = getResourceIcon(resource.resourceType)
-                        
                         return (
                           <motion.div key={resource.id} variants={itemVariants}>
-                            <Card className="border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 group hover:shadow-xl">
-                              <CardContent className="p-8">
-                                <div className="flex items-start gap-6">
-                                  <motion.div
-                                    className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl group-hover:from-purple-100 group-hover:to-purple-200 transition-all duration-300"
-                                    whileHover={{ scale: 1.1, rotate: 5 }}
+                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors group">
+                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-rose-500 transition-colors" />
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 group-hover:text-rose-700 transition-colors">
+                                  {resource.title}
+                                </h4>
+                                {resource.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {resource.externalUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => window.open(resource.externalUrl, '_blank')}
                                   >
-                                    <IconComponent className="h-8 w-8 text-gray-600 group-hover:text-purple-600 transition-colors" />
-                                  </motion.div>
-                                  <div className="flex-1">
-                                    <div className="flex items-start justify-between mb-3">
-                                      <h4 className="text-xl font-semibold text-gray-900 group-hover:text-purple-700 transition-colors">
-                                        {resource.title}
-                                      </h4>
-                                      <motion.div whileHover={{ scale: 1.05 }}>
-                                        <Badge variant="outline" className="ml-3 text-sm py-1 px-3">
-                                          {getResourceTypeName(resource.resourceType)}
-                                        </Badge>
-                                      </motion.div>
-                                    </div>
-                                    {resource.description && (
-                                      <p className="text-gray-600 mb-4 text-lg leading-relaxed">{resource.description}</p>
-                                    )}
-                                    
-                                    {/* Tags */}
-                                    {resource.tags && resource.tags.length > 0 && (
-                                      <div className="flex flex-wrap gap-2 mb-4">
-                                        {resource.tags.map((tag) => (
-                                          <Badge key={tag} variant="secondary" className="text-xs">
-                                            {tag}
-                                          </Badge>
-                                        ))}
-                                      </div>
-                                    )}
-                                    
-                                    <div className="flex gap-3">
-                                      {resource.externalUrl && (
-                                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="gap-2 bg-transparent hover:bg-purple-50"
-                                            onClick={() => window.open(resource.externalUrl, '_blank')}
-                                          >
-                                            <ExternalLink className="h-4 w-4" />
-                                            Open Resource
-                                          </Button>
-                                        </motion.div>
-                                      )}
-                                      {resource.fileUrl && (
-                                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="gap-2 bg-transparent hover:bg-blue-50"
-                                            onClick={() => window.open(resource.fileUrl, '_blank')}
-                                          >
-                                            <Eye className="h-4 w-4" />
-                                            View
-                                          </Button>
-                                        </motion.div>
-                                      )}
-                                      {resource.downloadUrl && (
-                                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                          <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="gap-2 bg-transparent hover:bg-green-50"
-                                            onClick={() => {
-                                              const link = document.createElement('a')
-                                              link.href = resource.downloadUrl!
-                                              link.download = ''
-                                              link.click()
-                                            }}
-                                          >
-                                            <Download className="h-4 w-4" />
-                                            Download
-                                          </Button>
-                                        </motion.div>
-                                      )}
-                                    </div>
-                                    
-                                    {/* Creator Information */}
-                                    {resource.creator && (
-                                      <div className="flex items-center gap-2 mt-4 pt-4 border-t text-xs text-gray-500">
-                                        <Users className="w-3 h-3" />
-                                        <span>Provider: {resource.creator.displayName}</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
+                                    <ExternalLink className="h-3 w-3" />
+                                    Open
+                                  </Button>
+                                )}
+                                {resource.downloadUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => {
+                                      const link = document.createElement('a')
+                                      link.href = resource.downloadUrl!
+                                      link.download = ''
+                                      link.click()
+                                    }}
+                                  >
+                                    <Download className="h-3 w-3" />
+                                    Download
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
                           </motion.div>
                         )
                       })}
@@ -837,28 +626,266 @@ export default function ResourcesPage() {
                 </Card>
               </motion.div>
             </motion.section>
-          ))
-        ) : (
-          // Display when no resources are available
-          <motion.div
-            variants={itemVariants}
-            initial="hidden"
-            animate="visible"
-            className="text-center py-12"
-          >
-            <Folder className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
-                ? 'No resources found matching criteria' 
-                : 'No resources available'}
-            </h3>
-            <p className="text-gray-600">
-              {searchQuery || selectedGrade !== 'all' || selectedCategory !== 'all' || selectedType !== 'all'
-                ? 'Please try adjusting your search criteria' 
-                : 'Please stay tuned for more learning resources'}
-            </p>
-          </motion.div>
-        )}
+          )}
+
+          {/* G1-G2 Transition Materials */}
+          {groupedByTheme['g1-g2-transition'].length > 0 && (
+            <motion.section
+              className="mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white relative overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                    />
+                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                      >
+                        <BookOpen className="h-8 w-8" />
+                      </motion.div>
+                      G1-G2 Transition Materials
+                    </CardTitle>
+                    <CardDescription className="text-white/90 text-lg relative z-10">
+                      Essential reading materials to support the transition to formal education
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <motion.div className="space-y-4" variants={containerVariants}>
+                      {groupedByTheme['g1-g2-transition'].map((resource) => {
+                        const IconComponent = getResourceIcon(resource.resourceType)
+                        return (
+                          <motion.div key={resource.id} variants={itemVariants}>
+                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-blue-50/50 transition-colors group">
+                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-blue-500 transition-colors" />
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 group-hover:text-blue-700 transition-colors">
+                                  {resource.title}
+                                </h4>
+                                {resource.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {resource.externalUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => window.open(resource.externalUrl, '_blank')}
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    Open
+                                  </Button>
+                                )}
+                                {resource.downloadUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => {
+                                      const link = document.createElement('a')
+                                      link.href = resource.downloadUrl!
+                                      link.download = ''
+                                      link.click()
+                                    }}
+                                  >
+                                    <Download className="h-3 w-3" />
+                                    Download
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )
+                      })}
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.section>
+          )}
+
+          {/* Reading Support Resources */}
+          {groupedByTheme['reading-support'].length > 0 && (
+            <motion.section
+              className="mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white relative overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                    />
+                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                      >
+                        <BookOpen className="h-8 w-8" />
+                      </motion.div>
+                      Reading Support Resources
+                    </CardTitle>
+                    <CardDescription className="text-white/90 text-lg relative z-10">
+                      Tools and materials to strengthen reading comprehension and fluency
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <motion.div className="space-y-4" variants={containerVariants}>
+                      {groupedByTheme['reading-support'].map((resource) => {
+                        const IconComponent = getResourceIcon(resource.resourceType)
+                        return (
+                          <motion.div key={resource.id} variants={itemVariants}>
+                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-green-50/50 transition-colors group">
+                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-green-500 transition-colors" />
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 group-hover:text-green-700 transition-colors">
+                                  {resource.title}
+                                </h4>
+                                {resource.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {resource.externalUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => window.open(resource.externalUrl, '_blank')}
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    Open
+                                  </Button>
+                                )}
+                                {resource.downloadUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => {
+                                      const link = document.createElement('a')
+                                      link.href = resource.downloadUrl!
+                                      link.download = ''
+                                      link.click()
+                                    }}
+                                  >
+                                    <Download className="h-3 w-3" />
+                                    Download
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )
+                      })}
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.section>
+          )}
+
+          {/* Language Learning Resources */}
+          {groupedByTheme['language-learning'].length > 0 && (
+            <motion.section
+              className="mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={itemVariants}>
+                <Card className="bg-white/90 backdrop-blur-lg shadow-2xl border-0 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 text-white relative overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                    />
+                    <CardTitle className="flex items-center gap-3 text-3xl relative z-10">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                      >
+                        <BookOpen className="h-8 w-8" />
+                      </motion.div>
+                      Language Learning Resources
+                    </CardTitle>
+                    <CardDescription className="text-white/90 text-lg relative z-10">
+                      Building essential language skills and background knowledge
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <motion.div className="space-y-4" variants={containerVariants}>
+                      {groupedByTheme['language-learning'].map((resource) => {
+                        const IconComponent = getResourceIcon(resource.resourceType)
+                        return (
+                          <motion.div key={resource.id} variants={itemVariants}>
+                            <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-purple-50/50 transition-colors group">
+                              <IconComponent className="h-5 w-5 text-gray-500 group-hover:text-purple-500 transition-colors" />
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 group-hover:text-purple-700 transition-colors">
+                                  {resource.title}
+                                </h4>
+                                {resource.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {resource.externalUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => window.open(resource.externalUrl, '_blank')}
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    Open
+                                  </Button>
+                                )}
+                                {resource.downloadUrl && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => {
+                                      const link = document.createElement('a')
+                                      link.href = resource.downloadUrl!
+                                      link.download = ''
+                                      link.click()
+                                    }}
+                                  >
+                                    <Download className="h-3 w-3" />
+                                    Download
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )
+                      })}
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.section>
+          )}
+        </div>
 
         {/* Featured Resources */}
         <motion.section
