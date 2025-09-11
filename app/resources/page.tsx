@@ -178,7 +178,7 @@ export default function ResourcesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100 overflow-hidden">
       {/* Animated Background - Same as homepage */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -279,7 +279,7 @@ export default function ResourcesPage() {
 
       <main>
         {/* Hero Section - Parents' Corner Style */}
-        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
+        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
           <motion.div 
             className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
             style={{ y: y1 }}
@@ -299,7 +299,7 @@ export default function ResourcesPage() {
                 <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
-                <Badge className="bg-white/20 backdrop-blur-lg text-white px-4 py-1">
+                <Badge className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-1">
                   Parents' Corner Resources
                 </Badge>
               </motion.div>
@@ -323,7 +323,7 @@ export default function ResourcesPage() {
               </motion.h2>
 
               <motion.p
-                className="text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto"
+                className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
@@ -517,7 +517,7 @@ export default function ResourcesPage() {
 
         {/* Call to Action Section */}
         <motion.section
-          className="py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900"
+          className="py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -526,14 +526,14 @@ export default function ResourcesPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <motion.div variants={itemVariants}>
               <motion.h3
-                className="text-3xl md:text-4xl font-bold text-white mb-6"
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
                 Need More Resources?
               </motion.h3>
               <motion.p
-                className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto"
+                className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
                 initial={{ y: 30, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
@@ -662,20 +662,10 @@ export default function ResourcesPage() {
         </motion.section>
       </main>
 
-      {/* Footer - Matching Homepage Three-Column Structure */}
-      <motion.footer
-        className="bg-gray-900 text-white py-12"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <motion.div
-            className="grid md:grid-cols-3 gap-8"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-          >
+          <div className="grid md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
@@ -719,20 +709,15 @@ export default function ResourcesPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="border-t border-gray-700 mt-8 pt-8 text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-          >
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
             <p className="text-gray-400 text-sm">
               © 2025 ES International Department. All rights reserved.
             </p>
-          </motion.div>
+          </div>
         </div>
-      </motion.footer>
+      </footer>
     </div>
   )
 }

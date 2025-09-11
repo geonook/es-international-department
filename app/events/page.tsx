@@ -765,20 +765,10 @@ export default function StaticEventsPage() {
         </motion.section>
       </main>
 
-      {/* Footer - Matching Homepage Three-Column Structure */}
-      <motion.footer
-        className="bg-gray-900 text-white py-12"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <motion.div
-            className="grid md:grid-cols-3 gap-8"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-          >
+          <div className="grid md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
@@ -822,20 +812,15 @@ export default function StaticEventsPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="border-t border-gray-700 mt-8 pt-8 text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-          >
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
             <p className="text-gray-400 text-sm">
               © 2025 ES International Department. All rights reserved.
             </p>
-          </motion.div>
+          </div>
         </div>
-      </motion.footer>
+      </footer>
     </div>
   )
 }
