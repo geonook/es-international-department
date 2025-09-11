@@ -51,15 +51,6 @@ export default function ContentCarousel({
   const [error, setError] = useState<string | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
 
-  // Debug logging for state changes
-  useEffect(() => {
-    console.log('🎯 ContentCarousel State Update:', {
-      imagesCount: images.length,
-      loading,
-      error,
-      currentIndex
-    })
-  }, [images, loading, error, currentIndex])
 
   // 載入輪播圖片
   useEffect(() => {
@@ -75,12 +66,9 @@ export default function ContentCarousel({
         }
 
         const data = await response.json()
-        console.log('🔍 ContentCarousel: API Response:', data)
         if (data.success && data.data) {
           setImages(data.data)
-          console.log(`📸 Loaded ${data.data.length} carousel images:`, data.data)
         } else {
-          console.log('❌ ContentCarousel: No data or success=false:', data)
           setImages([])
         }
       } catch (error) {
@@ -196,7 +184,7 @@ export default function ContentCarousel({
         <CarouselContent className="h-full">
           {images.map((image, index) => (
             <CarouselItem key={image.id} className="h-full">
-              <div className="relative w-full h-full overflow-hidden rounded-lg">
+              <div className={`relative w-full overflow-hidden rounded-lg ${getAspectRatioClass()}`}>
                 <Image
                   src={image.imageUrl}
                   alt={image.altText}
