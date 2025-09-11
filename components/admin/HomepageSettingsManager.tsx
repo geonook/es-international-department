@@ -57,10 +57,10 @@ export default function HomepageSettingsManager() {
     subtitle: 'Your dedicated family hub for school updates, events, and communication with your child\'s learning journey',
     quoteText: 'Parents are the cornerstone of a child\'s education; their support and collaboration with teachers create a powerful partnership that inspires and nurtures lifelong learners.',
     quoteAuthor: '',
-    exploreButtonText: 'Explore Resources',
-    exploreButtonLink: '/resources',
-    learnMoreButtonText: 'Learn More',
-    learnMoreButtonLink: '/events'
+    exploreButtonText: 'Explore Events',
+    exploreButtonLink: '/events',
+    learnMoreButtonText: 'More Resources',
+    learnMoreButtonLink: '/resources'
   })
 
   const [isEditing, setIsEditing] = useState(false)
