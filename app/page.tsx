@@ -244,7 +244,7 @@ export default function HomePage() {
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent leading-tight truncate">
                   <span className="hidden sm:inline">ES International Department</span>
-                  <span className="sm:hidden">ES Int'l Dept</span>
+                  <span className="sm:hidden">ESID</span>
                 </h1>
                 <p className="text-xs text-gray-500 leading-tight">Excellence in Education</p>
               </div>
