@@ -331,7 +331,7 @@ export default function HomePage() {
                   <span className="block">{settings.mainTitle}</span>
                 ) : (
                   <>
-                    <span className="block">Welcome to our</span>
+                    <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium opacity-80">Welcome to our</span>
                     <span className="block whitespace-nowrap">Parents' Corner</span>
                   </>
                 )}
