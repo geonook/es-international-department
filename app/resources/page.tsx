@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { 
   ExternalLink, 
   Sparkles, 
@@ -16,15 +17,19 @@ import {
   GraduationCap,
   Brain,
   Target,
-  Lightbulb
+  Lightbulb,
+  Globe,
+  School,
+  Gamepad2
 } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
+import { useState } from "react"
 
 /**
  * Resources Page - Parents' Corner Resource Center
- * Unified design with homepage and events page
- * Maintains Google Sites content structure with enhanced visual design
+ * Professional three-category design with hover-only animations
+ * Categories: 多元閱讀, 學習策略, 低年級專屬 (G1-G2)
  */
 
 export default function ResourcesPage() {
@@ -32,8 +37,11 @@ export default function ResourcesPage() {
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
+  
+  // Tab state
+  const [activeTab, setActiveTab] = useState("reading")
 
-  // Animation variants
+  // Animation variants for hover-only effects
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -50,74 +58,122 @@ export default function ResourcesPage() {
     visible: { y: 0, opacity: 1 },
   }
 
-  // Resources data structure following Google Sites
-  const resourceSections = [
-    {
-      id: 'parent-resources',
-      title: 'Parent Resources',
-      description: 'Parents play a crucial role in their children\'s development. Offers informative articles and online tools.',
-      icon: Users,
-      color: 'from-rose-500 to-rose-600',
-      link: 'https://drive.google.com/drive/folders/parent-support',
-      linkText: 'Access Parent Resources'
-    },
-    {
-      id: 'g1-g2-transition',
-      title: 'G1-G2 myView Transition Materials',
-      description: 'Learning materials for smooth student transition from Grade 1 to Grade 2. Summer 2025 collection.',
-      icon: GraduationCap,
-      color: 'from-blue-500 to-blue-600',
-      materials: [
-        "Henry on Wheels",
-        "Baby Animals Grow",
-        "Thumbs Up for Art and Music!",
-        "What Is the Story of Our Flag?",
-        "My Autumn Book",
-        "Review Games"
+  // Resource categories data structure
+  const resourceCategories = {
+    reading: {
+      title: "多元閱讀",
+      description: "透過多樣化的閱讀資源，培養孩子對閱讀的興趣與能力",
+      color: "from-green-500 to-emerald-600",
+      icon: BookOpen,
+      resources: [
+        {
+          id: 'reading-buddies',
+          title: 'Reading Buddies',
+          description: "Introduce 'Reading Buddies,' a fun and engaging program designed to help your child develop essential reading skills. Combining the science of reading with lots of laughter, Reading Buddies provides aspiring readers with a supportive and enjoyable environment to build a strong foundation in literacy.",
+          icon: Users,
+          color: 'from-green-400 to-green-600',
+          link: 'https://www.youtube.com/@readingbuddies',
+          linkText: 'Visit Reading Buddies Website',
+          type: 'program'
+        },
+        {
+          id: 'reading-campaign',
+          title: 'Reading Campaign',
+          description: "Reading is a fundamental skill that opens doors to a world of knowledge and imagination. It is a key to success in school and beyond. Setting aside dedicated time for reading beyond textbooks is crucial for their academic and personal growth. Fall 2024: Weekly Reading Challenge: Texts & Quizzes",
+          icon: Target,
+          color: 'from-blue-400 to-blue-600',
+          link: 'https://drive.google.com/drive/folders/weekly-reading-challenge-fall-2024',
+          linkText: 'Join Fall 2024 Weekly Reading Challenge',
+          timeline: 'Fall 2024',
+          type: 'campaign'
+        },
+        {
+          id: 'readworks',
+          title: 'ReadWorks: Article a Day',
+          description: "Online resources providing daily reading articles with comprehension questions. Build reading stamina and background knowledge through systematic daily practice.",
+          icon: Globe,
+          color: 'from-purple-400 to-purple-600',
+          link: 'https://www.readworks.org/',
+          linkText: 'Access ReadWorks Platform',
+          type: 'platform'
+        }
       ]
     },
-    {
-      id: 'reading-buddies',
-      title: 'Reading Buddies',
-      description: 'Combines the science of reading with lots of laughter. YouTube channel with engaging video content.',
-      icon: Play,
-      color: 'from-green-500 to-green-600',
-      link: 'https://www.youtube.com/@readingbuddies',
-      linkText: 'Visit Reading Buddies YouTube Channel'
-    },
-    {
-      id: 'five-components',
-      title: 'The Five Components of Reading',
-      description: 'Link to scientific research document. Emphasizes systematic practice of reading components: phonemic awareness, phonics, fluency, vocabulary, and comprehension.',
+    strategy: {
+      title: "學習策略",
+      description: "基於科學研究的學習策略，幫助學生建立穩固的學習基礎",
+      color: "from-purple-500 to-violet-600", 
       icon: Brain,
-      color: 'from-purple-500 to-purple-600',
-      link: 'https://drive.google.com/file/d/five-components-reading',
-      linkText: 'Access Five Components Research Document'
+      resources: [
+        {
+          id: 'five-components',
+          title: 'The Five Components of Reading',
+          description: "Scientific research shows that there are five essential components of reading that children must be taught in order to learn to read. Teachers and parents can help children learn to be good readers by systematically practicing these five components.",
+          icon: Brain,
+          color: 'from-indigo-400 to-indigo-600',
+          link: 'https://drive.google.com/file/d/five-components-reading-research',
+          linkText: 'Access Five Components Research Document',
+          type: 'research'
+        },
+        {
+          id: 'background-knowledge',
+          title: 'Building Background Knowledge',
+          description: "Building background knowledge is crucial for ELLs to succeed in their language learning journey. It helps them improve comprehension, vocabulary, and cultural understanding, while also increasing their motivation and engagement. Spring 2025: Building Background Knowledge",
+          icon: Lightbulb,
+          color: 'from-cyan-400 to-cyan-600',
+          link: 'https://drive.google.com/drive/folders/background-knowledge-spring-2025',
+          linkText: 'Access Spring 2025 Background Knowledge Resources',
+          timeline: 'Spring 2025',
+          type: 'strategy'
+        }
+      ]
     },
-    {
-      id: 'reading-campaign',
-      title: 'Reading Campaign',
-      description: 'Fall 2024: Weekly Reading Challenge. Focuses on reading beyond textbooks with weekly texts and comprehension activities.',
-      icon: Target,
-      color: 'from-orange-500 to-orange-600',
-      link: 'https://drive.google.com/drive/folders/weekly-reading-challenge',
-      linkText: 'Join Fall 2024 Weekly Reading Challenge'
-    },
-    {
-      id: 'background-knowledge',
-      title: 'Building Background Knowledge',
-      description: 'Spring 2025 resources. Emphasizes importance for English Language Learners with comprehensive materials.',
-      icon: Lightbulb,
-      color: 'from-cyan-500 to-cyan-600',
-      mainLink: 'https://drive.google.com/drive/folders/background-knowledge',
-      mainLinkText: 'Access Spring 2025 Background Knowledge Resources',
-      additionalLink: {
-        title: 'ReadWorks - Article a Day',
-        url: 'https://www.readworks.org/',
-        description: 'Daily reading articles with comprehension questions. Build reading stamina and background knowledge.'
-      }
+    grade12: {
+      title: "低年級專屬 (G1-G2)",
+      description: "專為一、二年級學生設計的過渡教材與學習資源",
+      color: "from-orange-500 to-red-600",
+      icon: GraduationCap,
+      resources: [
+        {
+          id: 'myview-review',
+          title: 'myView reView',
+          description: "Comprehensive review platform designed specifically for myView curriculum materials. Access interactive content and review materials to support student learning.",
+          icon: School,
+          color: 'from-teal-400 to-teal-600',
+          link: 'https://myviewreview.com/',
+          linkText: 'Visit myView reView Platform',
+          type: 'platform'
+        },
+        {
+          id: 'transition-materials',
+          title: 'G1-G2 myView Transition Materials',
+          description: "We provide learning materials to help students transition smoothly from G1 to G2. These resources include several PDF documents for reading and interactive review games.",
+          icon: FileText,
+          color: 'from-rose-400 to-rose-600',
+          timeline: 'Summer 2025',
+          type: 'materials',
+          materials: [
+            {
+              name: 'Henry on Wheels',
+              type: 'PDF',
+              link: 'https://drive.google.com/file/d/henry-on-wheels-pdf'
+            },
+            {
+              name: 'Baby Animals Grow',
+              type: 'PDF', 
+              link: 'https://drive.google.com/file/d/baby-animals-grow-pdf'
+            },
+            {
+              name: 'Review Games',
+              type: 'Canva Interactive',
+              link: 'https://canva.com/design/review-games-g1-g2',
+              description: 'Canva互動複習遊戲'
+            }
+          ]
+        }
+      ]
     }
-  ]
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100 overflow-hidden">
@@ -158,7 +214,11 @@ export default function ResourcesPage() {
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <motion.div className="flex items-center gap-2 sm:gap-3" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+            <motion.div 
+              className="flex items-center gap-2 sm:gap-3" 
+              whileHover={{ scale: 1.05 }} 
+              transition={{ duration: 0.2 }}
+            >
               <motion.div
                 className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center shadow-lg"
                 whileHover={{ rotate: 360 }}
@@ -249,7 +309,7 @@ export default function ResourcesPage() {
                 transition={{ delay: 0.3 }}
               >
                 <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                  Learning Resource Center
+                  學習資源中心
                 </span>
               </motion.h2>
 
@@ -259,13 +319,13 @@ export default function ResourcesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                Comprehensive learning resources for parents, teachers, and students to support academic development and success across all grade levels.
+                為家長、教師和學生提供全面的學習資源，支持各年級的學術發展與成功
               </motion.p>
             </motion.div>
           </motion.div>
         </section>
 
-        {/* Resource Sections */}
+        {/* Main Resource Categories Section with Tabs */}
         <motion.section
           className="py-16 md:py-20 relative"
           style={{ y: y2 }}
@@ -275,116 +335,174 @@ export default function ResourcesPage() {
           variants={containerVariants}
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="space-y-8">
-              {resourceSections.map((section, index) => {
-                const IconComponent = section.icon
-                
-                return (
-                  <motion.div
-                    key={section.id}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.01 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Card className="bg-white/80 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-                      <CardHeader className={`bg-gradient-to-r ${section.color} text-white relative overflow-hidden`}>
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                          animate={{ x: ["-100%", "100%"] }}
-                          transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                        />
-                        <div className="relative z-10">
-                          <div className="flex items-center gap-3 mb-2">
+            <motion.div
+              variants={itemVariants}
+              className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
+            >
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                {/* Tab Navigation */}
+                <motion.div 
+                  className="flex justify-center p-6 bg-gradient-to-r from-purple-50 to-indigo-50"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-white/90 backdrop-blur-lg shadow-xl border border-white/20 p-1 rounded-2xl overflow-hidden">
+                    <TabsTrigger 
+                      value="reading" 
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-green-50"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span className="text-sm font-medium">多元閱讀</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="strategy" 
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-purple-50"
+                    >
+                      <Brain className="w-4 h-4" />
+                      <span className="text-sm font-medium">學習策略</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="grade12" 
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-orange-50"
+                    >
+                      <GraduationCap className="w-4 h-4" />
+                      <span className="text-sm font-medium">低年級專屬</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </motion.div>
+
+                {/* Tab Content */}
+                <div className="p-6 md:p-8">
+                  {Object.entries(resourceCategories).map(([key, category]) => (
+                    <TabsContent key={key} value={key} className="mt-0">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="space-y-6"
+                      >
+                        {/* Category Header */}
+                        <motion.div 
+                          className="text-center mb-8"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.2 }}
+                        >
+                          <div className="flex items-center justify-center gap-3 mb-4">
+                            <div className={`w-16 h-16 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+                              <category.icon className="w-8 h-8 text-white" />
+                            </div>
+                          </div>
+                          <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{category.title}</h3>
+                          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{category.description}</p>
+                        </motion.div>
+
+                        {/* Resource Cards */}
+                        <div className="grid gap-6 md:gap-8">
+                          {category.resources.map((resource, index) => (
                             <motion.div
-                              className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center"
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.6 }}
+                              key={resource.id}
+                              initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.3 + index * 0.1 }}
                             >
-                              <IconComponent className="h-6 w-6" />
+                              <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group">
+                                <CardHeader className={`bg-gradient-to-r ${resource.color} text-white relative overflow-hidden`}>
+                                  <motion.div
+                                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100"
+                                    initial={false}
+                                    transition={{ duration: 0.3 }}
+                                  />
+                                  <div className="relative z-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                      <motion.div
+                                        className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
+                                        whileHover={{ rotate: 360 }}
+                                        transition={{ duration: 0.6 }}
+                                      >
+                                        <resource.icon className="h-6 w-6" />
+                                      </motion.div>
+                                      <div className="flex-1">
+                                        <CardTitle className="text-2xl">{resource.title}</CardTitle>
+                                        {resource.timeline && (
+                                          <Badge className="bg-white/20 text-white mt-2">
+                                            {resource.timeline}
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <CardDescription className="text-white/90 text-base leading-relaxed">
+                                      {resource.description}
+                                    </CardDescription>
+                                  </div>
+                                </CardHeader>
+                                
+                                <CardContent className="p-6">
+                                  {/* Materials List for G1-G2 Transition */}
+                                  {resource.materials && (
+                                    <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                                      {resource.materials.map((material, idx) => (
+                                        <motion.div
+                                          key={idx}
+                                          className="group/item"
+                                          whileHover={{ x: 5 }}
+                                          transition={{ duration: 0.2 }}
+                                        >
+                                          <motion.a
+                                            href={material.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group-hover/item:shadow-md"
+                                            whileHover={{ scale: 1.02 }}
+                                          >
+                                            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+                                              {material.type === 'PDF' ? (
+                                                <FileText className="w-4 h-4 text-white" />
+                                              ) : (
+                                                <Gamepad2 className="w-4 h-4 text-white" />
+                                              )}
+                                            </div>
+                                            <div className="flex-1">
+                                              <p className="font-medium text-gray-900">{material.name}</p>
+                                              <p className="text-sm text-gray-500">{material.type}</p>
+                                              {material.description && (
+                                                <p className="text-xs text-gray-400 mt-1">{material.description}</p>
+                                              )}
+                                            </div>
+                                            <ExternalLink className="w-4 h-4 text-gray-400 group-hover/item:text-gray-600" />
+                                          </motion.a>
+                                        </motion.div>
+                                      ))}
+                                    </div>
+                                  )}
+
+                                  {/* Main Resource Link */}
+                                  {resource.link && (
+                                    <motion.div 
+                                      whileHover={{ scale: 1.05 }} 
+                                      whileTap={{ scale: 0.95 }}
+                                    >
+                                      <Button
+                                        className={`w-full sm:w-auto bg-gradient-to-r ${resource.color} hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
+                                        onClick={() => window.open(resource.link, '_blank')}
+                                      >
+                                        <ExternalLink className="w-4 h-4 mr-2" />
+                                        {resource.linkText}
+                                      </Button>
+                                    </motion.div>
+                                  )}
+                                </CardContent>
+                              </Card>
                             </motion.div>
-                            <CardTitle className="text-2xl">{section.title}</CardTitle>
-                          </div>
-                          <CardDescription className="text-white/90 text-base">
-                            {section.description}
-                          </CardDescription>
+                          ))}
                         </div>
-                      </CardHeader>
-                      
-                      <CardContent className="p-6">
-                        {/* G1-G2 Materials List */}
-                        {section.materials && (
-                          <div className="grid sm:grid-cols-2 gap-3 mb-6">
-                            {section.materials.map((material, idx) => (
-                              <motion.div
-                                key={idx}
-                                whileHover={{ x: 5 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                <a
-                                  href={`https://drive.google.com/file/d/${material.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 text-purple-700 hover:text-purple-800 transition-colors"
-                                >
-                                  <FileText className="w-4 h-4" />
-                                  <span className="hover:underline">{material}</span>
-                                  <ExternalLink className="w-3 h-3" />
-                                </a>
-                              </motion.div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Main Link */}
-                        {section.link && (
-                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button
-                              className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
-                              onClick={() => window.open(section.link, '_blank')}
-                            >
-                              <ExternalLink className="w-4 h-4 mr-2" />
-                              {section.linkText}
-                            </Button>
-                          </motion.div>
-                        )}
-
-                        {/* Background Knowledge Section with Additional Link */}
-                        {section.mainLink && (
-                          <div className="space-y-4">
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                              <Button
-                                className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
-                                onClick={() => window.open(section.mainLink, '_blank')}
-                              >
-                                <ExternalLink className="w-4 h-4 mr-2" />
-                                {section.mainLinkText}
-                              </Button>
-                            </motion.div>
-                            
-                            {section.additionalLink && (
-                              <div className="border-t pt-4">
-                                <h4 className="font-semibold text-gray-800 mb-2">Recommended Platform:</h4>
-                                <p className="text-gray-600 text-sm mb-3">{section.additionalLink.description}</p>
-                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                  <Button
-                                    variant="outline"
-                                    className="border-purple-300 text-purple-700 hover:bg-purple-50"
-                                    onClick={() => window.open(section.additionalLink.url, '_blank')}
-                                  >
-                                    <ExternalLink className="w-4 h-4 mr-2" />
-                                    {section.additionalLink.title}
-                                  </Button>
-                                </motion.div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                )
-              })}
-            </div>
+                      </motion.div>
+                    </TabsContent>
+                  ))}
+                </div>
+              </Tabs>
+            </motion.div>
           </div>
         </motion.section>
 
@@ -400,11 +518,10 @@ export default function ResourcesPage() {
             <motion.div variants={itemVariants}>
               <motion.h3
                 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8 }}
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
               >
-                Need More Resources?
+                需要更多資源？
               </motion.h3>
               <motion.p
                 className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
@@ -412,7 +529,7 @@ export default function ResourcesPage() {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
-                Contact our team for additional learning materials or if you have questions about using these resources.
+                如需更多學習教材或對使用這些資源有任何疑問，請聯繫我們的團隊
               </motion.p>
 
               <motion.div
@@ -426,7 +543,7 @@ export default function ResourcesPage() {
                     size="lg"
                     className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
                   >
-                    Contact Support
+                    聯繫支援團隊
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -436,7 +553,7 @@ export default function ResourcesPage() {
                       variant="outline"
                       className="w-full sm:w-auto border-2 border-purple-300 text-purple-700 hover:bg-purple-50 px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                     >
-                      Back to Home
+                      返回首頁
                     </Button>
                   </Link>
                 </motion.div>
