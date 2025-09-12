@@ -31,7 +31,6 @@ import {
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
 import BackToTop from "@/components/ui/back-to-top"
-import { useState } from "react"
 
 /**
  * Resources Page - Parents' Corner Resource Center
