@@ -659,7 +659,7 @@ export default function StaticEventsPage() {
                 Event Documents
               </motion.h3>
               <motion.p
-                className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto"
+                className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto hidden"
                 variants={itemVariants}
               >
                 Download important forms, schedules, and information sheets for upcoming events
@@ -704,18 +704,18 @@ export default function StaticEventsPage() {
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Card className="bg-white/95 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden h-full">
+                    <Card className="bg-white/98 backdrop-blur-lg border border-gray-100 shadow-lg hover:shadow-xl hover:border-purple-200 transition-all duration-300 overflow-hidden h-full rounded-xl">
                       <CardContent className="p-0 h-full">
                         {/* Enhanced layout with thumbnail */}
                         <div className="flex h-full">
                           {/* Thumbnail/Icon Section - 16:9 aspect ratio */}
-                          <div className="flex-shrink-0 h-24 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center aspect-[16/9]">
+                          <div className="flex-shrink-0 h-28 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center aspect-[16/9] rounded-l-xl">
                             {doc.isGoogleDriveFile && doc.thumbnailUrl ? (
                               <div className="relative w-full h-full">
                                 <img
                                   src={doc.thumbnailUrl}
                                   alt={`${doc.title} preview`}
-                                  className="w-full h-full object-cover rounded-l-lg"
+                                  className="w-full h-full object-cover rounded-l-xl"
                                   onError={(e) => {
                                     // Fallback to icon on image error
                                     const target = e.target as HTMLImageElement
@@ -744,9 +744,9 @@ export default function StaticEventsPage() {
                           </div>
 
                           {/* Content Section */}
-                          <div className="flex-1 p-6 flex flex-col justify-between">
+                          <div className="flex-1 p-6 flex flex-col justify-between bg-gradient-to-r from-white to-purple-50/30">
                             <div className="flex items-start justify-between mb-4">
-                              <h4 className="font-semibold text-gray-900 leading-tight text-lg">
+                              <h4 className="font-semibold text-gray-900 leading-tight text-lg mb-2">
                                 {doc.title}
                               </h4>
                               {doc.isGoogleDriveFile && (
@@ -758,7 +758,7 @@ export default function StaticEventsPage() {
                             </div>
                             
                             {/* Enhanced dual-button design */}
-                            <div className="flex items-center gap-2 justify-end">
+                            <div className="flex items-center gap-3 justify-end mt-4">
                               {doc.isGoogleDriveFile && doc.previewUrl && (
                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                   <Button 
@@ -818,7 +818,7 @@ export default function StaticEventsPage() {
 
         {/* Call to Action */}
         <motion.section
-          className="py-16 md:py-20 relative overflow-hidden"
+          className="py-16 md:py-20 relative overflow-hidden hidden"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -875,7 +875,7 @@ export default function StaticEventsPage() {
 
         {/* Contact CTA Section - Matching Homepage */}
         <motion.section
-          className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden"
+          className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden hidden"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
