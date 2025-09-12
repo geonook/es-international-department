@@ -532,17 +532,17 @@ export default function StaticEventsPage() {
 
         {/* Documents Section */}
         <motion.section
-          className="py-16 md:py-20 bg-gradient-to-r from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden"
+          className="py-16 md:py-20 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-100 relative overflow-hidden"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
         >
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-20">
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: "radial-gradient(circle at 25% 25%, white 2px, transparent 2px)",
+                backgroundImage: "radial-gradient(circle at 25% 25%, rgb(147 51 234) 2px, transparent 2px)",
                 backgroundSize: "60px 60px",
               }}
             />
@@ -551,20 +551,21 @@ export default function StaticEventsPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div className="text-center mb-12" variants={itemVariants}>
               <motion.h3
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6"
+                className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6"
                 animate={{
-                  textShadow: [
-                    "0 0 10px rgba(255,255,255,0.5)",
-                    "0 0 20px rgba(255,255,255,0.8)",
-                    "0 0 10px rgba(255,255,255,0.5)",
-                  ],
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                transition={{
+                  duration: 5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                }}
+                style={{ backgroundSize: "200% 200%" }}
               >
                 Event Documents
               </motion.h3>
               <motion.p
-                className="text-lg md:text-xl text-purple-100 max-w-3xl mx-auto"
+                className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto"
                 variants={itemVariants}
               >
                 Download important forms, schedules, and information sheets for upcoming events
@@ -628,7 +629,7 @@ export default function StaticEventsPage() {
                 <Button 
                   size="lg"
                   variant="outline"
-                  className="border-2 border-white text-white hover:bg-white hover:text-purple-700 px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
+                  className="border-2 border-purple-300 text-purple-700 hover:bg-purple-50 px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
                 >
                   <ExternalLink className="w-5 h-5 mr-2" />
                   View All Documents
