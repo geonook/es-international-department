@@ -418,7 +418,7 @@ export default function ResourcesPage() {
                             </div>
                           </div>
                           <motion.h3
-                            className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6"
+                            className={`text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r ${category.color} bg-clip-text text-transparent mb-6`}
                             animate={{
                               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                             }}
@@ -518,7 +518,7 @@ export default function ResourcesPage() {
                                           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                             <Button 
                                               size="sm"
-                                              className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
+                                              className={`bg-gradient-to-r ${resource.color} hover:shadow-lg text-white transition-all duration-300`}
                                               onClick={() => window.open(resource.link, '_blank')}
                                             >
                                               <ExternalLink className="w-3 h-3 mr-1" />
