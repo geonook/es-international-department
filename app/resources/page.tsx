@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -75,6 +76,7 @@ export default function ResourcesPage() {
           description: "Introduce 'Reading Buddies,' a fun and engaging program designed to help your child develop essential reading skills. Combining the science of reading with lots of laughter, Reading Buddies provides aspiring readers with a supportive and enjoyable environment to build a strong foundation in literacy.",
           icon: Users,
           color: 'from-purple-400 to-purple-600',
+          image: '/images/resources/reading-buddies.jpg',
           link: 'https://www.youtube.com/@readingbuddies',
           linkText: 'Visit Reading Buddies Website',
           type: 'program'
@@ -85,6 +87,7 @@ export default function ResourcesPage() {
           description: "Reading is a fundamental skill that opens doors to a world of knowledge and imagination. It is a key to success in school and beyond. Setting aside dedicated time for reading beyond textbooks is crucial for their academic and personal growth. Fall 2024: Weekly Reading Challenge: Texts & Quizzes",
           icon: Target,
           color: 'from-purple-500 to-purple-700',
+          image: '/images/resources/reading-campaign.jpg',
           link: 'https://drive.google.com/drive/folders/weekly-reading-challenge-fall-2024',
           linkText: 'Join Fall 2024 Weekly Reading Challenge',
           timeline: 'Fall 2024',
@@ -96,6 +99,7 @@ export default function ResourcesPage() {
           description: "Online resources providing daily reading articles with comprehension questions. Build reading stamina and background knowledge through systematic daily practice.",
           icon: Globe,
           color: 'from-blue-400 to-blue-600',
+          image: '/images/resources/readworks.jpg',
           link: 'https://www.readworks.org/',
           linkText: 'Access ReadWorks Platform',
           type: 'platform'
@@ -114,6 +118,7 @@ export default function ResourcesPage() {
           description: "Scientific research shows that there are five essential components of reading that children must be taught in order to learn to read. Teachers and parents can help children learn to be good readers by systematically practicing these five components.",
           icon: Brain,
           color: 'from-blue-500 to-blue-700',
+          image: '/images/resources/five-components.jpg',
           link: 'https://drive.google.com/file/d/five-components-reading-research',
           linkText: 'Access Five Components Research Document',
           type: 'research'
@@ -124,6 +129,7 @@ export default function ResourcesPage() {
           description: "Building background knowledge is crucial for ELLs to succeed in their language learning journey. It helps them improve comprehension, vocabulary, and cultural understanding, while also increasing their motivation and engagement. Spring 2025: Building Background Knowledge",
           icon: Lightbulb,
           color: 'from-cyan-500 to-cyan-700',
+          image: '/images/resources/background-knowledge.jpg',
           link: 'https://drive.google.com/drive/folders/background-knowledge-spring-2025',
           linkText: 'Access Spring 2025 Background Knowledge Resources',
           timeline: 'Spring 2025',
@@ -143,6 +149,7 @@ export default function ResourcesPage() {
           description: "Comprehensive review platform designed specifically for myView curriculum materials. Access interactive content and review materials to support student learning.",
           icon: School,
           color: 'from-purple-400 to-purple-600',
+          image: '/images/resources/myview-review.jpg',
           link: 'https://myviewreview.com/',
           linkText: 'Visit myView reView Platform',
           type: 'platform'
@@ -153,6 +160,7 @@ export default function ResourcesPage() {
           description: "We provide learning materials to help students transition smoothly from G1 to G2. These resources include several PDF documents for reading and interactive review games.",
           icon: FileText,
           color: 'from-purple-500 to-purple-700',
+          image: '/images/resources/transition-materials.jpg',
           timeline: 'Summer 2025',
           type: 'materials',
           materials: [
@@ -442,14 +450,26 @@ export default function ResourcesPage() {
                                 <CardContent className="p-0 h-full">
                                   {/* Horizontal layout like events page documents */}
                                   <div className="flex h-full">
-                                    {/* Icon/Type Section - Left side */}
-                                    <div className="flex-shrink-0 w-24 h-32 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center rounded-l-xl overflow-hidden">
-                                      <div className={`w-16 h-16 bg-gradient-to-r ${resource.color} rounded-xl flex items-center justify-center shadow-lg`}>
-                                        <resource.icon className="w-8 h-8 text-white" />
+                                    {/* Resource Image Section - Left side */}
+                                    <div className="flex-shrink-0 w-36 h-24 relative rounded-l-xl overflow-hidden">
+                                      {resource.image && (
+                                        <Image
+                                          src={resource.image}
+                                          alt={resource.title}
+                                          fill
+                                          className="object-cover"
+                                        />
+                                      )}
+                                      {/* Type icon overlay - top right */}
+                                      <div className="absolute top-2 right-2">
+                                        <div className={`w-8 h-8 bg-gradient-to-r ${resource.color} rounded-lg flex items-center justify-center shadow-lg`}>
+                                          <resource.icon className="w-4 h-4 text-white" />
+                                        </div>
                                       </div>
+                                      {/* Timeline badge - bottom */}
                                       {resource.timeline && (
                                         <div className="absolute bottom-2 left-2 right-2">
-                                          <Badge className="bg-white/90 text-gray-700 text-xs px-2 py-1 w-full text-center">
+                                          <Badge className="bg-black/70 text-white text-xs px-2 py-1 w-full text-center backdrop-blur-sm">
                                             {resource.timeline}
                                           </Badge>
                                         </div>
