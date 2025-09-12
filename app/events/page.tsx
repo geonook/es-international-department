@@ -160,7 +160,7 @@ export default function StaticEventsPage() {
     },
     {
       id: 2,
-      title: "Coffee with Principal G1-G2 教學資料",
+      title: "G1-2 Coffee with the Principal 1129",
       description: "專為1-2年級學生設計的Coffee with Principal活動教學投影片",
       url: "https://drive.google.com/file/d/1ZsfVdLbah-fov4EMBDC1j0TKVeKxiPrb/view",
       category: "教學資料",
@@ -168,7 +168,7 @@ export default function StaticEventsPage() {
     },
     {
       id: 3,
-      title: "Coffee with Principal G3-G4 教學資料",
+      title: "G3-4 Coffee with the Principal 1129",
       description: "專為3-4年級學生設計的Coffee with Principal活動教學投影片",
       url: "https://drive.google.com/file/d/11fe6GQSf0JudhdO0t7LDsG3dKKWYi4Dm/view",
       category: "教學資料",
@@ -176,7 +176,7 @@ export default function StaticEventsPage() {
     },
     {
       id: 4,
-      title: "Coffee with Principal G5-G6 教學資料",
+      title: "G5-6 Coffee with the Principal 1129",
       description: "專為5-6年級學生設計的Coffee with Principal活動教學投影片",
       url: "https://drive.google.com/file/d/1SEnSdxKGC6DQG1Pe5qMYAcfVxqsR73-U/view",
       category: "教學資料",
@@ -768,7 +768,7 @@ export default function StaticEventsPage() {
                                     onClick={() => window.open(doc.previewUrl, '_blank')}
                                   >
                                     <Eye className="w-4 h-4 mr-1" />
-                                    預覽
+                                    Preview
                                   </Button>
                                 </motion.div>
                               )}
@@ -785,7 +785,7 @@ export default function StaticEventsPage() {
                                   ) : (
                                     <Download className="w-4 h-4 mr-1" />
                                   )}
-                                  {downloadingFiles.has(doc.id) ? '下載中...' : '下載'}
+                                  {downloadingFiles.has(doc.id) ? 'Downloading...' : 'Download'}
                                 </Button>
                               </motion.div>
                             </div>
