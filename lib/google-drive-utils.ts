@@ -252,3 +252,155 @@ export function handleThumbnailError(thumbnailUrl: string, fileType: string): st
   
   return svgFallback
 }
+
+/**
+ * Clean filename for cross-platform compatibility
+ * 
+ * @param filename - Original filename
+ * @returns Cleaned filename safe for file systems
+ */
+export function cleanFilename(filename: string): string {
+  // Remove or replace characters that are problematic in filenames
+  return filename
+    .replace(/[<>:"/\\|?*]/g, '_') // Replace illegal characters
+    .replace(/\s+/g, ' ')          // Normalize whitespace
+    .trim()                        // Remove leading/trailing spaces
+    .substring(0, 200)             // Limit length to prevent issues
+}
+
+/**
+ * Get appropriate file extension based on Drive file type
+ * 
+ * @param driveFileType - Detected Google Drive file type
+ * @returns File extension with dot
+ */
+export function getFileExtensionWithDot(driveFileType: string): string {
+  const extensionMap: Record<string, string> = {
+    'presentation': '.pptx',
+    'document': '.docx',
+    'spreadsheet': '.xlsx', 
+    'pdf': '.pdf',
+    'unknown': '.file'
+  }
+  
+  return extensionMap[driveFileType] || '.file'
+}
+
+/**
+ * Download Google Drive file with custom filename using JavaScript
+ * 
+ * @param fileId - Google Drive file ID
+ * @param customFilename - Desired filename (without extension)
+ * @param fileType - File type for extension determination
+ * @param onProgress - Progress callback (optional)
+ * @param onError - Error callback (optional)
+ * @param onSuccess - Success callback (optional)
+ */
+export async function downloadFileWithCustomName(
+  fileId: string,
+  customFilename: string,
+  fileType: string = 'unknown',
+  onProgress?: (progress: number) => void,
+  onError?: (error: string) => void,
+  onSuccess?: (filename: string) => void
+): Promise<void> {
+  try {
+    // Clean the filename and add appropriate extension
+    const cleanedName = cleanFilename(customFilename)
+    const extension = getFileExtensionWithDot(fileType)
+    const fullFilename = cleanedName + extension
+    
+    // Generate download URL
+    const downloadUrl = generateDriveDownloadUrl(fileId)
+    
+    // Show progress if callback provided
+    onProgress?.(10)
+    
+    // Attempt to fetch the file
+    const response = await fetch(downloadUrl, {
+      method: 'GET',
+      mode: 'cors',
+    })
+    
+    onProgress?.(50)
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    // Get the file as blob
+    const blob = await response.blob()
+    onProgress?.(90)
+    
+    // Create download link
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fullFilename
+    link.style.display = 'none'
+    
+    // Append to body, click, and remove
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    // Cleanup
+    URL.revokeObjectURL(url)
+    
+    onProgress?.(100)
+    onSuccess?.(fullFilename)
+    
+  } catch (error) {
+    console.error('Download failed:', error)
+    
+    // Fallback: open original Google Drive download in new tab
+    const fallbackUrl = generateDriveDownloadUrl(fileId)
+    window.open(fallbackUrl, '_blank')
+    
+    const errorMessage = error instanceof Error ? error.message : 'Unknown download error'
+    onError?.(errorMessage)
+  }
+}
+
+/**
+ * Download handler with loading state management
+ * This is the main function to use in React components
+ * 
+ * @param fileId - Google Drive file ID
+ * @param customFilename - Desired filename 
+ * @param fileType - File type for extension
+ * @returns Promise with download status
+ */
+export async function handleCustomDownload(
+  fileId: string,
+  customFilename: string,
+  fileType: string = 'unknown'
+): Promise<{ success: boolean; filename?: string; error?: string }> {
+  return new Promise((resolve) => {
+    downloadFileWithCustomName(
+      fileId,
+      customFilename,
+      fileType,
+      undefined, // progress callback - can be added later
+      (error) => {
+        resolve({ success: false, error })
+      },
+      (filename) => {
+        resolve({ success: true, filename })
+      }
+    )
+  })
+}
+
+/**
+ * Check if custom download is supported by the browser
+ * 
+ * @returns True if browser supports custom downloads
+ */
+export function isCustomDownloadSupported(): boolean {
+  return typeof window !== 'undefined' && 
+         typeof document !== 'undefined' &&
+         'createElement' in document &&
+         'URL' in window &&
+         'createObjectURL' in URL
+}

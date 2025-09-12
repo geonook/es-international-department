@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -22,14 +24,15 @@ import {
   FolderOpen,
   PlayCircle,
   FileSpreadsheet,
-  Presentation
+  Presentation,
+  Loader2
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
 import BackToTop from "@/components/ui/back-to-top"
-import { processDriveUrl, handleThumbnailError } from "@/lib/google-drive-utils"
+import { processDriveUrl, handleThumbnailError, handleCustomDownload } from "@/lib/google-drive-utils"
 
 /**
  * Static Events Page Component - KCISLK ESID Events
@@ -75,6 +78,9 @@ interface DocumentDownload {
 }
 
 export default function StaticEventsPage() {
+  // Download state management
+  const [downloadingFiles, setDownloadingFiles] = useState<Set<number>>(new Set())
+  
   // Scroll parallax effect
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 300], [0, -50])
@@ -213,6 +219,51 @@ export default function StaticEventsPage() {
       isGoogleDriveFile: false
     }
   })
+
+  // Custom download handler with state management
+  const handleDocumentDownload = async (doc: DocumentDownload) => {
+    if (!doc.isGoogleDriveFile || !doc.driveFileId) {
+      // Fallback for non-Drive files
+      window.open(doc.url, '_blank')
+      return
+    }
+
+    // Set downloading state
+    setDownloadingFiles(prev => new Set([...prev, doc.id]))
+
+    try {
+      const result = await handleCustomDownload(
+        doc.driveFileId,
+        doc.title,
+        doc.type === 'drive' ? detectFileTypeFromUrl(doc.url) : doc.type
+      )
+
+      if (result.success) {
+        console.log(`✅ Successfully downloaded: ${result.filename}`)
+        // Could show success toast here
+      } else {
+        console.error(`❌ Download failed: ${result.error}`)
+        // Could show error toast here
+      }
+    } catch (error) {
+      console.error('Download error:', error)
+    } finally {
+      // Remove downloading state
+      setDownloadingFiles(prev => {
+        const updated = new Set(prev)
+        updated.delete(doc.id)
+        return updated
+      })
+    }
+  }
+
+  // Helper function to detect file type from URL
+  const detectFileTypeFromUrl = (url: string): string => {
+    if (url.includes('/presentation/')) return 'presentation'
+    if (url.includes('/document/')) return 'document'
+    if (url.includes('/spreadsheets/')) return 'spreadsheet'
+    return 'unknown'
+  }
 
   // Animation variants
   const containerVariants = {
@@ -741,11 +792,16 @@ export default function StaticEventsPage() {
                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                   <Button 
                                     size="sm"
-                                    className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
-                                    onClick={() => window.open(doc.downloadUrl || doc.url, '_blank')}
+                                    className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white disabled:opacity-50"
+                                    onClick={() => handleDocumentDownload(doc)}
+                                    disabled={downloadingFiles.has(doc.id)}
                                   >
-                                    <Download className="w-4 h-4 mr-1" />
-                                    下載
+                                    {downloadingFiles.has(doc.id) ? (
+                                      <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                    ) : (
+                                      <Download className="w-4 h-4 mr-1" />
+                                    )}
+                                    {downloadingFiles.has(doc.id) ? '下載中...' : '下載'}
                                   </Button>
                                 </motion.div>
                               </div>
