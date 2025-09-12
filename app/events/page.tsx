@@ -799,7 +799,7 @@ export default function StaticEventsPage() {
             </motion.div>
 
             <motion.div
-              className="text-center mt-12"
+              className="text-center mt-12 hidden"
               variants={itemVariants}
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
