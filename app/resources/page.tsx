@@ -311,11 +311,17 @@ export default function ResourcesPage() {
               transition={{ duration: 0.2 }}
             >
               <motion.div
-                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center shadow-lg"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shadow-lg"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
               >
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                <Image
+                  src="/images/kcislk-logo.png"
+                  alt="KCISLK Logo"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-cover"
+                />
               </motion.div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent leading-tight truncate">
@@ -773,8 +779,14 @@ export default function ResourcesPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-full overflow-hidden">
+                  <Image
+                    src="/images/kcislk-logo.png"
+                    alt="KCISLK Logo"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">ES International Department</h3>
