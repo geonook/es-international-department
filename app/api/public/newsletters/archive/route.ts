@@ -47,6 +47,227 @@ export async function GET(request: NextRequest) {
       includeEmpty
     })
 
+    // 臨時強制使用硬編碼資料 - 緊急修復
+    const isProduction = process.env.NODE_ENV === 'production'
+    const forceHardcoded = true  // 臨時強制啟用
+    
+    if (isProduction || forceHardcoded) {
+      console.log('🏭 Production mode: Using hardcoded newsletter archive data')
+      
+      const hardcodedNewsletters = [
+        {
+          id: 10,
+          title: "June 2025 ID Monthly Newsletter",
+          issueNumber: "2025-06",
+          publishedAt: new Date('2025-06-15T10:00:00Z'),
+          createdAt: new Date('2025-06-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/vgzj/",
+          pdfUrl: null
+        },
+        {
+          id: 9,
+          title: "May 2025 ID Monthly Newsletter",
+          issueNumber: "2025-05",
+          publishedAt: new Date('2025-05-15T10:00:00Z'),
+          createdAt: new Date('2025-05-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/wwdj/",
+          pdfUrl: null
+        },
+        {
+          id: 8,
+          title: "April 2025 ID Monthly Newsletter",
+          issueNumber: "2025-04",
+          publishedAt: new Date('2025-04-15T10:00:00Z'),
+          createdAt: new Date('2025-04-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/jlyw/",
+          pdfUrl: null
+        },
+        {
+          id: 7,
+          title: "March 2025 ID Monthly Newsletter",
+          issueNumber: "2025-03",
+          publishedAt: new Date('2025-03-15T10:00:00Z'),
+          createdAt: new Date('2025-03-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/ihti/",
+          pdfUrl: null
+        },
+        {
+          id: 6,
+          title: "February 2025 ID Monthly Newsletter",
+          issueNumber: "2025-02",
+          publishedAt: new Date('2025-02-15T10:00:00Z'),
+          createdAt: new Date('2025-02-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/kfhv/",
+          pdfUrl: null
+        },
+        {
+          id: 5,
+          title: "January 2025 ID Monthly Newsletter",
+          issueNumber: "2025-01",
+          publishedAt: new Date('2025-01-15T10:00:00Z'),
+          createdAt: new Date('2025-01-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/xjrq/",
+          pdfUrl: null
+        },
+        {
+          id: 4,
+          title: "December 2024 ID Monthly Newsletter",
+          issueNumber: "2024-12",
+          publishedAt: new Date('2024-12-15T10:00:00Z'),
+          createdAt: new Date('2024-12-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/dqmj/",
+          pdfUrl: null
+        },
+        {
+          id: 3,
+          title: "November 2024 ID Monthly Newsletter",
+          issueNumber: "2024-11",
+          publishedAt: new Date('2024-11-15T10:00:00Z'),
+          createdAt: new Date('2024-11-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/kmhh/",
+          pdfUrl: null
+        },
+        {
+          id: 2,
+          title: "October 2024 ID Monthly Newsletter",
+          issueNumber: "2024-10",
+          publishedAt: new Date('2024-10-15T10:00:00Z'),
+          createdAt: new Date('2024-10-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/jwad/",
+          pdfUrl: null
+        },
+        {
+          id: 1,
+          title: "September 2024 ID Monthly Newsletter",
+          issueNumber: "2024-09",
+          publishedAt: new Date('2024-09-15T10:00:00Z'),
+          createdAt: new Date('2024-09-15T10:00:00Z'),
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/tcme/",
+          pdfUrl: null
+        }
+      ]
+
+      // 按月份分組電子報
+      const monthlyGroups = new Map<string, {
+        month: string
+        year: number
+        newsletters: typeof hardcodedNewsletters
+      }>()
+
+      hardcodedNewsletters.forEach(newsletter => {
+        const date = newsletter.publishedAt || newsletter.createdAt
+        if (!date) return
+
+        const d = new Date(date)
+        const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        
+        if (!monthlyGroups.has(monthKey)) {
+          monthlyGroups.set(monthKey, {
+            month: monthKey,
+            year: d.getFullYear(),
+            newsletters: []
+          })
+        }
+        
+        monthlyGroups.get(monthKey)!.newsletters.push(newsletter)
+      })
+
+      console.log(`Grouped ${hardcodedNewsletters.length} hardcoded newsletters into ${monthlyGroups.size} months`)
+
+      // 建立月份檔案資料
+      const monthlyArchives: MonthlyArchive[] = Array.from(monthlyGroups.entries())
+        .map(([monthKey, group]) => ({
+          month: monthKey,
+          year: group.year,
+          count: group.newsletters.length,
+          newsletters: group.newsletters.map(n => ({
+            id: n.id,
+            title: n.title,
+            issueNumber: n.issueNumber || undefined,
+            publishedAt: n.publishedAt || n.createdAt,
+            hasOnlineReader: Boolean(n.onlineReaderUrl),
+            onlineReaderUrl: n.onlineReaderUrl || undefined,
+            pdfUrl: n.pdfUrl || undefined
+          })),
+          hasOnlineReader: group.newsletters.some(n => Boolean(n.onlineReaderUrl))
+        }))
+        .sort((a, b) => b.month.localeCompare(a.month)) // 最新的月份在前
+        .slice(0, limit) // 應用限制
+
+      // 獲取可用年份列表
+      const availableYears = [...new Set(monthlyArchives.map(archive => archive.year))]
+        .sort((a, b) => b - a) // 最新年份在前
+
+      // 獲取可用月份列表  
+      const availableMonths = monthlyArchives.map(archive => archive.month)
+
+      // 建立年份檔案資料（如果需要）
+      let yearlyArchives: YearlyArchive[] = []
+      if (groupBy === 'year' || groupBy === 'both') {
+        const yearlyGroups = new Map<number, MonthlyArchive[]>()
+        
+        monthlyArchives.forEach(monthArchive => {
+          if (!yearlyGroups.has(monthArchive.year)) {
+            yearlyGroups.set(monthArchive.year, [])
+          }
+          yearlyGroups.get(monthArchive.year)!.push(monthArchive)
+        })
+        
+        yearlyArchives = Array.from(yearlyGroups.entries())
+          .map(([year, months]) => ({
+            year,
+            count: months.reduce((sum, month) => sum + month.count, 0),
+            months: months.sort((a, b) => b.month.localeCompare(a.month)) // 最新月份在前
+          }))
+          .sort((a, b) => b.year - a.year) // 最新年份在前
+      }
+
+      // 計算總統計
+      const totalNewsletters = hardcodedNewsletters.length
+      const totalMonths = monthlyArchives.length
+      const totalYears = availableYears.length
+
+      // 根據 groupBy 參數返回相應的資料結構
+      const responseData: any = {
+        success: true,
+        totalNewsletters,
+        totalMonths,
+        totalYears,
+        availableYears,
+        availableMonths,
+        groupBy,
+        queryParams: {
+          groupBy,
+          limit,
+          includeEmpty
+        }
+      }
+
+      if (groupBy === 'month') {
+        responseData.archive = monthlyArchives
+      } else if (groupBy === 'year') {
+        responseData.archive = yearlyArchives
+      } else if (groupBy === 'both') {
+        responseData.archive = {
+          byMonth: monthlyArchives,
+          byYear: yearlyArchives
+        }
+      }
+
+      console.log('Hardcoded Archive API response prepared:', {
+        totalNewsletters,
+        totalMonths,
+        totalYears,
+        availableYears: availableYears.slice(0, 3), // 只記錄前3年
+        groupBy
+      })
+
+      return NextResponse.json(responseData)
+    }
+
+    // Development/Staging 環境使用資料庫查詢
+    console.log('🧪 Development/Staging mode: Using database query')
+
     // 獲取所有已發布的電子報，按發布日期排序
     const newsletters = await prisma.communication.findMany({
       where: {
