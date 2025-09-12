@@ -647,7 +647,6 @@ export default function HomePage() {
                       <span className="hidden sm:inline md:hidden text-xs truncate">News</span>
                       <span className="sm:hidden text-xs truncate">News</span>
                     </TabsTrigger>
-                    {false && (
                     <TabsTrigger 
                       value="newsletter" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-3 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px]"
@@ -657,7 +656,6 @@ export default function HomePage() {
                       <span className="hidden sm:inline md:hidden text-xs truncate">Newsletter</span>
                       <span className="sm:hidden text-xs truncate">Letter</span>
                     </TabsTrigger>
-                    )}
                   </TabsList>
                 </motion.div>
 
@@ -818,8 +816,7 @@ View All Messages & Announcements
                     </motion.div>
                   </TabsContent>
 
-                  {/* Monthly Newsletter Tab - Temporarily Hidden */}
-                  {false && (
+                  {/* Monthly Newsletter Tab */}
                   <TabsContent value="newsletter" className="mt-0">
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -997,7 +994,6 @@ Browse Complete Newsletter Archive
                       </Card>
                     </motion.div>
                   </TabsContent>
-                  )}
 
                 </div>
               </Tabs>
