@@ -412,11 +412,6 @@ export default function ResourcesPage() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.2 }}
                         >
-                          <div className="flex items-center justify-center gap-3 mb-6">
-                            <div className={`w-16 h-16 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center shadow-lg`}>
-                              <category.icon className="w-8 h-8 text-white" />
-                            </div>
-                          </div>
                           <motion.h3
                             className={`text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r ${category.color} bg-clip-text text-transparent mb-6`}
                             animate={{
