@@ -69,10 +69,11 @@ export default function StaticEventsPage() {
   const y2 = useTransform(scrollY, [0, 300], [0, -100])
 
   // Static events data
+  // TODO: FUTURE_ENHANCEMENT - This will be replaced with dynamic backend data for Featured Event management
   const featuredEvent: StaticEvent = {
     id: 1,
     title: "Coffee with the Principal",
-    description: "Join us for an informal coffee morning with our Principal. This is a wonderful opportunity to discuss your children's education, share feedback, and learn about upcoming initiatives. Parents are encouraged to bring questions and suggestions in a relaxed, friendly environment.",
+    description: "Coffee with the Principal is a welcoming and informal event to foster open communication and collaboration between the school's leadership and our community. Parents and guardians can connect with the principal, directors, coordinators and teachers to share ideas, concerns, or feedback.",
     date: "February 28, 2025",
     time: "9:00 AM - 11:00 AM",
     location: "KCISLK School Library",
@@ -351,7 +352,8 @@ export default function StaticEventsPage() {
                     {featuredEvent.description}
                   </motion.p>
 
-                  {/* Event Details */}
+                  {/* Event Details - Hidden for now, will be restored when specific event dates are confirmed */}
+                  {/* TODO: FUTURE_ENHANCEMENT - Uncomment when backend provides specific event scheduling
                   <motion.div
                     className="space-y-4 mb-8"
                     initial={{ opacity: 0, y: 30 }}
@@ -371,6 +373,7 @@ export default function StaticEventsPage() {
                       <span className="font-medium">{featuredEvent.location}</span>
                     </div>
                   </motion.div>
+                  */
 
                   {/* Action Buttons */}
                   <motion.div
@@ -411,7 +414,7 @@ export default function StaticEventsPage() {
                   <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-400/30 to-pink-400/30 rounded-3xl blur-xl transform rotate-3" />
                     <Image
-                      src="/images/parent-child-reading.jpg"
+                      src="/images/coffee-with-principal.jpg"
                       alt="Coffee with the Principal"
                       fill
                       className="object-cover relative z-10"
