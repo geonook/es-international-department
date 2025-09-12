@@ -437,7 +437,7 @@ export default function StaticEventsPage() {
 
         {/* Upcoming Events Section */}
         <motion.section
-          className="py-16 md:py-20 relative"
+          className="hidden py-16 md:py-20 relative"
           style={{ y: y2 }}
           initial="hidden"
           whileInView="visible"
