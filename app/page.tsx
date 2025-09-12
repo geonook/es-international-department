@@ -951,12 +951,11 @@ View All Messages & Announcements
 Download PDF Version
                                             </Button>
                                           </motion.div>
-{/* HIDDEN: Individual "Coming Soon" button - can be restored later
                                         ) : (
-                                          <Button className="flex-1 bg-gray-300 text-gray-500" disabled>
-                                            Coming Soon
-                                          </Button>
-                                        ) */}
+                                          <div className="flex-1">
+                                            {/* HIDDEN: Coming Soon button - can be restored later */}
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
