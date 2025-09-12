@@ -473,21 +473,21 @@ export default function ResourcesPage() {
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-800 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-purple-50"
                     >
                       <BookOpen className="w-4 h-4" />
-                      <span className="text-sm font-medium">Diverse Reading</span>
+                      <span className="hidden sm:inline text-sm font-medium">Diverse Reading</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="strategy" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-blue-50"
                     >
                       <Brain className="w-4 h-4" />
-                      <span className="text-sm font-medium">Learning Strategies</span>
+                      <span className="hidden sm:inline text-sm font-medium">Learning Strategies</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="grade12" 
                       className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-purple-50"
                     >
                       <GraduationCap className="w-4 h-4" />
-                      <span className="text-sm font-medium">G1-G2 Exclusive</span>
+                      <span className="hidden sm:inline text-sm font-medium">G1-G2 Exclusive</span>
                     </TabsTrigger>
                   </TabsList>
                 </motion.div>
