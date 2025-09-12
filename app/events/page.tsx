@@ -152,7 +152,7 @@ export default function StaticEventsPage() {
   const rawDocumentUrls = [
     {
       id: 1,
-      title: "Coffee with Principal 活動簡報",
+      title: "Coffee with the Principal Presentation_1129",
       description: "Coffee with Principal 活動主要簡報內容，包含活動介紹與重要資訊",
       url: "https://drive.google.com/file/d/1BGmKA8TdoXvmI52erkEpgSWre-SAvITb/view",
       category: "簡報",
