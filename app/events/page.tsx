@@ -17,13 +17,19 @@ import {
   Star,
   ExternalLink,
   Mail,
-  Phone
+  Phone,
+  Eye,
+  FolderOpen,
+  PlayCircle,
+  FileSpreadsheet,
+  Presentation
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
 import BackToTop from "@/components/ui/back-to-top"
+import { processDriveUrl, handleThumbnailError } from "@/lib/google-drive-utils"
 
 /**
  * Static Events Page Component - KCISLK ESID Events
@@ -56,10 +62,16 @@ interface DocumentDownload {
   title: string
   description: string
   url: string
-  type: 'pdf' | 'doc' | 'link'
+  type: 'pdf' | 'doc' | 'link' | 'presentation' | 'drive'
   category: string
   size?: string
   lastUpdated?: string
+  thumbnailUrl?: string
+  driveFileId?: string
+  isGoogleDriveFile?: boolean
+  previewUrl?: string
+  downloadUrl?: string
+  fileExtension?: string
 }
 
 export default function StaticEventsPage() {
@@ -129,48 +141,78 @@ export default function StaticEventsPage() {
     }
   ]
 
-  const documents: DocumentDownload[] = [
+  // Process Google Drive URLs and create enhanced document data
+  const rawDocumentUrls = [
     {
       id: 1,
-      title: "Coffee with Principal - February 2025",
-      description: "Information sheet and agenda for the upcoming coffee morning",
-      url: "/events/coffee-principal-feb-2025.pdf",
-      type: "pdf",
-      category: "Meeting",
-      size: "245 KB",
-      lastUpdated: "January 15, 2025"
+      title: "11/29 簡報資料",
+      description: "Coffee with Principal 活動主要簡報內容，包含活動介紹與重要資訊",
+      url: "https://drive.google.com/file/d/1BGmKA8TdoXvmI52erkEpgSWre-SAvITb/view",
+      category: "簡報",
+      lastUpdated: "2024年11月29日"
     },
     {
       id: 2,
-      title: "Cultural Day Registration Form",
-      description: "Registration and participation form for International Cultural Day",
-      url: "/events/cultural-day-registration.pdf",
-      type: "pdf", 
-      category: "Event",
-      size: "189 KB",
-      lastUpdated: "January 10, 2025"
+      title: "11/29 一、二年級教材",
+      description: "專為1-2年級學生設計的Coffee with Principal活動教學投影片",
+      url: "https://drive.google.com/file/d/1ZsfVdLbah-fov4EMBDC1j0TKVeKxiPrb/view",
+      category: "教學資料",
+      lastUpdated: "2024年11月29日"
     },
     {
       id: 3,
-      title: "Sports Day Schedule & Rules",
-      description: "Complete schedule and competition rules for Spring Sports Day",
-      url: "/events/sports-day-guide.pdf",
-      type: "pdf",
-      category: "Event", 
-      size: "512 KB",
-      lastUpdated: "January 8, 2025"
+      title: "11/29 三、四年級教材",
+      description: "專為3-4年級學生設計的Coffee with Principal活動教學投影片",
+      url: "https://drive.google.com/file/d/11fe6GQSf0JudhdO0t7LDsG3dKKWYi4Dm/view",
+      category: "教學資料",
+      lastUpdated: "2024年11月29日"
     },
     {
       id: 4,
-      title: "Parent Volunteer Opportunities",
-      description: "Information about how parents can get involved in school activities",
-      url: "/events/volunteer-opportunities.pdf",
-      type: "pdf",
-      category: "General",
-      size: "156 KB",
-      lastUpdated: "January 5, 2025"
+      title: "11/29 五、六年級教材",
+      description: "專為5-6年級學生設計的Coffee with Principal活動教學投影片",
+      url: "https://drive.google.com/file/d/1SEnSdxKGC6DQG1Pe5qMYAcfVxqsR73-U/view",
+      category: "教學資料",
+      lastUpdated: "2024年11月29日"
     }
   ]
+
+  // Process documents with Google Drive integration
+  const documents: DocumentDownload[] = rawDocumentUrls.map(doc => {
+    const driveInfo = processDriveUrl(doc.url)
+    
+    if (driveInfo) {
+      return {
+        id: doc.id,
+        title: doc.title,
+        description: doc.description,
+        url: doc.url,
+        type: 'drive',
+        category: doc.category,
+        size: driveInfo.estimatedSize,
+        lastUpdated: doc.lastUpdated,
+        thumbnailUrl: driveInfo.thumbnailUrl,
+        driveFileId: driveInfo.fileId,
+        isGoogleDriveFile: true,
+        previewUrl: driveInfo.previewUrl,
+        downloadUrl: driveInfo.downloadUrl,
+        fileExtension: driveInfo.extension
+      }
+    }
+    
+    // Fallback for non-Drive files
+    return {
+      id: doc.id,
+      title: doc.title,
+      description: doc.description,
+      url: doc.url,
+      type: 'pdf',
+      category: doc.category,
+      size: 'Unknown',
+      lastUpdated: doc.lastUpdated,
+      isGoogleDriveFile: false
+    }
+  })
 
   // Animation variants
   const containerVariants = {
@@ -576,49 +618,145 @@ export default function StaticEventsPage() {
               className="grid md:grid-cols-2 lg:grid-cols-2 gap-6"
               variants={containerVariants}
             >
-              {documents.map((doc, index) => (
-                <motion.div
-                  key={doc.id}
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="bg-white/95 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <FileText className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-gray-900 mb-2 leading-tight">
-                            {doc.title}
-                          </h4>
-                          <p className="text-sm text-gray-600 mb-3">
-                            {doc.description}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
-                              <span>{doc.size}</span>
-                              <span>•</span>
-                              <span>Updated {doc.lastUpdated}</span>
+              {documents.map((doc, index) => {
+                // Get appropriate icon for file type
+                const getFileIcon = () => {
+                  if (doc.isGoogleDriveFile) {
+                    switch (doc.fileExtension) {
+                      case 'PPTX': return <Presentation className="w-6 h-6 text-white" />
+                      case 'DOCX': return <FileText className="w-6 h-6 text-white" />
+                      case 'XLSX': return <FileSpreadsheet className="w-6 h-6 text-white" />
+                      default: return <FolderOpen className="w-6 h-6 text-white" />
+                    }
+                  }
+                  return <FileText className="w-6 h-6 text-white" />
+                }
+
+                // Get color scheme based on file type
+                const getIconColors = () => {
+                  if (doc.isGoogleDriveFile) {
+                    switch (doc.fileExtension) {
+                      case 'PPTX': return 'bg-gradient-to-br from-orange-500 to-red-600'
+                      case 'DOCX': return 'bg-gradient-to-br from-blue-500 to-blue-600'
+                      case 'XLSX': return 'bg-gradient-to-br from-green-500 to-green-600'
+                      default: return 'bg-gradient-to-br from-purple-500 to-purple-600'
+                    }
+                  }
+                  return 'bg-gradient-to-br from-red-500 to-red-600'
+                }
+
+                return (
+                  <motion.div
+                    key={doc.id}
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Card className="bg-white/95 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                      <CardContent className="p-0">
+                        {/* Enhanced layout with thumbnail */}
+                        <div className="flex">
+                          {/* Thumbnail/Icon Section */}
+                          <div className="flex-shrink-0 w-32 h-32 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+                            {doc.isGoogleDriveFile && doc.thumbnailUrl ? (
+                              <div className="relative w-full h-full">
+                                <img
+                                  src={doc.thumbnailUrl}
+                                  alt={`${doc.title} preview`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    // Fallback to icon on image error
+                                    const target = e.target as HTMLImageElement
+                                    const parent = target.parentElement
+                                    if (parent) {
+                                      parent.innerHTML = `
+                                        <div class="${getIconColors()} w-16 h-16 rounded-xl flex items-center justify-center shadow-lg">
+                                          <div class="text-white text-xs font-bold">${doc.fileExtension}</div>
+                                        </div>
+                                      `
+                                    }
+                                  }}
+                                />
+                                {/* File type badge */}
+                                <div className="absolute top-2 right-2">
+                                  <Badge className="bg-white/90 text-gray-700 text-xs px-2 py-1">
+                                    {doc.fileExtension}
+                                  </Badge>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className={`w-16 h-16 ${getIconColors()} rounded-xl flex items-center justify-center shadow-lg`}>
+                                {getFileIcon()}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Content Section */}
+                          <div className="flex-1 p-6">
+                            <div className="flex items-start justify-between mb-3">
+                              <h4 className="font-semibold text-gray-900 leading-tight text-lg">
+                                {doc.title}
+                              </h4>
+                              {doc.isGoogleDriveFile && (
+                                <Badge variant="outline" className="ml-2 text-xs border-purple-200 text-purple-600">
+                                  <FolderOpen className="w-3 h-3 mr-1" />
+                                  Drive
+                                </Badge>
+                              )}
                             </div>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                              <Button 
-                                size="sm"
-                                className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
-                                onClick={() => window.open(doc.url, '_blank')}
-                              >
-                                <Download className="w-4 h-4 mr-1" />
-                                Download
-                              </Button>
-                            </motion.div>
+                            
+                            <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                              {doc.description}
+                            </p>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4 text-xs text-gray-500">
+                                <span className="flex items-center gap-1">
+                                  <FileText className="w-3 h-3" />
+                                  {doc.size}
+                                </span>
+                                <span>•</span>
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {doc.lastUpdated}
+                                </span>
+                              </div>
+
+                              {/* Enhanced dual-button design */}
+                              <div className="flex items-center gap-2">
+                                {doc.isGoogleDriveFile && doc.previewUrl && (
+                                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                    <Button 
+                                      size="sm"
+                                      variant="outline"
+                                      className="border-purple-200 text-purple-600 hover:bg-purple-50"
+                                      onClick={() => window.open(doc.previewUrl, '_blank')}
+                                    >
+                                      <Eye className="w-4 h-4 mr-1" />
+                                      預覽
+                                    </Button>
+                                  </motion.div>
+                                )}
+                                
+                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                  <Button 
+                                    size="sm"
+                                    className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
+                                    onClick={() => window.open(doc.downloadUrl || doc.url, '_blank')}
+                                  >
+                                    <Download className="w-4 h-4 mr-1" />
+                                    下載
+                                  </Button>
+                                </motion.div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )
+              })}
             </motion.div>
 
             <motion.div
