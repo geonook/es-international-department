@@ -337,6 +337,61 @@ export default function ResourcesPage() {
           </motion.div>
         </section>
 
+        {/* Parent Resource Center Featured Section - Like Events Page but No Image */}
+        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+          {/* Background Gradient - Same as Events Page */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-purple-800/30 to-pink-900/20" />
+          
+          <motion.div 
+            className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+            style={{ y: y1 }}
+          >
+            <div className="max-w-4xl mx-auto">
+              {/* Content - Centered Single Column */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-center"
+              >
+                <motion.div
+                  className="flex items-center justify-center gap-3 mb-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <Badge className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-1">
+                    Featured Resources
+                  </Badge>
+                </motion.div>
+
+                <motion.h2
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  Parent Resource
+                  <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    Center
+                  </span>
+                </motion.h2>
+
+                <motion.p
+                  className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  Parents play a crucial role in their children's development. To support parents in their parenting journey, we provide a range of valuable resources. These resources may include informative articles and online tools designed to equip parents with the knowledge and skills to nurture their children's growth. By empowering parents with the right information and support, we aim to create a strong foundation for children to thrive and reach their full potential.
+                </motion.p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </section>
 
         {/* Main Resource Categories Section with Tabs */}
         <motion.section
