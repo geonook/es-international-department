@@ -957,7 +957,6 @@ Download PDF Version
                                             Coming Soon
                                           </Button>
                                         ) */}
-                                        }
                                       </div>
                                     </div>
                                   </div>
