@@ -509,36 +509,38 @@ export default function ResourcesPage() {
                                         </p>
                                       </div>
 
-                                      {/* Materials List (for G1-G2 resources) - Compact Version */}
+                                      {/* Materials List (for G1-G2 resources) - Horizontal Scrolling Version */}
                                       {resource.materials && (
-                                        <div className="mb-4">
-                                          <h5 className="font-semibold text-gray-800 mb-2 text-xs">Available Materials:</h5>
-                                          <div className="grid gap-2">
-                                            {resource.materials.slice(0, 2).map((material, idx) => (
+                                        <div className="mb-3">
+                                          <h5 className="font-semibold text-gray-800 mb-1.5 text-xs">Available Materials:</h5>
+                                          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300">
+                                            {resource.materials.slice(0, 4).map((material, idx) => (
                                               <motion.a
                                                 key={idx}
                                                 href={material.link}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center gap-2 p-1 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-xs"
-                                                whileHover={{ x: 2 }}
+                                                className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors text-xs border border-gray-200"
+                                                whileHover={{ scale: 1.05 }}
+                                                title={material.name}
                                               >
-                                                <div className="w-4 h-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded flex items-center justify-center">
+                                                <div className="w-3 h-3 bg-gradient-to-br from-purple-400 to-purple-600 rounded flex items-center justify-center flex-shrink-0">
                                                   {material.type === 'PDF' ? (
-                                                    <FileText className="w-2.5 h-2.5 text-white" />
+                                                    <FileText className="w-1.5 h-1.5 text-white" />
                                                   ) : material.type === 'Drive Folder' ? (
-                                                    <FolderOpen className="w-2.5 h-2.5 text-white" />
+                                                    <FolderOpen className="w-1.5 h-1.5 text-white" />
                                                   ) : (
-                                                    <Gamepad2 className="w-2.5 h-2.5 text-white" />
+                                                    <Gamepad2 className="w-1.5 h-1.5 text-white" />
                                                   )}
                                                 </div>
-                                                <span className="flex-1 truncate">{material.name}</span>
-                                                <ExternalLink className="w-2.5 h-2.5 text-gray-400" />
+                                                <span className="truncate max-w-16 text-xs">
+                                                  {material.name.length > 12 ? material.name.substring(0, 12) + '...' : material.name}
+                                                </span>
                                               </motion.a>
                                             ))}
-                                            {resource.materials.length > 2 && (
-                                              <div className="text-xs text-gray-500 text-center py-0.5">
-                                                +{resource.materials.length - 2} more materials
+                                            {resource.materials.length > 4 && (
+                                              <div className="flex-shrink-0 text-xs text-gray-500 px-1 py-1 bg-gray-50 rounded-md border border-gray-200">
+                                                +{resource.materials.length - 4}
                                               </div>
                                             )}
                                           </div>
