@@ -26,12 +26,12 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 創建測試電子報數據
+    // Create English newsletter test data
     const newsletterData = [
       {
-        title: '2025年1月份 國際部月刊',
-        content: '本月月刊包含期末評量週安排、寒假活動規劃、以及下學期課程預告。內容豐富，歡迎家長們線上閱讀。本期特別報導包括：\n\n1. 期末評量週時間安排與注意事項\n2. 寒假學習活動規劃\n3. 下學期課程介紹與重點\n4. 家長會議重要決議\n5. 學生優秀作品展示\n\n感謝所有家長與老師的支持與配合！',
-        summary: '本月月刊包含期末評量週安排、寒假活動規劃、以及下學期課程預告。內容豐富，歡迎家長們線上閱讀。',
+        title: 'January 2025 ID Monthly Newsletter',
+        content: 'This month\'s newsletter includes final exam week arrangements, winter holiday activity planning, and next semester course previews. Rich in content, parents and teachers are welcome to read online. This issue features:\n\n1. Final exam week schedule and important notes\n2. Winter holiday learning activity planning\n3. Next semester course introduction and highlights\n4. Important parent meeting resolutions\n5. Outstanding student work showcase\n\nThank you for all parents and teachers\' support and cooperation!',
+        summary: 'This month\'s newsletter includes final exam week arrangements, winter holiday activity planning, and next semester course previews. Rich in content, welcome to read online.',
         type: 'newsletter',
         targetAudience: 'all',
         priority: 'high',
@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
         issueNumber: '2025-01'
       },
       {
-        title: '2024年12月份 國際部月刊',
-        content: '十二月份月刊特別報導聖誕節慶祝活動、年終成果發表、以及新年活動預告。本期內容包括：\n\n1. 聖誕節慶祝活動回顧\n2. 學生年終成果展示\n3. 新年活動預告\n4. 冬季課程總結\n5. 家長感謝信件分享\n\n願新的一年為所有家庭帶來健康與快樂！',
-        summary: '十二月份月刊特別報導聖誕節慶祝活動、年終成果發表、以及新年活動預告。',
+        title: 'December 2024 ID Monthly Newsletter',
+        content: 'December newsletter features special coverage of Christmas celebrations, year-end achievement presentations, and New Year activity previews. This issue includes:\n\n1. Christmas celebration activity review\n2. Student year-end achievement showcase\n3. New Year activity announcements\n4. Winter semester course summary\n5. Parent appreciation letter sharing\n\nMay the new year bring health and happiness to all families!',
+        summary: 'December newsletter features special coverage of Christmas celebrations, year-end achievement presentations, and New Year activity previews.',
         type: 'newsletter',
         targetAudience: 'parents',
         priority: 'medium',
@@ -59,9 +59,9 @@ export async function POST(request: NextRequest) {
         issueNumber: '2024-12'
       },
       {
-        title: '2024年11月份 國際部月刊',
-        content: '十一月份月刊聚焦感恩節活動、家長會議總結、以及十二月活動預告。本期重點內容：\n\n1. 感恩節主題活動報導\n2. 家長會議重要決議\n3. 學生學習成果分享\n4. 十二月重要活動預告\n5. 教師專業發展報告\n\n感謝所有家長對學校工作的理解與支持！',
-        summary: '十一月份月刊聚焦感恩節活動、家長會議總結、以及十二月活動預告。',
+        title: 'November 2024 ID Monthly Newsletter',
+        content: 'November newsletter focuses on Thanksgiving activities, parent meeting summaries, and December activity previews. Key content includes:\n\n1. Thanksgiving themed activity coverage\n2. Important parent meeting resolutions\n3. Student learning achievement sharing\n4. December important activity announcements\n5. Teacher professional development report\n\nThank you to all parents for their understanding and support of school work!',
+        summary: 'November newsletter focuses on Thanksgiving activities, parent meeting summaries, and December activity previews.',
         type: 'newsletter',
         targetAudience: 'all',
         priority: 'medium',

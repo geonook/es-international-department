@@ -119,17 +119,16 @@ export async function GET(request: NextRequest) {
       take: limit
     })
 
-    // 如果沒有找到 newsletter 類型的數據，嘗試查詢包含 "月刊" 或 "Newsletter" 字樣的公告
+    // If no newsletter type data found, try to find communications with "Newsletter" keywords
     if (newsletters.length === 0) {
       newsletters = await prisma.communication.findMany({
         where: {
           ...whereCondition,
           OR: [
-            { title: { contains: '月刊', mode: 'insensitive' } },
             { title: { contains: 'Newsletter', mode: 'insensitive' } },
             { title: { contains: 'newsletter', mode: 'insensitive' } },
-            { content: { contains: '月刊', mode: 'insensitive' } },
-            { content: { contains: 'Newsletter', mode: 'insensitive' } }
+            { content: { contains: 'Newsletter', mode: 'insensitive' } },
+            { content: { contains: 'monthly', mode: 'insensitive' } }
           ]
         },
         select: {
