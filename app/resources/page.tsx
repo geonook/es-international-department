@@ -163,7 +163,7 @@ export default function ResourcesPage() {
           title: 'ReadWorks: Article a Day',
           description: "Online resources providing daily reading articles with comprehension questions. Build reading stamina and background knowledge through systematic daily practice.",
           icon: Globe,
-          color: 'from-blue-400 to-blue-600',
+          color: 'from-purple-600 to-purple-800',
           image: '/images/resources/readworks.png',
           link: 'https://www.readworks.org/',
           linkText: 'Access ReadWorks Platform',
@@ -193,7 +193,7 @@ export default function ResourcesPage() {
           title: 'Building Background Knowledge',
           description: "Building background knowledge is crucial for ELLs to succeed in their language learning journey. It helps them improve comprehension, vocabulary, and cultural understanding, while also increasing their motivation and engagement. Spring 2025: Building Background Knowledge",
           icon: Lightbulb,
-          color: 'from-cyan-500 to-cyan-700',
+          color: 'from-blue-600 to-blue-800',
           image: '/images/resources/background-knowledge.png',
           link: 'https://drive.google.com/drive/folders/background-knowledge-spring-2025',
           linkText: 'Access Spring 2025 Background Knowledge Resources',
@@ -544,7 +544,7 @@ export default function ResourcesPage() {
                                         />
                                       )}
                                       {/* Type icon overlay - top right */}
-                                      <div className="absolute top-3 right-3">
+                                      <div className="absolute top-3 right-3 hidden">
                                         <div className={`w-10 h-10 bg-gradient-to-r ${resource.color} rounded-xl flex items-center justify-center shadow-lg`}>
                                           <resource.icon className="w-5 h-5 text-white" />
                                         </div>
@@ -575,7 +575,7 @@ export default function ResourcesPage() {
                                           <h4 className="font-bold text-gray-900 leading-tight text-xl">
                                             {resource.title}
                                           </h4>
-                                          <Badge variant="outline" className="ml-3 text-xs border-purple-200 text-purple-600 px-2 py-1">
+                                          <Badge variant="outline" className="ml-3 text-xs border-purple-200 text-purple-600 px-2 py-1 hidden">
                                             {resource.type || 'Resource'}
                                           </Badge>
                                         </div>
