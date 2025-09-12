@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ExternalLink, Mail, Phone, Search, ChevronDown, Sparkles, Users, BookOpen, Calendar, Newspaper, Megaphone, X, Printer } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -40,6 +41,9 @@ export default function HomePage() {
   // Newsletter 狀態 | Newsletter state  
   const [newsletters, setNewsletters] = useState([])
   const [newslettersLoading, setNewslettersLoading] = useState(true)
+  const [availableMonths, setAvailableMonths] = useState([])
+  const [selectedMonth, setSelectedMonth] = useState('')
+  const [monthsLoading, setMonthsLoading] = useState(true)
   
   // 消息展開狀態 | Message expansion state
   const [expandedMessages, setExpandedMessages] = useState(new Set())
@@ -76,8 +80,15 @@ export default function HomePage() {
   useEffect(() => {
     setIsLoaded(true)
     fetchMessages()
-    fetchNewsletters()
+    fetchAvailableMonths()
   }, [])
+
+  // 當選擇的月份改變時，重新載入 Newsletter
+  useEffect(() => {
+    if (selectedMonth) {
+      fetchNewsletters(selectedMonth)
+    }
+  }, [selectedMonth])
 
   // 載入 Message Board 數據 | Load Message Board data
   const fetchMessages = async () => {
@@ -96,11 +107,35 @@ export default function HomePage() {
     }
   }
 
+  // 載入可用月份 | Load available months
+  const fetchAvailableMonths = async () => {
+    try {
+      setMonthsLoading(true)
+      const response = await fetch('/api/public/newsletters/archive?groupBy=month&limit=12')
+      const data = await response.json()
+      
+      if (data.success && data.availableMonths) {
+        setAvailableMonths(data.availableMonths)
+        // 自動選擇最新月份
+        if (data.availableMonths.length > 0) {
+          setSelectedMonth(data.availableMonths[0])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load available months:', error)
+    } finally {
+      setMonthsLoading(false)
+    }
+  }
+
   // 載入 Newsletter 數據 | Load Newsletter data
-  const fetchNewsletters = async () => {
+  const fetchNewsletters = async (month = '') => {
     try {
       setNewslettersLoading(true)
-      const response = await fetch('/api/public/newsletters?limit=3')
+      const url = month 
+        ? `/api/public/newsletters?month=${month}&limit=10`
+        : '/api/public/newsletters?limit=3'
+      const response = await fetch(url)
       const data = await response.json()
       
       if (data.success) {
@@ -795,6 +830,29 @@ View All Messages & Announcements
                             Monthly Newsletter Archive
                           </CardTitle>
                           <p className="text-sm text-gray-600 mt-2">Browse our collection of monthly newsletters with online reading capabilities</p>
+                          
+                          {/* 月份選擇器 | Month Selector */}
+                          {!monthsLoading && availableMonths.length > 0 && (
+                            <div className="mt-4 flex items-center justify-center gap-3">
+                              <span className="text-sm font-medium text-gray-700">選擇月份：</span>
+                              <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                                <SelectTrigger className="w-40">
+                                  <SelectValue placeholder="選擇月份" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {availableMonths.map((month) => {
+                                    const [year, monthNum] = month.split('-')
+                                    const monthName = new Date(parseInt(year), parseInt(monthNum) - 1).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long' })
+                                    return (
+                                      <SelectItem key={month} value={month}>
+                                        {monthName}
+                                      </SelectItem>
+                                    )
+                                  })}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
                         </CardHeader>
                         <CardContent className="p-8">
                           {newslettersLoading ? (
@@ -866,20 +924,30 @@ View All Messages & Announcements
                                         <h3 className="text-xl font-bold text-gray-900 mb-3">{newsletter.title}</h3>
                                         <p className="text-gray-700 leading-relaxed mb-4">{newsletter.content}</p>
                                         
-                                        {newsletter.onlineReaderUrl && (
+                                        {/* 優先顯示 embedCode，次選 onlineReaderUrl */}
+                                        {newsletter.embedCode ? (
+                                          <div className="mb-4">
+                                            <div className="bg-white/80 rounded-lg p-4 border border-blue-200 overflow-hidden">
+                                              <div 
+                                                dangerouslySetInnerHTML={{ __html: newsletter.embedCode }}
+                                                className="w-full [&>iframe]:w-full [&>iframe]:max-w-full"
+                                              />
+                                            </div>
+                                          </div>
+                                        ) : newsletter.onlineReaderUrl ? (
                                           <div className="mb-4">
                                             <div className="bg-white/80 rounded-lg p-4 border border-blue-200">
                                               <iframe
                                                 src={newsletter.onlineReaderUrl}
                                                 width="100%"
-                                                height="200"
+                                                height="500"
                                                 frameBorder="0"
                                                 className="rounded-lg"
                                                 title={`${newsletter.title} Preview`}
                                               />
                                             </div>
                                           </div>
-                                        )}
+                                        ) : null}
                                       </div>
                                       
                                       {/* Action Buttons */}

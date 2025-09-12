@@ -585,6 +585,7 @@ model Communication {
   // Newsletter specific fields
   onlineReaderUrl String?  @map("online_reader_url") // For embedded online readers like pubhtml5.com
   pdfUrl         String?   @map("pdf_url") // PDF download URL
+  embedCode      String?   @map("embed_code") // Complete iframe embed code for newsletter display
   issueNumber    String?   @map("issue_number") // Newsletter issue number
   
   // Metadata

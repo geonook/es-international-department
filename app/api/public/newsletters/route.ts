@@ -98,6 +98,7 @@ export async function GET(request: NextRequest) {
         summary: true,
         onlineReaderUrl: true,
         pdfUrl: true,
+        embedCode: true,
         issueNumber: true,
         status: true,
         publishedAt: true,
@@ -138,6 +139,7 @@ export async function GET(request: NextRequest) {
           summary: true,
           onlineReaderUrl: true,
           pdfUrl: true,
+          embedCode: true,
           issueNumber: true,
           status: true,
           publishedAt: true,
@@ -183,8 +185,9 @@ export async function GET(request: NextRequest) {
         targetAudience: 'all',
         onlineReaderUrl: newsletter.onlineReaderUrl, // 線上閱讀器 URL
         pdfUrl: newsletter.pdfUrl, // PDF 下載 URL
+        embedCode: newsletter.embedCode, // 嵌入程式碼
         issueNumber: newsletter.issueNumber, // 期號
-        hasOnlineReader: Boolean(newsletter.onlineReaderUrl) // 新增：是否有線上閱讀器
+        hasOnlineReader: Boolean(newsletter.onlineReaderUrl || newsletter.embedCode) // 新增：是否有線上閱讀器或嵌入碼
       }
     })
 

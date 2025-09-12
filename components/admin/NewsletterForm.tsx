@@ -31,6 +31,7 @@ interface NewsletterData {
   htmlContent?: string
   coverImageUrl?: string
   pdfUrl?: string
+  embedCode?: string
   status: 'draft' | 'published' | 'archived'
   issueNumber?: number
   publicationDate?: string
@@ -59,6 +60,7 @@ export default function NewsletterForm({
     htmlContent: '',
     coverImageUrl: '',
     pdfUrl: '',
+    embedCode: '',
     status: 'draft',
     issueNumber: undefined,
     publicationDate: undefined
@@ -306,6 +308,28 @@ export default function NewsletterForm({
                 <p className="text-xs text-gray-500">
                   PDF link for "View Latest Newsletter" button on homepage
                 </p>
+              </div>
+
+              {/* Embed Code */}
+              <div className="space-y-2">
+                <Label htmlFor="embedCode">Iframe Embed Code (嵌入程式碼)</Label>
+                <Textarea
+                  id="embedCode"
+                  value={formData.embedCode || ''}
+                  onChange={(e) => handleInputChange('embedCode', e.target.value)}
+                  placeholder='<iframe style="width:900px;height:500px" src="https://online.pubhtml5.com/..." seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true"></iframe>'
+                  rows={4}
+                  className="font-mono text-xs"
+                />
+                <p className="text-xs text-gray-500">
+                  貼上完整的 iframe 嵌入程式碼（如 PubHTML5 提供的程式碼）
+                </p>
+                {formData.embedCode && (
+                  <div className="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-xs font-medium text-gray-700 mb-2">Iframe Preview:</p>
+                    <div dangerouslySetInnerHTML={{ __html: formData.embedCode }} className="w-full" />
+                  </div>
+                )}
               </div>
 
               {/* Publication Date */}
