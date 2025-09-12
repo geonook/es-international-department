@@ -55,6 +55,7 @@
     "test:api": "tsx scripts/run-api-tests.ts",
     "generate:api-tests": "tsx scripts/generate-api-tests.ts",
     "test:db": "tsx scripts/test-db-connection.ts",
+    "test:db:multi": "tsx scripts/test-multi-env-db.ts",
     "db:integrity": "tsx scripts/database-integrity-check.ts",
     "db:health": "tsx scripts/database-health-check.ts",
     "db:health:multi": "tsx scripts/db-health-monitor.ts",
