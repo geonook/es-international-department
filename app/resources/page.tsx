@@ -76,7 +76,7 @@ export default function ResourcesPage() {
           description: "Introduce 'Reading Buddies,' a fun and engaging program designed to help your child develop essential reading skills. Combining the science of reading with lots of laughter, Reading Buddies provides aspiring readers with a supportive and enjoyable environment to build a strong foundation in literacy.",
           icon: Users,
           color: 'from-purple-400 to-purple-600',
-          image: '/images/resources/reading-buddies.jpg',
+          image: '/images/resources/reading-buddies.png',
           link: 'https://www.youtube.com/@readingbuddies',
           linkText: 'Visit Reading Buddies Website',
           type: 'program'
@@ -87,7 +87,7 @@ export default function ResourcesPage() {
           description: "Reading is a fundamental skill that opens doors to a world of knowledge and imagination. It is a key to success in school and beyond. Setting aside dedicated time for reading beyond textbooks is crucial for their academic and personal growth. Fall 2024: Weekly Reading Challenge: Texts & Quizzes",
           icon: Target,
           color: 'from-purple-500 to-purple-700',
-          image: '/images/resources/reading-campaign.jpg',
+          image: '/images/resources/reading-campaign.png',
           link: 'https://drive.google.com/drive/folders/weekly-reading-challenge-fall-2024',
           linkText: 'Join Fall 2024 Weekly Reading Challenge',
           timeline: 'Fall 2024',
