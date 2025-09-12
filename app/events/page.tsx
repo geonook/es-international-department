@@ -373,7 +373,7 @@ export default function StaticEventsPage() {
                       <span className="font-medium">{featuredEvent.location}</span>
                     </div>
                   </motion.div>
-                  */
+                  */}
 
                   {/* Action Buttons */}
                   <motion.div
