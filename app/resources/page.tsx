@@ -281,62 +281,6 @@ export default function ResourcesPage() {
       </motion.header>
 
       <main>
-        {/* Hero Section - Parents' Corner Style */}
-        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-r from-purple-50 via-pink-50 to-purple-100">
-          <motion.div 
-            className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
-            style={{ y: y1 }}
-          >
-            <motion.div
-              className="text-center max-w-4xl mx-auto"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <motion.div
-                className="flex items-center justify-center gap-3 mb-6"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
-                  <BookOpen className="w-6 h-6 text-white" />
-                </div>
-                <Badge className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-1">
-                  Featured Resources
-                </Badge>
-              </motion.div>
-
-              <motion.h2
-                className="text-4xl md:text-5xl lg:text-6xl font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 mb-6 leading-tight"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0, backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                transition={{ 
-                  opacity: { delay: 0.3 },
-                  y: { delay: 0.3 },
-                  backgroundPosition: {
-                    duration: 5,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "linear"
-                  }
-                }}
-                style={{ backgroundSize: "200% 200%" }}
-              >
-                Parent Resource Center
-              </motion.h2>
-
-              <motion.p
-                className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                Parents play a crucial role in their children's development. To support parents in their parenting journey, we provide a range of valuable resources. These resources may include informative articles and online tools designed to equip parents with the knowledge and skills to nurture their children's growth. By empowering parents with the right information and support, we aim to create a strong foundation for children to thrive and reach their full potential.
-              </motion.p>
-            </motion.div>
-          </motion.div>
-        </section>
-
         {/* Parent Resource Center Featured Section - Like Events Page but No Image */}
         <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
           {/* Background Gradient - Same as Events Page */}
