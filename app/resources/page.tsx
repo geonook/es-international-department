@@ -431,7 +431,6 @@ export default function ResourcesPage() {
                           >
                             {category.title}
                           </motion.h3>
-                          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">{category.description}</p>
                         </motion.div>
 
                         {/* Resource Cards - Horizontal Layout like Events */}
