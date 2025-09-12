@@ -99,7 +99,7 @@ export default function ResourcesPage() {
           description: "Online resources providing daily reading articles with comprehension questions. Build reading stamina and background knowledge through systematic daily practice.",
           icon: Globe,
           color: 'from-blue-400 to-blue-600',
-          image: '/images/resources/readworks.jpg',
+          image: '/images/resources/readworks.png',
           link: 'https://www.readworks.org/',
           linkText: 'Access ReadWorks Platform',
           type: 'platform'
@@ -118,7 +118,7 @@ export default function ResourcesPage() {
           description: "Scientific research shows that there are five essential components of reading that children must be taught in order to learn to read. Teachers and parents can help children learn to be good readers by systematically practicing these five components.",
           icon: Brain,
           color: 'from-blue-500 to-blue-700',
-          image: '/images/resources/five-components.jpg',
+          image: '/images/resources/five-components.png',
           link: 'https://drive.google.com/file/d/five-components-reading-research',
           linkText: 'Access Five Components Research Document',
           type: 'research'
@@ -129,7 +129,7 @@ export default function ResourcesPage() {
           description: "Building background knowledge is crucial for ELLs to succeed in their language learning journey. It helps them improve comprehension, vocabulary, and cultural understanding, while also increasing their motivation and engagement. Spring 2025: Building Background Knowledge",
           icon: Lightbulb,
           color: 'from-cyan-500 to-cyan-700',
-          image: '/images/resources/background-knowledge.jpg',
+          image: '/images/resources/background-knowledge.png',
           link: 'https://drive.google.com/drive/folders/background-knowledge-spring-2025',
           linkText: 'Access Spring 2025 Background Knowledge Resources',
           timeline: 'Spring 2025',
@@ -149,7 +149,7 @@ export default function ResourcesPage() {
           description: "Comprehensive review platform designed specifically for myView curriculum materials. Access interactive content and review materials to support student learning.",
           icon: School,
           color: 'from-purple-400 to-purple-600',
-          image: '/images/resources/myview-review.jpg',
+          image: '/images/resources/myview-review.png',
           link: 'https://myviewreview.com/',
           linkText: 'Visit myView reView Platform',
           type: 'platform'
@@ -160,7 +160,7 @@ export default function ResourcesPage() {
           description: "We provide learning materials to help students transition smoothly from G1 to G2. These resources include several PDF documents for reading and interactive review games.",
           icon: FileText,
           color: 'from-purple-500 to-purple-700',
-          image: '/images/resources/transition-materials.jpg',
+          image: '/images/resources/transition-materials.png',
           timeline: 'Summer 2025',
           type: 'materials',
           materials: [
