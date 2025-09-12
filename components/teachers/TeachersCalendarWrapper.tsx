@@ -212,11 +212,11 @@ export default function TeachersCalendarWrapper({
       <div className={cn("space-y-6", className)}>
         {/* Event Detail Dialog */}
         <Dialog open={showEventDialog} onOpenChange={setShowEventDialog}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl" aria-describedby="event-details">
             <DialogHeader>
-              <DialogTitle>{selectedEvent?.title}</DialogTitle>
-              <DialogDescription>
-                {selectedEvent && format(parseISO(selectedEvent.startDate), 'PPP')}
+              <DialogTitle id="event-title">{selectedEvent?.title}</DialogTitle>
+              <DialogDescription id="event-details">
+                {selectedEvent && `Event scheduled for ${format(parseISO(selectedEvent.startDate), 'PPP')}`}
               </DialogDescription>
             </DialogHeader>
             

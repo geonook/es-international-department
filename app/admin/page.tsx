@@ -305,10 +305,19 @@ export default function AdminPage() {
         if (data.success) {
           setAnnouncements(data.announcements || [])
         }
+      } else if (response.status === 401) {
+        // Authentication required - not a real error
+        console.log('Authentication required for admin features')
+        // Clear any previous error messages
+        setError('')
+      } else if (response.status >= 500) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Server error:', response.status, errorData)
+        setError(`Server error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to fetch announcements:', error)
-      setError('Failed to load announcements')
+      console.error('Network error while fetching announcements:', error)
+      setError('Network error: Failed to connect to server')
     } finally {
       setDataLoading(false)
       setIsAnnouncementLoading(false)
@@ -419,10 +428,19 @@ export default function AdminPage() {
         if (data.success) {
           setNewsletters(data.data || [])
         }
+      } else if (response.status === 401) {
+        // Authentication required - not a real error
+        console.log('Authentication required for admin features')
+        // Clear any previous error messages
+        setError('')
+      } else if (response.status >= 500) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Server error:', response.status, errorData)
+        setError(`Server error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to fetch newsletters:', error)
-      setError('Failed to load newsletters')
+      console.error('Network error while fetching newsletters:', error)
+      setError('Network error: Failed to connect to server')
     } finally {
       setDataLoading(false)
       setIsNewsletterLoading(false)
@@ -445,10 +463,18 @@ export default function AdminPage() {
         if (data.success) {
           setFeedbackForms(data.data || [])
         }
+      } else if (response.status === 401) {
+        // Authentication required - not a real error
+        console.log('Authentication required for admin features')
+        setError('')
+      } else if (response.status >= 500) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Server error:', response.status, errorData)
+        setError(`Server error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to fetch feedback forms:', error)
-      setError('Failed to load feedback forms')
+      console.error('Network error while fetching feedback forms:', error)
+      setError('Network error: Failed to connect to server')
     } finally {
       setDataLoading(false)
       setIsFeedbackLoading(false)
@@ -480,12 +506,18 @@ export default function AdminPage() {
           setUsers(data.data.users || [])
           setUserPagination(data.data.pagination)
         }
-      } else {
-        setError('Failed to load users')
+      } else if (response.status === 401) {
+        // Authentication required - not a real error
+        console.log('Authentication required for admin features')
+        setError('')
+      } else if (response.status >= 500) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Server error:', response.status, errorData)
+        setError(`Server error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to fetch users:', error)
-      setError('Failed to load users')
+      console.error('Network error while fetching users:', error)
+      setError('Network error: Failed to connect to server')
     } finally {
       setDataLoading(false)
       setIsUserLoading(false)
@@ -517,12 +549,18 @@ export default function AdminPage() {
 
       if (response.ok) {
         fetchUsers() // Refresh users list
-      } else {
-        setError('Failed to delete user')
+      } else if (response.status === 401) {
+        // Authentication required - not a real error
+        console.log('Authentication required for admin features')
+        setError('')
+      } else if (response.status >= 500) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Server error:', response.status, errorData)
+        setError(`Server error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to delete user:', error)
-      setError('Failed to delete user')
+      console.error('Network error while deleting user:', error)
+      setError('Network error: Failed to connect to server')
     } finally {
       setDataLoading(false)
     }
@@ -545,12 +583,18 @@ export default function AdminPage() {
 
       if (response.ok) {
         fetchUsers() // Refresh users list
-      } else {
-        setError('Failed to update user status')
+      } else if (response.status === 401) {
+        // Authentication required - not a real error
+        console.log('Authentication required for admin features')
+        setError('')
+      } else if (response.status >= 500) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Server error:', response.status, errorData)
+        setError(`Server error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to update user status:', error)
-      setError('Failed to update user status')
+      console.error('Network error while updating user status:', error)
+      setError('Network error: Failed to connect to server')
     } finally {
       setDataLoading(false)
     }

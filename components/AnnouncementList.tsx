@@ -838,12 +838,12 @@ export default function AnnouncementList({
 
       {/* 批量操作確認對話框 */}
       <Dialog open={showBulkConfirm} onOpenChange={setShowBulkConfirm}>
-        <DialogContent>
+        <DialogContent aria-describedby="bulk-operation-description">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle id="bulk-operation-title">
               確認批量操作
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription id="bulk-operation-description">
               {getBulkActionMessage()}
             </DialogDescription>
           </DialogHeader>
@@ -859,6 +859,8 @@ export default function AnnouncementList({
               onClick={confirmBulkOperation}
               disabled={bulkOperationLoading}
               variant={bulkAction === 'delete' ? 'destructive' : 'default'}
+              aria-live="polite"
+              aria-label={bulkOperationLoading ? "正在處理批量操作..." : "確認批量操作"}
             >
               {bulkOperationLoading && (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

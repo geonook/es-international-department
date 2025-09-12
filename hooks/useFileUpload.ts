@@ -118,10 +118,25 @@ export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUpload
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Upload failed'
       setError(errorMessage)
-      toast.error(`Upload failed: ${errorMessage}`)
+      
+      // 改善錯誤提示訊息
+      let userFriendlyMessage = errorMessage
+      if (errorMessage.includes('Total file size exceeds')) {
+        userFriendlyMessage = '檔案總大小超過限制，請選擇較小的檔案或分批上傳'
+      } else if (errorMessage.includes('Maximum') && errorMessage.includes('files allowed')) {
+        userFriendlyMessage = '檔案數量超過限制，請減少檔案數量後重試'
+      } else if (errorMessage.includes('File too large')) {
+        userFriendlyMessage = '單個檔案過大，請壓縮後重新上傳'
+      } else if (errorMessage.includes('Invalid file type')) {
+        userFriendlyMessage = '檔案格式不支援，請檢查檔案類型'
+      } else if (errorMessage.includes('Authentication required')) {
+        userFriendlyMessage = '需要登入才能上傳檔案'
+      }
+      
+      toast.error(`上傳失敗: ${userFriendlyMessage}`)
       
       if (onError) {
-        onError([{ filename: 'Unknown', error: errorMessage }])
+        onError([{ filename: 'Unknown', error: userFriendlyMessage }])
       }
 
       throw err
