@@ -951,10 +951,12 @@ View All Messages & Announcements
 Download PDF Version
                                             </Button>
                                           </motion.div>
+{/* HIDDEN: Individual "Coming Soon" button - can be restored later
                                         ) : (
                                           <Button className="flex-1 bg-gray-300 text-gray-500" disabled>
                                             Coming Soon
                                           </Button>
+                                        */}
                                         )}
                                       </div>
                                     </div>
@@ -962,6 +964,7 @@ Download PDF Version
                                 </motion.div>
                               ))}
                               
+{/* HIDDEN: Newsletter Archive "Coming Soon" section - can be restored later
                               <motion.div 
                                 className="text-center pt-8 border-t border-blue-100"
                                 initial={{ opacity: 0 }}
@@ -975,6 +978,7 @@ Browse Complete Newsletter Archive
                                   </Button>
                                 </Link>
                               </motion.div>
+                              */}
                             </div>
                           ) : (
                             <div className="text-center py-16">
