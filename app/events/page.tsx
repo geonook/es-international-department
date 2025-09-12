@@ -709,7 +709,7 @@ export default function StaticEventsPage() {
                         {/* Enhanced layout with thumbnail */}
                         <div className="flex h-full">
                           {/* Thumbnail/Icon Section - 16:9 aspect ratio */}
-                          <div className="flex-shrink-0 w-36 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center aspect-[16/9]">
+                          <div className="flex-shrink-0 h-24 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center aspect-[16/9]">
                             {doc.isGoogleDriveFile && doc.thumbnailUrl ? (
                               <div className="relative w-full h-full">
                                 <img
