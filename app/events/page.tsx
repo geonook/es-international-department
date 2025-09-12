@@ -759,36 +759,35 @@ export default function StaticEventsPage() {
                             
                             {/* Enhanced dual-button design */}
                             <div className="flex items-center gap-2 justify-end">
-                                {doc.isGoogleDriveFile && doc.previewUrl && (
-                                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                    <Button 
-                                      size="sm"
-                                      variant="outline"
-                                      className="border-purple-200 text-purple-600 hover:bg-purple-50"
-                                      onClick={() => window.open(doc.previewUrl, '_blank')}
-                                    >
-                                      <Eye className="w-4 h-4 mr-1" />
-                                      預覽
-                                    </Button>
-                                  </motion.div>
-                                )}
-                                
+                              {doc.isGoogleDriveFile && doc.previewUrl && (
                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                   <Button 
                                     size="sm"
-                                    className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white disabled:opacity-50"
-                                    onClick={() => handleDocumentDownload(doc)}
-                                    disabled={downloadingFiles.has(doc.id)}
+                                    variant="outline"
+                                    className="border-purple-200 text-purple-600 hover:bg-purple-50"
+                                    onClick={() => window.open(doc.previewUrl, '_blank')}
                                   >
-                                    {downloadingFiles.has(doc.id) ? (
-                                      <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                                    ) : (
-                                      <Download className="w-4 h-4 mr-1" />
-                                    )}
-                                    {downloadingFiles.has(doc.id) ? '下載中...' : '下載'}
+                                    <Eye className="w-4 h-4 mr-1" />
+                                    預覽
                                   </Button>
                                 </motion.div>
-                              </div>
+                              )}
+                              
+                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Button 
+                                  size="sm"
+                                  className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white disabled:opacity-50"
+                                  onClick={() => handleDocumentDownload(doc)}
+                                  disabled={downloadingFiles.has(doc.id)}
+                                >
+                                  {downloadingFiles.has(doc.id) ? (
+                                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                  ) : (
+                                    <Download className="w-4 h-4 mr-1" />
+                                  )}
+                                  {downloadingFiles.has(doc.id) ? '下載中...' : '下載'}
+                                </Button>
+                              </motion.div>
                             </div>
                           </div>
                         </div>
