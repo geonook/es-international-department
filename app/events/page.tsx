@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -85,6 +85,9 @@ export default function StaticEventsPage() {
   const [loadingThumbnails, setLoadingThumbnails] = useState<Set<number>>(new Set())
   const [failedThumbnails, setFailedThumbnails] = useState<Set<number>>(new Set())
   const [loadedThumbnails, setLoadedThumbnails] = useState<Set<number>>(new Set())
+  
+  // Ref to track processed thumbnails to prevent infinite useEffect loop
+  const processedThumbnails = useRef<Set<number>>(new Set())
   
   // Scroll parallax effect
   const { scrollY } = useScroll()
@@ -189,42 +192,43 @@ export default function StaticEventsPage() {
     }
   ]
 
-  // Process documents with Google Drive integration
-  const documents: DocumentDownload[] = rawDocumentUrls.map(doc => {
-    const driveInfo = processDriveUrl(doc.url)
-    
-    if (driveInfo) {
+  // Process documents with Google Drive integration - Memoized to prevent infinite useEffect loop
+  const documents: DocumentDownload[] = useMemo(() => 
+    rawDocumentUrls.map(doc => {
+      const driveInfo = processDriveUrl(doc.url)
+      
+      if (driveInfo) {
+        return {
+          id: doc.id,
+          title: doc.title,
+          description: doc.description,
+          url: doc.url,
+          type: 'drive',
+          category: doc.category,
+          size: driveInfo.estimatedSize,
+          lastUpdated: doc.lastUpdated,
+          thumbnailUrl: driveInfo.thumbnailUrl,
+          driveFileId: driveInfo.fileId,
+          isGoogleDriveFile: true,
+          previewUrl: driveInfo.previewUrl,
+          downloadUrl: driveInfo.downloadUrl,
+          fileExtension: driveInfo.extension
+        }
+      }
+      
+      // Fallback for non-Drive files
       return {
         id: doc.id,
         title: doc.title,
         description: doc.description,
         url: doc.url,
-        type: 'drive',
+        type: 'pdf',
         category: doc.category,
-        size: driveInfo.estimatedSize,
+        size: 'Unknown',
         lastUpdated: doc.lastUpdated,
-        thumbnailUrl: driveInfo.thumbnailUrl,
-        driveFileId: driveInfo.fileId,
-        isGoogleDriveFile: true,
-        previewUrl: driveInfo.previewUrl,
-        downloadUrl: driveInfo.downloadUrl,
-        fileExtension: driveInfo.extension
+        isGoogleDriveFile: false
       }
-    }
-    
-    // Fallback for non-Drive files
-    return {
-      id: doc.id,
-      title: doc.title,
-      description: doc.description,
-      url: doc.url,
-      type: 'pdf',
-      category: doc.category,
-      size: 'Unknown',
-      lastUpdated: doc.lastUpdated,
-      isGoogleDriveFile: false
-    }
-  })
+    }), [rawDocumentUrls])
 
   // Thumbnail loading handlers
   const handleThumbnailLoadStart = (docId: number) => {
@@ -254,29 +258,47 @@ export default function StaticEventsPage() {
     setFailedThumbnails(prev => new Set([...prev, docId]))
   }
 
-  // Preload thumbnails
+  // Preload thumbnails - Fixed to prevent infinite loop
   useEffect(() => {
+    const timeouts: NodeJS.Timeout[] = []
+    
     documents.forEach((doc) => {
+      // Skip if already processed
+      if (processedThumbnails.current.has(doc.id)) {
+        return
+      }
+      
       if (doc.isGoogleDriveFile && doc.thumbnailUrl) {
+        // Mark as processed to prevent reprocessing
+        processedThumbnails.current.add(doc.id)
+        
         const img = new (globalThis.Image || window.Image)()
         handleThumbnailLoadStart(doc.id)
-        
-        img.onload = () => handleThumbnailLoadSuccess(doc.id)
-        img.onerror = () => handleThumbnailLoadError(doc.id)
         
         // Set loading timeout (3 seconds)
         const timeout = setTimeout(() => {
           handleThumbnailLoadError(doc.id)
         }, 3000)
+        timeouts.push(timeout)
         
         img.onload = () => {
           clearTimeout(timeout)
           handleThumbnailLoadSuccess(doc.id)
         }
         
+        img.onerror = () => {
+          clearTimeout(timeout)
+          handleThumbnailLoadError(doc.id)
+        }
+        
         img.src = doc.thumbnailUrl
       }
     })
+    
+    // Cleanup function
+    return () => {
+      timeouts.forEach(timeout => clearTimeout(timeout))
+    }
   }, [documents])
 
   // Custom download handler with state management
