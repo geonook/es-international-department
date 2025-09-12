@@ -180,12 +180,12 @@ export default function HomePage() {
   // 取得訊息類型顯示名稱 | Get message type display name
   const getTypeDisplayName = (type) => {
     const typeNames = {
-      message_board: "訊息板",
-      announcement: "公告",
-      event: "活動",
-      news: "新聞"
+      message_board: "Message Board",
+      announcement: "Announcement",
+      event: "Event",
+      news: "News"
     }
-    return typeNames[type] || "通知"
+    return typeNames[type] || "Notice"
   }
 
   // 處理消息展開/收合 | Handle message expand/collapse
@@ -721,7 +721,7 @@ export default function HomePage() {
                                         {getTypeDisplayName(message.type)}
                                       </span>
                                       <div className="text-right text-sm text-gray-600">
-                                        {new Date(message.publishedAt || message.createdAt).toLocaleDateString('zh-TW', { 
+                                        {new Date(message.publishedAt || message.createdAt).toLocaleDateString('en-US', { 
                                           month: 'short', 
                                           day: 'numeric',
                                           year: 'numeric'
@@ -748,7 +748,7 @@ export default function HomePage() {
                                             <div 
                                               className="text-gray-700 leading-relaxed text-xs sm:text-sm prose prose-sm max-w-none"
                                               dangerouslySetInnerHTML={{ 
-                                                __html: sanitizeAnnouncementContent(message.content || '<p class="text-gray-500">暫無內容</p>')
+                                                __html: sanitizeAnnouncementContent(message.content || '<p class="text-gray-500">No content available</p>')
                                               }}
                                             />
                                           </div>
@@ -759,7 +759,7 @@ export default function HomePage() {
                                               onClick={(e) => toggleMessageExpansion(message.id, e)}
                                               className="text-blue-600 text-xs sm:text-sm font-medium hover:text-blue-800 hover:underline flex items-center gap-1 transition-colors duration-200 mb-2"
                                             >
-                                              {expandedMessages.has(message.id) ? '收合' : '顯示更多'}
+                                              {expandedMessages.has(message.id) ? 'Show Less' : 'Show More'}
                                               <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${
                                                 expandedMessages.has(message.id) ? 'rotate-180' : ''
                                               }`} />
@@ -834,15 +834,15 @@ View All Messages & Announcements
                           {/* 月份選擇器 | Month Selector */}
                           {!monthsLoading && availableMonths.length > 0 && (
                             <div className="mt-4 flex items-center justify-center gap-3">
-                              <span className="text-sm font-medium text-gray-700">選擇月份：</span>
+                              <span className="text-sm font-medium text-gray-700">Select Month:</span>
                               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                                 <SelectTrigger className="w-40">
-                                  <SelectValue placeholder="選擇月份" />
+                                  <SelectValue placeholder="Select Month" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {availableMonths.map((month) => {
                                     const [year, monthNum] = month.split('-')
-                                    const monthName = new Date(parseInt(year), parseInt(monthNum) - 1).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long' })
+                                    const monthName = new Date(parseInt(year), parseInt(monthNum) - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
                                     return (
                                       <SelectItem key={month} value={month}>
                                         {monthName}
@@ -882,30 +882,9 @@ View All Messages & Announcements
                                   transition={{ delay: index * 0.1 }}
                                   whileHover={{ scale: 1.01 }}
                                 >
-                                  <div className="flex flex-col lg:flex-row gap-6">
-                                    {/* Newsletter Cover */}
-                                    <div className="lg:w-1/3">
-                                      {newsletter.coverImage ? (
-                                        <motion.div className="relative" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
-                                          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-xl blur-lg" />
-                                          <Image
-                                            src={newsletter.coverImage}
-                                            alt={`${newsletter.title} Preview`}
-                                            width={300}
-                                            height={400}
-                                            className="relative w-full rounded-xl shadow-lg"
-                                          />
-                                        </motion.div>
-                                      ) : (
-                                        <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl p-8 text-center aspect-[3/4] flex flex-col items-center justify-center">
-                                          <Newspaper className="w-16 h-16 mb-4 text-blue-400" />
-                                          <p className="text-blue-600 font-medium">Newsletter Cover</p>
-                                        </div>
-                                      )}
-                                    </div>
-                                    
+                                  <div className="space-y-6">
                                     {/* Newsletter Details */}
-                                    <div className="lg:w-2/3 flex flex-col justify-between">
+                                    <div className="flex flex-col justify-between">
                                       <div>
                                         <div className="flex items-center gap-2 mb-3">
                                           {newsletter.issueNumber && (
@@ -914,7 +893,7 @@ View All Messages & Announcements
                                             </span>
                                           )}
                                           <span className="text-sm text-gray-500">
-                                            {new Date(newsletter.publishDate || newsletter.createdAt).toLocaleDateString('zh-TW', {
+                                            {new Date(newsletter.publishDate || newsletter.createdAt).toLocaleDateString('en-US', {
                                               year: 'numeric',
                                               month: 'long'
                                             })}
@@ -959,7 +938,7 @@ View All Messages & Announcements
                                               onClick={() => window.open(newsletter.onlineReaderUrl, '_blank')}
                                             >
                                               <ExternalLink className="w-4 h-4 mr-2" />
-                                              開啟完整閱讀器
+                                              Open Full Reader
                                             </Button>
                                           </motion.div>
                                         ) : newsletter.pdfUrl ? (
@@ -1120,7 +1099,7 @@ Browse Complete Newsletter Archive
               {selectedMessage?.title}
             </DialogTitle>
             <DialogDescription className="sr-only">
-              公告詳細內容
+              Announcement Details
             </DialogDescription>
           </DialogHeader>
           
@@ -1158,7 +1137,7 @@ Browse Complete Newsletter Archive
                 
                 <span className="text-gray-500 ml-auto">
                   {(selectedMessage.publishedAt || selectedMessage.createdAt) && 
-                    new Date(selectedMessage.publishedAt || selectedMessage.createdAt).toLocaleDateString('zh-TW', {
+                    new Date(selectedMessage.publishedAt || selectedMessage.createdAt).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'
@@ -1174,7 +1153,7 @@ Browse Complete Newsletter Archive
                 <div 
                   className="text-gray-700 leading-relaxed"
                   dangerouslySetInnerHTML={{ 
-                    __html: sanitizeAnnouncementContent(selectedMessage.content || '<p class="text-gray-500">暫無內容</p>')
+                    __html: sanitizeAnnouncementContent(selectedMessage.content || '<p class="text-gray-500">No content available</p>')
                   }}
                 />
               </div>
@@ -1185,7 +1164,7 @@ Browse Complete Newsletter Archive
                   variant="outline"
                   onClick={() => setShowMessageDetail(false)}
                 >
-                  關閉
+                  Close
                 </Button>
               </div>
             </div>
