@@ -212,7 +212,7 @@ export default function StaticEventsPage() {
           isGoogleDriveFile: true,
           previewUrl: driveInfo.previewUrl,
           downloadUrl: driveInfo.downloadUrl,
-          fileExtension: driveInfo.extension
+          fileExtension: 'PPTX' // Override as these are all presentations
         }
       }
       
