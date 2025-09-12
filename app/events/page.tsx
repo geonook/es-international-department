@@ -32,7 +32,7 @@ import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
 import BackToTop from "@/components/ui/back-to-top"
-import { processDriveUrl, handleThumbnailError, handleCustomDownload } from "@/lib/google-drive-utils"
+import { processDriveUrl, handleThumbnailError, handleCustomDownload, generateSkeletonSVG, detectDriveFileType } from "@/lib/google-drive-utils"
 
 /**
  * Static Events Page Component - KCISLK ESID Events
@@ -80,6 +80,11 @@ interface DocumentDownload {
 export default function StaticEventsPage() {
   // Download state management
   const [downloadingFiles, setDownloadingFiles] = useState<Set<number>>(new Set())
+  
+  // Thumbnail loading state management
+  const [loadingThumbnails, setLoadingThumbnails] = useState<Set<number>>(new Set())
+  const [failedThumbnails, setFailedThumbnails] = useState<Set<number>>(new Set())
+  const [loadedThumbnails, setLoadedThumbnails] = useState<Set<number>>(new Set())
   
   // Scroll parallax effect
   const { scrollY } = useScroll()
@@ -221,6 +226,59 @@ export default function StaticEventsPage() {
     }
   })
 
+  // Thumbnail loading handlers
+  const handleThumbnailLoadStart = (docId: number) => {
+    setLoadingThumbnails(prev => new Set([...prev, docId]))
+    setFailedThumbnails(prev => {
+      const newSet = new Set(prev)
+      newSet.delete(docId)
+      return newSet
+    })
+  }
+
+  const handleThumbnailLoadSuccess = (docId: number) => {
+    setLoadingThumbnails(prev => {
+      const newSet = new Set(prev)
+      newSet.delete(docId)
+      return newSet
+    })
+    setLoadedThumbnails(prev => new Set([...prev, docId]))
+  }
+
+  const handleThumbnailLoadError = (docId: number) => {
+    setLoadingThumbnails(prev => {
+      const newSet = new Set(prev)
+      newSet.delete(docId)
+      return newSet
+    })
+    setFailedThumbnails(prev => new Set([...prev, docId]))
+  }
+
+  // Preload thumbnails
+  useEffect(() => {
+    documents.forEach((doc) => {
+      if (doc.isGoogleDriveFile && doc.thumbnailUrl) {
+        const img = new Image()
+        handleThumbnailLoadStart(doc.id)
+        
+        img.onload = () => handleThumbnailLoadSuccess(doc.id)
+        img.onerror = () => handleThumbnailLoadError(doc.id)
+        
+        // Set loading timeout (3 seconds)
+        const timeout = setTimeout(() => {
+          handleThumbnailLoadError(doc.id)
+        }, 3000)
+        
+        img.onload = () => {
+          clearTimeout(timeout)
+          handleThumbnailLoadSuccess(doc.id)
+        }
+        
+        img.src = doc.thumbnailUrl
+      }
+    })
+  }, [documents])
+
   // Custom download handler with state management
   const handleDocumentDownload = async (doc: DocumentDownload) => {
     if (!doc.isGoogleDriveFile || !doc.driveFileId) {
@@ -236,7 +294,7 @@ export default function StaticEventsPage() {
       const result = await handleCustomDownload(
         doc.driveFileId,
         doc.title,
-        doc.type === 'drive' ? detectFileTypeFromUrl(doc.url) : doc.type
+        doc.type === 'drive' ? detectDriveFileType(doc.url) : doc.type
       )
 
       if (result.success) {
@@ -709,25 +767,36 @@ export default function StaticEventsPage() {
                         {/* Enhanced layout with thumbnail */}
                         <div className="flex h-full">
                           {/* Thumbnail/Icon Section - 16:9 aspect ratio */}
-                          <div className="flex-shrink-0 h-28 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center aspect-[16/9] rounded-l-xl">
-                            {doc.isGoogleDriveFile && doc.thumbnailUrl ? (
+                          <div className="flex-shrink-0 h-28 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center aspect-[16/9] rounded-l-xl overflow-hidden">
+                            {loadingThumbnails.has(doc.id) ? (
+                              // Loading skeleton
+                              <div className="w-full h-full bg-gray-200 rounded-l-xl animate-pulse flex items-center justify-center">
+                                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                              </div>
+                            ) : failedThumbnails.has(doc.id) ? (
+                              // Error fallback with improved design
+                              <div 
+                                className="w-full h-full flex items-center justify-center rounded-l-xl"
+                                style={{
+                                  backgroundImage: `url("${handleThumbnailError(doc.thumbnailUrl || '', doc.type)}")`,
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center'
+                                }}
+                              >
+                                {/* File type badge for fallback */}
+                                <div className="absolute top-2 right-2">
+                                  <Badge className="bg-white/90 text-gray-700 text-xs px-2 py-1">
+                                    {doc.fileExtension}
+                                  </Badge>
+                                </div>
+                              </div>
+                            ) : doc.isGoogleDriveFile && doc.thumbnailUrl && loadedThumbnails.has(doc.id) ? (
+                              // Successfully loaded thumbnail
                               <div className="relative w-full h-full">
                                 <img
                                   src={doc.thumbnailUrl}
                                   alt={`${doc.title} preview`}
                                   className="w-full h-full object-cover rounded-l-xl"
-                                  onError={(e) => {
-                                    // Fallback to icon on image error
-                                    const target = e.target as HTMLImageElement
-                                    const parent = target.parentElement
-                                    if (parent) {
-                                      parent.innerHTML = `
-                                        <div class="${getIconColors()} w-16 h-16 rounded-xl flex items-center justify-center shadow-lg">
-                                          <div class="text-white text-xs font-bold">${doc.fileExtension}</div>
-                                        </div>
-                                      `
-                                    }
-                                  }}
                                 />
                                 {/* File type badge */}
                                 <div className="absolute top-2 right-2">
@@ -737,6 +806,7 @@ export default function StaticEventsPage() {
                                 </div>
                               </div>
                             ) : (
+                              // Default icon fallback
                               <div className={`w-20 h-12 ${getIconColors()} rounded-xl flex items-center justify-center shadow-lg`}>
                                 {getFileIcon()}
                               </div>

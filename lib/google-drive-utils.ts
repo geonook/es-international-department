@@ -231,26 +231,92 @@ export function processDriveUrl(originalUrl: string): DriveFileInfo | null {
  * @returns Fallback thumbnail strategy
  */
 export function handleThumbnailError(thumbnailUrl: string, fileType: string): string {
-  // Return a data URL for a simple colored rectangle as fallback
-  const colors = getFileTypeColors(fileType)
   const extension = getFileExtension(fileType)
+  const colors = getFileTypeColors(fileType)
   
-  // Generate SVG fallback
+  // Extract gradient colors from the bg class
+  const gradientMap: Record<string, { start: string; end: string }> = {
+    'presentation': { start: '#f97316', end: '#dc2626' }, // orange to red
+    'document': { start: '#3b82f6', end: '#2563eb' }, // blue
+    'spreadsheet': { start: '#10b981', end: '#059669' }, // green
+    'pdf': { start: '#ef4444', end: '#dc2626' }, // red
+    'unknown': { start: '#8b5cf6', end: '#a855f7' } // purple
+  }
+  
+  const gradient = gradientMap[fileType] || gradientMap.unknown
+  
+  // Generate improved SVG fallback with better design
   const svgFallback = `data:image/svg+xml;base64,${btoa(`
-    <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+    <svg width="400" height="225" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 225">
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:rgb(147,51,234);stop-opacity:1" />
-          <stop offset="100%" style="stop-color:rgb(219,39,119);stop-opacity:1" />
+          <stop offset="0%" style="stop-color:${gradient.start};stop-opacity:1" />
+          <stop offset="100%" style="stop-color:${gradient.end};stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="overlay" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:rgba(0,0,0,0.1);stop-opacity:1" />
         </linearGradient>
       </defs>
-      <rect width="400" height="300" fill="url(#grad)" rx="12"/>
-      <text x="200" y="140" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" font-weight="bold">${extension}</text>
-      <text x="200" y="170" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Google Drive File</text>
+      <rect width="400" height="225" fill="url(#grad)" rx="12"/>
+      <rect width="400" height="225" fill="url(#overlay)" rx="12"/>
+      
+      <!-- File Icon Background -->
+      <circle cx="200" cy="85" r="35" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      
+      <!-- File Extension -->
+      <text x="200" y="95" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">${extension}</text>
+      
+      <!-- Title -->
+      <text x="200" y="145" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="white" text-anchor="middle">Google Drive Document</text>
+      
+      <!-- Subtitle -->
+      <text x="200" y="170" font-family="Arial, sans-serif" font-size="12" fill="rgba(255,255,255,0.8)" text-anchor="middle">Preview not available</text>
+      
+      <!-- Loading indicator dots -->
+      <g opacity="0.6">
+        <circle cx="180" cy="190" r="3" fill="white">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="0s"/>
+        </circle>
+        <circle cx="200" cy="190" r="3" fill="white">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="0.5s"/>
+        </circle>
+        <circle cx="220" cy="190" r="3" fill="white">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="1s"/>
+        </circle>
+      </g>
     </svg>
   `)}`
   
   return svgFallback
+}
+
+/**
+ * Generate skeleton loading placeholder SVG
+ * 
+ * @param width - SVG width
+ * @param height - SVG height
+ * @returns Skeleton loading SVG data URL
+ */
+export function generateSkeletonSVG(width: number = 400, height: number = 225): string {
+  return `data:image/svg+xml;base64,${btoa(`
+    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
+      <defs>
+        <linearGradient id="skeleton-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#f3f4f6;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#e5e7eb;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#f3f4f6;stop-opacity:1" />
+          <animateTransform attributeName="gradientTransform" type="translate" values="-${width};0;${width};0;-${width};0" dur="1.5s" repeatCount="indefinite"/>
+        </linearGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#skeleton-gradient)" rx="12"/>
+      
+      <!-- Skeleton content -->
+      <rect x="20" y="20" width="60" height="60" fill="rgba(156, 163, 175, 0.3)" rx="8"/>
+      <rect x="100" y="30" width="200" height="16" fill="rgba(156, 163, 175, 0.3)" rx="4"/>
+      <rect x="100" y="55" width="150" height="12" fill="rgba(156, 163, 175, 0.3)" rx="4"/>
+    </svg>
+  `)}`
 }
 
 /**
