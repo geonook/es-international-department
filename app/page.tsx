@@ -1265,7 +1265,7 @@ Browse Complete Newsletter Archive
                   <div className="space-y-1 text-gray-300">
                     <div className="flex items-center gap-2">
                       <Phone className="w-3 h-3" />
-                      <span>ext. 8130</span>
+                      <span>ext. 8130 / 8136</span>
                     </div>
                   </div>
                 </div>
