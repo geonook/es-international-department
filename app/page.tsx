@@ -289,7 +289,7 @@ export default function HomePage() {
                   <span className="hidden sm:inline">ES International Department</span>
                   <span className="sm:hidden">ESID</span>
                 </h1>
-                <p className="text-xs text-gray-500 leading-tight">Excellence in Education</p>
+                <p className="text-xs text-gray-500 leading-tight">KCISLK</p>
               </div>
             </motion.div>
 
@@ -1191,11 +1191,11 @@ Browse Complete Newsletter Archive
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">ES International Department</h3>
-                  <p className="text-xs text-gray-400">Excellence in Education</p>
+                  <p className="text-xs text-gray-400">KCISLK</p>
                 </div>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
-                Nurturing global citizens through innovative education and meaningful partnerships.
+                What will you discover beyond your border?
               </p>
             </div>
 

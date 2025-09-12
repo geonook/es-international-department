@@ -158,7 +158,7 @@ export default function MobileNav() {
                 ES International Department
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                Excellence in Education
+                KCISLK
               </p>
             </div>
           </motion.nav>
