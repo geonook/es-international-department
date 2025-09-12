@@ -956,8 +956,8 @@ Download PDF Version
                                           <Button className="flex-1 bg-gray-300 text-gray-500" disabled>
                                             Coming Soon
                                           </Button>
-                                        */}
-                                        )}
+                                        ) */}
+                                        }
                                       </div>
                                     </div>
                                   </div>
