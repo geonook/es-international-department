@@ -909,7 +909,7 @@ View All Messages & Announcements
                                             <div className="bg-white/80 rounded-lg p-4 border border-blue-200 overflow-hidden">
                                               <div 
                                                 dangerouslySetInnerHTML={{ __html: newsletter.embedCode }}
-                                                className="w-full [&>iframe]:w-full [&>iframe]:max-w-full"
+                                                className="w-full flex justify-center [&>iframe]:mx-auto [&>iframe]:block"
                                               />
                                             </div>
                                           </div>

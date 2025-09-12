@@ -247,8 +247,8 @@ export async function GET(request: NextRequest) {
       fallback: [
         {
           id: 'fallback-1',
-          title: '2025年1月份 國際部月刊',
-          content: '本月月刊包含期末評量週安排、寒假活動規劃、以及下學期課程預告。內容豐富，歡迎家長們線上閱讀。',
+          title: 'January 2025 International Department Monthly Newsletter',
+          content: 'This month\'s newsletter includes final exam week arrangements, winter holiday activity planning, and next semester course previews. Rich in content, parents and teachers are welcome to read online.',
           type: 'newsletter',
           priority: 'high',
           isImportant: true,
@@ -262,8 +262,8 @@ export async function GET(request: NextRequest) {
         },
         {
           id: 'fallback-2',
-          title: '2024年12月份 國際部月刊',
-          content: '十二月份月刊特別報導聖誕節慶祝活動、年終成果發表、以及新年活動預告。',
+          title: 'December 2024 International Department Monthly Newsletter',
+          content: 'December newsletter features special coverage of Christmas celebrations, year-end achievement presentations, and New Year activity previews.',
           type: 'newsletter',
           priority: 'medium',
           isImportant: false,
