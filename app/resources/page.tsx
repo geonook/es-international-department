@@ -26,7 +26,8 @@ import {
   Gamepad2,
   FolderOpen,
   Mail,
-  Phone
+  Phone,
+  Printer
 } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
@@ -776,7 +777,7 @@ export default function ResourcesPage() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full overflow-hidden">
@@ -814,15 +815,73 @@ export default function ResourcesPage() {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4 text-purple-300">Contact Info</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-gray-300">
-                  <Mail className="w-4 h-4" />
-                  <span>esid@kangchiao.com.tw</span>
+              <h4 className="font-semibold mb-4 text-purple-300">Management Team</h4>
+              <div className="space-y-4 text-sm">
+                {/* Director */}
+                <div>
+                  <h5 className="font-medium text-white mb-2">Vickie Licari - Director</h5>
+                  <div className="space-y-1 text-gray-300">
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-3 h-3" />
+                      <span>+886-2-8512-8164</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Printer className="w-3 h-3" />
+                      <span>+886-2-2601-5888</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-3 h-3" />
+                      <span>vickielicari@kcislk.ntpc.edu.tw</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-gray-300">
-                  <Phone className="w-4 h-4" />
-                  <span>(02) 8195-8852</span>
+                
+                {/* Associate Director */}
+                <div>
+                  <h5 className="font-medium text-white mb-2">Matthew Taylor - Associate Director</h5>
+                  <div className="space-y-1 text-gray-300">
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-3 h-3" />
+                      <span>+886-2-8512-8162</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Printer className="w-3 h-3" />
+                      <span>+886-2-2601-5888</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-3 h-3" />
+                      <span>matthewtaylor@kcislk.ntpc.edu.tw</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4 text-purple-300">Office Contact</h4>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <h5 className="font-medium text-white mb-2">ESID Office</h5>
+                  <div className="space-y-1 text-gray-300">
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-3 h-3" />
+                      <span>ext. 8130</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border-t border-gray-700 pt-3">
+                  <h5 className="font-medium text-white mb-2">General Contact</h5>
+                  <div className="space-y-1 text-gray-300">
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-3 h-3" />
+                      <span>esid@kangchiao.com.tw</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-3 h-3" />
+                      <span>(02) 8195-8852</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
