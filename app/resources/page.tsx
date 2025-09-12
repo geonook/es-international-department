@@ -22,6 +22,7 @@ import {
   Globe,
   School,
   Gamepad2,
+  FolderOpen,
   Mail,
   Phone
 } from "lucide-react"
@@ -157,7 +158,7 @@ export default function ResourcesPage() {
         {
           id: 'transition-materials',
           title: 'G1-G2 myView Transition Materials',
-          description: "We provide learning materials to help students transition smoothly from G1 to G2. These resources include several PDF documents for reading and interactive review games.",
+          description: "We provide comprehensive learning materials to help students transition smoothly from G1 to G2. These resources include 5 Google Drive folders with rich educational content and 1 interactive Canva review game, covering literacy, arts, social studies, and seasonal themes.",
           icon: FileText,
           color: 'from-purple-500 to-purple-700',
           image: '/images/resources/transition-materials.png',
@@ -166,18 +167,33 @@ export default function ResourcesPage() {
           materials: [
             {
               name: 'Henry on Wheels',
-              type: 'PDF',
-              link: 'https://drive.google.com/file/d/henry-on-wheels-pdf'
+              type: 'Drive Folder',
+              link: 'https://drive.google.com/drive/folders/1dADMA_24Tz4MJKT7O_4wwp8MhWbUzmVn'
             },
             {
               name: 'Baby Animals Grow',
-              type: 'PDF', 
-              link: 'https://drive.google.com/file/d/baby-animals-grow-pdf'
+              type: 'Drive Folder', 
+              link: 'https://drive.google.com/drive/folders/19OYLAXQYav1VjRebPk9Huao5u5xP8R25'
             },
             {
-              name: 'Review Games',
+              name: 'Thumbs Up for Art and Music!',
+              type: 'Drive Folder',
+              link: 'https://drive.google.com/drive/folders/1xQs34_LHaAr1qsWuJNzKvH2935b-oCIg'
+            },
+            {
+              name: 'What Is the Story of Our Flag',
+              type: 'Drive Folder',
+              link: 'https://drive.google.com/drive/folders/1HEtpE5x-nq-_XnxF4F1G95ZKGMl504by'
+            },
+            {
+              name: 'My Autumn Book',
+              type: 'Drive Folder',
+              link: 'https://drive.google.com/drive/folders/1Hmk3XKUFb0FnfcebFVLZ67VHGSKkosPR'
+            },
+            {
+              name: 'Review Game',
               type: 'Canva Interactive',
-              link: 'https://canva.com/design/review-games-g1-g2',
+              link: 'https://www.canva.com/design/DAGqwUABlok/l-mJ53HKpwXAinLe4HpzPA/view?utm_content=DAGqwUABlok&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb6629fe5dd',
               description: 'Canva互動複習遊戲'
             }
           ]
@@ -510,6 +526,8 @@ export default function ResourcesPage() {
                                                 <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-purple-600 rounded flex items-center justify-center">
                                                   {material.type === 'PDF' ? (
                                                     <FileText className="w-3 h-3 text-white" />
+                                                  ) : material.type === 'Drive Folder' ? (
+                                                    <FolderOpen className="w-3 h-3 text-white" />
                                                   ) : (
                                                     <Gamepad2 className="w-3 h-3 text-white" />
                                                   )}
