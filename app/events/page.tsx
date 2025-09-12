@@ -148,10 +148,11 @@ export default function StaticEventsPage() {
   ]
 
   // Process Google Drive URLs and create enhanced document data
+  // Updated titles to match actual Google Drive filenames
   const rawDocumentUrls = [
     {
       id: 1,
-      title: "11/29 簡報資料",
+      title: "Coffee with Principal 活動簡報",
       description: "Coffee with Principal 活動主要簡報內容，包含活動介紹與重要資訊",
       url: "https://drive.google.com/file/d/1BGmKA8TdoXvmI52erkEpgSWre-SAvITb/view",
       category: "簡報",
@@ -159,7 +160,7 @@ export default function StaticEventsPage() {
     },
     {
       id: 2,
-      title: "11/29 一、二年級教材",
+      title: "Coffee with Principal G1-G2 教學資料",
       description: "專為1-2年級學生設計的Coffee with Principal活動教學投影片",
       url: "https://drive.google.com/file/d/1ZsfVdLbah-fov4EMBDC1j0TKVeKxiPrb/view",
       category: "教學資料",
@@ -167,7 +168,7 @@ export default function StaticEventsPage() {
     },
     {
       id: 3,
-      title: "11/29 三、四年級教材",
+      title: "Coffee with Principal G3-G4 教學資料",
       description: "專為3-4年級學生設計的Coffee with Principal活動教學投影片",
       url: "https://drive.google.com/file/d/11fe6GQSf0JudhdO0t7LDsG3dKKWYi4Dm/view",
       category: "教學資料",
@@ -175,7 +176,7 @@ export default function StaticEventsPage() {
     },
     {
       id: 4,
-      title: "11/29 五、六年級教材",
+      title: "Coffee with Principal G5-G6 教學資料",
       description: "專為5-6年級學生設計的Coffee with Principal活動教學投影片",
       url: "https://drive.google.com/file/d/1SEnSdxKGC6DQG1Pe5qMYAcfVxqsR73-U/view",
       category: "教學資料",
@@ -666,7 +667,7 @@ export default function StaticEventsPage() {
             </motion.div>
 
             <motion.div
-              className="grid md:grid-cols-2 lg:grid-cols-2 gap-6"
+              className="grid md:grid-cols-2 lg:grid-cols-2 gap-6 auto-rows-fr"
               variants={containerVariants}
             >
               {documents.map((doc, index) => {
@@ -703,18 +704,18 @@ export default function StaticEventsPage() {
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Card className="bg-white/95 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-                      <CardContent className="p-0">
+                    <Card className="bg-white/95 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden h-full">
+                      <CardContent className="p-0 h-full">
                         {/* Enhanced layout with thumbnail */}
-                        <div className="flex">
-                          {/* Thumbnail/Icon Section */}
-                          <div className="flex-shrink-0 w-32 h-32 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+                        <div className="flex h-full">
+                          {/* Thumbnail/Icon Section - 16:9 aspect ratio */}
+                          <div className="flex-shrink-0 w-36 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center aspect-[16/9]">
                             {doc.isGoogleDriveFile && doc.thumbnailUrl ? (
                               <div className="relative w-full h-full">
                                 <img
                                   src={doc.thumbnailUrl}
                                   alt={`${doc.title} preview`}
-                                  className="w-full h-full object-cover"
+                                  className="w-full h-full object-cover rounded-l-lg"
                                   onError={(e) => {
                                     // Fallback to icon on image error
                                     const target = e.target as HTMLImageElement
@@ -736,14 +737,14 @@ export default function StaticEventsPage() {
                                 </div>
                               </div>
                             ) : (
-                              <div className={`w-16 h-16 ${getIconColors()} rounded-xl flex items-center justify-center shadow-lg`}>
+                              <div className={`w-20 h-12 ${getIconColors()} rounded-xl flex items-center justify-center shadow-lg`}>
                                 {getFileIcon()}
                               </div>
                             )}
                           </div>
 
                           {/* Content Section */}
-                          <div className="flex-1 p-6">
+                          <div className="flex-1 p-6 flex flex-col justify-between">
                             <div className="flex items-start justify-between mb-3">
                               <h4 className="font-semibold text-gray-900 leading-tight text-lg">
                                 {doc.title}
