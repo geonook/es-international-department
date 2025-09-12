@@ -22,9 +22,7 @@ import {
   School,
   Gamepad2,
   Mail,
-  Phone,
-  Heart,
-  Star
+  Phone
 } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
@@ -324,7 +322,7 @@ export default function ResourcesPage() {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                Learning Resource Center
+                Parent Resource Center
               </motion.h2>
 
               <motion.p
@@ -333,153 +331,12 @@ export default function ResourcesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                Comprehensive learning resources for parents, teachers, and students to support academic development and success across all grade levels
+                Parents play a crucial role in their children's development. To support parents in their parenting journey, we provide a range of valuable resources. These resources may include informative articles and online tools designed to equip parents with the knowledge and skills to nurture their children's growth. By empowering parents with the right information and support, we aim to create a strong foundation for children to thrive and reach their full potential.
               </motion.p>
             </motion.div>
           </motion.div>
         </section>
 
-        {/* Parent Resource Center Featured Section */}
-        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
-          {/* Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-purple-800/30 to-pink-900/20" />
-          
-          <motion.div 
-            className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
-            style={{ y: y1 }}
-          >
-            <div className="max-w-6xl mx-auto">
-              <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-                {/* Content */}
-                <motion.div
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8 }}
-                  className="text-center lg:text-left"
-                >
-                  <motion.div
-                    className="flex items-center justify-center lg:justify-start gap-3 mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
-                      <Users className="w-6 h-6 text-white" />
-                    </div>
-                    <Badge className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-1">
-                      Featured Resources
-                    </Badge>
-                  </motion.div>
-
-                  <motion.h2
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    Parent Resource
-                    <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                      Center
-                    </span>
-                  </motion.h2>
-
-                  <motion.p
-                    className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    Parents play a crucial role in their children's development. To support parents in their parenting journey, we provide a range of valuable resources. These resources may include informative articles and online tools designed to equip parents with the knowledge and skills to nurture their children's growth. By empowering parents with the right information and support, we aim to create a strong foundation for children to thrive and reach their full potential.
-                  </motion.p>
-
-                  {/* Action Buttons - Optional for future use */}
-                  <motion.div
-                    className="hidden flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button 
-                        size="lg"
-                        className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
-                      >
-                        <Heart className="w-5 h-5 mr-2" />
-                        Explore Resources
-                      </Button>
-                    </motion.div>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button 
-                        size="lg"
-                        variant="outline"
-                        className="w-full sm:w-auto border-2 border-purple-300 text-purple-700 hover:bg-purple-50 px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-                      >
-                        <Download className="w-5 h-5 mr-2" />
-                        Download Guide
-                      </Button>
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
-
-                {/* Illustration */}
-                <motion.div
-                  className="relative"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                  <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-50 to-orange-100 rounded-3xl flex items-center justify-center p-8">
-                      {/* Parent-Child Learning Illustration */}
-                      <div className="text-center">
-                        <div className="text-6xl md:text-8xl mb-4">📚</div>
-                        <div className="flex items-center justify-center gap-4 mb-4">
-                          <div className="text-4xl">👩‍💼</div>
-                          <div className="text-2xl">💕</div>
-                          <div className="text-4xl">👶</div>
-                        </div>
-                        <div className="text-lg font-semibold text-amber-800">
-                          Parent Support Hub
-                        </div>
-                        <div className="text-sm text-amber-600 mt-2">
-                          Empowering Families
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Floating elements */}
-                  <motion.div
-                    className="absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg"
-                    animate={{
-                      y: [-10, 10, -10],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <Star className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <motion.div
-                    className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
-                    animate={{
-                      y: [10, -10, 10],
-                    }}
-                    transition={{
-                      duration: 2.5,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: "easeInOut",
-                      delay: 0.5,
-                    }}
-                  >
-                    <Heart className="w-5 h-5 text-white" />
-                  </motion.div>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        </section>
 
         {/* Main Resource Categories Section with Tabs */}
         <motion.section
