@@ -413,7 +413,7 @@ export default function ResourcesPage() {
                           transition={{ delay: 0.2 }}
                         >
                           <motion.h3
-                            className={`text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r ${category.color} bg-clip-text text-transparent mb-6`}
+                            className={`text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r ${category.color} bg-clip-text text-transparent mb-6 break-words whitespace-normal leading-tight`}
                             animate={{
                               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                             }}
