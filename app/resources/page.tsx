@@ -282,7 +282,7 @@ export default function ResourcesPage() {
 
       <main>
         {/* Hero Section - Parents' Corner Style */}
-        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-r from-purple-50 via-pink-50 to-purple-100">
           <motion.div 
             className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
             style={{ y: y1 }}
@@ -299,11 +299,11 @@ export default function ResourcesPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
                 <Badge className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-1">
-                  Parents' Corner Resources
+                  Featured Resources
                 </Badge>
               </motion.div>
 
