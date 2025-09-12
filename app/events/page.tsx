@@ -414,7 +414,7 @@ export default function StaticEventsPage() {
                   <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-400/30 to-pink-400/30 rounded-3xl blur-xl transform rotate-3" />
                     <Image
-                      src="/images/coffee-with-principal.jpg"
+                      src="/images/coffee-with-principal.png"
                       alt="Coffee with the Principal"
                       fill
                       className="object-cover relative z-10"
