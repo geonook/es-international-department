@@ -22,7 +22,9 @@ import {
   School,
   Gamepad2,
   Mail,
-  Phone
+  Phone,
+  Heart,
+  Star
 } from "lucide-react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import MobileNav from "@/components/ui/mobile-nav"
@@ -66,7 +68,7 @@ export default function ResourcesPage() {
     reading: {
       title: "Diverse Reading",
       description: "Foster children's interest and ability in reading through diverse resources and engaging programs",
-      color: "from-green-500 to-emerald-600",
+      color: "from-purple-600 to-purple-800",
       icon: BookOpen,
       resources: [
         {
@@ -74,7 +76,7 @@ export default function ResourcesPage() {
           title: 'Reading Buddies',
           description: "Introduce 'Reading Buddies,' a fun and engaging program designed to help your child develop essential reading skills. Combining the science of reading with lots of laughter, Reading Buddies provides aspiring readers with a supportive and enjoyable environment to build a strong foundation in literacy.",
           icon: Users,
-          color: 'from-green-400 to-green-600',
+          color: 'from-purple-400 to-purple-600',
           link: 'https://www.youtube.com/@readingbuddies',
           linkText: 'Visit Reading Buddies Website',
           type: 'program'
@@ -84,7 +86,7 @@ export default function ResourcesPage() {
           title: 'Reading Campaign',
           description: "Reading is a fundamental skill that opens doors to a world of knowledge and imagination. It is a key to success in school and beyond. Setting aside dedicated time for reading beyond textbooks is crucial for their academic and personal growth. Fall 2024: Weekly Reading Challenge: Texts & Quizzes",
           icon: Target,
-          color: 'from-blue-400 to-blue-600',
+          color: 'from-purple-500 to-purple-700',
           link: 'https://drive.google.com/drive/folders/weekly-reading-challenge-fall-2024',
           linkText: 'Join Fall 2024 Weekly Reading Challenge',
           timeline: 'Fall 2024',
@@ -95,7 +97,7 @@ export default function ResourcesPage() {
           title: 'ReadWorks: Article a Day',
           description: "Online resources providing daily reading articles with comprehension questions. Build reading stamina and background knowledge through systematic daily practice.",
           icon: Globe,
-          color: 'from-purple-400 to-purple-600',
+          color: 'from-blue-400 to-blue-600',
           link: 'https://www.readworks.org/',
           linkText: 'Access ReadWorks Platform',
           type: 'platform'
@@ -105,7 +107,7 @@ export default function ResourcesPage() {
     strategy: {
       title: "Learning Strategies",
       description: "Science-based learning strategies to help students build solid foundations and enhance academic success",
-      color: "from-purple-500 to-violet-600", 
+      color: "from-blue-600 to-cyan-600", 
       icon: Brain,
       resources: [
         {
@@ -113,7 +115,7 @@ export default function ResourcesPage() {
           title: 'The Five Components of Reading',
           description: "Scientific research shows that there are five essential components of reading that children must be taught in order to learn to read. Teachers and parents can help children learn to be good readers by systematically practicing these five components.",
           icon: Brain,
-          color: 'from-indigo-400 to-indigo-600',
+          color: 'from-blue-500 to-blue-700',
           link: 'https://drive.google.com/file/d/five-components-reading-research',
           linkText: 'Access Five Components Research Document',
           type: 'research'
@@ -123,7 +125,7 @@ export default function ResourcesPage() {
           title: 'Building Background Knowledge',
           description: "Building background knowledge is crucial for ELLs to succeed in their language learning journey. It helps them improve comprehension, vocabulary, and cultural understanding, while also increasing their motivation and engagement. Spring 2025: Building Background Knowledge",
           icon: Lightbulb,
-          color: 'from-cyan-400 to-cyan-600',
+          color: 'from-cyan-500 to-cyan-700',
           link: 'https://drive.google.com/drive/folders/background-knowledge-spring-2025',
           linkText: 'Access Spring 2025 Background Knowledge Resources',
           timeline: 'Spring 2025',
@@ -134,7 +136,7 @@ export default function ResourcesPage() {
     grade12: {
       title: "G1-G2 Exclusive Resources",
       description: "Specialized transition materials and learning resources designed specifically for Grade 1-2 students",
-      color: "from-orange-500 to-red-600",
+      color: "from-purple-500 to-purple-700",
       icon: GraduationCap,
       resources: [
         {
@@ -142,7 +144,7 @@ export default function ResourcesPage() {
           title: 'myView reView',
           description: "Comprehensive review platform designed specifically for myView curriculum materials. Access interactive content and review materials to support student learning.",
           icon: School,
-          color: 'from-teal-400 to-teal-600',
+          color: 'from-purple-400 to-purple-600',
           link: 'https://myviewreview.com/',
           linkText: 'Visit myView reView Platform',
           type: 'platform'
@@ -152,7 +154,7 @@ export default function ResourcesPage() {
           title: 'G1-G2 myView Transition Materials',
           description: "We provide learning materials to help students transition smoothly from G1 to G2. These resources include several PDF documents for reading and interactive review games.",
           icon: FileText,
-          color: 'from-rose-400 to-rose-600',
+          color: 'from-purple-500 to-purple-700',
           timeline: 'Summer 2025',
           type: 'materials',
           materials: [
@@ -282,7 +284,7 @@ export default function ResourcesPage() {
 
       <main>
         {/* Hero Section - Parents' Corner Style */}
-        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100">
+        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
           <motion.div 
             className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
             style={{ y: y1 }}
@@ -337,46 +339,199 @@ export default function ResourcesPage() {
           </motion.div>
         </section>
 
+        {/* Parent Resource Center Featured Section */}
+        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+          {/* Background Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-purple-800/30 to-pink-900/20" />
+          
+          <motion.div 
+            className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+            style={{ y: y1 }}
+          >
+            <div className="max-w-6xl mx-auto">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+                {/* Content */}
+                <motion.div
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="text-center lg:text-left"
+                >
+                  <motion.div
+                    className="flex items-center justify-center lg:justify-start gap-3 mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <Badge className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-4 py-1">
+                      Featured Resources
+                    </Badge>
+                  </motion.div>
+
+                  <motion.h2
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    Parent Resource
+                    <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      Center
+                    </span>
+                  </motion.h2>
+
+                  <motion.p
+                    className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    Parents play a crucial role in their children's development. To support parents in their parenting journey, we provide a range of valuable resources. These resources may include informative articles and online tools designed to equip parents with the knowledge and skills to nurture their children's growth. By empowering parents with the right information and support, we aim to create a strong foundation for children to thrive and reach their full potential.
+                  </motion.p>
+
+                  {/* Action Buttons - Optional for future use */}
+                  <motion.div
+                    className="hidden flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button 
+                        size="lg"
+                        className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
+                      >
+                        <Heart className="w-5 h-5 mr-2" />
+                        Explore Resources
+                      </Button>
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button 
+                        size="lg"
+                        variant="outline"
+                        className="w-full sm:w-auto border-2 border-purple-300 text-purple-700 hover:bg-purple-50 px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                      >
+                        <Download className="w-5 h-5 mr-2" />
+                        Download Guide
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+
+                {/* Illustration */}
+                <motion.div
+                  className="relative"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                >
+                  <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-50 to-orange-100 rounded-3xl flex items-center justify-center p-8">
+                      {/* Parent-Child Learning Illustration */}
+                      <div className="text-center">
+                        <div className="text-6xl md:text-8xl mb-4">📚</div>
+                        <div className="flex items-center justify-center gap-4 mb-4">
+                          <div className="text-4xl">👩‍💼</div>
+                          <div className="text-2xl">💕</div>
+                          <div className="text-4xl">👶</div>
+                        </div>
+                        <div className="text-lg font-semibold text-amber-800">
+                          Parent Support Hub
+                        </div>
+                        <div className="text-sm text-amber-600 mt-2">
+                          Empowering Families
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Floating elements */}
+                  <motion.div
+                    className="absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg"
+                    animate={{
+                      y: [-10, 10, -10],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <Star className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <motion.div
+                    className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
+                    animate={{
+                      y: [10, -10, 10],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                      delay: 0.5,
+                    }}
+                  >
+                    <Heart className="w-5 h-5 text-white" />
+                  </motion.div>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
         {/* Main Resource Categories Section with Tabs */}
         <motion.section
-          className="py-16 md:py-20 relative"
+          className="py-16 md:py-20 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-100 relative overflow-hidden"
           style={{ y: y2 }}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={containerVariants}
         >
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Subtle pattern overlay like events page */}
+          <div className="absolute inset-0 opacity-20">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: "radial-gradient(circle at 25% 25%, rgb(147 51 234) 2px, transparent 2px)",
+                backgroundSize: "60px 60px",
+              }}
+            />
+          </div>
+
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div
               variants={itemVariants}
-              className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/30 overflow-hidden"
+              className="bg-white/98 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
             >
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 {/* Tab Navigation */}
                 <motion.div 
-                  className="flex justify-center p-6 bg-gradient-to-r from-purple-50 to-indigo-50"
+                  className="flex justify-center p-6 bg-gradient-to-r from-white/50 to-purple-50/50"
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-white/95 backdrop-blur-lg shadow-xl border border-white/30 p-1 rounded-2xl overflow-hidden">
+                  <TabsList className="grid w-full max-w-2xl grid-cols-3 bg-white/95 backdrop-blur-lg shadow-lg border border-gray-100 p-1 rounded-xl overflow-hidden">
                     <TabsTrigger 
                       value="reading" 
-                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-green-50"
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-800 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-purple-50"
                     >
                       <BookOpen className="w-4 h-4" />
                       <span className="text-sm font-medium">Diverse Reading</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="strategy" 
-                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-purple-50"
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-blue-50"
                     >
                       <Brain className="w-4 h-4" />
                       <span className="text-sm font-medium">Learning Strategies</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="grade12" 
-                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-orange-50"
+                      className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-3 sm:py-4 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 min-h-[44px] hover:bg-purple-50"
                     >
                       <GraduationCap className="w-4 h-4" />
                       <span className="text-sm font-medium">G1-G2 Exclusive</span>
@@ -396,114 +551,128 @@ export default function ResourcesPage() {
                       >
                         {/* Category Header */}
                         <motion.div 
-                          className="text-center mb-8"
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
+                          className="text-center mb-12"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.2 }}
                         >
-                          <div className="flex items-center justify-center gap-3 mb-4">
+                          <div className="flex items-center justify-center gap-3 mb-6">
                             <div className={`w-16 h-16 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center shadow-lg`}>
                               <category.icon className="w-8 h-8 text-white" />
                             </div>
                           </div>
-                          <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{category.title}</h3>
-                          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{category.description}</p>
+                          <motion.h3
+                            className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6"
+                            animate={{
+                              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                            }}
+                            transition={{
+                              duration: 5,
+                              repeat: Number.POSITIVE_INFINITY,
+                              ease: "linear",
+                            }}
+                            style={{ backgroundSize: "200% 200%" }}
+                          >
+                            {category.title}
+                          </motion.h3>
+                          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">{category.description}</p>
                         </motion.div>
 
-                        {/* Resource Cards */}
-                        <div className="grid gap-6 md:gap-8">
+                        {/* Resource Cards - Horizontal Layout like Events */}
+                        <div className="grid md:grid-cols-2 gap-6 auto-rows-fr">
                           {category.resources.map((resource, index) => (
                             <motion.div
                               key={resource.id}
-                              initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                              animate={{ opacity: 1, x: 0 }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: 0.3 + index * 0.1 }}
+                              whileHover={{ scale: 1.02 }}
                             >
-                              <Card className="bg-white/90 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group">
-                                <CardHeader className={`bg-gradient-to-r ${resource.color} text-white relative overflow-hidden`}>
-                                  <motion.div
-                                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100"
-                                    initial={false}
-                                    transition={{ duration: 0.3 }}
-                                  />
-                                  <div className="relative z-10">
-                                    <div className="flex items-center gap-3 mb-2">
-                                      <motion.div
-                                        className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
-                                        whileHover={{ rotate: 360 }}
-                                        transition={{ duration: 0.6 }}
-                                      >
-                                        <resource.icon className="h-6 w-6" />
-                                      </motion.div>
-                                      <div className="flex-1">
-                                        <CardTitle className="text-2xl">{resource.title}</CardTitle>
-                                        {resource.timeline && (
-                                          <Badge className="bg-white/20 text-white mt-2">
+                              <Card className="bg-white/98 backdrop-blur-lg border border-gray-100 shadow-lg hover:shadow-xl hover:border-purple-200 transition-all duration-300 overflow-hidden h-full rounded-xl">
+                                <CardContent className="p-0 h-full">
+                                  {/* Horizontal layout like events page documents */}
+                                  <div className="flex h-full">
+                                    {/* Icon/Type Section - Left side */}
+                                    <div className="flex-shrink-0 w-24 h-32 relative bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center rounded-l-xl overflow-hidden">
+                                      <div className={`w-16 h-16 bg-gradient-to-r ${resource.color} rounded-xl flex items-center justify-center shadow-lg`}>
+                                        <resource.icon className="w-8 h-8 text-white" />
+                                      </div>
+                                      {resource.timeline && (
+                                        <div className="absolute bottom-2 left-2 right-2">
+                                          <Badge className="bg-white/90 text-gray-700 text-xs px-2 py-1 w-full text-center">
                                             {resource.timeline}
                                           </Badge>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Content Section - Right side */}
+                                    <div className="flex-1 p-4 flex flex-col justify-between bg-gradient-to-r from-white to-purple-50/30">
+                                      <div>
+                                        <div className="flex items-start justify-between mb-2">
+                                          <h4 className="font-semibold text-gray-900 leading-tight text-lg mb-2">
+                                            {resource.title}
+                                          </h4>
+                                          <Badge variant="outline" className="ml-2 text-xs border-purple-200 text-purple-600">
+                                            {resource.type || 'Resource'}
+                                          </Badge>
+                                        </div>
+                                        
+                                        <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                                          {resource.description}
+                                        </p>
+                                      </div>
+
+                                      {/* Materials List (for G1-G2 resources) */}
+                                      {resource.materials && (
+                                        <div className="mb-4">
+                                          <div className="grid gap-2">
+                                            {resource.materials.slice(0, 2).map((material, idx) => (
+                                              <motion.a
+                                                key={idx}
+                                                href={material.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-sm"
+                                                whileHover={{ x: 2 }}
+                                              >
+                                                <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-purple-600 rounded flex items-center justify-center">
+                                                  {material.type === 'PDF' ? (
+                                                    <FileText className="w-3 h-3 text-white" />
+                                                  ) : (
+                                                    <Gamepad2 className="w-3 h-3 text-white" />
+                                                  )}
+                                                </div>
+                                                <span className="flex-1 truncate">{material.name}</span>
+                                                <ExternalLink className="w-3 h-3 text-gray-400" />
+                                              </motion.a>
+                                            ))}
+                                            {resource.materials.length > 2 && (
+                                              <div className="text-xs text-gray-500 text-center py-1">
+                                                +{resource.materials.length - 2} more materials
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+                                      
+                                      {/* Action buttons */}
+                                      <div className="flex items-center gap-2 justify-end">
+                                        {resource.link && (
+                                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                            <Button 
+                                              size="sm"
+                                              className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white"
+                                              onClick={() => window.open(resource.link, '_blank')}
+                                            >
+                                              <ExternalLink className="w-3 h-3 mr-1" />
+                                              Access
+                                            </Button>
+                                          </motion.div>
                                         )}
                                       </div>
                                     </div>
-                                    <CardDescription className="text-white/90 text-base leading-relaxed">
-                                      {resource.description}
-                                    </CardDescription>
                                   </div>
-                                </CardHeader>
-                                
-                                <CardContent className="p-6">
-                                  {/* Materials List for G1-G2 Transition */}
-                                  {resource.materials && (
-                                    <div className="grid sm:grid-cols-2 gap-4 mb-6">
-                                      {resource.materials.map((material, idx) => (
-                                        <motion.div
-                                          key={idx}
-                                          className="group/item"
-                                          whileHover={{ x: 5 }}
-                                          transition={{ duration: 0.2 }}
-                                        >
-                                          <motion.a
-                                            href={material.link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group-hover/item:shadow-md"
-                                            whileHover={{ scale: 1.02 }}
-                                          >
-                                            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
-                                              {material.type === 'PDF' ? (
-                                                <FileText className="w-4 h-4 text-white" />
-                                              ) : (
-                                                <Gamepad2 className="w-4 h-4 text-white" />
-                                              )}
-                                            </div>
-                                            <div className="flex-1">
-                                              <p className="font-medium text-gray-900">{material.name}</p>
-                                              <p className="text-sm text-gray-500">{material.type}</p>
-                                              {material.description && (
-                                                <p className="text-xs text-gray-400 mt-1">{material.description}</p>
-                                              )}
-                                            </div>
-                                            <ExternalLink className="w-4 h-4 text-gray-400 group-hover/item:text-gray-600" />
-                                          </motion.a>
-                                        </motion.div>
-                                      ))}
-                                    </div>
-                                  )}
-
-                                  {/* Main Resource Link */}
-                                  {resource.link && (
-                                    <motion.div 
-                                      whileHover={{ scale: 1.05 }} 
-                                      whileTap={{ scale: 0.95 }}
-                                    >
-                                      <Button
-                                        className={`w-full sm:w-auto bg-gradient-to-r ${resource.color} hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
-                                        onClick={() => window.open(resource.link, '_blank')}
-                                      >
-                                        <ExternalLink className="w-4 h-4 mr-2" />
-                                        {resource.linkText}
-                                      </Button>
-                                    </motion.div>
-                                  )}
                                 </CardContent>
                               </Card>
                             </motion.div>
@@ -518,9 +687,9 @@ export default function ResourcesPage() {
           </div>
         </motion.section>
 
-        {/* Call to Action Section */}
+        {/* Call to Action Section - HIDDEN as requested */}
         <motion.section
-          className="py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100"
+          className="hidden py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-100"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -574,9 +743,9 @@ export default function ResourcesPage() {
           </div>
         </motion.section>
 
-        {/* Contact CTA Section - Matching Homepage */}
+        {/* Contact CTA Section - HIDDEN as requested */}
         <motion.section
-          className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden"
+          className="hidden py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 relative overflow-hidden"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
