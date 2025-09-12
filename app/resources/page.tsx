@@ -761,7 +761,7 @@ export default function ResourcesPage() {
               >
                 <div className="flex items-center gap-2">
                   <Mail className="w-5 h-5" />
-                  <span>esid@kangchiao.com.tw</span>
+                  <span>kcislkesid@kcislk.ntpc.edu.tw</span>
                 </div>
                 <div className="hidden md:block w-px h-6 bg-purple-300" />
                 <div className="flex items-center gap-2">
@@ -875,7 +875,7 @@ export default function ResourcesPage() {
                   <div className="space-y-1 text-gray-300">
                     <div className="flex items-center gap-2">
                       <Mail className="w-3 h-3" />
-                      <span>esid@kangchiao.com.tw</span>
+                      <span>kcislkesid@kcislk.ntpc.edu.tw</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="w-3 h-3" />
