@@ -1,11 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { 
   ExternalLink, 
   Sparkles, 
@@ -45,6 +47,10 @@ export default function ResourcesPage() {
   
   // Tab state
   const [activeTab, setActiveTab] = useState("reading")
+  
+  // Materials Modal state
+  const [selectedResource, setSelectedResource] = useState<any>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Animation variants for hover-only effects
   const containerVariants = {
@@ -61,6 +67,65 @@ export default function ResourcesPage() {
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1 },
+  }
+
+  // Handle resource card click to open materials modal
+  const handleResourceClick = (resource: any) => {
+    if (resource.materials && resource.materials.length > 0) {
+      setSelectedResource(resource)
+      setIsModalOpen(true)
+    } else if (resource.link) {
+      window.open(resource.link, '_blank')
+    }
+  }
+
+  // MaterialsModal Component
+  const MaterialsModal = () => {
+    if (!selectedResource) return null
+
+    return (
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-md md:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">
+              {selectedResource.title} - Available Materials
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              Access all learning materials for this resource
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-3 mt-4">
+            {selectedResource.materials.map((material: any, idx: number) => (
+              <motion.a
+                key={idx}
+                href={material.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-200"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  {material.type === 'PDF' ? (
+                    <FileText className="w-5 h-5 text-white" />
+                  ) : material.type === 'Drive Folder' ? (
+                    <FolderOpen className="w-5 h-5 text-white" />
+                  ) : (
+                    <Gamepad2 className="w-5 h-5 text-white" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900">{material.name}</h4>
+                  <p className="text-sm text-gray-600">{material.type}</p>
+                </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
+              </motion.a>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
   }
 
   // Resource categories data structure
@@ -462,7 +527,10 @@ export default function ResourcesPage() {
                               transition={{ delay: 0.3 + index * 0.1 }}
                               whileHover={{ scale: 1.02 }}
                             >
-                              <Card className="bg-white/98 backdrop-blur-lg border border-gray-100 shadow-lg hover:shadow-xl hover:border-purple-200 transition-all duration-300 overflow-hidden h-full rounded-xl">
+                              <Card 
+                                className="bg-white/98 backdrop-blur-lg border border-gray-100 shadow-lg hover:shadow-xl hover:border-purple-200 transition-all duration-300 overflow-hidden h-full rounded-xl cursor-pointer"
+                                onClick={() => handleResourceClick(resource)}
+                              >
                                 <CardContent className="p-0 h-full">
                                   {/* Vertical layout with large image on top */}
                                   <div className="flex flex-col h-full">
@@ -490,6 +558,15 @@ export default function ResourcesPage() {
                                           </Badge>
                                         </div>
                                       )}
+                                      {/* Materials indicator - bottom right */}
+                                      {resource.materials && resource.materials.length > 0 && (
+                                        <div className="absolute bottom-3 right-3">
+                                          <Badge className="bg-purple-600/90 text-white text-xs px-2 py-1 backdrop-blur-sm rounded-full flex items-center gap-1">
+                                            <FolderOpen className="w-3 h-3" />
+                                            {resource.materials.length} Materials
+                                          </Badge>
+                                        </div>
+                                      )}
                                     </div>
 
                                     {/* Content Section - Bottom */}
@@ -509,43 +586,6 @@ export default function ResourcesPage() {
                                         </p>
                                       </div>
 
-                                      {/* Materials List (for G1-G2 resources) - Horizontal Scrolling Version */}
-                                      {resource.materials && (
-                                        <div className="mb-3">
-                                          <h5 className="font-semibold text-gray-800 mb-1.5 text-xs">Available Materials:</h5>
-                                          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300">
-                                            {resource.materials.slice(0, 4).map((material, idx) => (
-                                              <motion.a
-                                                key={idx}
-                                                href={material.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors text-xs border border-gray-200"
-                                                whileHover={{ scale: 1.05 }}
-                                                title={material.name}
-                                              >
-                                                <div className="w-3 h-3 bg-gradient-to-br from-purple-400 to-purple-600 rounded flex items-center justify-center flex-shrink-0">
-                                                  {material.type === 'PDF' ? (
-                                                    <FileText className="w-1.5 h-1.5 text-white" />
-                                                  ) : material.type === 'Drive Folder' ? (
-                                                    <FolderOpen className="w-1.5 h-1.5 text-white" />
-                                                  ) : (
-                                                    <Gamepad2 className="w-1.5 h-1.5 text-white" />
-                                                  )}
-                                                </div>
-                                                <span className="truncate max-w-16 text-xs">
-                                                  {material.name.length > 12 ? material.name.substring(0, 12) + '...' : material.name}
-                                                </span>
-                                              </motion.a>
-                                            ))}
-                                            {resource.materials.length > 4 && (
-                                              <div className="flex-shrink-0 text-xs text-gray-500 px-1 py-1 bg-gray-50 rounded-md border border-gray-200">
-                                                +{resource.materials.length - 4}
-                                              </div>
-                                            )}
-                                          </div>
-                                        </div>
-                                      )}
                                       
                                       {/* Action buttons */}
                                       <div className="flex items-center gap-3 justify-center mt-auto pt-4">
@@ -554,7 +594,10 @@ export default function ResourcesPage() {
                                             <Button 
                                               size="lg"
                                               className={`bg-gradient-to-r ${resource.color} hover:shadow-lg text-white transition-all duration-300 px-8 py-3 rounded-xl`}
-                                              onClick={() => window.open(resource.link, '_blank')}
+                                              onClick={(e) => {
+                                                e.stopPropagation()
+                                                window.open(resource.link, '_blank')
+                                              }}
                                             >
                                               <ExternalLink className="w-4 h-4 mr-2" />
                                               Access Resource
@@ -784,6 +827,9 @@ export default function ResourcesPage() {
 
       {/* Back to Top Button */}
       <BackToTop />
+
+      {/* Materials Modal */}
+      <MaterialsModal />
     </div>
   )
 }
