@@ -745,7 +745,7 @@ export default function StaticEventsPage() {
 
                           {/* Content Section */}
                           <div className="flex-1 p-6 flex flex-col justify-between">
-                            <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-start justify-between mb-4">
                               <h4 className="font-semibold text-gray-900 leading-tight text-lg">
                                 {doc.title}
                               </h4>
@@ -757,25 +757,8 @@ export default function StaticEventsPage() {
                               )}
                             </div>
                             
-                            <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                              {doc.description}
-                            </p>
-                            
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-4 text-xs text-gray-500">
-                                <span className="flex items-center gap-1">
-                                  <FileText className="w-3 h-3" />
-                                  {doc.size}
-                                </span>
-                                <span>•</span>
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
-                                  {doc.lastUpdated}
-                                </span>
-                              </div>
-
-                              {/* Enhanced dual-button design */}
-                              <div className="flex items-center gap-2">
+                            {/* Enhanced dual-button design */}
+                            <div className="flex items-center gap-2 justify-end">
                                 {doc.isGoogleDriveFile && doc.previewUrl && (
                                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                     <Button 
