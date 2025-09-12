@@ -73,7 +73,7 @@ export function FileUploader({
 
     // Validate file count
     if (files.length > maxFiles) {
-      onError?.([{ filename: 'Multiple files', error: `Maximum ${maxFiles} files allowed` }])
+      onError?.([{ filename: 'Multiple files', error: `最多只能選擇 ${maxFiles} 個檔案` }])
       return
     }
 
@@ -82,7 +82,7 @@ export function FileUploader({
     if (oversizedFiles.length > 0) {
       onError?.(oversizedFiles.map(file => ({
         filename: file.name,
-        error: `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB > ${maxSize / 1024 / 1024}MB)`
+        error: `檔案過大 (${(file.size / 1024 / 1024).toFixed(1)}MB，限制 ${(maxSize / 1024 / 1024).toFixed(1)}MB)`
       })))
       return
     }
@@ -154,10 +154,10 @@ export function FileUploader({
           <div className="text-center">
             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <p className="text-lg font-medium text-gray-900 mb-2">
-              Drag and drop files here or click to select files
+              拖放檔案到此處或點擊選擇檔案
             </p>
             <p className="text-sm text-gray-500">
-              Supports {allowedTypes.join(', ')} formats, maximum {formatFileSize(maxSize)}
+              支援 {allowedTypes.map(type => type === 'image' ? '圖片' : '文件').join('、')} 格式，單檔最大 {formatFileSize(maxSize)}，最多 {maxFiles} 個檔案
             </p>
           </div>
         )}

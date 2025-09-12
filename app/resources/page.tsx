@@ -85,23 +85,25 @@ export default function ResourcesPage() {
 
     return (
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md md:max-w-lg">
+        <DialogContent className="sm:max-w-md md:max-w-lg" aria-describedby="materials-description">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">
+            <DialogTitle id="materials-title" className="text-xl font-bold text-gray-900">
               {selectedResource.title} - Available Materials
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
-              Access all learning materials for this resource
+            <DialogDescription id="materials-description" className="text-gray-600">
+              Access all learning materials for this resource. Select any material to open it in a new tab.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-3 mt-4">
+          <div className="grid gap-3 mt-4" role="list" aria-label="Available materials">
             {selectedResource.materials.map((material: any, idx: number) => (
               <motion.a
                 key={idx}
                 href={material.link}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`Open ${material.title || `material ${idx + 1}`} in new tab`}
+                role="listitem"
                 className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-200"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
