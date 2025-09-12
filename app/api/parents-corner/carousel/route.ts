@@ -13,10 +13,11 @@ export async function GET(request: NextRequest) {
   try {
     console.log('🎠 GET /api/parents-corner/carousel - 獲取公共輪播圖片')
 
-    // Production 環境使用硬編碼資料以確保穩定性
+    // 臨時強制使用硬編碼資料 - 緊急修復
     const isProduction = process.env.NODE_ENV === 'production'
+    const forceHardcoded = true  // 臨時強制啟用
     
-    if (isProduction) {
+    if (isProduction || forceHardcoded) {
       console.log('🏭 Production mode: Using hardcoded carousel data')
       
       const hardcodedCarouselImages = [
