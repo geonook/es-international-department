@@ -212,7 +212,7 @@ export default function StaticEventsPage() {
           isGoogleDriveFile: true,
           previewUrl: driveInfo.previewUrl,
           downloadUrl: driveInfo.downloadUrl,
-          fileExtension: 'PPTX' // Override as these are all presentations
+          fileExtension: 'PDF' // Override as these are all PDF documents
         }
       }
       
@@ -758,6 +758,7 @@ export default function StaticEventsPage() {
                       case 'PPTX': return <Presentation className="w-6 h-6 text-white" />
                       case 'DOCX': return <FileText className="w-6 h-6 text-white" />
                       case 'XLSX': return <FileSpreadsheet className="w-6 h-6 text-white" />
+                      case 'PDF': return <FileText className="w-6 h-6 text-white" />
                       default: return <FolderOpen className="w-6 h-6 text-white" />
                     }
                   }
@@ -771,6 +772,7 @@ export default function StaticEventsPage() {
                       case 'PPTX': return 'bg-gradient-to-br from-orange-500 to-red-600'
                       case 'DOCX': return 'bg-gradient-to-br from-blue-500 to-blue-600'
                       case 'XLSX': return 'bg-gradient-to-br from-green-500 to-green-600'
+                      case 'PDF': return 'bg-gradient-to-br from-red-500 to-red-600'
                       default: return 'bg-gradient-to-br from-purple-500 to-purple-600'
                     }
                   }
