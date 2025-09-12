@@ -258,7 +258,7 @@ export default function StaticEventsPage() {
   useEffect(() => {
     documents.forEach((doc) => {
       if (doc.isGoogleDriveFile && doc.thumbnailUrl) {
-        const img = new Image()
+        const img = new (globalThis.Image || window.Image)()
         handleThumbnailLoadStart(doc.id)
         
         img.onload = () => handleThumbnailLoadSuccess(doc.id)
