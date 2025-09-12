@@ -436,8 +436,8 @@ export default function ResourcesPage() {
                           </motion.h3>
                         </motion.div>
 
-                        {/* Resource Cards - Horizontal Layout like Events */}
-                        <div className="grid md:grid-cols-2 gap-6 auto-rows-fr">
+                        {/* Resource Cards - Vertical Layout with Large Images */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
                           {category.resources.map((resource, index) => (
                             <motion.div
                               key={resource.id}
@@ -448,10 +448,10 @@ export default function ResourcesPage() {
                             >
                               <Card className="bg-white/98 backdrop-blur-lg border border-gray-100 shadow-lg hover:shadow-xl hover:border-purple-200 transition-all duration-300 overflow-hidden h-full rounded-xl">
                                 <CardContent className="p-0 h-full">
-                                  {/* Horizontal layout like events page documents */}
-                                  <div className="flex h-full">
-                                    {/* Resource Image Section - Left side */}
-                                    <div className="flex-shrink-0 w-36 h-24 relative rounded-l-xl overflow-hidden">
+                                  {/* Vertical layout with large image on top */}
+                                  <div className="flex flex-col h-full">
+                                    {/* Resource Image Section - Top */}
+                                    <div className="w-full aspect-video relative overflow-hidden">
                                       {resource.image && (
                                         <Image
                                           src={resource.image}
@@ -461,42 +461,43 @@ export default function ResourcesPage() {
                                         />
                                       )}
                                       {/* Type icon overlay - top right */}
-                                      <div className="absolute top-2 right-2">
-                                        <div className={`w-8 h-8 bg-gradient-to-r ${resource.color} rounded-lg flex items-center justify-center shadow-lg`}>
-                                          <resource.icon className="w-4 h-4 text-white" />
+                                      <div className="absolute top-3 right-3">
+                                        <div className={`w-10 h-10 bg-gradient-to-r ${resource.color} rounded-xl flex items-center justify-center shadow-lg`}>
+                                          <resource.icon className="w-5 h-5 text-white" />
                                         </div>
                                       </div>
-                                      {/* Timeline badge - bottom */}
+                                      {/* Timeline badge - bottom left */}
                                       {resource.timeline && (
-                                        <div className="absolute bottom-2 left-2 right-2">
-                                          <Badge className="bg-black/70 text-white text-xs px-2 py-1 w-full text-center backdrop-blur-sm">
+                                        <div className="absolute bottom-3 left-3">
+                                          <Badge className="bg-black/80 text-white text-sm px-3 py-1 backdrop-blur-sm rounded-full">
                                             {resource.timeline}
                                           </Badge>
                                         </div>
                                       )}
                                     </div>
 
-                                    {/* Content Section - Right side */}
-                                    <div className="flex-1 p-4 flex flex-col justify-between bg-gradient-to-r from-white to-purple-50/30">
+                                    {/* Content Section - Bottom */}
+                                    <div className="flex-1 p-6 flex flex-col justify-between bg-gradient-to-b from-white to-purple-50/30">
                                       <div>
-                                        <div className="flex items-start justify-between mb-2">
-                                          <h4 className="font-semibold text-gray-900 leading-tight text-lg mb-2">
+                                        <div className="flex items-start justify-between mb-3">
+                                          <h4 className="font-bold text-gray-900 leading-tight text-xl">
                                             {resource.title}
                                           </h4>
-                                          <Badge variant="outline" className="ml-2 text-xs border-purple-200 text-purple-600">
+                                          <Badge variant="outline" className="ml-3 text-xs border-purple-200 text-purple-600 px-2 py-1">
                                             {resource.type || 'Resource'}
                                           </Badge>
                                         </div>
                                         
-                                        <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                                        <p className="text-base text-gray-600 leading-relaxed mb-6">
                                           {resource.description}
                                         </p>
                                       </div>
 
                                       {/* Materials List (for G1-G2 resources) */}
                                       {resource.materials && (
-                                        <div className="mb-4">
-                                          <div className="grid gap-2">
+                                        <div className="mb-6">
+                                          <h5 className="font-semibold text-gray-800 mb-3 text-sm">Available Materials:</h5>
+                                          <div className="grid gap-3">
                                             {resource.materials.slice(0, 2).map((material, idx) => (
                                               <motion.a
                                                 key={idx}
@@ -527,16 +528,16 @@ export default function ResourcesPage() {
                                       )}
                                       
                                       {/* Action buttons */}
-                                      <div className="flex items-center gap-2 justify-end">
+                                      <div className="flex items-center gap-3 justify-center mt-auto pt-4">
                                         {resource.link && (
                                           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                             <Button 
-                                              size="sm"
-                                              className={`bg-gradient-to-r ${resource.color} hover:shadow-lg text-white transition-all duration-300`}
+                                              size="lg"
+                                              className={`bg-gradient-to-r ${resource.color} hover:shadow-lg text-white transition-all duration-300 px-8 py-3 rounded-xl`}
                                               onClick={() => window.open(resource.link, '_blank')}
                                             >
-                                              <ExternalLink className="w-3 h-3 mr-1" />
-                                              Access
+                                              <ExternalLink className="w-4 h-4 mr-2" />
+                                              Access Resource
                                             </Button>
                                           </motion.div>
                                         )}
