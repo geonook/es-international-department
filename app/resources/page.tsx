@@ -88,7 +88,7 @@ export default function ResourcesPage() {
           icon: Target,
           color: 'from-purple-500 to-purple-700',
           image: '/images/resources/reading-campaign.png',
-          link: 'https://drive.google.com/drive/folders/weekly-reading-challenge-fall-2024',
+          link: 'https://drive.google.com/drive/folders/1N_-MlY9wOR9VrwbRctnkS1-W8yZG62Qz',
           linkText: 'Join Fall 2024 Weekly Reading Challenge',
           timeline: 'Fall 2024',
           type: 'campaign'
@@ -119,7 +119,7 @@ export default function ResourcesPage() {
           icon: Brain,
           color: 'from-blue-500 to-blue-700',
           image: '/images/resources/five-components.png',
-          link: 'https://drive.google.com/file/d/five-components-reading-research',
+          link: 'https://drive.google.com/file/d/1zfYSi45RSGUg9Rk3aH9J8xtn60jw-BHE/view',
           linkText: 'Access Five Components Research Document',
           type: 'research'
         },
