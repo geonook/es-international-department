@@ -70,6 +70,8 @@ function formatMonthYear(date: Date | null | undefined): { month: string; year: 
 // GET - 獲取電子報內容 (支援日期篩選)
 export async function GET(request: NextRequest) {
   try {
+    console.log('📰 GET /api/public/newsletters - 獲取電子報內容')
+
     // 獲取查詢參數
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '10')
@@ -77,6 +79,268 @@ export async function GET(request: NextRequest) {
     
     // Build date filters
     const dateFilters = buildDateFilters(searchParams)
+
+    // 臨時強制使用硬編碼資料 - 緊急修復
+    const isProduction = process.env.NODE_ENV === 'production'
+    const forceHardcoded = true  // 臨時強制啟用
+    
+    if (isProduction || forceHardcoded) {
+      console.log('🏭 Production mode: Using hardcoded newsletters data')
+      
+      const hardcodedNewsletters = [
+        {
+          id: 10,
+          title: "June 2025 ID Monthly Newsletter",
+          content: "Explore our June 2025 newsletter featuring summer activities, graduation ceremonies, and next academic year preparation. This issue highlights student achievements, upcoming events, and important announcements for the International Department community.",
+          summary: "June 2025 newsletter: Summer activities, graduation ceremonies, and next academic year preparation.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/vgzj/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/vgzj/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2025-06",
+          status: "published",
+          publishedAt: new Date('2025-06-15T10:00:00Z'),
+          createdAt: new Date('2025-06-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 9,
+          title: "May 2025 ID Monthly Newsletter",
+          content: "Discover our May 2025 newsletter covering spring semester highlights, international cultural events, and academic achievements. This issue showcases student projects, teacher spotlights, and upcoming graduation preparations.",
+          summary: "May 2025 newsletter: Spring semester highlights, cultural events, and academic achievements.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/xjrq/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/xjrq/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2025-05",
+          status: "published",
+          publishedAt: new Date('2025-05-15T10:00:00Z'),
+          createdAt: new Date('2025-05-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 8,
+          title: "April 2025 ID Monthly Newsletter",
+          content: "Read our April 2025 newsletter featuring spring festival celebrations, academic progress updates, and international exchange programs. This issue includes student art exhibitions, sports achievements, and community service projects.",
+          summary: "April 2025 newsletter: Spring festivals, academic updates, and international exchanges.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/bbcn/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/bbcn/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2025-04",
+          status: "published",
+          publishedAt: new Date('2025-04-15T10:00:00Z'),
+          createdAt: new Date('2025-04-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 7,
+          title: "March 2025 ID Monthly Newsletter",
+          content: "Check out our March 2025 newsletter highlighting new semester beginnings, international curriculum updates, and student leadership programs. This issue features classroom innovations, parent engagement activities, and upcoming events.",
+          summary: "March 2025 newsletter: New semester beginnings, curriculum updates, and leadership programs.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/xcjz/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/xcjz/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2025-03",
+          status: "published",
+          publishedAt: new Date('2025-03-15T10:00:00Z'),
+          createdAt: new Date('2025-03-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 6,
+          title: "February 2025 ID Monthly Newsletter",
+          content: "Explore our February 2025 newsletter covering Lunar New Year celebrations, winter learning activities, and academic excellence recognition. This issue includes cultural performances, study abroad opportunities, and family engagement programs.",
+          summary: "February 2025 newsletter: Lunar New Year celebrations, winter activities, and academic excellence.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/hqjv/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/hqjv/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2025-02",
+          status: "published",
+          publishedAt: new Date('2025-02-15T10:00:00Z'),
+          createdAt: new Date('2025-02-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 5,
+          title: "January 2025 ID Monthly Newsletter",
+          content: "Welcome to our January 2025 newsletter featuring new year resolutions, winter semester preparations, and student achievements. This issue highlights innovative teaching methods, technology integration, and community partnerships.",
+          summary: "January 2025 newsletter: New year resolutions, winter semester preparations, and achievements.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/iojr/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/iojr/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2025-01",
+          status: "published",
+          publishedAt: new Date('2025-01-15T10:00:00Z'),
+          createdAt: new Date('2025-01-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 4,
+          title: "December 2024 ID Monthly Newsletter",
+          content: "Discover our December 2024 newsletter showcasing winter celebrations, year-end reflections, and holiday activities. This issue features student performances, academic milestones, and festive community events.",
+          summary: "December 2024 newsletter: Winter celebrations, year-end reflections, and holiday activities.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/bhyo/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/bhyo/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2024-12",
+          status: "published",
+          publishedAt: new Date('2024-12-15T10:00:00Z'),
+          createdAt: new Date('2024-12-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 3,
+          title: "November 2024 ID Monthly Newsletter",
+          content: "Read our November 2024 newsletter featuring autumn learning adventures, international collaboration projects, and gratitude celebrations. This issue includes teacher development programs, student research projects, and thanksgiving activities.",
+          summary: "November 2024 newsletter: Autumn learning, international collaborations, and gratitude celebrations.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/bhyo/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/bhyo/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2024-11",
+          status: "published",
+          publishedAt: new Date('2024-11-15T10:00:00Z'),
+          createdAt: new Date('2024-11-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 2,
+          title: "October 2024 ID Monthly Newsletter",
+          content: "Explore our October 2024 newsletter highlighting autumn semester activities, international student exchanges, and academic innovations. This issue showcases science fair projects, literary competitions, and multicultural awareness programs.",
+          summary: "October 2024 newsletter: Autumn activities, student exchanges, and academic innovations.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/jeay/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/jeay/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2024-10",
+          status: "published",
+          publishedAt: new Date('2024-10-15T10:00:00Z'),
+          createdAt: new Date('2024-10-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        },
+        {
+          id: 1,
+          title: "September 2024 ID Monthly Newsletter",
+          content: "Welcome to our September 2024 newsletter featuring the start of new academic year, fresh curriculum initiatives, and exciting international programs. This issue introduces new faculty members, student achievements, and upcoming school events.",
+          summary: "September 2024 newsletter: New academic year, curriculum initiatives, and international programs.",
+          onlineReaderUrl: "https://online.pubhtml5.com/vpgbz/hqdc/",
+          pdfUrl: null,
+          embedCode: "<iframe style='width:900px;height:600px' src='https://online.pubhtml5.com/vpgbz/hqdc/'  seamless='seamless' scrolling='no' frameborder='0' allowtransparency='true' allowfullscreen='true' ></iframe>",
+          issueNumber: "2024-09",
+          status: "published",
+          publishedAt: new Date('2024-09-15T10:00:00Z'),
+          createdAt: new Date('2024-09-15T10:00:00Z'),
+          author: {
+            id: 'id_office',
+            displayName: 'KCISLK ESID',
+            firstName: 'KCISLK',
+            lastName: 'ESID'
+          }
+        }
+      ]
+
+      // 應用日期篩選
+      let filteredNewsletters = hardcodedNewsletters
+      
+      // Check for date filters from buildDateFilters function
+      if (dateFilters.publishedAt) {
+        filteredNewsletters = filteredNewsletters.filter(newsletter => {
+          const publishedDate = new Date(newsletter.publishedAt)
+          const filterStart = dateFilters.publishedAt.gte
+          const filterEnd = dateFilters.publishedAt.lte
+          
+          return publishedDate >= filterStart && publishedDate <= filterEnd
+        })
+      }
+
+      // 應用數量限制
+      const limitedNewsletters = filteredNewsletters.slice(0, limit)
+
+      // 格式化回應數據
+      const formattedNewsletters = limitedNewsletters.map(newsletter => {
+        const publishedDate = newsletter.publishedAt || newsletter.createdAt
+        const { month, year } = formatMonthYear(publishedDate)
+        
+        return {
+          id: newsletter.id,
+          title: newsletter.title,
+          content: newsletter.content,
+          type: 'newsletter',
+          priority: 'medium',
+          isImportant: false,
+          isPinned: false,
+          date: publishedDate,
+          month: month,
+          year: year,
+          author: newsletter.author.displayName,
+          targetAudience: 'all',
+          onlineReaderUrl: newsletter.onlineReaderUrl,
+          pdfUrl: newsletter.pdfUrl,
+          embedCode: newsletter.embedCode,
+          issueNumber: newsletter.issueNumber,
+          hasOnlineReader: Boolean(newsletter.onlineReaderUrl || newsletter.embedCode)
+        }
+      })
+
+      return NextResponse.json({
+        success: true,
+        data: formattedNewsletters,
+        total: formattedNewsletters.length,
+        totalInDatabase: hardcodedNewsletters.length,
+        queryParams: {
+          month: searchParams.get('month'),
+          year: searchParams.get('year'),
+          limit: limit,
+          audience: targetAudience
+        },
+        hasDateFilter: Boolean(dateFilters.publishedAt),
+        source: 'hardcoded'
+      })
+    }
+
+    // Development/Staging 環境使用資料庫查詢
+    console.log('🧪 Development/Staging mode: Using database query')
 
     // 查詢條件 - 結合基礎條件和日期篩選
     const whereCondition: any = {

@@ -1202,7 +1202,7 @@ Browse Complete Newsletter Archive
             <div>
               <h4 className="font-semibold mb-4 text-purple-300">Quick Links</h4>
               <div className="space-y-2">
-                {["Events", "Resources", "News", "Contact"].map((link) => (
+                {["Events", "Resources"].map((link) => (
                   <Link
                     key={link}
                     href={`/${link.toLowerCase()}`}
