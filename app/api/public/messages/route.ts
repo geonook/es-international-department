@@ -23,11 +23,11 @@ export async function GET(request: NextRequest) {
     
     const skip = (page - 1) * limit
 
-    // 臨時強制使用硬編碼資料 - 緊急修復
+    // 檢查是否為生產環境且資料庫連線失敗時的備用方案
     const isProduction = process.env.NODE_ENV === 'production'
-    const forceHardcoded = true  // 臨時強制啟用
-    
-    if (isProduction || forceHardcoded) {
+    const forceHardcoded = false  // 已將資料遷移到資料庫，關閉硬編碼
+
+    if (isProduction && forceHardcoded) {
       console.log('🏭 Production mode: Using hardcoded messages data')
       
       const hardcodedMessages = [
